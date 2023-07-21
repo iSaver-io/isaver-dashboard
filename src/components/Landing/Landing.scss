@@ -1,0 +1,930 @@
+@import '@/assets/styles/normalize.css';
+@import '@/assets/styles/vars.scss';
+
+body {
+  min-width: 320px;
+}
+
+.main-container {
+  max-width: 1360px;
+  padding: 0 20px;
+  margin: auto;
+}
+
+.color-green {
+  color: $color-green;
+}
+
+.color-blue {
+  color: $color-blue;
+}
+
+.no-wrap {
+  white-space: nowrap;
+}
+
+.heading {
+  font-weight: 700;
+  font-size: 38px;
+  line-height: 130%;
+  text-transform: uppercase;
+  color: #ffffff;
+  text-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
+  position: relative;
+  text-align: center;
+
+  &::before,
+  &::after {
+    content: '';
+    background: #ffffff;
+    width: 70px;
+    height: 2px;
+    position: absolute;
+    top: calc(50% - 1px);
+  }
+
+  &::before {
+    right: -80px;
+  }
+
+  &::after {
+    left: -80px;
+  }
+}
+
+.heading-container {
+  .heading {
+    margin-bottom: 20px;
+  }
+
+  .subheading {
+    margin-bottom: 40px;
+  }
+}
+
+.subheading {
+  font-weight: 500;
+  font-size: 26px;
+  line-height: 32px;
+  text-align: center;
+  text-transform: uppercase;
+  color: #ffffff;
+}
+
+.text {
+  font-weight: 500;
+  font-size: 18px;
+  line-height: 130%;
+  color: #ffffff;
+}
+
+.main-heading {
+  font-weight: 700;
+  font-size: 90px;
+  line-height: 110%;
+  text-transform: uppercase;
+  color: #ffffff;
+  margin: 0 0 5px 0;
+}
+
+.main-subheading {
+  font-weight: 500;
+  font-size: 32px;
+  line-height: 130%;
+  color: #ffffff;
+  margin-bottom: 72px;
+}
+
+.main-text {
+  font-weight: 700;
+  font-size: 38px;
+  line-height: 130%;
+  text-transform: uppercase;
+  margin-bottom: 40px;
+}
+
+.main-btns {
+  margin-bottom: 100px;
+  div {
+    &:last-child a {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      min-width: 220px;
+    }
+  }
+}
+
+.main-banner {
+  &__top {
+    margin-top: 10px;
+  }
+  &__bottom {
+    top: -60px;
+  }
+}
+
+.about-container {
+  background: rgba(28, 74, 64, 0.3);
+  // backdrop-filter: blur(22.5px);
+  border-radius: 5px;
+  margin-bottom: 100px;
+  justify-content: center;
+
+  .text {
+    padding-bottom: 25px;
+  }
+
+  &__img {
+    padding-top: 20px;
+  }
+}
+
+.coins-text__img {
+  position: relative;
+
+  svg {
+    pointer-events: none;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+}
+
+.coins-text__primary {
+  font-weight: 700;
+  font-size: 38px;
+  line-height: 130%;
+  text-transform: uppercase;
+  color: #ffffff;
+  margin-bottom: 7px;
+}
+
+.coins-text__secondary {
+  font-weight: 500;
+  font-size: 26px;
+  line-height: 32px;
+  text-transform: uppercase;
+  color: #ffffff;
+}
+
+.icons-card {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  text-align: center;
+  padding: 50px 25px 28px 25px;
+
+  &__heading {
+    font-weight: 700;
+    font-size: 24px;
+    line-height: 31px;
+    text-align: center;
+    color: #ffffff;
+    margin-top: 50px;
+  }
+
+  &__text {
+    font-weight: 500;
+    font-size: 18px;
+    line-height: 130%;
+    color: #ffffff;
+    margin-top: 15px;
+  }
+}
+
+.benefit {
+  margin-bottom: 100px;
+}
+
+.number {
+  margin-top: 80px;
+}
+
+.benefit-container {
+  gap: 33px;
+  margin-top: 50px;
+
+  .icons-card {
+    width: 300px;
+    padding: 50px 20px 20px;
+
+    svg {
+      width: 130px;
+    }
+  }
+}
+
+.plans {
+  margin-bottom: 150px;
+}
+
+.card--shadow {
+  background: rgba(28, 74, 64, 0.3);
+  box-shadow: inset 8px 9px 14px #0b200a;
+  // backdrop-filter: blur(22.5px);
+  border-radius: 5px;
+}
+
+.number-item {
+  display: flex;
+  width: 33%;
+  align-items: center;
+  flex-direction: column;
+  margin-bottom: 160px;
+
+  &:nth-last-child(-n + 3) {
+    margin-bottom: 0;
+  }
+
+  &__heading {
+    font-weight: 700;
+    font-size: 24px;
+    line-height: 31px;
+    text-align: center;
+    color: #ffffff;
+    margin-bottom: 20px;
+  }
+
+  &__text {
+    color: $color-green;
+    font-weight: 700;
+    font-size: 52px;
+    line-height: 130%;
+    text-align: center;
+    text-transform: uppercase;
+  }
+}
+
+.plans-container {
+  gap: 30px;
+}
+.plans-item {
+  $this: &;
+  background-image: url(./images/p_texture.svg);
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+
+  &--size {
+    &-medium {
+      width: 300px;
+      height: 300px;
+      padding: 30px;
+
+      #{$this}__heading {
+        font-size: 26px;
+        margin-bottom: 25px;
+      }
+      #{$this}__text {
+        font-size: 16px;
+        font-weight: 500;
+      }
+    }
+    &-small {
+      width: 220px;
+      height: 220px;
+      padding: 30px;
+
+      #{$this}__heading {
+        font-size: 18px;
+        margin-bottom: 20px;
+      }
+      #{$this}__text {
+        font-size: 12px;
+        font-weight: 400;
+      }
+    }
+  }
+
+  &__heading {
+    font-weight: 700;
+    line-height: 130%;
+    text-transform: uppercase;
+  }
+
+  &__text {
+    line-height: 130%;
+    color: #ffffff;
+  }
+}
+
+.banner {
+  padding: 104px 0;
+  background-image: url(./images/banner_bg.svg);
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+
+  &__btn {
+    min-width: 220px;
+  }
+
+  &__heading {
+    font-weight: 700;
+    font-size: 90px;
+    line-height: 110%;
+    text-align: center;
+    text-transform: uppercase;
+    color: #ffffff;
+    margin-bottom: 25px;
+  }
+
+  &__subheading {
+    font-weight: 700;
+    font-size: 26px;
+    line-height: 130%;
+    text-align: center;
+    text-transform: uppercase;
+    color: #ffffff;
+    margin-bottom: 35px;
+  }
+}
+
+.lottery {
+  .heading {
+    margin-bottom: 15px;
+  }
+
+  &__img {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    max-width: unset;
+    width: 1500px;
+    pointer-events: none;
+  }
+
+  &__text {
+    font-weight: 500;
+    font-size: 26px;
+    line-height: 32px;
+    text-transform: uppercase;
+    color: #ffffff;
+  }
+
+  &__heading {
+    text-align: right;
+    font-weight: 700;
+    font-size: 52px;
+    line-height: 130%;
+    text-transform: uppercase;
+    color: #ffffff;
+  }
+}
+
+@media screen and (max-width: $xl2) {
+  .heading::before {
+    right: -40px;
+  }
+  .heading::after {
+    left: -40px;
+  }
+  .heading::before,
+  .heading::after {
+    width: 30px;
+  }
+  .main-container {
+    max-width: 940px;
+    padding: 0;
+  }
+  .main-heading {
+    font-size: 52px;
+    line-height: 130%;
+  }
+  .main-subheading {
+    font-size: 18px;
+    line-height: 130%;
+    margin-bottom: 60px;
+  }
+  .main-text {
+    font-size: 26px;
+    line-height: 130%;
+    margin-bottom: 20px;
+  }
+  .main-btns {
+    margin-bottom: 80px;
+  }
+  .coins-text__img {
+    svg {
+      max-height: 420px;
+      margin: 0 auto;
+    }
+  }
+  .coins-text__primary {
+    font-size: 26px;
+    line-height: 130%;
+  }
+  .coins-text__secondary {
+    font-size: 18px;
+    line-height: 130%;
+  }
+  .main-banner {
+    &__bottom {
+      top: -35px;
+    }
+  }
+  .about-container {
+    margin-bottom: 100px;
+
+    .text {
+      font-weight: 400;
+      padding-bottom: 0px;
+    }
+
+    &__img {
+      svg {
+        width: 200px;
+        height: 304px;
+      }
+    }
+
+    .subheading {
+      font-weight: 400;
+      margin-bottom: 35px;
+    }
+  }
+  .heading-container {
+    padding: 0 27px;
+  }
+  .heading {
+    font-size: 26px;
+    line-height: 130%;
+  }
+  .subheading {
+    font-size: 18px;
+    line-height: 22px;
+  }
+  .text {
+    font-size: 12px;
+    line-height: 130%;
+  }
+  .icons-card {
+    padding-top: 40px;
+  }
+  .benefit {
+    margin-bottom: 100px;
+  }
+  .benefit-container {
+    margin-top: 40px;
+    gap: 20px;
+
+    .icons-card {
+      width: 220px;
+      svg {
+        width: 100px;
+      }
+    }
+  }
+  .number {
+    margin-top: 40px;
+  }
+  .number-item {
+    margin-bottom: 60px;
+  }
+  .icons-card__heading {
+    margin-top: 20px;
+    font-size: 18px;
+    line-height: 23px;
+    font-weight: 700;
+  }
+  .icons-card__text {
+    font-size: 12px;
+    line-height: 130%;
+  }
+  .plans {
+    margin-bottom: 100px;
+  }
+  .plans-container {
+    gap: 20px;
+  }
+  .banner {
+    padding: 55px 0;
+
+    &__heading {
+      max-width: 660px;
+      font-size: 52px;
+      line-height: 130%;
+      margin-bottom: 20px;
+    }
+
+    &__subheading {
+      font-size: 18px;
+      line-height: 130%;
+      margin-bottom: 30px;
+    }
+  }
+  .lottery {
+    &__img {
+      width: 1300px;
+    }
+    &__text {
+      font-size: 26px;
+      line-height: 32px;
+    }
+
+    &__heading {
+      font-size: 40px;
+      line-height: 130%;
+    }
+  }
+}
+
+@media screen and (max-width: $xl) {
+  .main-container {
+    max-width: 610px;
+  }
+  .main-heading {
+    font-size: 38px;
+    margin-bottom: 0;
+  }
+  .main-banner {
+    &__top {
+      margin-top: 0;
+    }
+  }
+  .main-subheading {
+    font-size: 12px;
+    margin-bottom: 35px;
+  }
+  .main-text {
+    font-size: 18px;
+    margin-bottom: 20px;
+  }
+  .coins-text__img {
+    svg {
+      height: 360px;
+    }
+  }
+  .coins-text__primary {
+    font-size: 18px;
+    margin-bottom: 5px;
+  }
+  .coins-text__secondary {
+    font-size: 16px;
+  }
+  .about-container {
+    padding: 50px 0 40px;
+    margin-bottom: 70px;
+
+    &__img {
+      display: none;
+
+      svg {
+        width: 200px;
+        height: 304px;
+      }
+    }
+
+    .subheading {
+      margin-bottom: 30px;
+    }
+  }
+  .main-btns {
+    margin-bottom: 60px;
+
+    button:last-child,
+    button:first-child {
+      font-size: 12px;
+      max-width: 150px;
+      min-width: initial;
+    }
+  }
+  .heading-container {
+    padding: 0 90px;
+  }
+  .icons-card {
+    padding-top: 40px;
+  }
+
+  .benefit {
+    margin-bottom: 80px;
+  }
+  .number {
+    margin-top: 30px;
+  }
+  .number-item {
+    margin-bottom: 50px;
+
+    &__heading {
+      font-size: 16px;
+      line-height: 21px;
+      margin-bottom: 10px;
+    }
+
+    &__text {
+      font-size: 26px;
+      line-height: 130%;
+    }
+  }
+  .benefit-container {
+    margin-top: 30px;
+    flex-wrap: wrap;
+    gap: 10px;
+
+    .icons-card {
+      padding: 40px 35px 20px;
+      width: 300px;
+      min-height: 450px;
+
+      svg {
+        width: 130px;
+      }
+
+      &__heading {
+        margin-top: 50px;
+        font-size: 24px;
+        font-weight: 700;
+        line-height: 31px;
+      }
+      &__text {
+        font-size: 18px;
+        font-weight: 500;
+        line-height: 130%;
+      }
+    }
+  }
+  .icons-card__heading {
+    margin-top: 50px;
+    font-size: 24px;
+    line-height: 23px;
+    font-weight: 700;
+  }
+  .icons-card__text {
+    font-size: 18px;
+    font-weight: 500;
+    line-height: 130%;
+  }
+  .plans {
+    margin-bottom: 80px;
+  }
+  .plans-container {
+    gap: 10px;
+  }
+  .lottery {
+    &__img {
+      width: 840px;
+    }
+    &__text {
+      font-size: 12px;
+      line-height: 15px;
+    }
+
+    &__heading {
+      font-size: 26px;
+      line-height: 26px;
+    }
+  }
+}
+
+@media screen and (max-width: $lg) {
+  .main-container {
+    padding: 0 10px;
+  }
+  .main-heading {
+    font-size: 38px;
+    margin-bottom: 10px;
+  }
+  .main-subheading {
+    font-size: 18px;
+    margin-bottom: 20px;
+  }
+  .main-btns button:last-child,
+  .main-btns button:first-child {
+    max-width: calc(50% - 8px);
+    width: 100%;
+  }
+  .main-btns {
+    width: 100%;
+    margin-top: 30px;
+    justify-content: center;
+  }
+  .main-banner {
+    text-align: center;
+
+    &__bottom {
+      display: none;
+    }
+
+    &__top {
+      width: 100%;
+    }
+  }
+  .main-text {
+    font-size: 26px;
+    margin-bottom: 0;
+  }
+  .coins-text__img {
+    margin: auto;
+
+    svg {
+      height: 480px;
+    }
+  }
+  .number-item {
+    margin-bottom: 30px;
+    width: 50%;
+
+    &:nth-child(3n) {
+      width: 100%;
+    }
+
+    &:nth-last-child(-n + 3) {
+      margin-bottom: 50px;
+    }
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+  .about-container {
+    padding: 50px 10px 40px;
+    margin-bottom: 60px;
+  }
+  .heading-container {
+    padding: 0;
+  }
+
+  .plans-container {
+    justify-content: center;
+    gap: 15px;
+  }
+
+  .lottery {
+    &__img {
+      width: 100vw;
+      transform: unset;
+      position: unset;
+      margin-top: -120px;
+    }
+    &__text {
+      position: absolute;
+      top: 10%;
+      width: 100px;
+      text-align: center;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    &__heading {
+      position: absolute;
+      top: 60%;
+      width: 100px;
+      font-size: 26px;
+      font-weight: 700;
+      line-height: 130%;
+      text-align: center;
+    }
+    &__description {
+      position: relative;
+      width: 100px;
+      margin-left: 50px;
+    }
+  }
+  .banner {
+    padding: 70px 0;
+
+    &__heading {
+      font-size: 38px;
+      max-width: 450px;
+    }
+
+    &__subheading {
+      font-size: 16px;
+      margin-bottom: 25px;
+    }
+  }
+  .benefit-container {
+    .icons-card {
+      padding: 40px 15px 15px;
+      width: calc(50% - 5px);
+      min-height: 300px;
+
+      &__heading {
+        margin-top: 20px;
+        font-weight: 700;
+        font-size: 18px;
+        line-height: 23px;
+      }
+
+      &__text {
+        margin-top: 15px;
+        font-weight: 400;
+        font-size: 12px;
+        line-height: 130%;
+      }
+
+      svg {
+        width: 100px;
+      }
+    }
+  }
+}
+
+@media screen and (min-width: $sm) and (max-width: $md) {
+  .heading {
+    font-size: 26px;
+    font-weight: 700;
+    margin: 0 40px;
+  }
+  .main-text {
+    position: relative;
+    z-index: 2;
+  }
+  .main-heading {
+    font-size: 26px;
+    margin-bottom: 5px;
+  }
+  .main-subheading {
+    font-size: 12px;
+  }
+  .main-text {
+    font-size: 18px;
+  }
+  .main-btns {
+    margin-top: 20px;
+    margin-bottom: 50px;
+  }
+  .about-container {
+    padding: 40px 10px;
+    .subheading {
+      margin-bottom: 25px;
+    }
+  }
+  .coins-text__img {
+    svg {
+      height: 400px;
+    }
+  }
+  .banner {
+    padding: 90px 0;
+
+    &__heading {
+      font-size: 26px;
+      max-width: 280px;
+    }
+
+    &__subheading {
+      font-size: 12px;
+      margin-bottom: 30px;
+    }
+  }
+  .benefit-container {
+    .icons-card {
+      padding: 25px;
+      width: 300px;
+      min-height: 190px;
+
+      &__heading {
+        font-size: 16px;
+        line-height: 21px;
+        margin-top: 10px;
+      }
+
+      &__text {
+        margin-top: 10px;
+      }
+
+      svg {
+        width: 50px;
+      }
+    }
+  }
+  .number {
+    margin-top: 40px;
+  }
+  .plans {
+    margin-bottom: 100px;
+  }
+  .plans-container {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .lottery {
+    &__img {
+      margin-top: -80px;
+    }
+    &__text {
+      position: absolute;
+      top: 10%;
+    }
+    .heading {
+      &::before {
+        right: -50px;
+      }
+      &::after {
+        left: -50px;
+      }
+    }
+    &__heading {
+      top: 60%;
+    }
+    &__description {
+      width: 100px;
+      margin-left: 30px;
+    }
+  }
+}

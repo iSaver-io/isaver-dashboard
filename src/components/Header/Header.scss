@@ -1,0 +1,11 @@
+@import '@/assets/styles/vars';
+
+.app-header {
+  background: rgba(12, 34, 14, 0.2);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(7.5px);
+
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
