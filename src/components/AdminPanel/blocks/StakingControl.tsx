@@ -15,7 +15,7 @@ export const StakingControl = () => {
   const { addStakingPlan, updatePlanActivity } = useStakingAdminActions();
   const { isOpen, onOpen, onClose } = useDisclosure();
 
-  const { claimsDataRequest } = useStakingHistory();
+  const { claimsCountData } = useStakingHistory();
 
   return (
     <AdminSection title="Staking" isLoading={stakingPlansRequest.isLoading}>
@@ -35,8 +35,8 @@ export const StakingControl = () => {
               isActive={plan.isActive}
               totalStakesSav={plan.totalStakesToken1No.toNumber()}
               totalStakesSavr={plan.totalStakesToken2No.toNumber()}
-              claimedStakesSav={claimsDataRequest.data?.[plan.stakingPlanId]?.sav || 0}
-              claimedStakesSavr={claimsDataRequest.data?.[plan.stakingPlanId]?.savr || 0}
+              claimedStakesSav={claimsCountData?.[plan.stakingPlanId]?.sav || 0}
+              claimedStakesSavr={claimsCountData?.[plan.stakingPlanId]?.savr || 0}
               onActivate={() =>
                 updatePlanActivity.mutateAsync({
                   planId: plan.stakingPlanId,

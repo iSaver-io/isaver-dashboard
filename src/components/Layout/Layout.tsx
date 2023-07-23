@@ -40,7 +40,7 @@ export const Layout = () => {
           key={location.pathname}
           nodeRef={nodeRef as any}
           timeout={250}
-          classNames="route-transition"
+          classNames="fade-transition"
           onEntering={scrollToTop}
           unmountOnExit
           in

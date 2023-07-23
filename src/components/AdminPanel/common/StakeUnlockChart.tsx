@@ -3,15 +3,7 @@ import { Box, Text } from '@chakra-ui/react';
 import { Area, AreaChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 
 import { PERIOD } from '@/hooks/staking/useStakingHistory';
-import { getLocalDateString, ONE_DAY } from '@/utils/time';
-
-const getWeekNumber = (date: Date) => {
-  const firstDayOfYear = new Date(new Date().getFullYear(), 0, 1);
-  const week =
-    Math.floor((date.getTime() - firstDayOfYear.getTime() + 6 * ONE_DAY) / (7 * ONE_DAY)) + 1;
-
-  return week;
-};
+import { chartDateTickFormatter } from '@/utils/chart';
 
 type StakesData = {
   balance: number;
@@ -24,15 +16,7 @@ type StakeUnlockChartProps = {
   period?: PERIOD;
 };
 export const StakeUnlockChart: FC<StakeUnlockChartProps> = ({ data, period }) => {
-  const tickFormatter = useCallback(
-    (day: any) => {
-      const date = getLocalDateString(parseFloat(day) * 86400);
-      if (period !== PERIOD.WEEK) return date;
-
-      return `${date} (${getWeekNumber(new Date(parseFloat(day) * 86400 * 1000))})`;
-    },
-    [period]
-  );
+  const tickFormatter = useCallback((day: any) => chartDateTickFormatter(day, period), [period]);
 
   return (
     <ResponsiveContainer width="100%" height="100%">
