@@ -122,6 +122,22 @@ body {
   }
 }
 
+.puzzle-animation {
+  animation-name: puzzlePulseAnimation;
+  animation-duration: 2s;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+}
+
+@keyframes puzzlePulseAnimation {
+  from {
+    color: var(--chakra-colors-bgGreen-600);
+  }
+  to {
+    color: var(--chakra-colors-green-500);
+  }
+}
+
 .top-notification {
   a {
     text-decoration: underline;

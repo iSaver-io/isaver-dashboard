@@ -107,7 +107,7 @@ export const WalletPortfolio = () => {
           mb="20px"
           textTransform="uppercase"
         >
-          Wallet portfolio
+          {isConnected ? 'Wallet portfolio' : 'Historical rates'}
         </Text>
 
         {isConnected ? (
@@ -181,13 +181,7 @@ export const WalletPortfolio = () => {
                       <TvlAndClaimedChart data={tvlAndClaimedData} />
                     </Box>
                   ) : (
-                    <Box
-                      ref={imageRef}
-                      color="bgGreen.600"
-                      transition="all .3s ease"
-                      _hover={{ color: 'green.500' }}
-                      height="100%"
-                    >
+                    <Box ref={imageRef} className="puzzle-animation" height="100%">
                       <PuzzlesIcon height="100%" />
                     </Box>
                   )}
@@ -210,6 +204,7 @@ export const WalletPortfolio = () => {
                 alignItems="baseline"
                 width="50%"
                 justifyContent={{ sm: 'flex-start', xl: 'flex-end' }}
+                color="yellow.200"
               >
                 <Text mr="8px">Total Claimed</Text>
                 <Text fontSize="18px" fontWeight="500">
