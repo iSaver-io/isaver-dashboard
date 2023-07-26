@@ -14,7 +14,7 @@ export const LotteryControl = () => {
   const {
     ticketPriceRequest,
     roundsRequest,
-    roundTitlesRequest,
+    isRafflesDataLoading,
     lotteryRounds,
     finishLotteryRound,
     manuallyGetWinners,
@@ -25,9 +25,7 @@ export const LotteryControl = () => {
   return (
     <AdminSection
       title="Raffles"
-      isLoading={
-        ticketPriceRequest.isLoading || roundsRequest.isLoading || roundTitlesRequest.isLoading
-      }
+      isLoading={ticketPriceRequest.isLoading || roundsRequest.isLoading || isRafflesDataLoading}
     >
       <>
         <Button size="sm" onClick={onOpen}>

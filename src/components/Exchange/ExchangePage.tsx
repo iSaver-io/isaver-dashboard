@@ -9,6 +9,7 @@ import { ReactComponent as SavIcon } from '@/assets/images/sav_icon.svg';
 import { ReactComponent as UsdtIcon } from '@/assets/images/usdt_icon.svg';
 import { Button } from '@/components/ui/Button/Button';
 import { InputAmount } from '@/components/ui/InputAmount/InputAmount';
+import { useDashboardConfig } from '@/hooks/useDashboardConfig';
 import { useDocumentTitle, useMetaDescription } from '@/hooks/useMeta';
 import { useSavBalance, useUsdtBalance } from '@/hooks/useTokenBalance';
 import { useVendorSell } from '@/hooks/useVendorSell';
@@ -40,16 +41,11 @@ export const ExchangePage = () => {
 
   const { address } = useAccount();
   const navigate = useNavigate();
-  const {
-    buyTokens,
-    sellTokens,
-    isSellAvailable,
-    getTokenSellEquivalent,
-    getTokenBuyEquivalent,
-    sellCommission,
-  } = useVendorSell();
+  const { buyTokens, sellTokens, getTokenSellEquivalent, getTokenBuyEquivalent, sellCommission } =
+    useVendorSell();
   const usdtBalance = useUsdtBalance(address);
   const savBalance = useSavBalance(address);
+  const { isExchangeSellEnabled } = useDashboardConfig();
 
   const handleClose = useCallback(() => {
     navigate('/');
@@ -83,7 +79,7 @@ export const ExchangePage = () => {
     !amount ||
     parseFloat(amount) > parseFloat(totalBalance) ||
     parseFloat(amount) === 0 ||
-    (isTokenSell && !isSellAvailable);
+    (isTokenSell && !isExchangeSellEnabled);
 
   const tokens = useMemo(
     () => (isTokenSell ? [tokenPair[1], tokenPair[0]] : tokenPair),
@@ -197,7 +193,7 @@ export const ExchangePage = () => {
 
         {isTokenSell ? (
           <Text mt="30px" textStyle="text1">
-            {isSellAvailable ? (
+            {isExchangeSellEnabled ? (
               <>Token sell fee is {(sellCommission || 0) * 100}%</>
             ) : (
               <>

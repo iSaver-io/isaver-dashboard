@@ -1,29 +1,31 @@
 import { useMemo } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useCollectionData } from 'react-firebase-hooks/firestore';
+import { DocumentData } from 'firebase/firestore';
 
-import { fetchRoundTitles } from '@/api/fetchRoundTitle';
+import { rafflesCollection } from '@/modules/firebase';
 
 export type RaffleAdditionalData = Record<number, { title: string; description?: string }>;
 
-export const LOTTERY_ROUND_ADDITIONAL_DATA_REQUEST = 'lottery-addition-data-request';
 export const useLotteryRoundAdditionalData = () => {
-  const roundTitlesRequest = useQuery({
-    queryKey: [LOTTERY_ROUND_ADDITIONAL_DATA_REQUEST],
-    queryFn: () => fetchRoundTitles(),
-  });
+  const [rafflesData, isRafflesDataLoading, rafflesDataError] =
+    useCollectionData(rafflesCollection);
+
+  if (rafflesDataError) {
+    console.error('rafflesDataError', rafflesDataError);
+  }
 
   const raffleRoundDataMap = useMemo(() => {
-    if (roundTitlesRequest.data) {
-      return roundTitlesRequest.data.records.reduce((acc: RaffleAdditionalData, record: any) => {
-        acc[record.fields.id] = {
-          title: record.fields.title,
-          description: record.fields.description,
+    if (rafflesData) {
+      return rafflesData.reduce((acc: RaffleAdditionalData, item: DocumentData) => {
+        acc[item.raffle_id] = {
+          title: item.title,
+          description: item.description,
         };
         return acc;
       }, {} as RaffleAdditionalData);
     }
     return undefined;
-  }, [roundTitlesRequest.data]);
+  }, [rafflesData]);
 
-  return { roundTitlesRequest, raffleRoundDataMap };
+  return { isRafflesDataLoading, raffleRoundDataMap };
 };

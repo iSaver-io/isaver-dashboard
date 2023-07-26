@@ -4,7 +4,7 @@ import { BigNumber } from 'ethers';
 import { parseEther } from 'ethers/lib/utils';
 import { useAccount } from 'wagmi';
 
-import { setRaffleRoundData } from '@/api/setRaffleRoundData';
+import { useDashboardConfigControl } from '@/hooks/admin/useDashboardConfigControl';
 import { CreateLotteryProps, useLotteryContract } from '@/hooks/contracts/useLotteryContract';
 import { useTicketContract } from '@/hooks/contracts/useTicketContract';
 import { TOKENS } from '@/hooks/contracts/useTokenContract';
@@ -28,9 +28,10 @@ export type CreateLotteryWithTitleProps = CreateLotteryProps & {
 };
 export const useLotteryControl = () => {
   const lotteryContract = useLotteryContract();
-  const { raffleRoundDataMap, roundTitlesRequest } = useLotteryRoundAdditionalData();
+  const { raffleRoundDataMap, isRafflesDataLoading } = useLotteryRoundAdditionalData();
   const queryClient = useQueryClient();
   const { success, handleError } = useNotification();
+  const { isAuthorized, signIn, setRaffleRoundParams } = useDashboardConfigControl();
 
   const roundsRequest = useQuery([LOTTERY_ROUNDS_REQUEST], () => lotteryContract.getRounds());
 
@@ -113,7 +114,11 @@ export const useLotteryControl = () => {
   const createLotteryRound = useMutation(
     ['create-lottery-round'],
     async ({ title, description, ...props }: CreateLotteryWithTitleProps) => {
-      await setRaffleRoundData(roundsRequest.data?.length || 0, title, description);
+      if (!isAuthorized) {
+        signIn();
+        return;
+      }
+      await setRaffleRoundParams(roundsRequest.data?.length || 0, title, description);
       const txHash = await lotteryContract.createLotteryRound(props);
       success({ title: 'Success', description: 'Raffle round has been created', txHash });
     },
@@ -129,7 +134,7 @@ export const useLotteryControl = () => {
     ticketPriceRequest,
     ticketPrice,
     roundsRequest,
-    roundTitlesRequest,
+    isRafflesDataLoading,
     lotteryRounds,
     updateTicketPrice,
     finishLotteryRound,
