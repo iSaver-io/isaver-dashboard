@@ -1,10 +1,6 @@
 import { useCallback, useMemo, useState } from 'react';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
-import { fetchTopNotification } from '@/api/fetchTopNotification';
-import { setTopNotification } from '@/api/setTopNotification';
-
-import { useNotification } from './useNotification';
+import { useDashboardConfig } from './useDashboardConfig';
 
 export const TOP_NOTIFICATION_REQUEST = 'top-notification-request';
 const NOTIFICATION_READ_STORAGE_KEY = 'ntf-read';
@@ -13,13 +9,10 @@ const SHOW_DELAY_TS = 30 * 24 * 3600 * 1000; // 30 days
 export const useTopNotification = () => {
   const [isOpen, setIsOpen] = useState(true);
 
-  const topNotificationRequest = useQuery({
-    queryKey: [TOP_NOTIFICATION_REQUEST],
-    queryFn: () => fetchTopNotification(),
-  });
+  const { topNotification: topNotificationFirestoreValue } = useDashboardConfig();
 
   const topNotification = useMemo(() => {
-    const currentMessage = topNotificationRequest.data as string;
+    const currentMessage = topNotificationFirestoreValue;
     if (!currentMessage || !isOpen) return null;
 
     const closedData = JSON.parse(localStorage.getItem(NOTIFICATION_READ_STORAGE_KEY) || '{}');
@@ -31,7 +24,7 @@ export const useTopNotification = () => {
       return currentMessage;
 
     return null;
-  }, [topNotificationRequest.data, isOpen]);
+  }, [topNotificationFirestoreValue, isOpen]);
 
   const closeNotification = useCallback(() => {
     localStorage.setItem(
@@ -41,25 +34,5 @@ export const useTopNotification = () => {
     setIsOpen(false);
   }, [topNotification]);
 
-  return { topNotificationRequest, topNotification, closeNotification };
-};
-
-export const useTopNotificationControl = () => {
-  const queryClient = useQueryClient();
-  const { success, handleError } = useNotification();
-
-  const updateTopNotification = useMutation(
-    ['update-top-notification'],
-    async (text: string) => {
-      await setTopNotification(text);
-      success({ title: 'Success', description: 'Top notification has changed' });
-    },
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries([TOP_NOTIFICATION_REQUEST]);
-      },
-      onError: handleError,
-    }
-  );
-  return { updateTopNotification };
+  return { topNotification, closeNotification };
 };

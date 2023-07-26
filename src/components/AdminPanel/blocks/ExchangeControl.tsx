@@ -3,28 +3,23 @@ import { ButtonGroup, Flex, Text } from '@chakra-ui/react';
 import { AdminSection } from '@/components/AdminPanel/common/AdminSection';
 import { ControlField } from '@/components/AdminPanel/common/ControlField';
 import { Button } from '@/components/ui/Button/Button';
+import { useDashboardConfigControl } from '@/hooks/admin/useDashboardConfigControl';
+import { useDashboardConfig } from '@/hooks/useDashboardConfig';
 import { useVendorSellControl } from '@/hooks/useVendorSell';
 
 export const ExchangeControl = () => {
-  const {
-    isSellAvailableRequest,
-    sellCommissionRequest,
-    sellCommission,
-    enableSell,
-    disableSell,
-    updateSellFee,
-  } = useVendorSellControl();
+  const { sellCommissionRequest, sellCommission, updateSellFee } = useVendorSellControl();
+
+  const { isAuthorized, setIsExchangeSellEnabled, signIn } = useDashboardConfigControl();
+  const { isExchangeSellEnabled } = useDashboardConfig();
 
   return (
-    <AdminSection
-      title="Exchange"
-      isLoading={isSellAvailableRequest.isLoading || sellCommissionRequest.isLoading}
-    >
+    <AdminSection title="Exchange" isLoading={sellCommissionRequest.isLoading}>
       <Flex alignItems="center" mb="16px">
         <Text textStyle="text1" width="100px">
           SAV sell:
         </Text>
-        {isSellAvailableRequest.data ? (
+        {isExchangeSellEnabled ? (
           <Text textStyle="button" color="green.400">
             Enabled
           </Text>
@@ -35,30 +30,26 @@ export const ExchangeControl = () => {
         )}
 
         <ButtonGroup size="sm" ml="24px">
-          <Button
-            borderRadius="sm"
-            isDisabled={
-              isSellAvailableRequest.data ||
-              isSellAvailableRequest.isLoading ||
-              enableSell.isLoading
-            }
-            isLoading={enableSell.isLoading}
-            onClick={() => enableSell.mutate()}
-          >
-            Enable
-          </Button>
-          <Button
-            variant="filledRed"
-            isDisabled={
-              !isSellAvailableRequest.data ||
-              isSellAvailableRequest.isLoading ||
-              disableSell.isLoading
-            }
-            isLoading={disableSell.isLoading}
-            onClick={() => disableSell.mutate()}
-          >
-            Disable
-          </Button>
+          {isAuthorized ? (
+            <>
+              <Button
+                borderRadius="sm"
+                isDisabled={isExchangeSellEnabled}
+                onClick={() => setIsExchangeSellEnabled(true)}
+              >
+                Enable
+              </Button>
+              <Button
+                variant="filledRed"
+                isDisabled={!isExchangeSellEnabled}
+                onClick={() => setIsExchangeSellEnabled(false)}
+              >
+                Disable
+              </Button>
+            </>
+          ) : (
+            <Button onClick={signIn}>Log In with Google</Button>
+          )}
         </ButtonGroup>
       </Flex>
       <ControlField
