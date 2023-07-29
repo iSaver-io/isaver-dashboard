@@ -1,7 +1,7 @@
 import { useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { CSSTransition, SwitchTransition } from 'react-transition-group';
-import { Box, Flex, Text } from '@chakra-ui/react';
+import { Box, Flex, Text, useBreakpoint } from '@chakra-ui/react';
 import { useAccount } from 'wagmi';
 
 import { ReactComponent as BoxIcon } from '@/assets/images/icons/box.svg';
@@ -50,6 +50,9 @@ export const WalletPortfolio = () => {
   const isTvlChartLoaded = Boolean(stakingClaimsHistory.length && stakesHistory.length);
   const chartRef = useRef(null);
   const imageRef = useRef(null);
+
+  const bp = useBreakpoint({ ssr: false });
+  const isSmOrXl = ['sm', 'xl'].includes(bp);
 
   const handleNavigateToExchange = useCallback(() => {
     logger({ label: 'buy_sav' });
@@ -181,7 +184,11 @@ export const WalletPortfolio = () => {
                       <TvlAndClaimedChart data={tvlAndClaimedData} />
                     </Box>
                   ) : (
-                    <Box ref={imageRef} className="puzzle-animation" height="100%">
+                    <Box
+                      ref={imageRef}
+                      className="puzzle-animation"
+                      height={isSmOrXl ? '100%' : 'unset'}
+                    >
                       <PuzzlesIcon height="100%" />
                     </Box>
                   )}
