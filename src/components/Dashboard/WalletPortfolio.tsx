@@ -87,13 +87,9 @@ export const WalletPortfolio = () => {
           <Text mr="40px">SAV = 1 USDT</Text>
           <Text>SAVR = 1 USDT</Text>
         </Flex>
-        <Button
-          mt="30px"
-          width={{ sm: '100%', xl: 'unset' }}
-          rightIcon={<BoxIcon />}
-          onClick={handleNavigateToExchange}
-        >
-          Buy SAV
+        <Button mt="30px" width={{ sm: '100%', xl: 'unset' }} onClick={handleNavigateToExchange}>
+          <Text mr="12px">Buy SAV</Text>
+          <BoxIcon />
         </Button>
       </Box>
 
@@ -169,7 +165,10 @@ export const WalletPortfolio = () => {
           </>
         ) : (
           <>
-            <Box height="220px" overflow="hidden">
+            <Box
+              height={{ sm: '146px', md: '215px', lg: '273px', xl: '207px', '2xl': '220px' }}
+              overflow="hidden"
+            >
               <SwitchTransition>
                 <CSSTransition
                   key={isTvlChartLoaded ? 'chart' : 'image'}
@@ -189,7 +188,7 @@ export const WalletPortfolio = () => {
                       className="puzzle-animation"
                       height={isSmOrXl ? '100%' : 'unset'}
                     >
-                      <PuzzlesIcon height="100%" />
+                      <PuzzlesIcon height="100%" width="100%" />
                     </Box>
                   )}
                 </CSSTransition>
