@@ -1,5 +1,6 @@
-import { useCallback } from 'react';
+import { useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { CSSTransition, SwitchTransition } from 'react-transition-group';
 import { Box, Flex, Text } from '@chakra-ui/react';
 import { useAccount } from 'wagmi';
 
@@ -9,12 +10,14 @@ import { ReactComponent as PuzzlesIcon } from '@/assets/images/icons/puzzles.svg
 import { Button } from '@/components/ui/Button/Button';
 import { ConnectWalletButton } from '@/components/ui/ConnectWalletButton/ConnectWalletButton';
 import { useStakingMetrics } from '@/hooks/staking/useStaking';
+import { useStakingTvlAndTotalClaimed } from '@/hooks/staking/useStakingHistory';
 import { useAddTokens } from '@/hooks/useAddTokens';
 import { useLogger } from '@/hooks/useLogger';
 import { useSavBalance, useSavRBalance, useTokenBalanceHistory } from '@/hooks/useTokenBalance';
 import { bigNumberToString, getReadableAmount } from '@/utils/number';
 
 import { BalanceHistoryChart } from './BalanceChart';
+import { TvlAndClaimedChart } from './TvlAndClaimedChart';
 
 const buttonProps = {
   mt: { sm: '20px', md: '10px', lg: '15px', xl: '10px', '2xl': '12px' },
@@ -42,6 +45,11 @@ export const WalletPortfolio = () => {
   const { balanceHistory } = useTokenBalanceHistory();
 
   const { tvlSavSavr, totalClaimed } = useStakingMetrics();
+
+  const { tvlAndClaimedData, stakingClaimsHistory, stakesHistory } = useStakingTvlAndTotalClaimed();
+  const isTvlChartLoaded = Boolean(stakingClaimsHistory.length && stakesHistory.length);
+  const chartRef = useRef(null);
+  const imageRef = useRef(null);
 
   const handleNavigateToExchange = useCallback(() => {
     logger({ label: 'buy_sav' });
@@ -99,7 +107,7 @@ export const WalletPortfolio = () => {
           mb="20px"
           textTransform="uppercase"
         >
-          Wallet portfolio
+          {isConnected ? 'Wallet portfolio' : 'Historical rates'}
         </Text>
 
         {isConnected ? (
@@ -158,8 +166,27 @@ export const WalletPortfolio = () => {
           </>
         ) : (
           <>
-            <Box color="bgGreen.600" transition="all .3s ease" _hover={{ color: 'green.500' }}>
-              <PuzzlesIcon />
+            <Box height="220px" overflow="hidden">
+              <SwitchTransition>
+                <CSSTransition
+                  key={isTvlChartLoaded ? 'chart' : 'image'}
+                  timeout={250}
+                  classNames="fade-transition"
+                  nodeRef={isTvlChartLoaded ? chartRef : imageRef}
+                  in
+                  appear
+                >
+                  {isTvlChartLoaded ? (
+                    <Box ref={chartRef} height="100%" overflow="hidden">
+                      <TvlAndClaimedChart data={tvlAndClaimedData} />
+                    </Box>
+                  ) : (
+                    <Box ref={imageRef} className="puzzle-animation" height="100%">
+                      <PuzzlesIcon height="100%" />
+                    </Box>
+                  )}
+                </CSSTransition>
+              </SwitchTransition>
             </Box>
             <Flex
               gap={2}
@@ -177,6 +204,7 @@ export const WalletPortfolio = () => {
                 alignItems="baseline"
                 width="50%"
                 justifyContent={{ sm: 'flex-start', xl: 'flex-end' }}
+                color="yellow.200"
               >
                 <Text mr="8px">Total Claimed</Text>
                 <Text fontSize="18px" fontWeight="500">

@@ -55,3 +55,5 @@ export const getStampsFromDuration = (duration: number) => {
 
   return { days, hours, minutes, seconds };
 };
+
+export const convertDayToLocalDateString = (day: number) => getLocalDateString(day * 86400);

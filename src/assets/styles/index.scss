@@ -44,27 +44,27 @@ body {
   }
 }
 
-.route-transition-enter {
+.fade-transition-enter {
   opacity: 0;
   transform: scale(1.02);
 }
-.route-transition-enter-active {
+.fade-transition-enter-active {
   opacity: 1;
   transform: scale(1);
   transition: all 250ms;
 }
-.route-transition-exit {
+.fade-transition-exit {
   opacity: 1;
   transform: scale(1);
 }
-.route-transition-exit-active {
+.fade-transition-exit-active {
   opacity: 0;
   transform: scale(0.98);
   transition: all 250ms;
 }
-.route-transition--appear {
+.fade-transition--appear {
 }
-.route-transition--appear-active {
+.fade-transition--appear-active {
 }
 
 .date-picker-element {
@@ -119,6 +119,22 @@ body {
   }
   to {
     box-shadow: 0 0px 1px rgba(0, 0, 0, 0.01);
+  }
+}
+
+.puzzle-animation {
+  animation-name: puzzlePulseAnimation;
+  animation-duration: 2s;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+}
+
+@keyframes puzzlePulseAnimation {
+  from {
+    color: var(--chakra-colors-bgGreen-600);
+  }
+  to {
+    color: var(--chakra-colors-green-500);
   }
 }
 

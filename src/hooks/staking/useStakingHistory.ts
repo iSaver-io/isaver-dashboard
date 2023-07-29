@@ -18,6 +18,19 @@ type StakeLockBalance = {
   changeToken1: BigNumber;
   changeToken2: BigNumber;
 };
+type TotalClaimedHistory = {
+  day: number;
+  totalClaimed: BigNumber;
+};
+type TvlHistory = {
+  day: number;
+  tvl: BigNumber;
+};
+type AggregatedTvlAndClaimedHistory = {
+  day: number;
+  tvl: BigNumber;
+  totalClaimed: BigNumber;
+};
 
 export const useStakingHistory = () => {
   const { getAllStakes, getAllClaims } = useStakingContract();
@@ -45,9 +58,20 @@ export const useStakingHistory = () => {
 
   const claimsDataRequest = useQuery(['claims-history-request'], getAllClaims, {
     select: (data) =>
-      data.reduce((acc, claim) => {
-        const id = claim.args.stakingPlanId.toNumber();
-        const isToken2 = claim.args.isToken2;
+      data.map(({ args }) => {
+        const timestamp = args.timestamp.toNumber();
+        return {
+          ...args,
+          timestamp,
+        };
+      }),
+  });
+
+  const claimsCountData = useMemo(
+    () =>
+      claimsDataRequest?.data?.reduce((acc, claim) => {
+        const id = claim.stakingPlanId.toNumber();
+        const isToken2 = claim.isToken2;
 
         if (!acc[id]) {
           acc[id] = { sav: 0, savr: 0 };
@@ -61,9 +85,10 @@ export const useStakingHistory = () => {
 
         return acc;
       }, {} as Record<number, { sav: number; savr: number }>),
-  });
+    [claimsDataRequest.data]
+  );
 
-  return { stakesDataRequest, claimsDataRequest };
+  return { stakesDataRequest, claimsDataRequest, claimsCountData };
 };
 
 export enum PERIOD {
@@ -167,4 +192,118 @@ export const useStakingUnlocks = (
   }, [stakesDataRequest.data, groupPeriod, minDate, maxDate]);
 
   return stakingUnlocksData;
+};
+
+export const useStakingTvlAndTotalClaimed = () => {
+  const { stakesDataRequest, claimsDataRequest } = useStakingHistory();
+
+  const savTvlData = useMemo(
+    () => stakesDataRequest.data?.filter((stake) => !stake.isToken2),
+    [stakesDataRequest.data]
+  );
+  const savClaimsData = useMemo(
+    () => claimsDataRequest.data?.filter((claim) => !claim.isToken2),
+    [claimsDataRequest.data]
+  );
+
+  const stakingClaimsHistory = useMemo<TotalClaimedHistory[]>(
+    () =>
+      aggregateHistoryByDay(savClaimsData || []).map(({ aggregatedAmount, ...data }) => ({
+        ...data,
+        totalClaimed: aggregatedAmount,
+      })),
+    [savClaimsData]
+  );
+
+  const stakesHistory = useMemo<TvlHistory[]>(
+    () =>
+      aggregateHistoryByDay(savTvlData || []).map(({ aggregatedAmount, ...data }) => ({
+        ...data,
+        tvl: aggregatedAmount,
+      })),
+    [savTvlData]
+  );
+
+  const aggregatedTvlAndClaimedData = useMemo(
+    () =>
+      [...stakesHistory, ...stakingClaimsHistory]
+        .sort((a, b) => a.day - b.day)
+        .reduce((acc, item) => {
+          const lastItem = acc.length
+            ? acc[acc.length - 1]
+            : ({
+                day: 0,
+                tvl: BigNumber.from(0),
+                totalClaimed: BigNumber.from(0),
+              } as AggregatedTvlAndClaimedHistory);
+
+          if (Object.hasOwn(item, 'tvl')) {
+            acc.push({
+              day: item.day,
+              tvl: lastItem.tvl.add((item as TvlHistory).tvl),
+              totalClaimed: lastItem.totalClaimed,
+            });
+          } else {
+            // subtract claimed amount from new or the same day
+            if (lastItem.day === item.day) {
+              acc[acc.length - 1].tvl = acc[acc.length - 1].tvl.sub(
+                (item as TotalClaimedHistory).totalClaimed
+              );
+              acc[acc.length - 1].totalClaimed = acc[acc.length - 1].totalClaimed.add(
+                (item as TotalClaimedHistory).totalClaimed
+              );
+            } else {
+              acc.push({
+                day: item.day,
+                tvl: lastItem.tvl.sub((item as TotalClaimedHistory).totalClaimed),
+                totalClaimed: lastItem.totalClaimed.add((item as TotalClaimedHistory).totalClaimed),
+              });
+            }
+          }
+
+          return acc;
+        }, [] as AggregatedTvlAndClaimedHistory[])
+        .map((item) => ({
+          ...item,
+          tvl: bigNumberToNumber(item.tvl),
+          totalClaimed: bigNumberToNumber(item.totalClaimed),
+        })),
+    [stakesHistory, stakingClaimsHistory]
+  );
+
+  return {
+    stakesHistory,
+    stakingClaimsHistory,
+    tvlAndClaimedData: aggregatedTvlAndClaimedData,
+  };
+};
+
+type HistoryData = {
+  timestamp: number;
+  amount: BigNumber;
+};
+type AggregatedHistoryData = {
+  day: number;
+  aggregatedAmount: BigNumber;
+};
+const aggregateHistoryByDay = (data: HistoryData[]) => {
+  return data.reduce((acc, item) => {
+    const date = new Date(item.timestamp * 1000);
+    const day = getDayFromDate(date);
+
+    const lastItem = acc.length
+      ? acc[acc.length - 1]
+      : ({ day: 0, aggregatedAmount: BigNumber.from(0) } as AggregatedHistoryData);
+
+    if (day === lastItem.day) {
+      acc[acc.length - 1].aggregatedAmount = acc[acc.length - 1].aggregatedAmount.add(item.amount);
+    } else {
+      acc.push({
+        day,
+        aggregatedAmount: item.amount,
+      });
+    }
+
+    return acc;
+  }, [] as AggregatedHistoryData[]);
 };
