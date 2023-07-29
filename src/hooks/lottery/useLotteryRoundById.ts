@@ -81,9 +81,9 @@ export const useLotteryRoundById = (id?: number) => {
   );
 
   return {
+    isRoundLoading: fetchRoundRequest.isLoading || isRafflesDataLoading,
     fetchRoundRequest,
     round,
-    isRafflesDataLoading,
     userRoundEntryRequest,
     entryLottery,
   };
