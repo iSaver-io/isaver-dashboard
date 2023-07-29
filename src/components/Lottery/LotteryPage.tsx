@@ -34,9 +34,7 @@ export const LotteryPage = () => {
     userRoundEntryRequest: { data: userEnteredTickets },
   } = useLotteryRoundById(roundId);
 
-  useDocumentTitle(
-    id ? `iSaver | Raffles - ${round?.title || 'Ultra Raffle ' + id}` : 'iSaver | Raffles'
-  );
+  useDocumentTitle(round ? `iSaver | Raffles - ${round.title + id}` : 'iSaver | Raffles');
   useMetaDescription(
     'iSaver Raffles joining gives you a chance to win big prizes! It`s easy, if you have a Ticket.'
   );
