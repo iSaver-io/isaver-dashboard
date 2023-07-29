@@ -3,8 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import { Box, Center, Container } from '@chakra-ui/react';
 import { useAccount } from 'wagmi';
 
+import { Button } from '@/components/ui/Button/Button';
 import { CenteredSpinner } from '@/components/ui/CenteredSpinner/CenteredSpinner';
 import { ConnectWalletButton } from '@/components/ui/ConnectWalletButton/ConnectWalletButton';
+import { useDashboardConfigControl } from '@/hooks/admin/useDashboardConfigControl';
 import { useHasRole } from '@/hooks/admin/useHasRole';
 import { ContractsEnum } from '@/hooks/contracts/useContractAbi';
 import { useDocumentTitle } from '@/hooks/useMeta';
@@ -21,6 +23,7 @@ import { TicketControl } from './blocks/TicketControl';
 import { TokenControl } from './blocks/TokenControl';
 import { TopNotificationControl } from './blocks/TopNotificationControl';
 import { VestingControl } from './blocks/VestingControl';
+import { AdminSection } from './common/AdminSection';
 
 import 'react-datepicker/dist/react-datepicker.css';
 
@@ -72,6 +75,7 @@ export const AdminPanel = () => {
     [adminContracts]
   );
   const isAnyAdmin = useMemo(() => adminContracts.some(({ data }) => data), [adminContracts]);
+  const { isAuthorized, signIn, signOut } = useDashboardConfigControl();
 
   useEffect(() => {
     if (isConnected && isAuthLoaded && !isAnyAdmin) {
@@ -107,6 +111,18 @@ export const AdminPanel = () => {
       {isLotteryAdmin || isLotteryOperator ? <LotteryControl /> : null}
       {isVestingAdmin ? <VestingControl /> : null}
       <TopNotificationControl />
+      <AdminSection title="Database authentication">
+        {isAuthorized ? (
+          <Button size="sm" onClick={signOut}>
+            Log out from Google
+          </Button>
+        ) : (
+          <Button size="sm" onClick={signIn}>
+            Log in with Google
+          </Button>
+        )}
+      </AdminSection>
+
       <Addresses />
     </Container>
   );

@@ -23,7 +23,7 @@ export const useLotteryRoundById = (id?: number) => {
   const queryClient = useQueryClient();
   const { connect } = useConnectWallet();
   const { success, handleError } = useNotification();
-  const { raffleRoundDataMap, roundTitlesRequest } = useLotteryRoundAdditionalData();
+  const { raffleRoundDataMap, isRafflesDataLoading } = useLotteryRoundAdditionalData();
 
   const enabled = id !== undefined;
 
@@ -81,9 +81,9 @@ export const useLotteryRoundById = (id?: number) => {
   );
 
   return {
+    isRoundLoading: fetchRoundRequest.isLoading || isRafflesDataLoading,
     fetchRoundRequest,
     round,
-    roundTitlesRequest,
     userRoundEntryRequest,
     entryLottery,
   };
