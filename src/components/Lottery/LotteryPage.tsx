@@ -30,7 +30,8 @@ export const LotteryPage = () => {
   const {
     round,
     entryLottery,
-    fetchRoundRequest: { refetch, isFetched },
+    fetchRoundRequest: { refetch },
+    isRoundLoading,
     userRoundEntryRequest: { data: userEnteredTickets },
   } = useLotteryRoundById(roundId);
 
@@ -58,10 +59,10 @@ export const LotteryPage = () => {
 
   // Redirect to dashboard if round not found
   useEffect(() => {
-    if ((isFetched && !round) || !id) {
+    if ((!isRoundLoading && !round) || !id) {
       navigate('/');
     }
-  }, [isFetched, round, navigate, id]);
+  }, [isRoundLoading, round, navigate, id]);
 
   const handleOpenTicketModal = useCallback(() => {
     logBuyTickets();
