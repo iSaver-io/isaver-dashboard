@@ -4,6 +4,7 @@ import { useContract, useProvider, useSigner } from 'wagmi';
 
 import { Token1 } from '@/types.common';
 import { BALANCE_HISTORY_PERIOD } from '@/utils/balance';
+import { queryThrowBlocks } from '@/utils/queryThrowBlocks';
 import { waitForTransaction } from '@/utils/waitForTransaction';
 
 import { ContractsEnum, useContractAbi } from './useContractAbi';
@@ -36,15 +37,24 @@ export const useTokenContract = (token: ContractsEnum.SAV | ContractsEnum.SAVR) 
   };
 
   const getBalanceHistoryTransfers = async (account: string) => {
-    const { block } = await dater.getDate(Date.now() - BALANCE_HISTORY_PERIOD);
+    const { block: fromBlock } = await dater.getDate(Date.now() - BALANCE_HISTORY_PERIOD);
+    const { block: toBlock } = await dater.getDate(new Date());
 
     const filterFrom = contract.filters.Transfer(account);
     const filterTo = contract.filters.Transfer(null, account);
 
-    const fromTransfersRequest = contract.queryFilter(filterFrom, block);
-    const toTransfersRequest = contract.queryFilter(filterTo, block);
+    const fetchTransfersFrom = (from: number, to: number) =>
+      contract.queryFilter(filterFrom, from, to);
+    const fetchTransfersTo = (from: number, to: number) => contract.queryFilter(filterTo, from, to);
+
+    const fromTransfers = await queryThrowBlocks(fetchTransfersFrom, { fromBlock, toBlock });
+    const toTransfers = await queryThrowBlocks(fetchTransfersTo, {
+      fromBlock,
+      toBlock,
+    });
+
     return (
-      (await Promise.all([fromTransfersRequest, toTransfersRequest]))
+      [fromTransfers, toTransfers]
         .reduce((acc, transfers) => {
           acc.push(...transfers);
           return acc;

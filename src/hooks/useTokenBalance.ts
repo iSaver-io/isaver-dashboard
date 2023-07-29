@@ -53,7 +53,8 @@ export const useTokenBalanceHistory = () => {
         savContract.getBalanceHistoryTransfers(address),
         savrContract.getBalanceHistoryTransfers(address),
       ]);
-    }
+    },
+    { enabled: Boolean(address) }
   );
 
   const balanceHistory = useMemo(() => {

@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { BigNumber } from 'ethers';
+import { useAccount } from 'wagmi';
 
 import { useStakingContract } from '@/hooks/contracts/useStakingContract';
 import { useStakingPlans } from '@/hooks/staking/useStaking';
@@ -32,11 +33,12 @@ type AggregatedTvlAndClaimedHistory = {
   totalClaimed: BigNumber;
 };
 
-export const useStakingHistory = () => {
+export const useStakingHistory = (enabled: boolean = true) => {
   const { getAllStakes, getAllClaims } = useStakingContract();
   const { stakingPlansRequest } = useStakingPlans();
 
   const stakesDataRequest = useQuery(['stakes-history-request'], getAllStakes, {
+    enabled,
     select: (data) =>
       data.map(({ args }) => {
         const stakingPlan = stakingPlansRequest.data?.find(
@@ -57,6 +59,7 @@ export const useStakingHistory = () => {
   });
 
   const claimsDataRequest = useQuery(['claims-history-request'], getAllClaims, {
+    enabled,
     select: (data) =>
       data.map(({ args }) => {
         const timestamp = args.timestamp.toNumber();
@@ -195,7 +198,9 @@ export const useStakingUnlocks = (
 };
 
 export const useStakingTvlAndTotalClaimed = () => {
-  const { stakesDataRequest, claimsDataRequest } = useStakingHistory();
+  const { isConnected } = useAccount();
+  // Fetch only for disconnected
+  const { stakesDataRequest, claimsDataRequest } = useStakingHistory(!isConnected);
 
   const savTvlData = useMemo(
     () => stakesDataRequest.data?.filter((stake) => !stake.isToken2),
