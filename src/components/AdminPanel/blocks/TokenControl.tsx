@@ -34,6 +34,9 @@ export const TokenControl: FC<TokenControlProps> = ({ token }) => {
           {isPaused.data ? 'Paused' : 'Active'}
         </Text>
       ) : null}
+      <Text ml="12px" textStyle="button" color="green.400">
+        {isSav ? 'Blacklist' : 'Whitelist'}
+      </Text>
     </Flex>
   );
 
