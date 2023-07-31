@@ -75,8 +75,8 @@ export const useLotteryControl = () => {
 
   const finishLotteryRound = useMutation(
     ['finish-lottery-round'],
-    async ({ roundId, pk }: { roundId: number; pk: string[][] }) => {
-      const txHash = await lotteryContract.finishLotteryRound(roundId, pk);
+    async ({ roundId }: { roundId: number }) => {
+      const txHash = await lotteryContract.finishLotteryRound(roundId);
       success({
         title: 'Success',
         description: `Raffle round ${

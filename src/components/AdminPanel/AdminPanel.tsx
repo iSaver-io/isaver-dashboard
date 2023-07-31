@@ -14,7 +14,7 @@ import { useDocumentTitle } from '@/hooks/useMeta';
 import { Addresses } from './blocks/Addresses';
 import { Balances } from './blocks/Balances';
 import { ExchangeControl } from './blocks/ExchangeControl';
-import { LotteryControl } from './blocks/LotteryConttrol';
+import { LotteryControl } from './blocks/LotteryControl';
 import { ReferralControl } from './blocks/ReferralControl';
 import { SquadsControl } from './blocks/SquadsControl';
 import { StakingControl } from './blocks/StakingControl';
