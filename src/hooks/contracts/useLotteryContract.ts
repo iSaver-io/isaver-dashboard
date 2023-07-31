@@ -106,8 +106,8 @@ export const useLotteryContract = () => {
     return waitForTransaction(tx);
   };
 
-  const finishLotteryRound = async (roundId: number, pk: string[][]) => {
-    const tx = await contract.finishLotteryRound(roundId, pk);
+  const finishLotteryRound = async (roundId: number) => {
+    const tx = await contract.finishLotteryRound(roundId);
     return waitForTransaction(tx);
   };
 

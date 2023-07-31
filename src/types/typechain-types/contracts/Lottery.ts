@@ -96,7 +96,7 @@ export interface LotteryInterface extends utils.Interface {
     "claimDay()": FunctionFragment;
     "createLotteryRound(uint256,uint256,uint256,uint256,uint256,uint256[],uint256[])": FunctionFragment;
     "entryLottery(uint256,uint256)": FunctionFragment;
-    "finishLotteryRound(uint256,address[][])": FunctionFragment;
+    "finishLotteryRound(uint256)": FunctionFragment;
     "getActiveRounds()": FunctionFragment;
     "getClaimStreak(address)": FunctionFragment;
     "getLastClaimTime(address)": FunctionFragment;
@@ -228,7 +228,7 @@ export interface LotteryInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "finishLotteryRound",
-    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<string>[][]]
+    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "getActiveRounds",
@@ -708,7 +708,6 @@ export interface Lottery extends BaseContract {
 
     finishLotteryRound(
       roundId: PromiseOrValue<BigNumberish>,
-      pk: PromiseOrValue<string>[][],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -831,19 +830,19 @@ export interface Lottery extends BaseContract {
         BigNumber,
         BigNumber
       ] & {
-        id: BigNumber;
-        startTime: BigNumber;
-        duration: BigNumber;
-        isClosed: boolean;
-        isOracleFulfilled: boolean;
-        isFinished: boolean;
-        initialPrize: BigNumber;
-        totalPrize: BigNumber;
-        maxTicketsFromOneMember: BigNumber;
-        tokensForOneTicket: BigNumber;
-        totalTickets: BigNumber;
-        randomWord: BigNumber;
-      }
+      id: BigNumber;
+      startTime: BigNumber;
+      duration: BigNumber;
+      isClosed: boolean;
+      isOracleFulfilled: boolean;
+      isFinished: boolean;
+      initialPrize: BigNumber;
+      totalPrize: BigNumber;
+      maxTicketsFromOneMember: BigNumber;
+      tokensForOneTicket: BigNumber;
+      totalTickets: BigNumber;
+      randomWord: BigNumber;
+    }
     >;
 
     supportsInterface(
@@ -957,7 +956,6 @@ export interface Lottery extends BaseContract {
 
   finishLotteryRound(
     roundId: PromiseOrValue<BigNumberish>,
-    pk: PromiseOrValue<string>[][],
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -1078,19 +1076,19 @@ export interface Lottery extends BaseContract {
       BigNumber,
       BigNumber
     ] & {
-      id: BigNumber;
-      startTime: BigNumber;
-      duration: BigNumber;
-      isClosed: boolean;
-      isOracleFulfilled: boolean;
-      isFinished: boolean;
-      initialPrize: BigNumber;
-      totalPrize: BigNumber;
-      maxTicketsFromOneMember: BigNumber;
-      tokensForOneTicket: BigNumber;
-      totalTickets: BigNumber;
-      randomWord: BigNumber;
-    }
+    id: BigNumber;
+    startTime: BigNumber;
+    duration: BigNumber;
+    isClosed: boolean;
+    isOracleFulfilled: boolean;
+    isFinished: boolean;
+    initialPrize: BigNumber;
+    totalPrize: BigNumber;
+    maxTicketsFromOneMember: BigNumber;
+    tokensForOneTicket: BigNumber;
+    totalTickets: BigNumber;
+    randomWord: BigNumber;
+  }
   >;
 
   supportsInterface(
@@ -1202,7 +1200,6 @@ export interface Lottery extends BaseContract {
 
     finishLotteryRound(
       roundId: PromiseOrValue<BigNumberish>,
-      pk: PromiseOrValue<string>[][],
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1321,19 +1318,19 @@ export interface Lottery extends BaseContract {
         BigNumber,
         BigNumber
       ] & {
-        id: BigNumber;
-        startTime: BigNumber;
-        duration: BigNumber;
-        isClosed: boolean;
-        isOracleFulfilled: boolean;
-        isFinished: boolean;
-        initialPrize: BigNumber;
-        totalPrize: BigNumber;
-        maxTicketsFromOneMember: BigNumber;
-        tokensForOneTicket: BigNumber;
-        totalTickets: BigNumber;
-        randomWord: BigNumber;
-      }
+      id: BigNumber;
+      startTime: BigNumber;
+      duration: BigNumber;
+      isClosed: boolean;
+      isOracleFulfilled: boolean;
+      isFinished: boolean;
+      initialPrize: BigNumber;
+      totalPrize: BigNumber;
+      maxTicketsFromOneMember: BigNumber;
+      tokensForOneTicket: BigNumber;
+      totalTickets: BigNumber;
+      randomWord: BigNumber;
+    }
     >;
 
     supportsInterface(
@@ -1526,7 +1523,6 @@ export interface Lottery extends BaseContract {
 
     finishLotteryRound(
       roundId: PromiseOrValue<BigNumberish>,
-      pk: PromiseOrValue<string>[][],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -1748,7 +1744,6 @@ export interface Lottery extends BaseContract {
 
     finishLotteryRound(
       roundId: PromiseOrValue<BigNumberish>,
-      pk: PromiseOrValue<string>[][],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

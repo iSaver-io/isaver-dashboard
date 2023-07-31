@@ -3,7 +3,6 @@ import { Box, Flex, Text, useDisclosure } from '@chakra-ui/react';
 
 import { AddLotteryRound } from '@/components/AdminPanel/common/AddLotteryRound';
 import { AdminSection } from '@/components/AdminPanel/common/AdminSection';
-import { CloseLotteryRound } from '@/components/AdminPanel/common/CloseLotteryRound';
 import { LotteryStatus } from '@/components/Lottery/LotteryStatus';
 import { Button } from '@/components/ui/Button/Button';
 import { useLotteryControl } from '@/hooks/lottery/useLottery';
@@ -37,9 +36,7 @@ export const LotteryControl = () => {
             <LotteryRoundInfo
               key={round.id}
               {...round}
-              onCloseRound={(pk: string[][]) =>
-                finishLotteryRound.mutateAsync({ roundId: round.id, pk })
-              }
+              onCloseRound={() => finishLotteryRound.mutateAsync({ roundId: round.id })}
               onFinishRound={() => manuallyGetWinners.mutateAsync(round.id)}
             />
           ))}
@@ -64,7 +61,7 @@ type LotteryRoundInfoProps = {
   prizeForLevel: number[];
   status: LotteryStatusEnum;
   totalTickets: number;
-  onCloseRound: (pk: string[][]) => Promise<void>;
+  onCloseRound: () => Promise<void>;
   onFinishRound: () => Promise<void>;
 };
 const LotteryRoundInfo: FC<LotteryRoundInfoProps> = ({
@@ -81,13 +78,18 @@ const LotteryRoundInfo: FC<LotteryRoundInfoProps> = ({
   onCloseRound,
   onFinishRound,
 }) => {
-  const [isLoading, setIsLoading] = useState(false);
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [isLoadingClose, setIsLoadingClose] = useState(false);
+  const [isLoadingFinish, setIsLoadingFinish] = useState(false);
+
+  const handleCloseRound = useCallback(() => {
+    setIsLoadingClose(true);
+    onCloseRound().finally(() => setIsLoadingClose(false));
+  }, [onCloseRound, setIsLoadingClose]);
 
   const handleFinishRound = useCallback(() => {
-    setIsLoading(true);
-    onFinishRound().finally(() => setIsLoading(false));
-  }, [onFinishRound, setIsLoading]);
+    setIsLoadingFinish(true);
+    onFinishRound().finally(() => setIsLoadingFinish(false));
+  }, [onFinishRound, setIsLoadingFinish]);
 
   const levels = winnersForLevel.length;
 
@@ -122,7 +124,14 @@ const LotteryRoundInfo: FC<LotteryRoundInfoProps> = ({
         <LotteryStatus status={roundStatus} noBorder />
 
         {roundStatus === LotteryStatusEnum.soldOut ? (
-          <Button variant="filledRed" size="sm" ml="20px" padding="2px 8px" onClick={onOpen}>
+          <Button
+            variant="filledRed"
+            size="sm"
+            ml="20px"
+            padding="2px 8px"
+            isLoading={isLoadingClose}
+            onClick={handleCloseRound}
+          >
             Close
           </Button>
         ) : null}
@@ -133,7 +142,7 @@ const LotteryRoundInfo: FC<LotteryRoundInfoProps> = ({
             size="sm"
             ml="20px"
             padding="2px 8px"
-            isLoading={isLoading}
+            isLoading={isLoadingFinish}
             onClick={handleFinishRound}
           >
             Finish
@@ -176,14 +185,6 @@ const LotteryRoundInfo: FC<LotteryRoundInfoProps> = ({
           </Flex>
         </Flex>
       </Flex>
-
-      {isOpen ? (
-        <CloseLotteryRound
-          winnersForLevel={winnersForLevel}
-          onClose={onClose}
-          onSubmit={onCloseRound}
-        />
-      ) : null}
     </Box>
   );
 };
