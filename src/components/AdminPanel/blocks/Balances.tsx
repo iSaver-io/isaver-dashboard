@@ -1,19 +1,20 @@
 import { AdminSection } from '@/components/AdminPanel/common/AdminSection';
 import { Balance } from '@/components/Balance/Balance';
 import { useAccounts } from '@/hooks/admin/useAccounts';
+import { useContractsAddresses } from '@/hooks/admin/useContractsAddresses';
 import { ContractsEnum } from '@/hooks/contracts/useContractAbi';
 import { useStakingMetrics } from '@/hooks/staking/useStaking';
 import { useSavBalance, useSavRBalance, useUsdtBalance } from '@/hooks/useTokenBalance';
 import { useTokenSupply } from '@/hooks/useTokenSupply';
 
 export const Balances = () => {
-  const { stakingPool, referralRewardPool, vendorPool, vendorChangePool, vestingPool } =
-    useAccounts();
+  const { stakingPool, referralRewardPool, vestingPool } = useAccounts();
+  const { VendorSell } = useContractsAddresses();
 
   const stakingBalance = useSavBalance(stakingPool);
   const referralBalance = useSavRBalance(referralRewardPool);
-  const vendorBalance = useSavBalance(vendorPool);
-  const vendorChangeBalance = useUsdtBalance(vendorChangePool);
+  const vendorBalance = useSavBalance(VendorSell);
+  const vendorChangeBalance = useUsdtBalance(VendorSell);
   const vestingBalance = useSavBalance(vestingPool);
   const { tvlSav, tvlSavr } = useStakingMetrics();
   const savSupply = useTokenSupply(ContractsEnum.SAV);
