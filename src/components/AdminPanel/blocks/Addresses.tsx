@@ -30,8 +30,6 @@ export const Addresses = () => {
         </Text>
         <AddressInfo title="Staking Pool" address={accounts.stakingPool} />
         <AddressInfo title="Referral Reward Pool" address={accounts.referralRewardPool} />
-        <AddressInfo title="Exchange (SAV) Pool" address={accounts.vendorPool} />
-        <AddressInfo title="Exchange (USDT) Pool" address={accounts.vendorChangePool} />
         <AddressInfo title="Vesting Pool" address={accounts.vestingPool} />
       </Flex>
     </AdminSection>
