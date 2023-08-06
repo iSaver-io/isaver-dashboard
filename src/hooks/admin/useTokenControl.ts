@@ -5,7 +5,6 @@ import { useTokenContract } from '@/hooks/contracts/useTokenContract';
 import { useNotification } from '@/hooks/useNotification';
 
 const IS_PAUSED = 'is-paused';
-const IS_WHITELISTED = 'is-whitelisted';
 
 export const useTokenControl = (token: ContractsEnum.SAV | ContractsEnum.SAVR) => {
   const queryClient = useQueryClient();
@@ -14,9 +13,6 @@ export const useTokenControl = (token: ContractsEnum.SAV | ContractsEnum.SAVR) =
   const { success, handleError } = useNotification();
 
   const isPaused = useQuery([IS_PAUSED, token], () => contract.paused());
-  const isWhitelistRestrictionMode = useQuery([IS_WHITELISTED, token], () =>
-    contract.isWhitelistRestrictionMode()
-  );
 
   const pause = useMutation(
     ['pause-token-mutation'],
@@ -49,46 +45,6 @@ export const useTokenControl = (token: ContractsEnum.SAV | ContractsEnum.SAVR) =
     {
       onSuccess: () => {
         queryClient.invalidateQueries([IS_PAUSED, token]);
-      },
-      onError: handleError,
-    }
-  );
-
-  const enableWhitelistMode = useMutation(
-    ['enable-whitelist-mode-mutation'],
-    async () => {
-      const txHash = await contract.enableWhitelistMode();
-      success({
-        title: 'Success',
-        description: `${
-          token === ContractsEnum.SAV ? 'SAV' : 'SAVR'
-        } token has been turned to Whitelist mode`,
-        txHash,
-      });
-    },
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries([IS_WHITELISTED, token]);
-      },
-      onError: handleError,
-    }
-  );
-
-  const disableWhitelistMode = useMutation(
-    ['disable-whitelist-mode-mutation'],
-    async () => {
-      const txHash = await contract.disableWhitelistMode();
-      success({
-        title: 'Success',
-        description: `${
-          token === ContractsEnum.SAV ? 'SAV' : 'SAVR'
-        } token has been turned to Blacklist mode`,
-        txHash,
-      });
-    },
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries([IS_WHITELISTED, token]);
       },
       onError: handleError,
     }
@@ -177,14 +133,11 @@ export const useTokenControl = (token: ContractsEnum.SAV | ContractsEnum.SAVR) =
   return {
     contract,
     isPaused,
-    isWhitelistRestrictionMode,
     pause,
     unpause,
     addToBlacklist,
     removeFromBlacklist,
     addToWhitelist,
     removeFromWhitelist,
-    enableWhitelistMode,
-    disableWhitelistMode,
   };
 };
