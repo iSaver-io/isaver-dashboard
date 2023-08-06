@@ -33,8 +33,6 @@ export interface VendorSellInterface extends utils.Interface {
     "DIVIDER()": FunctionFragment;
     "buyTokens(uint256)": FunctionFragment;
     "changeToken()": FunctionFragment;
-    "disableSell()": FunctionFragment;
-    "enableSell()": FunctionFragment;
     "getChangeTokenReserve()": FunctionFragment;
     "getEquivalentChangeTokenEstimate(uint256)": FunctionFragment;
     "getEquivalentTokenEstimate(uint256)": FunctionFragment;
@@ -42,7 +40,6 @@ export interface VendorSellInterface extends utils.Interface {
     "getTokenReserve()": FunctionFragment;
     "grantRole(bytes32,address)": FunctionFragment;
     "hasRole(bytes32,address)": FunctionFragment;
-    "isSellAvailable()": FunctionFragment;
     "pause()": FunctionFragment;
     "paused()": FunctionFragment;
     "renounceRole(bytes32,address)": FunctionFragment;
@@ -54,11 +51,11 @@ export interface VendorSellInterface extends utils.Interface {
     "token()": FunctionFragment;
     "unpause()": FunctionFragment;
     "updateChangeToken(address)": FunctionFragment;
-    "updateChangeTokenPool(address)": FunctionFragment;
     "updateSellFee(uint256)": FunctionFragment;
     "updateSwapRate(uint256)": FunctionFragment;
     "updateToken(address)": FunctionFragment;
-    "updateTokenPool(address)": FunctionFragment;
+    "withdrawChangeToken(uint256)": FunctionFragment;
+    "withdrawToken(uint256)": FunctionFragment;
   };
 
   getFunction(
@@ -67,8 +64,6 @@ export interface VendorSellInterface extends utils.Interface {
       | "DIVIDER"
       | "buyTokens"
       | "changeToken"
-      | "disableSell"
-      | "enableSell"
       | "getChangeTokenReserve"
       | "getEquivalentChangeTokenEstimate"
       | "getEquivalentTokenEstimate"
@@ -76,7 +71,6 @@ export interface VendorSellInterface extends utils.Interface {
       | "getTokenReserve"
       | "grantRole"
       | "hasRole"
-      | "isSellAvailable"
       | "pause"
       | "paused"
       | "renounceRole"
@@ -88,11 +82,11 @@ export interface VendorSellInterface extends utils.Interface {
       | "token"
       | "unpause"
       | "updateChangeToken"
-      | "updateChangeTokenPool"
       | "updateSellFee"
       | "updateSwapRate"
       | "updateToken"
-      | "updateTokenPool"
+      | "withdrawChangeToken"
+      | "withdrawToken"
   ): FunctionFragment;
 
   encodeFunctionData(
@@ -106,14 +100,6 @@ export interface VendorSellInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "changeToken",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "disableSell",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "enableSell",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -143,10 +129,6 @@ export interface VendorSellInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "hasRole",
     values: [PromiseOrValue<BytesLike>, PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "isSellAvailable",
-    values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "pause", values?: undefined): string;
   encodeFunctionData(functionFragment: "paused", values?: undefined): string;
@@ -178,10 +160,6 @@ export interface VendorSellInterface extends utils.Interface {
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
-    functionFragment: "updateChangeTokenPool",
-    values: [PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
     functionFragment: "updateSellFee",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
@@ -194,8 +172,12 @@ export interface VendorSellInterface extends utils.Interface {
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
-    functionFragment: "updateTokenPool",
-    values: [PromiseOrValue<string>]
+    functionFragment: "withdrawChangeToken",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "withdrawToken",
+    values: [PromiseOrValue<BigNumberish>]
   ): string;
 
   decodeFunctionResult(
@@ -208,11 +190,6 @@ export interface VendorSellInterface extends utils.Interface {
     functionFragment: "changeToken",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(
-    functionFragment: "disableSell",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "enableSell", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getChangeTokenReserve",
     data: BytesLike
@@ -235,10 +212,6 @@ export interface VendorSellInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "grantRole", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "hasRole", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "isSellAvailable",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "pause", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "paused", data: BytesLike): Result;
   decodeFunctionResult(
@@ -263,10 +236,6 @@ export interface VendorSellInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "updateChangeTokenPool",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "updateSellFee",
     data: BytesLike
   ): Result;
@@ -279,7 +248,11 @@ export interface VendorSellInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "updateTokenPool",
+    functionFragment: "withdrawChangeToken",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "withdrawToken",
     data: BytesLike
   ): Result;
 
@@ -291,6 +264,7 @@ export interface VendorSellInterface extends utils.Interface {
     "TokensPurchased(address,uint256,uint256)": EventFragment;
     "TokensSold(address,uint256,uint256)": EventFragment;
     "Unpaused(address)": EventFragment;
+    "Withdrawn(address,uint256)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "Paused"): EventFragment;
@@ -300,6 +274,7 @@ export interface VendorSellInterface extends utils.Interface {
   getEvent(nameOrSignatureOrTopic: "TokensPurchased"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "TokensSold"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Unpaused"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Withdrawn"): EventFragment;
 }
 
 export interface PausedEventObject {
@@ -377,6 +352,17 @@ export type UnpausedEvent = TypedEvent<[string], UnpausedEventObject>;
 
 export type UnpausedEventFilter = TypedEventFilter<UnpausedEvent>;
 
+export interface WithdrawnEventObject {
+  token: string;
+  amount: BigNumber;
+}
+export type WithdrawnEvent = TypedEvent<
+  [string, BigNumber],
+  WithdrawnEventObject
+>;
+
+export type WithdrawnEventFilter = TypedEventFilter<WithdrawnEvent>;
+
 export interface VendorSell extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
@@ -415,14 +401,6 @@ export interface VendorSell extends BaseContract {
 
     changeToken(overrides?: CallOverrides): Promise<[string]>;
 
-    disableSell(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    enableSell(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
     getChangeTokenReserve(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     getEquivalentChangeTokenEstimate(
@@ -453,8 +431,6 @@ export interface VendorSell extends BaseContract {
       account: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
-
-    isSellAvailable(overrides?: CallOverrides): Promise<[boolean]>;
 
     pause(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -499,11 +475,6 @@ export interface VendorSell extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    updateChangeTokenPool(
-      pool: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
     updateSellFee(
       sellTokenFee_: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -519,8 +490,13 @@ export interface VendorSell extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    updateTokenPool(
-      pool: PromiseOrValue<string>,
+    withdrawChangeToken(
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    withdrawToken(
+      amount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
   };
@@ -535,14 +511,6 @@ export interface VendorSell extends BaseContract {
   ): Promise<ContractTransaction>;
 
   changeToken(overrides?: CallOverrides): Promise<string>;
-
-  disableSell(
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  enableSell(
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
 
   getChangeTokenReserve(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -574,8 +542,6 @@ export interface VendorSell extends BaseContract {
     account: PromiseOrValue<string>,
     overrides?: CallOverrides
   ): Promise<boolean>;
-
-  isSellAvailable(overrides?: CallOverrides): Promise<boolean>;
 
   pause(
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -620,11 +586,6 @@ export interface VendorSell extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  updateChangeTokenPool(
-    pool: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
   updateSellFee(
     sellTokenFee_: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -640,8 +601,13 @@ export interface VendorSell extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  updateTokenPool(
-    pool: PromiseOrValue<string>,
+  withdrawChangeToken(
+    amount: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  withdrawToken(
+    amount: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -656,10 +622,6 @@ export interface VendorSell extends BaseContract {
     ): Promise<void>;
 
     changeToken(overrides?: CallOverrides): Promise<string>;
-
-    disableSell(overrides?: CallOverrides): Promise<void>;
-
-    enableSell(overrides?: CallOverrides): Promise<void>;
 
     getChangeTokenReserve(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -691,8 +653,6 @@ export interface VendorSell extends BaseContract {
       account: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<boolean>;
-
-    isSellAvailable(overrides?: CallOverrides): Promise<boolean>;
 
     pause(overrides?: CallOverrides): Promise<void>;
 
@@ -733,11 +693,6 @@ export interface VendorSell extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    updateChangeTokenPool(
-      pool: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
     updateSellFee(
       sellTokenFee_: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -753,8 +708,13 @@ export interface VendorSell extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    updateTokenPool(
-      pool: PromiseOrValue<string>,
+    withdrawChangeToken(
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    withdrawToken(
+      amount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
   };
@@ -820,6 +780,15 @@ export interface VendorSell extends BaseContract {
 
     "Unpaused(address)"(account?: null): UnpausedEventFilter;
     Unpaused(account?: null): UnpausedEventFilter;
+
+    "Withdrawn(address,uint256)"(
+      token?: PromiseOrValue<string> | null,
+      amount?: null
+    ): WithdrawnEventFilter;
+    Withdrawn(
+      token?: PromiseOrValue<string> | null,
+      amount?: null
+    ): WithdrawnEventFilter;
   };
 
   estimateGas: {
@@ -833,14 +802,6 @@ export interface VendorSell extends BaseContract {
     ): Promise<BigNumber>;
 
     changeToken(overrides?: CallOverrides): Promise<BigNumber>;
-
-    disableSell(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    enableSell(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
 
     getChangeTokenReserve(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -872,8 +833,6 @@ export interface VendorSell extends BaseContract {
       account: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
-
-    isSellAvailable(overrides?: CallOverrides): Promise<BigNumber>;
 
     pause(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -918,11 +877,6 @@ export interface VendorSell extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    updateChangeTokenPool(
-      pool: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
     updateSellFee(
       sellTokenFee_: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -938,8 +892,13 @@ export interface VendorSell extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    updateTokenPool(
-      pool: PromiseOrValue<string>,
+    withdrawChangeToken(
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    withdrawToken(
+      amount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
   };
@@ -957,14 +916,6 @@ export interface VendorSell extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     changeToken(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    disableSell(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    enableSell(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
 
     getChangeTokenReserve(
       overrides?: CallOverrides
@@ -998,8 +949,6 @@ export interface VendorSell extends BaseContract {
       account: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
-
-    isSellAvailable(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     pause(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -1044,11 +993,6 @@ export interface VendorSell extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    updateChangeTokenPool(
-      pool: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
     updateSellFee(
       sellTokenFee_: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -1064,8 +1008,13 @@ export interface VendorSell extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    updateTokenPool(
-      pool: PromiseOrValue<string>,
+    withdrawChangeToken(
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    withdrawToken(
+      amount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
   };
