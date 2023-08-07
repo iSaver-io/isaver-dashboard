@@ -28,8 +28,6 @@ export const Addresses = () => {
         <Text textStyle="textMedium" mt="20px" mb="8px" fontSize="18px">
           Accounts (Pools)
         </Text>
-        <AddressInfo title="Staking Pool" address={accounts.stakingPool} />
-        <AddressInfo title="Referral Reward Pool" address={accounts.referralRewardPool} />
         <AddressInfo title="Vesting Pool" address={accounts.vestingPool} />
       </Flex>
     </AdminSection>
