@@ -63,7 +63,7 @@ export const Main = () => {
             Whitepaper
           </Button>
           <Button
-            variant="filledRed"
+            variant="primary"
             fontSize={{ sm: '12px', '2xl': 'unset' }}
             width={{ sm: '145px', md: '220px', lg: '145px', xl: '225px' }}
             onClick={handleGetStartedClick}

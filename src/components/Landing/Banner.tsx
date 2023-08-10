@@ -27,7 +27,7 @@ export const Banner = () => {
         <h4 className="banner__heading">No registration, no KYC, no hassle</h4>
         <h5 className="banner__subheading">Just by connecting your wallet</h5>
         <Flex justifyContent="center">
-          <Button variant="filledRed" className="banner__btn" onClick={handleGetStartedClick}>
+          <Button variant="primary" className="banner__btn" onClick={handleGetStartedClick}>
             Get started
           </Button>
         </Flex>
