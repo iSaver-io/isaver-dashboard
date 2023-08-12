@@ -30,6 +30,10 @@ export const useStakingContract = () => {
     signerOrProvider: signer || provider,
   }) as unknown as Staking;
 
+  const getAvailableTokens = async () => {
+    return contract.getAvailableTokens();
+  };
+
   const getStakingPlans = async () => {
     return contract.getStakingPlans();
   };
@@ -125,6 +129,7 @@ export const useStakingContract = () => {
     deposit,
     withdraw,
     withdrawAll,
+    getAvailableTokens,
     getStakingPlans,
     getUserStakingInfo,
     getUserStakesWithRewards,
