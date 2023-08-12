@@ -3,15 +3,15 @@ import { Balance } from '@/components/Balance/Balance';
 import { useAccounts } from '@/hooks/admin/useAccounts';
 import { useContractsAddresses } from '@/hooks/admin/useContractsAddresses';
 import { ContractsEnum } from '@/hooks/contracts/useContractAbi';
-import { useStakingMetrics } from '@/hooks/staking/useStaking';
+import { useStakingAvailableTokens, useStakingMetrics } from '@/hooks/staking/useStaking';
 import { useSavBalance, useSavRBalance, useUsdtBalance } from '@/hooks/useTokenBalance';
 import { useTokenSupply } from '@/hooks/useTokenSupply';
 
 export const Balances = () => {
   const { vestingPool } = useAccounts();
-  const { Lottery, ReferralManager, Staking, VendorSell } = useContractsAddresses();
+  const { Lottery, ReferralManager, VendorSell } = useContractsAddresses();
 
-  const stakingBalance = useSavBalance(Staking);
+  const stakingAvailableTokens = useStakingAvailableTokens();
   const lotteryBalance = useSavRBalance(Lottery);
   const referralBalance = useSavRBalance(ReferralManager);
   const vendorBalance = useSavBalance(VendorSell);
@@ -22,7 +22,7 @@ export const Balances = () => {
   const savrSupply = useTokenSupply(ContractsEnum.SAVR);
 
   const isLoading =
-    stakingBalance.isLoading ||
+    stakingAvailableTokens.isLoading ||
     lotteryBalance.isLoading ||
     referralBalance.isLoading ||
     vendorBalance.isLoading ||
@@ -64,14 +64,14 @@ export const Balances = () => {
         minLimit={0}
       />
 
-      <Balance label="Staking pool" balance={stakingBalance.data} symbol="SAV" />
+      <Balance label="Staking rewards balance" balance={stakingAvailableTokens.data} symbol="SAV" />
       <Balance label="Staking TVL (SAV)" balance={tvlSav} symbol="SAV" minLimit={0} />
       <Balance label="Staking TVL (SAVR)" balance={tvlSavr} symbol="SAVR" minLimit={0} />
-      <Balance label="Lottery rewards pool" balance={lotteryBalance.data} symbol="SAVR" />
-      <Balance label="Referral rewards pool" balance={referralBalance.data} symbol="SAVR" />
-      <Balance label="Exchange pool (SAV)" balance={vendorBalance.data} symbol="SAV" />
+      <Balance label="Lottery rewards balance" balance={lotteryBalance.data} symbol="SAVR" />
+      <Balance label="Referral rewards balance" balance={referralBalance.data} symbol="SAVR" />
+      <Balance label="Exchange balance (SAV)" balance={vendorBalance.data} symbol="SAV" />
       <Balance
-        label="Exchange pool (USDT)"
+        label="Exchange balance (USDT)"
         balance={vendorChangeBalance.data}
         decimals={6}
         symbol="USDT"
