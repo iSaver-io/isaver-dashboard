@@ -14,9 +14,10 @@ import { formatStakes } from '@/utils/formatters/formatStakes';
 import { bigNumberToString } from '@/utils/number';
 import { getReadableDuration } from '@/utils/time';
 
-export const STAKING_PLANS_REQUEST = 'staking-plans';
-export const USER_STAKING_INFO_REQUEST = 'user-staking-info';
-export const USER_STAKES_REQUEST = 'user-stakes';
+const STAKING_PLANS_REQUEST = 'staking-plans';
+const USER_STAKING_INFO_REQUEST = 'user-staking-info';
+const USER_STAKES_REQUEST = 'user-stakes';
+const STAKING_AVAILABLE_TOKENS_REQUEST = 'staking-available-tokens-request';
 const STAKING_SUBSCRIBE_MUTATION = 'staking-subscribe';
 const STAKING_DEPOSIT_MUTATION = 'staking-deposit';
 const STAKING_CLAIM_MUTATION = 'staking-claim';
@@ -431,4 +432,9 @@ export const useStakingAdminActions = () => {
   );
 
   return { updatePlanActivity, addStakingPlan };
+};
+
+export const useStakingAvailableTokens = () => {
+  const stakingContract = useStakingContract();
+  return useQuery([STAKING_AVAILABLE_TOKENS_REQUEST], () => stakingContract.getAvailableTokens());
 };
