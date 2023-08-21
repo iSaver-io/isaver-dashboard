@@ -21,7 +21,6 @@ import { TvlAndClaimedChart } from './TvlAndClaimedChart';
 
 const buttonProps = {
   mt: { sm: '20px', md: '10px', lg: '15px', xl: '10px', '2xl': '12px' },
-  rightIcon: <PlusIcon />,
   size: { sm: 'xl', xl: 'md', '2xl': 'xl' },
   fontSize: { xl: '12px', '2xl': 'unset' },
   width: { sm: '100%', lg: '200px', xl: '100%' },
@@ -136,7 +135,8 @@ export const WalletPortfolio = () => {
                   SAV
                 </Flex>
                 <Button {...buttonProps} onClick={handleAddSav}>
-                  Add to wallet
+                  <Text mr="12px">Add to wallet</Text>
+                  <PlusIcon />
                 </Button>
               </Flex>
               <Flex
@@ -158,7 +158,8 @@ export const WalletPortfolio = () => {
                   SAVR
                 </Flex>
                 <Button {...buttonProps} onClick={handleAddSavR}>
-                  Add to wallet
+                  <Text mr="12px">Add to wallet</Text>
+                  <PlusIcon />
                 </Button>
               </Flex>
             </Flex>
