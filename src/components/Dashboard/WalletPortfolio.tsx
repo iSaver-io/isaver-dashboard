@@ -20,6 +20,7 @@ import { BalanceHistoryChart } from './BalanceChart';
 import { TvlAndClaimedChart } from './TvlAndClaimedChart';
 
 const buttonProps = {
+  padding: { md: '15px' },
   mt: { sm: '20px', md: '10px', lg: '15px', xl: '10px', '2xl': '12px' },
   size: { sm: 'xl', xl: 'md', '2xl': 'xl' },
   fontSize: { xl: '12px', '2xl': 'unset' },

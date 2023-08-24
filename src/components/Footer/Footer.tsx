@@ -5,10 +5,11 @@ import { useAccount } from 'wagmi';
 import { sendDataMessage } from '@/api/sendDataMessage';
 import { Logo } from '@/assets/images/icons-components/Logo';
 import { ReactComponent as ArrowIcon } from '@/components/Landing/images/arrow-right.svg';
-import { ReactComponent as DiscordIcon } from '@/components/Landing/images/discord.svg';
+// import { ReactComponent as DiscordIcon } from '@/components/Landing/images/discord.svg';
+import { ReactComponent as GithubIcon } from '@/components/Landing/images/github.svg';
 import { ReactComponent as SavIcon } from '@/components/Landing/images/sav.svg';
 import { ReactComponent as SavrIcon } from '@/components/Landing/images/savr.svg';
-import { ReactComponent as TelegramIcon } from '@/components/Landing/images/tg.svg';
+// import { ReactComponent as TelegramIcon } from '@/components/Landing/images/tg.svg';
 import { ReactComponent as TwitterIcon } from '@/components/Landing/images/twitter.svg';
 import { useDebounce } from '@/hooks/useDebounce';
 import { useLogger } from '@/hooks/useLogger';
@@ -175,11 +176,16 @@ export const Footer = () => {
                 rel="noreferrer"
                 onClick={() => handleSocialLinkClick('tw')}
               >
-                <TwitterIcon />
+                <TwitterIcon width="32px" height="32px" />
               </a>
-              {/* <a href="#" target="_blank">
-                <DiscordIcon />
-              </a> */}
+              <a
+                href="https://github.com/iSaver-io"
+                target="_blank"
+                rel="noreferrer"
+                onClick={() => handleSocialLinkClick('github')}
+              >
+                <GithubIcon width="32px" height="32px" />
+              </a>
             </Flex>
             <Link
               className="contact-mail"
