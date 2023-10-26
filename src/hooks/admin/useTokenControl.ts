@@ -50,7 +50,7 @@ export const useTokenControl = (token: ContractsEnum.SAV | ContractsEnum.SAVR) =
     }
   );
 
-  const addToBlacklist = useMutation(
+  const addToBlackList = useMutation(
     ['add-to-blacklist-mutation'],
     async (value: string) => {
       const addresses = value
@@ -58,7 +58,7 @@ export const useTokenControl = (token: ContractsEnum.SAV | ContractsEnum.SAVR) =
         .map((address) => address.trim())
         .filter(Boolean);
 
-      const txHash = await contract.addToBlacklist(addresses);
+      const txHash = await contract.addToBlackList(addresses);
       success({
         title: 'Success',
         description: `${addresses.join(', ')} addresses added to blacklist`,
@@ -70,7 +70,7 @@ export const useTokenControl = (token: ContractsEnum.SAV | ContractsEnum.SAVR) =
     }
   );
 
-  const removeFromBlacklist = useMutation(
+  const removeFromBlackList = useMutation(
     ['remove-from-blacklist-mutation'],
     async (value: string) => {
       const addresses = value
@@ -78,7 +78,7 @@ export const useTokenControl = (token: ContractsEnum.SAV | ContractsEnum.SAVR) =
         .map((address) => address.trim())
         .filter(Boolean);
 
-      const txHash = await contract.removeFromBlacklist(addresses);
+      const txHash = await contract.removeFromBlackList(addresses);
       success({
         title: 'Success',
         description: `${addresses.join(', ')} addresses removed from blacklist`,
@@ -90,7 +90,7 @@ export const useTokenControl = (token: ContractsEnum.SAV | ContractsEnum.SAVR) =
     }
   );
 
-  const addToWhitelist = useMutation(
+  const addToWhiteList = useMutation(
     ['add-to-whitelist-mutation'],
     async (value: string) => {
       const addresses = value
@@ -98,7 +98,7 @@ export const useTokenControl = (token: ContractsEnum.SAV | ContractsEnum.SAVR) =
         .map((address) => address.trim())
         .filter(Boolean);
 
-      const txHash = await contract.addToWhitelist(addresses);
+      const txHash = await contract.addToWhiteList(addresses);
       success({
         title: 'Success',
         description: `${addresses.join(', ')} addresses added to whitelist`,
@@ -110,7 +110,7 @@ export const useTokenControl = (token: ContractsEnum.SAV | ContractsEnum.SAVR) =
     }
   );
 
-  const removeFromWhitelist = useMutation(
+  const removeFromWhiteList = useMutation(
     ['remove-from-whitelist-mutation'],
     async (value: string) => {
       const addresses = value
@@ -118,7 +118,7 @@ export const useTokenControl = (token: ContractsEnum.SAV | ContractsEnum.SAVR) =
         .map((address) => address.trim())
         .filter(Boolean);
 
-      const txHash = await contract.removeFromWhitelist(addresses);
+      const txHash = await contract.removeFromWhiteList(addresses);
       success({
         title: 'Success',
         description: `${addresses.join(', ')} addresses removed from whitelist`,
@@ -135,9 +135,9 @@ export const useTokenControl = (token: ContractsEnum.SAV | ContractsEnum.SAVR) =
     isPaused,
     pause,
     unpause,
-    addToBlacklist,
-    removeFromBlacklist,
-    addToWhitelist,
-    removeFromWhitelist,
+    addToBlackList,
+    removeFromBlackList,
+    addToWhiteList,
+    removeFromWhiteList,
   };
 };

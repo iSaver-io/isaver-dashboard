@@ -9,35 +9,39 @@ import type {
   CallOverrides,
   ContractTransaction,
   Overrides,
+  PayableOverrides,
   PopulatedTransaction,
   Signer,
   utils,
-} from 'ethers';
-import type { FunctionFragment, Result, EventFragment } from '@ethersproject/abi';
-import type { Listener, Provider } from '@ethersproject/providers';
+} from "ethers";
+import type {
+  FunctionFragment,
+  Result,
+  EventFragment,
+} from "@ethersproject/abi";
+import type { Listener, Provider } from "@ethersproject/providers";
 import type {
   TypedEventFilter,
   TypedEvent,
   TypedListener,
   OnEvent,
-  PromiseOrValue,
-} from '../common';
+} from "../common";
 
 export declare namespace IStaking {
   export type StakingPlanStruct = {
-    stakingPlanId: PromiseOrValue<BigNumberish>;
-    isActive: PromiseOrValue<boolean>;
-    subscriptionCost: PromiseOrValue<BigNumberish>;
-    subscriptionDuration: PromiseOrValue<BigNumberish>;
-    stakingDuration: PromiseOrValue<BigNumberish>;
-    apr: PromiseOrValue<BigNumberish>;
-    totalStakesToken1No: PromiseOrValue<BigNumberish>;
-    totalStakesToken2No: PromiseOrValue<BigNumberish>;
-    totalStakedToken1: PromiseOrValue<BigNumberish>;
-    totalStakedToken2: PromiseOrValue<BigNumberish>;
-    currentToken1Locked: PromiseOrValue<BigNumberish>;
-    currentToken2Locked: PromiseOrValue<BigNumberish>;
-    totalClaimed: PromiseOrValue<BigNumberish>;
+    stakingPlanId: BigNumberish;
+    isActive: boolean;
+    subscriptionCost: BigNumberish;
+    subscriptionDuration: BigNumberish;
+    stakingDuration: BigNumberish;
+    apr: BigNumberish;
+    totalStakesSavTokenNo: BigNumberish;
+    totalStakesSavrTokenNo: BigNumberish;
+    totalStakedSavToken: BigNumberish;
+    totalStakedSavrToken: BigNumberish;
+    currentSavTokenLocked: BigNumberish;
+    currentSavrTokenLocked: BigNumberish;
+    totalClaimed: BigNumberish;
   };
 
   export type StakingPlanStructOutput = [
@@ -61,21 +65,21 @@ export declare namespace IStaking {
     subscriptionDuration: BigNumber;
     stakingDuration: BigNumber;
     apr: BigNumber;
-    totalStakesToken1No: BigNumber;
-    totalStakesToken2No: BigNumber;
-    totalStakedToken1: BigNumber;
-    totalStakedToken2: BigNumber;
-    currentToken1Locked: BigNumber;
-    currentToken2Locked: BigNumber;
+    totalStakesSavTokenNo: BigNumber;
+    totalStakesSavrTokenNo: BigNumber;
+    totalStakedSavToken: BigNumber;
+    totalStakedSavrToken: BigNumber;
+    currentSavTokenLocked: BigNumber;
+    currentSavrTokenLocked: BigNumber;
     totalClaimed: BigNumber;
   };
 
   export type UserStakingInfoStruct = {
-    totalClaimed: PromiseOrValue<BigNumberish>;
-    currentToken1Staked: PromiseOrValue<BigNumberish>;
-    currentToken2Staked: PromiseOrValue<BigNumberish>;
-    isSubscribed: PromiseOrValue<boolean>;
-    subscribedTill: PromiseOrValue<BigNumberish>;
+    totalClaimed: BigNumberish;
+    currentSavTokenStaked: BigNumberish;
+    currentSavrTokenStaked: BigNumberish;
+    isSubscribed: boolean;
+    subscribedTill: BigNumberish;
   };
 
   export type UserStakingInfoStructOutput = [
@@ -86,20 +90,20 @@ export declare namespace IStaking {
     BigNumber
   ] & {
     totalClaimed: BigNumber;
-    currentToken1Staked: BigNumber;
-    currentToken2Staked: BigNumber;
+    currentSavTokenStaked: BigNumber;
+    currentSavrTokenStaked: BigNumber;
     isSubscribed: boolean;
     subscribedTill: BigNumber;
   };
 
   export type StakeStruct = {
-    amount: PromiseOrValue<BigNumberish>;
-    timeStart: PromiseOrValue<BigNumberish>;
-    timeEnd: PromiseOrValue<BigNumberish>;
-    apr: PromiseOrValue<BigNumberish>;
-    profit: PromiseOrValue<BigNumberish>;
-    isClaimed: PromiseOrValue<boolean>;
-    isToken2: PromiseOrValue<boolean>;
+    amount: BigNumberish;
+    timeStart: BigNumberish;
+    timeEnd: BigNumberish;
+    apr: BigNumberish;
+    profit: BigNumberish;
+    isClaimed: boolean;
+    isSAVRToken: boolean;
   };
 
   export type StakeStructOutput = [
@@ -117,354 +121,493 @@ export declare namespace IStaking {
     apr: BigNumber;
     profit: BigNumber;
     isClaimed: boolean;
-    isToken2: boolean;
+    isSAVRToken: boolean;
   };
 
   export type StakeWithRewardsInfoStruct = {
     stake: IStaking.StakeStruct;
-    reward: PromiseOrValue<BigNumberish>;
+    reward: BigNumberish;
   };
 
-  export type StakeWithRewardsInfoStructOutput = [IStaking.StakeStructOutput, BigNumber] & {
-    stake: IStaking.StakeStructOutput;
-    reward: BigNumber;
-  };
+  export type StakeWithRewardsInfoStructOutput = [
+    IStaking.StakeStructOutput,
+    BigNumber
+  ] & { stake: IStaking.StakeStructOutput; reward: BigNumber };
 }
 
 export interface StakingInterface extends utils.Interface {
   functions: {
-    'BASE_POINTS_DIVIDER()': FunctionFragment;
-    'DEFAULT_ADMIN_ROLE()': FunctionFragment;
-    'MIN_STAKE_LIMIT()': FunctionFragment;
-    'TIME_STEP()': FunctionFragment;
-    'addStakingPlan(uint256,uint256,uint256,uint256)': FunctionFragment;
-    'calculateStakeProfit(uint256,uint256)': FunctionFragment;
-    'deposit(uint256,uint256,bool,address)': FunctionFragment;
-    'getAvailableStakeReward(uint256,address,uint256)': FunctionFragment;
-    'getAvailableTokens()': FunctionFragment;
-    'getRoleAdmin(bytes32)': FunctionFragment;
-    'getStakingPlans()': FunctionFragment;
-    'getTimestamp()': FunctionFragment;
-    'getUserPlanInfo(uint256,address)': FunctionFragment;
-    'getUserPlansInfo(address)': FunctionFragment;
-    'getUserStakes(uint256,address)': FunctionFragment;
-    'getUserStakesWithRewards(uint256,address)': FunctionFragment;
-    'grantRole(bytes32,address)': FunctionFragment;
-    'hasAnySubscription(address)': FunctionFragment;
-    'hasRole(bytes32,address)': FunctionFragment;
-    'hasSubscription(uint256,address)': FunctionFragment;
-    'referralManager()': FunctionFragment;
-    'renounceRole(bytes32,address)': FunctionFragment;
-    'revokeRole(bytes32,address)': FunctionFragment;
-    'shouldAddReferrerOnToken2Stake()': FunctionFragment;
-    'squadsManager()': FunctionFragment;
-    'stakingPlans(uint256)': FunctionFragment;
-    'subscribe(uint256)': FunctionFragment;
-    'supportsInterface(bytes4)': FunctionFragment;
-    'token1()': FunctionFragment;
-    'token2()': FunctionFragment;
-    'totalLockedTokens()': FunctionFragment;
-    'updateMinStakeLimit(uint256)': FunctionFragment;
-    'updatePlanAPR(uint256,uint256)': FunctionFragment;
-    'updatePlanActivity(uint256,bool)': FunctionFragment;
-    'updatePlanDurationDays(uint256,uint256)': FunctionFragment;
-    'updatePlanSubscriptionCost(uint256,uint256)': FunctionFragment;
-    'updatePlanSubscriptionPeriod(uint256,uint256)': FunctionFragment;
-    'updateReferralManager(address)': FunctionFragment;
-    'updateShouldAddReferrerOnToken2Stake(bool)': FunctionFragment;
-    'updateSquadsManager(address)': FunctionFragment;
-    'updateTimeStep(uint256)': FunctionFragment;
-    'updateToken1(address)': FunctionFragment;
-    'updateToken2(address)': FunctionFragment;
-    'withdraw(uint256,uint256)': FunctionFragment;
-    'withdrawAll(uint256)': FunctionFragment;
-    'withdrawLiquidity(address,uint256)': FunctionFragment;
+    "BASE_POINTS_DIVIDER()": FunctionFragment;
+    "DEFAULT_ADMIN_ROLE()": FunctionFragment;
+    "MIN_STAKE_LIMIT()": FunctionFragment;
+    "TIME_STEP()": FunctionFragment;
+    "UPGRADER_ROLE()": FunctionFragment;
+    "addStakingPlan(uint256,uint256,uint256,uint256)": FunctionFragment;
+    "calculateStakeProfit(uint256,uint256)": FunctionFragment;
+    "deposit(uint256,uint256,bool,address)": FunctionFragment;
+    "getAvailableStakeReward(uint256,address,uint256)": FunctionFragment;
+    "getAvailableTokens()": FunctionFragment;
+    "getRoleAdmin(bytes32)": FunctionFragment;
+    "getStakingPlans()": FunctionFragment;
+    "getTimestamp()": FunctionFragment;
+    "getUserPlanInfo(uint256,address)": FunctionFragment;
+    "getUserPlansInfo(address)": FunctionFragment;
+    "getUserStakes(uint256,address)": FunctionFragment;
+    "getUserStakesWithRewards(uint256,address)": FunctionFragment;
+    "grantRole(bytes32,address)": FunctionFragment;
+    "hasAnySubscription(address)": FunctionFragment;
+    "hasRole(bytes32,address)": FunctionFragment;
+    "hasSubscription(uint256,address)": FunctionFragment;
+    "initialize(address)": FunctionFragment;
+    "proxiableUUID()": FunctionFragment;
+    "renounceRole(bytes32,address)": FunctionFragment;
+    "revokeRole(bytes32,address)": FunctionFragment;
+    "shouldAddReferrerOnSavrTokenStake()": FunctionFragment;
+    "stakingPlans(uint256)": FunctionFragment;
+    "subscribe(uint256)": FunctionFragment;
+    "supportsInterface(bytes4)": FunctionFragment;
+    "totalLockedTokens()": FunctionFragment;
+    "updateMinStakeLimit(uint256)": FunctionFragment;
+    "updatePlanAPR(uint256,uint256)": FunctionFragment;
+    "updatePlanActivity(uint256,bool)": FunctionFragment;
+    "updatePlanDurationDays(uint256,uint256)": FunctionFragment;
+    "updatePlanSubscriptionCost(uint256,uint256)": FunctionFragment;
+    "updatePlanSubscriptionPeriod(uint256,uint256)": FunctionFragment;
+    "updateShouldAddReferrerOnSavrTokenStake(bool)": FunctionFragment;
+    "updateTimeStep(uint256)": FunctionFragment;
+    "upgradeTo(address)": FunctionFragment;
+    "upgradeToAndCall(address,bytes)": FunctionFragment;
+    "withdraw(uint256,uint256)": FunctionFragment;
+    "withdrawAll(uint256)": FunctionFragment;
+    "withdrawLiquidity(address,uint256)": FunctionFragment;
   };
 
   getFunction(
     nameOrSignatureOrTopic:
-      | 'BASE_POINTS_DIVIDER'
-      | 'DEFAULT_ADMIN_ROLE'
-      | 'MIN_STAKE_LIMIT'
-      | 'TIME_STEP'
-      | 'addStakingPlan'
-      | 'calculateStakeProfit'
-      | 'deposit'
-      | 'getAvailableStakeReward'
-      | 'getAvailableTokens'
-      | 'getRoleAdmin'
-      | 'getStakingPlans'
-      | 'getTimestamp'
-      | 'getUserPlanInfo'
-      | 'getUserPlansInfo'
-      | 'getUserStakes'
-      | 'getUserStakesWithRewards'
-      | 'grantRole'
-      | 'hasAnySubscription'
-      | 'hasRole'
-      | 'hasSubscription'
-      | 'referralManager'
-      | 'renounceRole'
-      | 'revokeRole'
-      | 'shouldAddReferrerOnToken2Stake'
-      | 'squadsManager'
-      | 'stakingPlans'
-      | 'subscribe'
-      | 'supportsInterface'
-      | 'token1'
-      | 'token2'
-      | 'totalLockedTokens'
-      | 'updateMinStakeLimit'
-      | 'updatePlanAPR'
-      | 'updatePlanActivity'
-      | 'updatePlanDurationDays'
-      | 'updatePlanSubscriptionCost'
-      | 'updatePlanSubscriptionPeriod'
-      | 'updateReferralManager'
-      | 'updateShouldAddReferrerOnToken2Stake'
-      | 'updateSquadsManager'
-      | 'updateTimeStep'
-      | 'updateToken1'
-      | 'updateToken2'
-      | 'withdraw'
-      | 'withdrawAll'
-      | 'withdrawLiquidity'
+      | "BASE_POINTS_DIVIDER"
+      | "DEFAULT_ADMIN_ROLE"
+      | "MIN_STAKE_LIMIT"
+      | "TIME_STEP"
+      | "UPGRADER_ROLE"
+      | "addStakingPlan"
+      | "calculateStakeProfit"
+      | "deposit"
+      | "getAvailableStakeReward"
+      | "getAvailableTokens"
+      | "getRoleAdmin"
+      | "getStakingPlans"
+      | "getTimestamp"
+      | "getUserPlanInfo"
+      | "getUserPlansInfo"
+      | "getUserStakes"
+      | "getUserStakesWithRewards"
+      | "grantRole"
+      | "hasAnySubscription"
+      | "hasRole"
+      | "hasSubscription"
+      | "initialize"
+      | "proxiableUUID"
+      | "renounceRole"
+      | "revokeRole"
+      | "shouldAddReferrerOnSavrTokenStake"
+      | "stakingPlans"
+      | "subscribe"
+      | "supportsInterface"
+      | "totalLockedTokens"
+      | "updateMinStakeLimit"
+      | "updatePlanAPR"
+      | "updatePlanActivity"
+      | "updatePlanDurationDays"
+      | "updatePlanSubscriptionCost"
+      | "updatePlanSubscriptionPeriod"
+      | "updateShouldAddReferrerOnSavrTokenStake"
+      | "updateTimeStep"
+      | "upgradeTo"
+      | "upgradeToAndCall"
+      | "withdraw"
+      | "withdrawAll"
+      | "withdrawLiquidity"
   ): FunctionFragment;
 
-  encodeFunctionData(functionFragment: 'BASE_POINTS_DIVIDER', values?: undefined): string;
-  encodeFunctionData(functionFragment: 'DEFAULT_ADMIN_ROLE', values?: undefined): string;
-  encodeFunctionData(functionFragment: 'MIN_STAKE_LIMIT', values?: undefined): string;
-  encodeFunctionData(functionFragment: 'TIME_STEP', values?: undefined): string;
   encodeFunctionData(
-    functionFragment: 'addStakingPlan',
-    values: [
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<BigNumberish>
-    ]
-  ): string;
-  encodeFunctionData(
-    functionFragment: 'calculateStakeProfit',
-    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: 'deposit',
-    values: [
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<boolean>,
-      PromiseOrValue<string>
-    ]
-  ): string;
-  encodeFunctionData(
-    functionFragment: 'getAvailableStakeReward',
-    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(functionFragment: 'getAvailableTokens', values?: undefined): string;
-  encodeFunctionData(functionFragment: 'getRoleAdmin', values: [PromiseOrValue<BytesLike>]): string;
-  encodeFunctionData(functionFragment: 'getStakingPlans', values?: undefined): string;
-  encodeFunctionData(functionFragment: 'getTimestamp', values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: 'getUserPlanInfo',
-    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: 'getUserPlansInfo',
-    values: [PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: 'getUserStakes',
-    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: 'getUserStakesWithRewards',
-    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: 'grantRole',
-    values: [PromiseOrValue<BytesLike>, PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: 'hasAnySubscription',
-    values: [PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: 'hasRole',
-    values: [PromiseOrValue<BytesLike>, PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: 'hasSubscription',
-    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(functionFragment: 'referralManager', values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: 'renounceRole',
-    values: [PromiseOrValue<BytesLike>, PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: 'revokeRole',
-    values: [PromiseOrValue<BytesLike>, PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: 'shouldAddReferrerOnToken2Stake',
+    functionFragment: "BASE_POINTS_DIVIDER",
     values?: undefined
   ): string;
-  encodeFunctionData(functionFragment: 'squadsManager', values?: undefined): string;
   encodeFunctionData(
-    functionFragment: 'stakingPlans',
-    values: [PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(functionFragment: 'subscribe', values: [PromiseOrValue<BigNumberish>]): string;
-  encodeFunctionData(
-    functionFragment: 'supportsInterface',
-    values: [PromiseOrValue<BytesLike>]
-  ): string;
-  encodeFunctionData(functionFragment: 'token1', values?: undefined): string;
-  encodeFunctionData(functionFragment: 'token2', values?: undefined): string;
-  encodeFunctionData(functionFragment: 'totalLockedTokens', values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: 'updateMinStakeLimit',
-    values: [PromiseOrValue<BigNumberish>]
+    functionFragment: "DEFAULT_ADMIN_ROLE",
+    values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: 'updatePlanAPR',
-    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
+    functionFragment: "MIN_STAKE_LIMIT",
+    values?: undefined
+  ): string;
+  encodeFunctionData(functionFragment: "TIME_STEP", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "UPGRADER_ROLE",
+    values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: 'updatePlanActivity',
-    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<boolean>]
+    functionFragment: "addStakingPlan",
+    values: [BigNumberish, BigNumberish, BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: 'updatePlanDurationDays',
-    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
+    functionFragment: "calculateStakeProfit",
+    values: [BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: 'updatePlanSubscriptionCost',
-    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
+    functionFragment: "deposit",
+    values: [BigNumberish, BigNumberish, boolean, string]
   ): string;
   encodeFunctionData(
-    functionFragment: 'updatePlanSubscriptionPeriod',
-    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
+    functionFragment: "getAvailableStakeReward",
+    values: [BigNumberish, string, BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: 'updateReferralManager',
-    values: [PromiseOrValue<string>]
+    functionFragment: "getAvailableTokens",
+    values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: 'updateShouldAddReferrerOnToken2Stake',
-    values: [PromiseOrValue<boolean>]
+    functionFragment: "getRoleAdmin",
+    values: [BytesLike]
   ): string;
   encodeFunctionData(
-    functionFragment: 'updateSquadsManager',
-    values: [PromiseOrValue<string>]
+    functionFragment: "getStakingPlans",
+    values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: 'updateTimeStep',
-    values: [PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(functionFragment: 'updateToken1', values: [PromiseOrValue<string>]): string;
-  encodeFunctionData(functionFragment: 'updateToken2', values: [PromiseOrValue<string>]): string;
-  encodeFunctionData(
-    functionFragment: 'withdraw',
-    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
+    functionFragment: "getTimestamp",
+    values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: 'withdrawAll',
-    values: [PromiseOrValue<BigNumberish>]
+    functionFragment: "getUserPlanInfo",
+    values: [BigNumberish, string]
   ): string;
   encodeFunctionData(
-    functionFragment: 'withdrawLiquidity',
-    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
+    functionFragment: "getUserPlansInfo",
+    values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getUserStakes",
+    values: [BigNumberish, string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getUserStakesWithRewards",
+    values: [BigNumberish, string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "grantRole",
+    values: [BytesLike, string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "hasAnySubscription",
+    values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "hasRole",
+    values: [BytesLike, string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "hasSubscription",
+    values: [BigNumberish, string]
+  ): string;
+  encodeFunctionData(functionFragment: "initialize", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "proxiableUUID",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "renounceRole",
+    values: [BytesLike, string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "revokeRole",
+    values: [BytesLike, string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "shouldAddReferrerOnSavrTokenStake",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "stakingPlans",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "subscribe",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "supportsInterface",
+    values: [BytesLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "totalLockedTokens",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "updateMinStakeLimit",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "updatePlanAPR",
+    values: [BigNumberish, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "updatePlanActivity",
+    values: [BigNumberish, boolean]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "updatePlanDurationDays",
+    values: [BigNumberish, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "updatePlanSubscriptionCost",
+    values: [BigNumberish, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "updatePlanSubscriptionPeriod",
+    values: [BigNumberish, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "updateShouldAddReferrerOnSavrTokenStake",
+    values: [boolean]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "updateTimeStep",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(functionFragment: "upgradeTo", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "upgradeToAndCall",
+    values: [string, BytesLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "withdraw",
+    values: [BigNumberish, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "withdrawAll",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "withdrawLiquidity",
+    values: [string, BigNumberish]
   ): string;
 
-  decodeFunctionResult(functionFragment: 'BASE_POINTS_DIVIDER', data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: 'DEFAULT_ADMIN_ROLE', data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: 'MIN_STAKE_LIMIT', data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: 'TIME_STEP', data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: 'addStakingPlan', data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: 'calculateStakeProfit', data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: 'deposit', data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: 'getAvailableStakeReward', data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: 'getAvailableTokens', data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: 'getRoleAdmin', data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: 'getStakingPlans', data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: 'getTimestamp', data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: 'getUserPlanInfo', data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: 'getUserPlansInfo', data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: 'getUserStakes', data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: 'getUserStakesWithRewards', data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: 'grantRole', data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: 'hasAnySubscription', data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: 'hasRole', data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: 'hasSubscription', data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: 'referralManager', data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: 'renounceRole', data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: 'revokeRole', data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: 'shouldAddReferrerOnToken2Stake', data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: 'squadsManager', data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: 'stakingPlans', data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: 'subscribe', data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: 'supportsInterface', data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: 'token1', data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: 'token2', data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: 'totalLockedTokens', data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: 'updateMinStakeLimit', data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: 'updatePlanAPR', data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: 'updatePlanActivity', data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: 'updatePlanDurationDays', data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: 'updatePlanSubscriptionCost', data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: 'updatePlanSubscriptionPeriod', data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: 'updateReferralManager', data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: 'updateShouldAddReferrerOnToken2Stake',
+    functionFragment: "BASE_POINTS_DIVIDER",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: 'updateSquadsManager', data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: 'updateTimeStep', data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: 'updateToken1', data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: 'updateToken2', data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: 'withdraw', data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: 'withdrawAll', data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: 'withdrawLiquidity', data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "DEFAULT_ADMIN_ROLE",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "MIN_STAKE_LIMIT",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "TIME_STEP", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "UPGRADER_ROLE",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "addStakingPlan",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "calculateStakeProfit",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "deposit", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "getAvailableStakeReward",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getAvailableTokens",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getRoleAdmin",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getStakingPlans",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getTimestamp",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getUserPlanInfo",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getUserPlansInfo",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getUserStakes",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getUserStakesWithRewards",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "grantRole", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "hasAnySubscription",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "hasRole", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "hasSubscription",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "initialize", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "proxiableUUID",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "renounceRole",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "revokeRole", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "shouldAddReferrerOnSavrTokenStake",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "stakingPlans",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "subscribe", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "supportsInterface",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "totalLockedTokens",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "updateMinStakeLimit",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "updatePlanAPR",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "updatePlanActivity",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "updatePlanDurationDays",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "updatePlanSubscriptionCost",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "updatePlanSubscriptionPeriod",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "updateShouldAddReferrerOnSavrTokenStake",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "updateTimeStep",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "upgradeTo", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "upgradeToAndCall",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "withdraw", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "withdrawAll",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "withdrawLiquidity",
+    data: BytesLike
+  ): Result;
 
   events: {
-    'ActivityChanged(uint256,bool)': EventFragment;
-    'Claimed(address,uint256,uint256,uint256,bool,uint256)': EventFragment;
-    'LiquidityWithdrawnByAdmin(address,uint256)': EventFragment;
-    'RoleAdminChanged(bytes32,bytes32,bytes32)': EventFragment;
-    'RoleGranted(bytes32,address,address)': EventFragment;
-    'RoleRevoked(bytes32,address,address)': EventFragment;
-    'Staked(address,uint256,uint256,uint256,uint256,bool,uint256)': EventFragment;
-    'StakingPlanCreated(uint256,uint256,uint256)': EventFragment;
-    'Subscribed(address,uint256)': EventFragment;
+    "ActivityChanged(uint256,bool)": EventFragment;
+    "AdminChanged(address,address)": EventFragment;
+    "BeaconUpgraded(address)": EventFragment;
+    "Claimed(address,uint256,uint256,uint256,bool,uint256)": EventFragment;
+    "Initialized(uint8)": EventFragment;
+    "LiquidityWithdrawnByAdmin(address,uint256)": EventFragment;
+    "RoleAdminChanged(bytes32,bytes32,bytes32)": EventFragment;
+    "RoleGranted(bytes32,address,address)": EventFragment;
+    "RoleRevoked(bytes32,address,address)": EventFragment;
+    "Staked(address,uint256,uint256,uint256,uint256,bool,uint256)": EventFragment;
+    "StakingPlanCreated(uint256,uint256,uint256)": EventFragment;
+    "Subscribed(address,uint256)": EventFragment;
+    "Upgraded(address)": EventFragment;
   };
 
-  getEvent(nameOrSignatureOrTopic: 'ActivityChanged'): EventFragment;
-  getEvent(nameOrSignatureOrTopic: 'Claimed'): EventFragment;
-  getEvent(nameOrSignatureOrTopic: 'LiquidityWithdrawnByAdmin'): EventFragment;
-  getEvent(nameOrSignatureOrTopic: 'RoleAdminChanged'): EventFragment;
-  getEvent(nameOrSignatureOrTopic: 'RoleGranted'): EventFragment;
-  getEvent(nameOrSignatureOrTopic: 'RoleRevoked'): EventFragment;
-  getEvent(nameOrSignatureOrTopic: 'Staked'): EventFragment;
-  getEvent(nameOrSignatureOrTopic: 'StakingPlanCreated'): EventFragment;
-  getEvent(nameOrSignatureOrTopic: 'Subscribed'): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "ActivityChanged"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "AdminChanged"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "BeaconUpgraded"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Claimed"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "LiquidityWithdrawnByAdmin"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "RoleAdminChanged"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "RoleGranted"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "RoleRevoked"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Staked"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "StakingPlanCreated"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Subscribed"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Upgraded"): EventFragment;
 }
 
 export interface ActivityChangedEventObject {
   stakingPlanId: BigNumber;
   isActive: boolean;
 }
-export type ActivityChangedEvent = TypedEvent<[BigNumber, boolean], ActivityChangedEventObject>;
+export type ActivityChangedEvent = TypedEvent<
+  [BigNumber, boolean],
+  ActivityChangedEventObject
+>;
 
 export type ActivityChangedEventFilter = TypedEventFilter<ActivityChangedEvent>;
+
+export interface AdminChangedEventObject {
+  previousAdmin: string;
+  newAdmin: string;
+}
+export type AdminChangedEvent = TypedEvent<
+  [string, string],
+  AdminChangedEventObject
+>;
+
+export type AdminChangedEventFilter = TypedEventFilter<AdminChangedEvent>;
+
+export interface BeaconUpgradedEventObject {
+  beacon: string;
+}
+export type BeaconUpgradedEvent = TypedEvent<
+  [string],
+  BeaconUpgradedEventObject
+>;
+
+export type BeaconUpgradedEventFilter = TypedEventFilter<BeaconUpgradedEvent>;
 
 export interface ClaimedEventObject {
   user: string;
   stakingPlanId: BigNumber;
   stakeIndex: BigNumber;
   amount: BigNumber;
-  isToken2: boolean;
+  isSAVRToken: boolean;
   timestamp: BigNumber;
 }
 export type ClaimedEvent = TypedEvent<
@@ -473,6 +616,13 @@ export type ClaimedEvent = TypedEvent<
 >;
 
 export type ClaimedEventFilter = TypedEventFilter<ClaimedEvent>;
+
+export interface InitializedEventObject {
+  version: number;
+}
+export type InitializedEvent = TypedEvent<[number], InitializedEventObject>;
+
+export type InitializedEventFilter = TypedEventFilter<InitializedEvent>;
 
 export interface LiquidityWithdrawnByAdminEventObject {
   recipient: string;
@@ -483,7 +633,8 @@ export type LiquidityWithdrawnByAdminEvent = TypedEvent<
   LiquidityWithdrawnByAdminEventObject
 >;
 
-export type LiquidityWithdrawnByAdminEventFilter = TypedEventFilter<LiquidityWithdrawnByAdminEvent>;
+export type LiquidityWithdrawnByAdminEventFilter =
+  TypedEventFilter<LiquidityWithdrawnByAdminEvent>;
 
 export interface RoleAdminChangedEventObject {
   role: string;
@@ -495,14 +646,18 @@ export type RoleAdminChangedEvent = TypedEvent<
   RoleAdminChangedEventObject
 >;
 
-export type RoleAdminChangedEventFilter = TypedEventFilter<RoleAdminChangedEvent>;
+export type RoleAdminChangedEventFilter =
+  TypedEventFilter<RoleAdminChangedEvent>;
 
 export interface RoleGrantedEventObject {
   role: string;
   account: string;
   sender: string;
 }
-export type RoleGrantedEvent = TypedEvent<[string, string, string], RoleGrantedEventObject>;
+export type RoleGrantedEvent = TypedEvent<
+  [string, string, string],
+  RoleGrantedEventObject
+>;
 
 export type RoleGrantedEventFilter = TypedEventFilter<RoleGrantedEvent>;
 
@@ -511,7 +666,10 @@ export interface RoleRevokedEventObject {
   account: string;
   sender: string;
 }
-export type RoleRevokedEvent = TypedEvent<[string, string, string], RoleRevokedEventObject>;
+export type RoleRevokedEvent = TypedEvent<
+  [string, string, string],
+  RoleRevokedEventObject
+>;
 
 export type RoleRevokedEventFilter = TypedEventFilter<RoleRevokedEvent>;
 
@@ -521,7 +679,7 @@ export interface StakedEventObject {
   stakeIndex: BigNumber;
   amount: BigNumber;
   profit: BigNumber;
-  isToken2: boolean;
+  isSAVRToken: boolean;
   timestamp: BigNumber;
 }
 export type StakedEvent = TypedEvent<
@@ -541,15 +699,26 @@ export type StakingPlanCreatedEvent = TypedEvent<
   StakingPlanCreatedEventObject
 >;
 
-export type StakingPlanCreatedEventFilter = TypedEventFilter<StakingPlanCreatedEvent>;
+export type StakingPlanCreatedEventFilter =
+  TypedEventFilter<StakingPlanCreatedEvent>;
 
 export interface SubscribedEventObject {
   user: string;
   stakingPlanId: BigNumber;
 }
-export type SubscribedEvent = TypedEvent<[string, BigNumber], SubscribedEventObject>;
+export type SubscribedEvent = TypedEvent<
+  [string, BigNumber],
+  SubscribedEventObject
+>;
 
 export type SubscribedEventFilter = TypedEventFilter<SubscribedEvent>;
+
+export interface UpgradedEventObject {
+  implementation: string;
+}
+export type UpgradedEvent = TypedEvent<[string], UpgradedEventObject>;
+
+export type UpgradedEventFilter = TypedEventFilter<UpgradedEvent>;
 
 export interface Staking extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
@@ -568,7 +737,9 @@ export interface Staking extends BaseContract {
     eventFilter?: TypedEventFilter<TEvent>
   ): Array<TypedListener<TEvent>>;
   listeners(eventName?: string): Array<Listener>;
-  removeAllListeners<TEvent extends TypedEvent>(eventFilter: TypedEventFilter<TEvent>): this;
+  removeAllListeners<TEvent extends TypedEvent>(
+    eventFilter: TypedEventFilter<TEvent>
+  ): this;
   removeAllListeners(eventName?: string): this;
   off: OnEvent<this>;
   on: OnEvent<this>;
@@ -584,106 +755,118 @@ export interface Staking extends BaseContract {
 
     TIME_STEP(overrides?: CallOverrides): Promise<[BigNumber]>;
 
+    UPGRADER_ROLE(overrides?: CallOverrides): Promise<[string]>;
+
     addStakingPlan(
-      subscriptionCost: PromiseOrValue<BigNumberish>,
-      subscriptionDuration: PromiseOrValue<BigNumberish>,
-      stakingDuration: PromiseOrValue<BigNumberish>,
-      apr: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      subscriptionCost: BigNumberish,
+      subscriptionDuration: BigNumberish,
+      stakingDuration: BigNumberish,
+      apr: BigNumberish,
+      overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
 
     calculateStakeProfit(
-      planId: PromiseOrValue<BigNumberish>,
-      amount: PromiseOrValue<BigNumberish>,
+      planId: BigNumberish,
+      amount: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
     deposit(
-      planId: PromiseOrValue<BigNumberish>,
-      depositAmount: PromiseOrValue<BigNumberish>,
-      isToken2: PromiseOrValue<boolean>,
-      referrer: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      planId: BigNumberish,
+      depositAmount: BigNumberish,
+      isSAVRToken: boolean,
+      referrer: string,
+      overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
 
     getAvailableStakeReward(
-      planId: PromiseOrValue<BigNumberish>,
-      userAddress: PromiseOrValue<string>,
-      stakeId: PromiseOrValue<BigNumberish>,
+      planId: BigNumberish,
+      userAddress: string,
+      stakeId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
     getAvailableTokens(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    getRoleAdmin(role: PromiseOrValue<BytesLike>, overrides?: CallOverrides): Promise<[string]>;
+    getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<[string]>;
 
-    getStakingPlans(overrides?: CallOverrides): Promise<[IStaking.StakingPlanStructOutput[]]>;
+    getStakingPlans(
+      overrides?: CallOverrides
+    ): Promise<[IStaking.StakingPlanStructOutput[]]>;
 
     getTimestamp(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     getUserPlanInfo(
-      planId: PromiseOrValue<BigNumberish>,
-      userAddress: PromiseOrValue<string>,
+      planId: BigNumberish,
+      userAddress: string,
       overrides?: CallOverrides
     ): Promise<[IStaking.UserStakingInfoStructOutput]>;
 
     getUserPlansInfo(
-      userAddress: PromiseOrValue<string>,
+      userAddress: string,
       overrides?: CallOverrides
     ): Promise<[IStaking.UserStakingInfoStructOutput[]]>;
 
     getUserStakes(
-      planId: PromiseOrValue<BigNumberish>,
-      userAddress: PromiseOrValue<string>,
+      planId: BigNumberish,
+      userAddress: string,
       overrides?: CallOverrides
     ): Promise<[IStaking.StakeStructOutput[]]>;
 
     getUserStakesWithRewards(
-      planId: PromiseOrValue<BigNumberish>,
-      userAddress: PromiseOrValue<string>,
+      planId: BigNumberish,
+      userAddress: string,
       overrides?: CallOverrides
     ): Promise<[IStaking.StakeWithRewardsInfoStructOutput[]]>;
 
     grantRole(
-      role: PromiseOrValue<BytesLike>,
-      account: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
 
-    hasAnySubscription(user: PromiseOrValue<string>, overrides?: CallOverrides): Promise<[boolean]>;
+    hasAnySubscription(
+      user: string,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
 
     hasRole(
-      role: PromiseOrValue<BytesLike>,
-      account: PromiseOrValue<string>,
+      role: BytesLike,
+      account: string,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
     hasSubscription(
-      planId: PromiseOrValue<BigNumberish>,
-      user: PromiseOrValue<string>,
+      planId: BigNumberish,
+      user: string,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
-    referralManager(overrides?: CallOverrides): Promise<[string]>;
+    initialize(
+      contractManagerAddress: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
+
+    proxiableUUID(overrides?: CallOverrides): Promise<[string]>;
 
     renounceRole(
-      role: PromiseOrValue<BytesLike>,
-      account: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
 
     revokeRole(
-      role: PromiseOrValue<BytesLike>,
-      account: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
 
-    shouldAddReferrerOnToken2Stake(overrides?: CallOverrides): Promise<[boolean]>;
-
-    squadsManager(overrides?: CallOverrides): Promise<[string]>;
+    shouldAddReferrerOnSavrTokenStake(
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
 
     stakingPlans(
-      arg0: PromiseOrValue<BigNumberish>,
+      arg0: BigNumberish,
       overrides?: CallOverrides
     ): Promise<
       [
@@ -707,112 +890,99 @@ export interface Staking extends BaseContract {
         subscriptionDuration: BigNumber;
         stakingDuration: BigNumber;
         apr: BigNumber;
-        totalStakesToken1No: BigNumber;
-        totalStakesToken2No: BigNumber;
-        totalStakedToken1: BigNumber;
-        totalStakedToken2: BigNumber;
-        currentToken1Locked: BigNumber;
-        currentToken2Locked: BigNumber;
+        totalStakesSavTokenNo: BigNumber;
+        totalStakesSavrTokenNo: BigNumber;
+        totalStakedSavToken: BigNumber;
+        totalStakedSavrToken: BigNumber;
+        currentSavTokenLocked: BigNumber;
+        currentSavrTokenLocked: BigNumber;
         totalClaimed: BigNumber;
       }
     >;
 
     subscribe(
-      planId: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      planId: BigNumberish,
+      overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
 
     supportsInterface(
-      interfaceId: PromiseOrValue<BytesLike>,
+      interfaceId: BytesLike,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
-
-    token1(overrides?: CallOverrides): Promise<[string]>;
-
-    token2(overrides?: CallOverrides): Promise<[string]>;
 
     totalLockedTokens(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     updateMinStakeLimit(
-      minLimit_: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      minLimit_: BigNumberish,
+      overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
 
     updatePlanAPR(
-      planId: PromiseOrValue<BigNumberish>,
-      apr: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      planId: BigNumberish,
+      apr: BigNumberish,
+      overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
 
     updatePlanActivity(
-      planId: PromiseOrValue<BigNumberish>,
-      isActive: PromiseOrValue<boolean>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      planId: BigNumberish,
+      isActive: boolean,
+      overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
 
     updatePlanDurationDays(
-      planId: PromiseOrValue<BigNumberish>,
-      duration: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      planId: BigNumberish,
+      duration: BigNumberish,
+      overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
 
     updatePlanSubscriptionCost(
-      planId: PromiseOrValue<BigNumberish>,
-      cost: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      planId: BigNumberish,
+      cost: BigNumberish,
+      overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
 
     updatePlanSubscriptionPeriod(
-      planId: PromiseOrValue<BigNumberish>,
-      subscriptionDuration: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      planId: BigNumberish,
+      subscriptionDuration: BigNumberish,
+      overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
 
-    updateReferralManager(
-      referralManager_: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    updateShouldAddReferrerOnToken2Stake(
-      value: PromiseOrValue<boolean>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    updateSquadsManager(
-      squadsManager_: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    updateShouldAddReferrerOnSavrTokenStake(
+      value: boolean,
+      overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
 
     updateTimeStep(
-      step_: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      step_: BigNumberish,
+      overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
 
-    updateToken1(
-      token1_: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    upgradeTo(
+      newImplementation: string,
+      overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
 
-    updateToken2(
-      token2_: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    upgradeToAndCall(
+      newImplementation: string,
+      data: BytesLike,
+      overrides?: PayableOverrides & { from?: string }
     ): Promise<ContractTransaction>;
 
     withdraw(
-      planId: PromiseOrValue<BigNumberish>,
-      stakeId: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      planId: BigNumberish,
+      stakeId: BigNumberish,
+      overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
 
     withdrawAll(
-      planId: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      planId: BigNumberish,
+      overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
 
     withdrawLiquidity(
-      recipient: PromiseOrValue<string>,
-      amount: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      recipient: string,
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
   };
 
@@ -824,106 +994,115 @@ export interface Staking extends BaseContract {
 
   TIME_STEP(overrides?: CallOverrides): Promise<BigNumber>;
 
+  UPGRADER_ROLE(overrides?: CallOverrides): Promise<string>;
+
   addStakingPlan(
-    subscriptionCost: PromiseOrValue<BigNumberish>,
-    subscriptionDuration: PromiseOrValue<BigNumberish>,
-    stakingDuration: PromiseOrValue<BigNumberish>,
-    apr: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
+    subscriptionCost: BigNumberish,
+    subscriptionDuration: BigNumberish,
+    stakingDuration: BigNumberish,
+    apr: BigNumberish,
+    overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
 
   calculateStakeProfit(
-    planId: PromiseOrValue<BigNumberish>,
-    amount: PromiseOrValue<BigNumberish>,
+    planId: BigNumberish,
+    amount: BigNumberish,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
   deposit(
-    planId: PromiseOrValue<BigNumberish>,
-    depositAmount: PromiseOrValue<BigNumberish>,
-    isToken2: PromiseOrValue<boolean>,
-    referrer: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
+    planId: BigNumberish,
+    depositAmount: BigNumberish,
+    isSAVRToken: boolean,
+    referrer: string,
+    overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
 
   getAvailableStakeReward(
-    planId: PromiseOrValue<BigNumberish>,
-    userAddress: PromiseOrValue<string>,
-    stakeId: PromiseOrValue<BigNumberish>,
+    planId: BigNumberish,
+    userAddress: string,
+    stakeId: BigNumberish,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
   getAvailableTokens(overrides?: CallOverrides): Promise<BigNumber>;
 
-  getRoleAdmin(role: PromiseOrValue<BytesLike>, overrides?: CallOverrides): Promise<string>;
+  getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<string>;
 
-  getStakingPlans(overrides?: CallOverrides): Promise<IStaking.StakingPlanStructOutput[]>;
+  getStakingPlans(
+    overrides?: CallOverrides
+  ): Promise<IStaking.StakingPlanStructOutput[]>;
 
   getTimestamp(overrides?: CallOverrides): Promise<BigNumber>;
 
   getUserPlanInfo(
-    planId: PromiseOrValue<BigNumberish>,
-    userAddress: PromiseOrValue<string>,
+    planId: BigNumberish,
+    userAddress: string,
     overrides?: CallOverrides
   ): Promise<IStaking.UserStakingInfoStructOutput>;
 
   getUserPlansInfo(
-    userAddress: PromiseOrValue<string>,
+    userAddress: string,
     overrides?: CallOverrides
   ): Promise<IStaking.UserStakingInfoStructOutput[]>;
 
   getUserStakes(
-    planId: PromiseOrValue<BigNumberish>,
-    userAddress: PromiseOrValue<string>,
+    planId: BigNumberish,
+    userAddress: string,
     overrides?: CallOverrides
   ): Promise<IStaking.StakeStructOutput[]>;
 
   getUserStakesWithRewards(
-    planId: PromiseOrValue<BigNumberish>,
-    userAddress: PromiseOrValue<string>,
+    planId: BigNumberish,
+    userAddress: string,
     overrides?: CallOverrides
   ): Promise<IStaking.StakeWithRewardsInfoStructOutput[]>;
 
   grantRole(
-    role: PromiseOrValue<BytesLike>,
-    account: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
+    role: BytesLike,
+    account: string,
+    overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
 
-  hasAnySubscription(user: PromiseOrValue<string>, overrides?: CallOverrides): Promise<boolean>;
+  hasAnySubscription(user: string, overrides?: CallOverrides): Promise<boolean>;
 
   hasRole(
-    role: PromiseOrValue<BytesLike>,
-    account: PromiseOrValue<string>,
+    role: BytesLike,
+    account: string,
     overrides?: CallOverrides
   ): Promise<boolean>;
 
   hasSubscription(
-    planId: PromiseOrValue<BigNumberish>,
-    user: PromiseOrValue<string>,
+    planId: BigNumberish,
+    user: string,
     overrides?: CallOverrides
   ): Promise<boolean>;
 
-  referralManager(overrides?: CallOverrides): Promise<string>;
+  initialize(
+    contractManagerAddress: string,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  proxiableUUID(overrides?: CallOverrides): Promise<string>;
 
   renounceRole(
-    role: PromiseOrValue<BytesLike>,
-    account: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
+    role: BytesLike,
+    account: string,
+    overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
 
   revokeRole(
-    role: PromiseOrValue<BytesLike>,
-    account: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
+    role: BytesLike,
+    account: string,
+    overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
 
-  shouldAddReferrerOnToken2Stake(overrides?: CallOverrides): Promise<boolean>;
-
-  squadsManager(overrides?: CallOverrides): Promise<string>;
+  shouldAddReferrerOnSavrTokenStake(
+    overrides?: CallOverrides
+  ): Promise<boolean>;
 
   stakingPlans(
-    arg0: PromiseOrValue<BigNumberish>,
+    arg0: BigNumberish,
     overrides?: CallOverrides
   ): Promise<
     [
@@ -947,112 +1126,99 @@ export interface Staking extends BaseContract {
       subscriptionDuration: BigNumber;
       stakingDuration: BigNumber;
       apr: BigNumber;
-      totalStakesToken1No: BigNumber;
-      totalStakesToken2No: BigNumber;
-      totalStakedToken1: BigNumber;
-      totalStakedToken2: BigNumber;
-      currentToken1Locked: BigNumber;
-      currentToken2Locked: BigNumber;
+      totalStakesSavTokenNo: BigNumber;
+      totalStakesSavrTokenNo: BigNumber;
+      totalStakedSavToken: BigNumber;
+      totalStakedSavrToken: BigNumber;
+      currentSavTokenLocked: BigNumber;
+      currentSavrTokenLocked: BigNumber;
       totalClaimed: BigNumber;
     }
   >;
 
   subscribe(
-    planId: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
+    planId: BigNumberish,
+    overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
 
   supportsInterface(
-    interfaceId: PromiseOrValue<BytesLike>,
+    interfaceId: BytesLike,
     overrides?: CallOverrides
   ): Promise<boolean>;
-
-  token1(overrides?: CallOverrides): Promise<string>;
-
-  token2(overrides?: CallOverrides): Promise<string>;
 
   totalLockedTokens(overrides?: CallOverrides): Promise<BigNumber>;
 
   updateMinStakeLimit(
-    minLimit_: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
+    minLimit_: BigNumberish,
+    overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
 
   updatePlanAPR(
-    planId: PromiseOrValue<BigNumberish>,
-    apr: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
+    planId: BigNumberish,
+    apr: BigNumberish,
+    overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
 
   updatePlanActivity(
-    planId: PromiseOrValue<BigNumberish>,
-    isActive: PromiseOrValue<boolean>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
+    planId: BigNumberish,
+    isActive: boolean,
+    overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
 
   updatePlanDurationDays(
-    planId: PromiseOrValue<BigNumberish>,
-    duration: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
+    planId: BigNumberish,
+    duration: BigNumberish,
+    overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
 
   updatePlanSubscriptionCost(
-    planId: PromiseOrValue<BigNumberish>,
-    cost: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
+    planId: BigNumberish,
+    cost: BigNumberish,
+    overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
 
   updatePlanSubscriptionPeriod(
-    planId: PromiseOrValue<BigNumberish>,
-    subscriptionDuration: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
+    planId: BigNumberish,
+    subscriptionDuration: BigNumberish,
+    overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
 
-  updateReferralManager(
-    referralManager_: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  updateShouldAddReferrerOnToken2Stake(
-    value: PromiseOrValue<boolean>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  updateSquadsManager(
-    squadsManager_: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  updateShouldAddReferrerOnSavrTokenStake(
+    value: boolean,
+    overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
 
   updateTimeStep(
-    step_: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
+    step_: BigNumberish,
+    overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
 
-  updateToken1(
-    token1_: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  upgradeTo(
+    newImplementation: string,
+    overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
 
-  updateToken2(
-    token2_: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  upgradeToAndCall(
+    newImplementation: string,
+    data: BytesLike,
+    overrides?: PayableOverrides & { from?: string }
   ): Promise<ContractTransaction>;
 
   withdraw(
-    planId: PromiseOrValue<BigNumberish>,
-    stakeId: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
+    planId: BigNumberish,
+    stakeId: BigNumberish,
+    overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
 
   withdrawAll(
-    planId: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
+    planId: BigNumberish,
+    overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
 
   withdrawLiquidity(
-    recipient: PromiseOrValue<string>,
-    amount: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
+    recipient: string,
+    amount: BigNumberish,
+    overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
 
   callStatic: {
@@ -1064,106 +1230,118 @@ export interface Staking extends BaseContract {
 
     TIME_STEP(overrides?: CallOverrides): Promise<BigNumber>;
 
+    UPGRADER_ROLE(overrides?: CallOverrides): Promise<string>;
+
     addStakingPlan(
-      subscriptionCost: PromiseOrValue<BigNumberish>,
-      subscriptionDuration: PromiseOrValue<BigNumberish>,
-      stakingDuration: PromiseOrValue<BigNumberish>,
-      apr: PromiseOrValue<BigNumberish>,
+      subscriptionCost: BigNumberish,
+      subscriptionDuration: BigNumberish,
+      stakingDuration: BigNumberish,
+      apr: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
     calculateStakeProfit(
-      planId: PromiseOrValue<BigNumberish>,
-      amount: PromiseOrValue<BigNumberish>,
+      planId: BigNumberish,
+      amount: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     deposit(
-      planId: PromiseOrValue<BigNumberish>,
-      depositAmount: PromiseOrValue<BigNumberish>,
-      isToken2: PromiseOrValue<boolean>,
-      referrer: PromiseOrValue<string>,
+      planId: BigNumberish,
+      depositAmount: BigNumberish,
+      isSAVRToken: boolean,
+      referrer: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
     getAvailableStakeReward(
-      planId: PromiseOrValue<BigNumberish>,
-      userAddress: PromiseOrValue<string>,
-      stakeId: PromiseOrValue<BigNumberish>,
+      planId: BigNumberish,
+      userAddress: string,
+      stakeId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     getAvailableTokens(overrides?: CallOverrides): Promise<BigNumber>;
 
-    getRoleAdmin(role: PromiseOrValue<BytesLike>, overrides?: CallOverrides): Promise<string>;
+    getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<string>;
 
-    getStakingPlans(overrides?: CallOverrides): Promise<IStaking.StakingPlanStructOutput[]>;
+    getStakingPlans(
+      overrides?: CallOverrides
+    ): Promise<IStaking.StakingPlanStructOutput[]>;
 
     getTimestamp(overrides?: CallOverrides): Promise<BigNumber>;
 
     getUserPlanInfo(
-      planId: PromiseOrValue<BigNumberish>,
-      userAddress: PromiseOrValue<string>,
+      planId: BigNumberish,
+      userAddress: string,
       overrides?: CallOverrides
     ): Promise<IStaking.UserStakingInfoStructOutput>;
 
     getUserPlansInfo(
-      userAddress: PromiseOrValue<string>,
+      userAddress: string,
       overrides?: CallOverrides
     ): Promise<IStaking.UserStakingInfoStructOutput[]>;
 
     getUserStakes(
-      planId: PromiseOrValue<BigNumberish>,
-      userAddress: PromiseOrValue<string>,
+      planId: BigNumberish,
+      userAddress: string,
       overrides?: CallOverrides
     ): Promise<IStaking.StakeStructOutput[]>;
 
     getUserStakesWithRewards(
-      planId: PromiseOrValue<BigNumberish>,
-      userAddress: PromiseOrValue<string>,
+      planId: BigNumberish,
+      userAddress: string,
       overrides?: CallOverrides
     ): Promise<IStaking.StakeWithRewardsInfoStructOutput[]>;
 
     grantRole(
-      role: PromiseOrValue<BytesLike>,
-      account: PromiseOrValue<string>,
+      role: BytesLike,
+      account: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    hasAnySubscription(user: PromiseOrValue<string>, overrides?: CallOverrides): Promise<boolean>;
+    hasAnySubscription(
+      user: string,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
 
     hasRole(
-      role: PromiseOrValue<BytesLike>,
-      account: PromiseOrValue<string>,
+      role: BytesLike,
+      account: string,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
     hasSubscription(
-      planId: PromiseOrValue<BigNumberish>,
-      user: PromiseOrValue<string>,
+      planId: BigNumberish,
+      user: string,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
-    referralManager(overrides?: CallOverrides): Promise<string>;
+    initialize(
+      contractManagerAddress: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    proxiableUUID(overrides?: CallOverrides): Promise<string>;
 
     renounceRole(
-      role: PromiseOrValue<BytesLike>,
-      account: PromiseOrValue<string>,
+      role: BytesLike,
+      account: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
     revokeRole(
-      role: PromiseOrValue<BytesLike>,
-      account: PromiseOrValue<string>,
+      role: BytesLike,
+      account: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    shouldAddReferrerOnToken2Stake(overrides?: CallOverrides): Promise<boolean>;
-
-    squadsManager(overrides?: CallOverrides): Promise<string>;
+    shouldAddReferrerOnSavrTokenStake(
+      overrides?: CallOverrides
+    ): Promise<boolean>;
 
     stakingPlans(
-      arg0: PromiseOrValue<BigNumberish>,
+      arg0: BigNumberish,
       overrides?: CallOverrides
     ): Promise<
       [
@@ -1187,207 +1365,223 @@ export interface Staking extends BaseContract {
         subscriptionDuration: BigNumber;
         stakingDuration: BigNumber;
         apr: BigNumber;
-        totalStakesToken1No: BigNumber;
-        totalStakesToken2No: BigNumber;
-        totalStakedToken1: BigNumber;
-        totalStakedToken2: BigNumber;
-        currentToken1Locked: BigNumber;
-        currentToken2Locked: BigNumber;
+        totalStakesSavTokenNo: BigNumber;
+        totalStakesSavrTokenNo: BigNumber;
+        totalStakedSavToken: BigNumber;
+        totalStakedSavrToken: BigNumber;
+        currentSavTokenLocked: BigNumber;
+        currentSavrTokenLocked: BigNumber;
         totalClaimed: BigNumber;
       }
     >;
 
-    subscribe(planId: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<void>;
+    subscribe(planId: BigNumberish, overrides?: CallOverrides): Promise<void>;
 
     supportsInterface(
-      interfaceId: PromiseOrValue<BytesLike>,
+      interfaceId: BytesLike,
       overrides?: CallOverrides
     ): Promise<boolean>;
-
-    token1(overrides?: CallOverrides): Promise<string>;
-
-    token2(overrides?: CallOverrides): Promise<string>;
 
     totalLockedTokens(overrides?: CallOverrides): Promise<BigNumber>;
 
     updateMinStakeLimit(
-      minLimit_: PromiseOrValue<BigNumberish>,
+      minLimit_: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
     updatePlanAPR(
-      planId: PromiseOrValue<BigNumberish>,
-      apr: PromiseOrValue<BigNumberish>,
+      planId: BigNumberish,
+      apr: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
     updatePlanActivity(
-      planId: PromiseOrValue<BigNumberish>,
-      isActive: PromiseOrValue<boolean>,
+      planId: BigNumberish,
+      isActive: boolean,
       overrides?: CallOverrides
     ): Promise<void>;
 
     updatePlanDurationDays(
-      planId: PromiseOrValue<BigNumberish>,
-      duration: PromiseOrValue<BigNumberish>,
+      planId: BigNumberish,
+      duration: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
     updatePlanSubscriptionCost(
-      planId: PromiseOrValue<BigNumberish>,
-      cost: PromiseOrValue<BigNumberish>,
+      planId: BigNumberish,
+      cost: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
     updatePlanSubscriptionPeriod(
-      planId: PromiseOrValue<BigNumberish>,
-      subscriptionDuration: PromiseOrValue<BigNumberish>,
+      planId: BigNumberish,
+      subscriptionDuration: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    updateReferralManager(
-      referralManager_: PromiseOrValue<string>,
+    updateShouldAddReferrerOnSavrTokenStake(
+      value: boolean,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    updateShouldAddReferrerOnToken2Stake(
-      value: PromiseOrValue<boolean>,
+    updateTimeStep(
+      step_: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    updateSquadsManager(
-      squadsManager_: PromiseOrValue<string>,
+    upgradeTo(
+      newImplementation: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    updateTimeStep(step_: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<void>;
-
-    updateToken1(token1_: PromiseOrValue<string>, overrides?: CallOverrides): Promise<void>;
-
-    updateToken2(token2_: PromiseOrValue<string>, overrides?: CallOverrides): Promise<void>;
+    upgradeToAndCall(
+      newImplementation: string,
+      data: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     withdraw(
-      planId: PromiseOrValue<BigNumberish>,
-      stakeId: PromiseOrValue<BigNumberish>,
+      planId: BigNumberish,
+      stakeId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    withdrawAll(planId: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<void>;
+    withdrawAll(planId: BigNumberish, overrides?: CallOverrides): Promise<void>;
 
     withdrawLiquidity(
-      recipient: PromiseOrValue<string>,
-      amount: PromiseOrValue<BigNumberish>,
+      recipient: string,
+      amount: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
   };
 
   filters: {
-    'ActivityChanged(uint256,bool)'(
-      stakingPlanId?: PromiseOrValue<BigNumberish> | null,
+    "ActivityChanged(uint256,bool)"(
+      stakingPlanId?: BigNumberish | null,
       isActive?: null
     ): ActivityChangedEventFilter;
     ActivityChanged(
-      stakingPlanId?: PromiseOrValue<BigNumberish> | null,
+      stakingPlanId?: BigNumberish | null,
       isActive?: null
     ): ActivityChangedEventFilter;
 
-    'Claimed(address,uint256,uint256,uint256,bool,uint256)'(
-      user?: PromiseOrValue<string> | null,
-      stakingPlanId?: PromiseOrValue<BigNumberish> | null,
-      stakeIndex?: PromiseOrValue<BigNumberish> | null,
+    "AdminChanged(address,address)"(
+      previousAdmin?: null,
+      newAdmin?: null
+    ): AdminChangedEventFilter;
+    AdminChanged(
+      previousAdmin?: null,
+      newAdmin?: null
+    ): AdminChangedEventFilter;
+
+    "BeaconUpgraded(address)"(
+      beacon?: string | null
+    ): BeaconUpgradedEventFilter;
+    BeaconUpgraded(beacon?: string | null): BeaconUpgradedEventFilter;
+
+    "Claimed(address,uint256,uint256,uint256,bool,uint256)"(
+      user?: string | null,
+      stakingPlanId?: BigNumberish | null,
+      stakeIndex?: BigNumberish | null,
       amount?: null,
-      isToken2?: null,
+      isSAVRToken?: null,
       timestamp?: null
     ): ClaimedEventFilter;
     Claimed(
-      user?: PromiseOrValue<string> | null,
-      stakingPlanId?: PromiseOrValue<BigNumberish> | null,
-      stakeIndex?: PromiseOrValue<BigNumberish> | null,
+      user?: string | null,
+      stakingPlanId?: BigNumberish | null,
+      stakeIndex?: BigNumberish | null,
       amount?: null,
-      isToken2?: null,
+      isSAVRToken?: null,
       timestamp?: null
     ): ClaimedEventFilter;
 
-    'LiquidityWithdrawnByAdmin(address,uint256)'(
-      recipient?: PromiseOrValue<string> | null,
+    "Initialized(uint8)"(version?: null): InitializedEventFilter;
+    Initialized(version?: null): InitializedEventFilter;
+
+    "LiquidityWithdrawnByAdmin(address,uint256)"(
+      recipient?: string | null,
       amount?: null
     ): LiquidityWithdrawnByAdminEventFilter;
     LiquidityWithdrawnByAdmin(
-      recipient?: PromiseOrValue<string> | null,
+      recipient?: string | null,
       amount?: null
     ): LiquidityWithdrawnByAdminEventFilter;
 
-    'RoleAdminChanged(bytes32,bytes32,bytes32)'(
-      role?: PromiseOrValue<BytesLike> | null,
-      previousAdminRole?: PromiseOrValue<BytesLike> | null,
-      newAdminRole?: PromiseOrValue<BytesLike> | null
+    "RoleAdminChanged(bytes32,bytes32,bytes32)"(
+      role?: BytesLike | null,
+      previousAdminRole?: BytesLike | null,
+      newAdminRole?: BytesLike | null
     ): RoleAdminChangedEventFilter;
     RoleAdminChanged(
-      role?: PromiseOrValue<BytesLike> | null,
-      previousAdminRole?: PromiseOrValue<BytesLike> | null,
-      newAdminRole?: PromiseOrValue<BytesLike> | null
+      role?: BytesLike | null,
+      previousAdminRole?: BytesLike | null,
+      newAdminRole?: BytesLike | null
     ): RoleAdminChangedEventFilter;
 
-    'RoleGranted(bytes32,address,address)'(
-      role?: PromiseOrValue<BytesLike> | null,
-      account?: PromiseOrValue<string> | null,
-      sender?: PromiseOrValue<string> | null
+    "RoleGranted(bytes32,address,address)"(
+      role?: BytesLike | null,
+      account?: string | null,
+      sender?: string | null
     ): RoleGrantedEventFilter;
     RoleGranted(
-      role?: PromiseOrValue<BytesLike> | null,
-      account?: PromiseOrValue<string> | null,
-      sender?: PromiseOrValue<string> | null
+      role?: BytesLike | null,
+      account?: string | null,
+      sender?: string | null
     ): RoleGrantedEventFilter;
 
-    'RoleRevoked(bytes32,address,address)'(
-      role?: PromiseOrValue<BytesLike> | null,
-      account?: PromiseOrValue<string> | null,
-      sender?: PromiseOrValue<string> | null
+    "RoleRevoked(bytes32,address,address)"(
+      role?: BytesLike | null,
+      account?: string | null,
+      sender?: string | null
     ): RoleRevokedEventFilter;
     RoleRevoked(
-      role?: PromiseOrValue<BytesLike> | null,
-      account?: PromiseOrValue<string> | null,
-      sender?: PromiseOrValue<string> | null
+      role?: BytesLike | null,
+      account?: string | null,
+      sender?: string | null
     ): RoleRevokedEventFilter;
 
-    'Staked(address,uint256,uint256,uint256,uint256,bool,uint256)'(
-      user?: PromiseOrValue<string> | null,
-      stakingPlanId?: PromiseOrValue<BigNumberish> | null,
-      stakeIndex?: PromiseOrValue<BigNumberish> | null,
+    "Staked(address,uint256,uint256,uint256,uint256,bool,uint256)"(
+      user?: string | null,
+      stakingPlanId?: BigNumberish | null,
+      stakeIndex?: BigNumberish | null,
       amount?: null,
       profit?: null,
-      isToken2?: null,
+      isSAVRToken?: null,
       timestamp?: null
     ): StakedEventFilter;
     Staked(
-      user?: PromiseOrValue<string> | null,
-      stakingPlanId?: PromiseOrValue<BigNumberish> | null,
-      stakeIndex?: PromiseOrValue<BigNumberish> | null,
+      user?: string | null,
+      stakingPlanId?: BigNumberish | null,
+      stakeIndex?: BigNumberish | null,
       amount?: null,
       profit?: null,
-      isToken2?: null,
+      isSAVRToken?: null,
       timestamp?: null
     ): StakedEventFilter;
 
-    'StakingPlanCreated(uint256,uint256,uint256)'(
-      stakingPlanId?: PromiseOrValue<BigNumberish> | null,
+    "StakingPlanCreated(uint256,uint256,uint256)"(
+      stakingPlanId?: BigNumberish | null,
       duration?: null,
       apr?: null
     ): StakingPlanCreatedEventFilter;
     StakingPlanCreated(
-      stakingPlanId?: PromiseOrValue<BigNumberish> | null,
+      stakingPlanId?: BigNumberish | null,
       duration?: null,
       apr?: null
     ): StakingPlanCreatedEventFilter;
 
-    'Subscribed(address,uint256)'(
-      user?: PromiseOrValue<string> | null,
-      stakingPlanId?: PromiseOrValue<BigNumberish> | null
+    "Subscribed(address,uint256)"(
+      user?: string | null,
+      stakingPlanId?: BigNumberish | null
     ): SubscribedEventFilter;
     Subscribed(
-      user?: PromiseOrValue<string> | null,
-      stakingPlanId?: PromiseOrValue<BigNumberish> | null
+      user?: string | null,
+      stakingPlanId?: BigNumberish | null
     ): SubscribedEventFilter;
+
+    "Upgraded(address)"(implementation?: string | null): UpgradedEventFilter;
+    Upgraded(implementation?: string | null): UpgradedEventFilter;
   };
 
   estimateGas: {
@@ -1399,247 +1593,258 @@ export interface Staking extends BaseContract {
 
     TIME_STEP(overrides?: CallOverrides): Promise<BigNumber>;
 
+    UPGRADER_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
+
     addStakingPlan(
-      subscriptionCost: PromiseOrValue<BigNumberish>,
-      subscriptionDuration: PromiseOrValue<BigNumberish>,
-      stakingDuration: PromiseOrValue<BigNumberish>,
-      apr: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      subscriptionCost: BigNumberish,
+      subscriptionDuration: BigNumberish,
+      stakingDuration: BigNumberish,
+      apr: BigNumberish,
+      overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
 
     calculateStakeProfit(
-      planId: PromiseOrValue<BigNumberish>,
-      amount: PromiseOrValue<BigNumberish>,
+      planId: BigNumberish,
+      amount: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     deposit(
-      planId: PromiseOrValue<BigNumberish>,
-      depositAmount: PromiseOrValue<BigNumberish>,
-      isToken2: PromiseOrValue<boolean>,
-      referrer: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      planId: BigNumberish,
+      depositAmount: BigNumberish,
+      isSAVRToken: boolean,
+      referrer: string,
+      overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
 
     getAvailableStakeReward(
-      planId: PromiseOrValue<BigNumberish>,
-      userAddress: PromiseOrValue<string>,
-      stakeId: PromiseOrValue<BigNumberish>,
+      planId: BigNumberish,
+      userAddress: string,
+      stakeId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     getAvailableTokens(overrides?: CallOverrides): Promise<BigNumber>;
 
-    getRoleAdmin(role: PromiseOrValue<BytesLike>, overrides?: CallOverrides): Promise<BigNumber>;
+    getRoleAdmin(
+      role: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     getStakingPlans(overrides?: CallOverrides): Promise<BigNumber>;
 
     getTimestamp(overrides?: CallOverrides): Promise<BigNumber>;
 
     getUserPlanInfo(
-      planId: PromiseOrValue<BigNumberish>,
-      userAddress: PromiseOrValue<string>,
+      planId: BigNumberish,
+      userAddress: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     getUserPlansInfo(
-      userAddress: PromiseOrValue<string>,
+      userAddress: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     getUserStakes(
-      planId: PromiseOrValue<BigNumberish>,
-      userAddress: PromiseOrValue<string>,
+      planId: BigNumberish,
+      userAddress: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     getUserStakesWithRewards(
-      planId: PromiseOrValue<BigNumberish>,
-      userAddress: PromiseOrValue<string>,
+      planId: BigNumberish,
+      userAddress: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     grantRole(
-      role: PromiseOrValue<BytesLike>,
-      account: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
 
-    hasAnySubscription(user: PromiseOrValue<string>, overrides?: CallOverrides): Promise<BigNumber>;
+    hasAnySubscription(
+      user: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     hasRole(
-      role: PromiseOrValue<BytesLike>,
-      account: PromiseOrValue<string>,
+      role: BytesLike,
+      account: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     hasSubscription(
-      planId: PromiseOrValue<BigNumberish>,
-      user: PromiseOrValue<string>,
+      planId: BigNumberish,
+      user: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    referralManager(overrides?: CallOverrides): Promise<BigNumber>;
+    initialize(
+      contractManagerAddress: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+
+    proxiableUUID(overrides?: CallOverrides): Promise<BigNumber>;
 
     renounceRole(
-      role: PromiseOrValue<BytesLike>,
-      account: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
 
     revokeRole(
-      role: PromiseOrValue<BytesLike>,
-      account: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
 
-    shouldAddReferrerOnToken2Stake(overrides?: CallOverrides): Promise<BigNumber>;
-
-    squadsManager(overrides?: CallOverrides): Promise<BigNumber>;
-
-    stakingPlans(arg0: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<BigNumber>;
-
-    subscribe(
-      planId: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    supportsInterface(
-      interfaceId: PromiseOrValue<BytesLike>,
+    shouldAddReferrerOnSavrTokenStake(
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    token1(overrides?: CallOverrides): Promise<BigNumber>;
+    stakingPlans(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
-    token2(overrides?: CallOverrides): Promise<BigNumber>;
+    subscribe(
+      planId: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+
+    supportsInterface(
+      interfaceId: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     totalLockedTokens(overrides?: CallOverrides): Promise<BigNumber>;
 
     updateMinStakeLimit(
-      minLimit_: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      minLimit_: BigNumberish,
+      overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
 
     updatePlanAPR(
-      planId: PromiseOrValue<BigNumberish>,
-      apr: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      planId: BigNumberish,
+      apr: BigNumberish,
+      overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
 
     updatePlanActivity(
-      planId: PromiseOrValue<BigNumberish>,
-      isActive: PromiseOrValue<boolean>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      planId: BigNumberish,
+      isActive: boolean,
+      overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
 
     updatePlanDurationDays(
-      planId: PromiseOrValue<BigNumberish>,
-      duration: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      planId: BigNumberish,
+      duration: BigNumberish,
+      overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
 
     updatePlanSubscriptionCost(
-      planId: PromiseOrValue<BigNumberish>,
-      cost: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      planId: BigNumberish,
+      cost: BigNumberish,
+      overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
 
     updatePlanSubscriptionPeriod(
-      planId: PromiseOrValue<BigNumberish>,
-      subscriptionDuration: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      planId: BigNumberish,
+      subscriptionDuration: BigNumberish,
+      overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
 
-    updateReferralManager(
-      referralManager_: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    updateShouldAddReferrerOnToken2Stake(
-      value: PromiseOrValue<boolean>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    updateSquadsManager(
-      squadsManager_: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    updateShouldAddReferrerOnSavrTokenStake(
+      value: boolean,
+      overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
 
     updateTimeStep(
-      step_: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      step_: BigNumberish,
+      overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
 
-    updateToken1(
-      token1_: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    upgradeTo(
+      newImplementation: string,
+      overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
 
-    updateToken2(
-      token2_: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    upgradeToAndCall(
+      newImplementation: string,
+      data: BytesLike,
+      overrides?: PayableOverrides & { from?: string }
     ): Promise<BigNumber>;
 
     withdraw(
-      planId: PromiseOrValue<BigNumberish>,
-      stakeId: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      planId: BigNumberish,
+      stakeId: BigNumberish,
+      overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
 
     withdrawAll(
-      planId: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      planId: BigNumberish,
+      overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
 
     withdrawLiquidity(
-      recipient: PromiseOrValue<string>,
-      amount: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      recipient: string,
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
   };
 
   populateTransaction: {
-    BASE_POINTS_DIVIDER(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    BASE_POINTS_DIVIDER(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
-    DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    DEFAULT_ADMIN_ROLE(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     MIN_STAKE_LIMIT(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     TIME_STEP(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    UPGRADER_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     addStakingPlan(
-      subscriptionCost: PromiseOrValue<BigNumberish>,
-      subscriptionDuration: PromiseOrValue<BigNumberish>,
-      stakingDuration: PromiseOrValue<BigNumberish>,
-      apr: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      subscriptionCost: BigNumberish,
+      subscriptionDuration: BigNumberish,
+      stakingDuration: BigNumberish,
+      apr: BigNumberish,
+      overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 
     calculateStakeProfit(
-      planId: PromiseOrValue<BigNumberish>,
-      amount: PromiseOrValue<BigNumberish>,
+      planId: BigNumberish,
+      amount: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     deposit(
-      planId: PromiseOrValue<BigNumberish>,
-      depositAmount: PromiseOrValue<BigNumberish>,
-      isToken2: PromiseOrValue<boolean>,
-      referrer: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      planId: BigNumberish,
+      depositAmount: BigNumberish,
+      isSAVRToken: boolean,
+      referrer: string,
+      overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 
     getAvailableStakeReward(
-      planId: PromiseOrValue<BigNumberish>,
-      userAddress: PromiseOrValue<string>,
-      stakeId: PromiseOrValue<BigNumberish>,
+      planId: BigNumberish,
+      userAddress: string,
+      stakeId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    getAvailableTokens(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    getAvailableTokens(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     getRoleAdmin(
-      role: PromiseOrValue<BytesLike>,
+      role: BytesLike,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -1648,170 +1853,162 @@ export interface Staking extends BaseContract {
     getTimestamp(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getUserPlanInfo(
-      planId: PromiseOrValue<BigNumberish>,
-      userAddress: PromiseOrValue<string>,
+      planId: BigNumberish,
+      userAddress: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     getUserPlansInfo(
-      userAddress: PromiseOrValue<string>,
+      userAddress: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     getUserStakes(
-      planId: PromiseOrValue<BigNumberish>,
-      userAddress: PromiseOrValue<string>,
+      planId: BigNumberish,
+      userAddress: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     getUserStakesWithRewards(
-      planId: PromiseOrValue<BigNumberish>,
-      userAddress: PromiseOrValue<string>,
+      planId: BigNumberish,
+      userAddress: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     grantRole(
-      role: PromiseOrValue<BytesLike>,
-      account: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 
     hasAnySubscription(
-      user: PromiseOrValue<string>,
+      user: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     hasRole(
-      role: PromiseOrValue<BytesLike>,
-      account: PromiseOrValue<string>,
+      role: BytesLike,
+      account: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     hasSubscription(
-      planId: PromiseOrValue<BigNumberish>,
-      user: PromiseOrValue<string>,
+      planId: BigNumberish,
+      user: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    referralManager(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    initialize(
+      contractManagerAddress: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    proxiableUUID(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     renounceRole(
-      role: PromiseOrValue<BytesLike>,
-      account: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 
     revokeRole(
-      role: PromiseOrValue<BytesLike>,
-      account: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 
-    shouldAddReferrerOnToken2Stake(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    squadsManager(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    shouldAddReferrerOnSavrTokenStake(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     stakingPlans(
-      arg0: PromiseOrValue<BigNumberish>,
+      arg0: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     subscribe(
-      planId: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      planId: BigNumberish,
+      overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 
     supportsInterface(
-      interfaceId: PromiseOrValue<BytesLike>,
+      interfaceId: BytesLike,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
-
-    token1(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    token2(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     totalLockedTokens(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     updateMinStakeLimit(
-      minLimit_: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      minLimit_: BigNumberish,
+      overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 
     updatePlanAPR(
-      planId: PromiseOrValue<BigNumberish>,
-      apr: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      planId: BigNumberish,
+      apr: BigNumberish,
+      overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 
     updatePlanActivity(
-      planId: PromiseOrValue<BigNumberish>,
-      isActive: PromiseOrValue<boolean>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      planId: BigNumberish,
+      isActive: boolean,
+      overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 
     updatePlanDurationDays(
-      planId: PromiseOrValue<BigNumberish>,
-      duration: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      planId: BigNumberish,
+      duration: BigNumberish,
+      overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 
     updatePlanSubscriptionCost(
-      planId: PromiseOrValue<BigNumberish>,
-      cost: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      planId: BigNumberish,
+      cost: BigNumberish,
+      overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 
     updatePlanSubscriptionPeriod(
-      planId: PromiseOrValue<BigNumberish>,
-      subscriptionDuration: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      planId: BigNumberish,
+      subscriptionDuration: BigNumberish,
+      overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 
-    updateReferralManager(
-      referralManager_: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    updateShouldAddReferrerOnToken2Stake(
-      value: PromiseOrValue<boolean>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    updateSquadsManager(
-      squadsManager_: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    updateShouldAddReferrerOnSavrTokenStake(
+      value: boolean,
+      overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 
     updateTimeStep(
-      step_: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      step_: BigNumberish,
+      overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 
-    updateToken1(
-      token1_: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    upgradeTo(
+      newImplementation: string,
+      overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 
-    updateToken2(
-      token2_: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    upgradeToAndCall(
+      newImplementation: string,
+      data: BytesLike,
+      overrides?: PayableOverrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 
     withdraw(
-      planId: PromiseOrValue<BigNumberish>,
-      stakeId: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      planId: BigNumberish,
+      stakeId: BigNumberish,
+      overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 
     withdrawAll(
-      planId: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      planId: BigNumberish,
+      overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 
     withdrawLiquidity(
-      recipient: PromiseOrValue<string>,
-      amount: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      recipient: string,
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
   };
 }

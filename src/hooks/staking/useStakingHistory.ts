@@ -11,13 +11,13 @@ import { getDayFromDate, ONE_DAY } from '@/utils/time';
 type StakeLockChange = {
   day: number;
   change: BigNumber;
-  isToken2: boolean;
+  isSAVRToken: boolean;
 };
 type StakeLockBalance = {
   day: number;
   balance: BigNumber;
-  changeToken1: BigNumber;
-  changeToken2: BigNumber;
+  changeSAVToken: BigNumber;
+  changeSAVRToken: BigNumber;
 };
 type TotalClaimedHistory = {
   day: number;
@@ -74,13 +74,13 @@ export const useStakingHistory = (enabled: boolean = true) => {
     () =>
       claimsDataRequest?.data?.reduce((acc, claim) => {
         const id = claim.stakingPlanId.toNumber();
-        const isToken2 = claim.isToken2;
+        const isSAVRToken = claim.isSAVRToken;
 
         if (!acc[id]) {
           acc[id] = { sav: 0, savr: 0 };
         }
 
-        if (isToken2) {
+        if (isSAVRToken) {
           acc[id].savr += 1;
         } else {
           acc[id].sav += 1;
@@ -134,13 +134,13 @@ export const useStakingUnlocks = (
         }
         acc.push({
           day,
-          change: stake.isToken2 ? stake.profit : stake.amount.add(stake.profit),
-          isToken2: stake.isToken2,
+          change: stake.isSAVRToken ? stake.profit : stake.amount.add(stake.profit),
+          isSAVRToken: stake.isSAVRToken,
         });
         acc.push({
           day: tillDay,
-          change: stake.isToken2 ? stake.profit.mul(-1) : stake.amount.add(stake.profit).mul(-1),
-          isToken2: false,
+          change: stake.isSAVRToken ? stake.profit.mul(-1) : stake.amount.add(stake.profit).mul(-1),
+          isSAVRToken: false,
         });
         return acc;
       },
@@ -156,25 +156,25 @@ export const useStakingUnlocks = (
           acc.push({
             day: tx.day,
             balance: tx.change,
-            changeToken1: !tx.isToken2 ? tx.change : BigNumber.from(0),
-            changeToken2: tx.isToken2 ? tx.change : BigNumber.from(0),
+            changeSAVToken: !tx.isSAVRToken ? tx.change : BigNumber.from(0),
+            changeSAVRToken: tx.isSAVRToken ? tx.change : BigNumber.from(0),
           });
         } else {
           const prev = acc.slice(-1)[0];
           if (prev.day === tx.day) {
             acc[acc.length - 1].balance = prev.balance.add(tx.change);
-            acc[acc.length - 1].changeToken1 = !tx.isToken2
-              ? prev.changeToken1.add(tx.change)
-              : prev.changeToken1;
-            acc[acc.length - 1].changeToken2 = tx.isToken2
-              ? prev.changeToken2.add(tx.change)
-              : prev.changeToken2;
+            acc[acc.length - 1].changeSAVToken = !tx.isSAVRToken
+              ? prev.changeSAVToken.add(tx.change)
+              : prev.changeSAVToken;
+            acc[acc.length - 1].changeSAVRToken = tx.isSAVRToken
+              ? prev.changeSAVRToken.add(tx.change)
+              : prev.changeSAVRToken;
           } else {
             acc.push({
               day: tx.day,
               balance: prev.balance.add(tx.change),
-              changeToken1: !tx.isToken2 ? tx.change : BigNumber.from(0),
-              changeToken2: tx.isToken2 ? tx.change : BigNumber.from(0),
+              changeSAVToken: !tx.isSAVRToken ? tx.change : BigNumber.from(0),
+              changeSAVRToken: tx.isSAVRToken ? tx.change : BigNumber.from(0),
             });
           }
         }
@@ -189,8 +189,8 @@ export const useStakingUnlocks = (
       .map((data) => ({
         ...data,
         balance: bigNumberToNumber(data.balance),
-        changeToken1: bigNumberToNumber(data.changeToken1),
-        changeToken2: bigNumberToNumber(data.changeToken2),
+        changeSAVToken: bigNumberToNumber(data.changeSAVToken),
+        changeSAVRToken: bigNumberToNumber(data.changeSAVRToken),
       }));
   }, [stakesDataRequest.data, groupPeriod, minDate, maxDate]);
 

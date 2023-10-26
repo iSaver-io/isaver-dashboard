@@ -5,9 +5,9 @@
 import { Contract, Signer, utils } from "ethers";
 import type { Provider } from "@ethersproject/providers";
 import type {
-  ERC20Blacklist,
-  ERC20BlacklistInterface,
-} from "../../../contracts/extensions/ERC20Blacklist";
+  ERC20BlackList,
+  ERC20BlackListInterface,
+} from "../../../contracts/extensions/ERC20BlackList";
 
 const _abi = [
   {
@@ -51,7 +51,7 @@ const _abi = [
         type: "address",
       },
     ],
-    name: "BlacklistAdded",
+    name: "BlackListAdded",
     type: "event",
   },
   {
@@ -70,7 +70,7 @@ const _abi = [
         type: "address",
       },
     ],
-    name: "BlacklistRemoved",
+    name: "BlackListRemoved",
     type: "event",
   },
   {
@@ -96,70 +96,6 @@ const _abi = [
       },
     ],
     name: "Transfer",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: false,
-        internalType: "address[]",
-        name: "_addresses",
-        type: "address[]",
-      },
-      {
-        indexed: false,
-        internalType: "address",
-        name: "admin",
-        type: "address",
-      },
-    ],
-    name: "WhitelistAdded",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: false,
-        internalType: "address",
-        name: "admin",
-        type: "address",
-      },
-    ],
-    name: "WhitelistDisabled",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: false,
-        internalType: "address",
-        name: "admin",
-        type: "address",
-      },
-    ],
-    name: "WhitelistEnabled",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: false,
-        internalType: "address[]",
-        name: "_addresses",
-        type: "address[]",
-      },
-      {
-        indexed: false,
-        internalType: "address",
-        name: "admin",
-        type: "address",
-      },
-    ],
-    name: "WhitelistRemoved",
     type: "event",
   },
   {
@@ -298,39 +234,7 @@ const _abi = [
         type: "address",
       },
     ],
-    name: "isAddressInBlacklist",
-    outputs: [
-      {
-        internalType: "bool",
-        name: "",
-        type: "bool",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "_address",
-        type: "address",
-      },
-    ],
-    name: "isAddressInWhiteList",
-    outputs: [
-      {
-        internalType: "bool",
-        name: "",
-        type: "bool",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "isWhitelistRestrictionMode",
+    name: "isAddressInBlackList",
     outputs: [
       {
         internalType: "bool",
@@ -433,17 +337,17 @@ const _abi = [
     stateMutability: "nonpayable",
     type: "function",
   },
-];
+] as const;
 
-export class ERC20Blacklist__factory {
+export class ERC20BlackList__factory {
   static readonly abi = _abi;
-  static createInterface(): ERC20BlacklistInterface {
-    return new utils.Interface(_abi) as ERC20BlacklistInterface;
+  static createInterface(): ERC20BlackListInterface {
+    return new utils.Interface(_abi) as ERC20BlackListInterface;
   }
   static connect(
     address: string,
     signerOrProvider: Signer | Provider
-  ): ERC20Blacklist {
-    return new Contract(address, _abi, signerOrProvider) as ERC20Blacklist;
+  ): ERC20BlackList {
+    return new Contract(address, _abi, signerOrProvider) as ERC20BlackList;
   }
 }

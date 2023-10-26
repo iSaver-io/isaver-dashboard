@@ -20,7 +20,6 @@ import type {
   TypedEvent,
   TypedListener,
   OnEvent,
-  PromiseOrValue,
 } from "../../common";
 
 export interface VRFCoordinatorMockInterface extends utils.Interface {
@@ -45,7 +44,7 @@ export interface VRFCoordinatorMockInterface extends utils.Interface {
 
   encodeFunctionData(
     functionFragment: "fulfillRequest",
-    values: [PromiseOrValue<BigNumberish>]
+    values: [BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "getRequestsLength",
@@ -53,25 +52,19 @@ export interface VRFCoordinatorMockInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "randomWords",
-    values: [PromiseOrValue<BigNumberish>]
+    values: [BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "requestRandomWords",
-    values: [
-      PromiseOrValue<BytesLike>,
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<BigNumberish>
-    ]
+    values: [BytesLike, BigNumberish, BigNumberish, BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "requests",
-    values: [PromiseOrValue<BigNumberish>]
+    values: [BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "setRandomWords",
-    values: [PromiseOrValue<BigNumberish>[]]
+    values: [BigNumberish[]]
   ): string;
 
   decodeFunctionResult(
@@ -127,97 +120,91 @@ export interface VRFCoordinatorMock extends BaseContract {
 
   functions: {
     fulfillRequest(
-      requestId: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      requestId: BigNumberish,
+      overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
 
     getRequestsLength(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     randomWords(
-      arg0: PromiseOrValue<BigNumberish>,
+      arg0: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
     requestRandomWords(
-      keyHash: PromiseOrValue<BytesLike>,
-      subId: PromiseOrValue<BigNumberish>,
-      minimumRequestConfirmations: PromiseOrValue<BigNumberish>,
-      callbackGasLimit: PromiseOrValue<BigNumberish>,
-      numWords: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      keyHash: BytesLike,
+      subId: BigNumberish,
+      minimumRequestConfirmations: BigNumberish,
+      callbackGasLimit: BigNumberish,
+      numWords: BigNumberish,
+      overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
 
     requests(
-      arg0: PromiseOrValue<BigNumberish>,
+      arg0: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[string] & { sender: string }>;
 
     setRandomWords(
-      _randomWords: PromiseOrValue<BigNumberish>[],
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      _randomWords: BigNumberish[],
+      overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
   };
 
   fulfillRequest(
-    requestId: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
+    requestId: BigNumberish,
+    overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
 
   getRequestsLength(overrides?: CallOverrides): Promise<BigNumber>;
 
   randomWords(
-    arg0: PromiseOrValue<BigNumberish>,
+    arg0: BigNumberish,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
   requestRandomWords(
-    keyHash: PromiseOrValue<BytesLike>,
-    subId: PromiseOrValue<BigNumberish>,
-    minimumRequestConfirmations: PromiseOrValue<BigNumberish>,
-    callbackGasLimit: PromiseOrValue<BigNumberish>,
-    numWords: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
+    keyHash: BytesLike,
+    subId: BigNumberish,
+    minimumRequestConfirmations: BigNumberish,
+    callbackGasLimit: BigNumberish,
+    numWords: BigNumberish,
+    overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
 
-  requests(
-    arg0: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<string>;
+  requests(arg0: BigNumberish, overrides?: CallOverrides): Promise<string>;
 
   setRandomWords(
-    _randomWords: PromiseOrValue<BigNumberish>[],
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
+    _randomWords: BigNumberish[],
+    overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
 
   callStatic: {
     fulfillRequest(
-      requestId: PromiseOrValue<BigNumberish>,
+      requestId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
     getRequestsLength(overrides?: CallOverrides): Promise<BigNumber>;
 
     randomWords(
-      arg0: PromiseOrValue<BigNumberish>,
+      arg0: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     requestRandomWords(
-      keyHash: PromiseOrValue<BytesLike>,
-      subId: PromiseOrValue<BigNumberish>,
-      minimumRequestConfirmations: PromiseOrValue<BigNumberish>,
-      callbackGasLimit: PromiseOrValue<BigNumberish>,
-      numWords: PromiseOrValue<BigNumberish>,
+      keyHash: BytesLike,
+      subId: BigNumberish,
+      minimumRequestConfirmations: BigNumberish,
+      callbackGasLimit: BigNumberish,
+      numWords: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    requests(
-      arg0: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<string>;
+    requests(arg0: BigNumberish, overrides?: CallOverrides): Promise<string>;
 
     setRandomWords(
-      _randomWords: PromiseOrValue<BigNumberish>[],
+      _randomWords: BigNumberish[],
       overrides?: CallOverrides
     ): Promise<void>;
   };
@@ -226,67 +213,64 @@ export interface VRFCoordinatorMock extends BaseContract {
 
   estimateGas: {
     fulfillRequest(
-      requestId: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      requestId: BigNumberish,
+      overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
 
     getRequestsLength(overrides?: CallOverrides): Promise<BigNumber>;
 
     randomWords(
-      arg0: PromiseOrValue<BigNumberish>,
+      arg0: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     requestRandomWords(
-      keyHash: PromiseOrValue<BytesLike>,
-      subId: PromiseOrValue<BigNumberish>,
-      minimumRequestConfirmations: PromiseOrValue<BigNumberish>,
-      callbackGasLimit: PromiseOrValue<BigNumberish>,
-      numWords: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      keyHash: BytesLike,
+      subId: BigNumberish,
+      minimumRequestConfirmations: BigNumberish,
+      callbackGasLimit: BigNumberish,
+      numWords: BigNumberish,
+      overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
 
-    requests(
-      arg0: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    requests(arg0: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
 
     setRandomWords(
-      _randomWords: PromiseOrValue<BigNumberish>[],
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      _randomWords: BigNumberish[],
+      overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
   };
 
   populateTransaction: {
     fulfillRequest(
-      requestId: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      requestId: BigNumberish,
+      overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 
     getRequestsLength(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     randomWords(
-      arg0: PromiseOrValue<BigNumberish>,
+      arg0: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     requestRandomWords(
-      keyHash: PromiseOrValue<BytesLike>,
-      subId: PromiseOrValue<BigNumberish>,
-      minimumRequestConfirmations: PromiseOrValue<BigNumberish>,
-      callbackGasLimit: PromiseOrValue<BigNumberish>,
-      numWords: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      keyHash: BytesLike,
+      subId: BigNumberish,
+      minimumRequestConfirmations: BigNumberish,
+      callbackGasLimit: BigNumberish,
+      numWords: BigNumberish,
+      overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 
     requests(
-      arg0: PromiseOrValue<BigNumberish>,
+      arg0: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     setRandomWords(
-      _randomWords: PromiseOrValue<BigNumberish>[],
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      _randomWords: BigNumberish[],
+      overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
   };
 }

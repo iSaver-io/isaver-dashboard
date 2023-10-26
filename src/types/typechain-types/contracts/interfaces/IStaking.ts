@@ -20,16 +20,15 @@ import type {
   TypedEvent,
   TypedListener,
   OnEvent,
-  PromiseOrValue,
 } from "../../common";
 
 export declare namespace IStaking {
   export type UserStakingInfoStruct = {
-    totalClaimed: PromiseOrValue<BigNumberish>;
-    currentToken1Staked: PromiseOrValue<BigNumberish>;
-    currentToken2Staked: PromiseOrValue<BigNumberish>;
-    isSubscribed: PromiseOrValue<boolean>;
-    subscribedTill: PromiseOrValue<BigNumberish>;
+    totalClaimed: BigNumberish;
+    currentSavTokenStaked: BigNumberish;
+    currentSavrTokenStaked: BigNumberish;
+    isSubscribed: boolean;
+    subscribedTill: BigNumberish;
   };
 
   export type UserStakingInfoStructOutput = [
@@ -40,20 +39,20 @@ export declare namespace IStaking {
     BigNumber
   ] & {
     totalClaimed: BigNumber;
-    currentToken1Staked: BigNumber;
-    currentToken2Staked: BigNumber;
+    currentSavTokenStaked: BigNumber;
+    currentSavrTokenStaked: BigNumber;
     isSubscribed: boolean;
     subscribedTill: BigNumber;
   };
 
   export type StakeStruct = {
-    amount: PromiseOrValue<BigNumberish>;
-    timeStart: PromiseOrValue<BigNumberish>;
-    timeEnd: PromiseOrValue<BigNumberish>;
-    apr: PromiseOrValue<BigNumberish>;
-    profit: PromiseOrValue<BigNumberish>;
-    isClaimed: PromiseOrValue<boolean>;
-    isToken2: PromiseOrValue<boolean>;
+    amount: BigNumberish;
+    timeStart: BigNumberish;
+    timeEnd: BigNumberish;
+    apr: BigNumberish;
+    profit: BigNumberish;
+    isClaimed: boolean;
+    isSAVRToken: boolean;
   };
 
   export type StakeStructOutput = [
@@ -71,7 +70,7 @@ export declare namespace IStaking {
     apr: BigNumber;
     profit: BigNumber;
     isClaimed: boolean;
-    isToken2: boolean;
+    isSAVRToken: boolean;
   };
 }
 
@@ -101,44 +100,35 @@ export interface IStakingInterface extends utils.Interface {
 
   encodeFunctionData(
     functionFragment: "deposit",
-    values: [
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<boolean>,
-      PromiseOrValue<string>
-    ]
+    values: [BigNumberish, BigNumberish, boolean, string]
   ): string;
   encodeFunctionData(
     functionFragment: "getAvailableStakeReward",
-    values: [
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<string>,
-      PromiseOrValue<BigNumberish>
-    ]
+    values: [BigNumberish, string, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "getUserPlanInfo",
-    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<string>]
+    values: [BigNumberish, string]
   ): string;
   encodeFunctionData(
     functionFragment: "getUserStakes",
-    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<string>]
+    values: [BigNumberish, string]
   ): string;
   encodeFunctionData(
     functionFragment: "hasAnySubscription",
-    values: [PromiseOrValue<string>]
+    values: [string]
   ): string;
   encodeFunctionData(
     functionFragment: "hasSubscription",
-    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<string>]
+    values: [BigNumberish, string]
   ): string;
   encodeFunctionData(
     functionFragment: "subscribe",
-    values: [PromiseOrValue<BigNumberish>]
+    values: [BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "withdraw",
-    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
+    values: [BigNumberish, BigNumberish]
   ): string;
 
   decodeFunctionResult(functionFragment: "deposit", data: BytesLike): Result;
@@ -196,153 +186,147 @@ export interface IStaking extends BaseContract {
 
   functions: {
     deposit(
-      planId: PromiseOrValue<BigNumberish>,
-      depositAmount: PromiseOrValue<BigNumberish>,
-      isToken2: PromiseOrValue<boolean>,
-      referrer: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      planId: BigNumberish,
+      depositAmount: BigNumberish,
+      isSAVRToken: boolean,
+      referrer: string,
+      overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
 
     getAvailableStakeReward(
-      planId: PromiseOrValue<BigNumberish>,
-      userAddress: PromiseOrValue<string>,
-      stakeId: PromiseOrValue<BigNumberish>,
+      planId: BigNumberish,
+      userAddress: string,
+      stakeId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
     getUserPlanInfo(
-      planId: PromiseOrValue<BigNumberish>,
-      userAddress: PromiseOrValue<string>,
+      planId: BigNumberish,
+      userAddress: string,
       overrides?: CallOverrides
     ): Promise<[IStaking.UserStakingInfoStructOutput]>;
 
     getUserStakes(
-      planId: PromiseOrValue<BigNumberish>,
-      userAddress: PromiseOrValue<string>,
+      planId: BigNumberish,
+      userAddress: string,
       overrides?: CallOverrides
     ): Promise<
       [IStaking.StakeStructOutput[]] & { stakes: IStaking.StakeStructOutput[] }
     >;
 
     hasAnySubscription(
-      user: PromiseOrValue<string>,
+      user: string,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
     hasSubscription(
-      planId: PromiseOrValue<BigNumberish>,
-      user: PromiseOrValue<string>,
+      planId: BigNumberish,
+      user: string,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
     subscribe(
-      planId: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      planId: BigNumberish,
+      overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
 
     withdraw(
-      planId: PromiseOrValue<BigNumberish>,
-      stakeId: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      planId: BigNumberish,
+      stakeId: BigNumberish,
+      overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
   };
 
   deposit(
-    planId: PromiseOrValue<BigNumberish>,
-    depositAmount: PromiseOrValue<BigNumberish>,
-    isToken2: PromiseOrValue<boolean>,
-    referrer: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
+    planId: BigNumberish,
+    depositAmount: BigNumberish,
+    isSAVRToken: boolean,
+    referrer: string,
+    overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
 
   getAvailableStakeReward(
-    planId: PromiseOrValue<BigNumberish>,
-    userAddress: PromiseOrValue<string>,
-    stakeId: PromiseOrValue<BigNumberish>,
+    planId: BigNumberish,
+    userAddress: string,
+    stakeId: BigNumberish,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
   getUserPlanInfo(
-    planId: PromiseOrValue<BigNumberish>,
-    userAddress: PromiseOrValue<string>,
+    planId: BigNumberish,
+    userAddress: string,
     overrides?: CallOverrides
   ): Promise<IStaking.UserStakingInfoStructOutput>;
 
   getUserStakes(
-    planId: PromiseOrValue<BigNumberish>,
-    userAddress: PromiseOrValue<string>,
+    planId: BigNumberish,
+    userAddress: string,
     overrides?: CallOverrides
   ): Promise<IStaking.StakeStructOutput[]>;
 
-  hasAnySubscription(
-    user: PromiseOrValue<string>,
-    overrides?: CallOverrides
-  ): Promise<boolean>;
+  hasAnySubscription(user: string, overrides?: CallOverrides): Promise<boolean>;
 
   hasSubscription(
-    planId: PromiseOrValue<BigNumberish>,
-    user: PromiseOrValue<string>,
+    planId: BigNumberish,
+    user: string,
     overrides?: CallOverrides
   ): Promise<boolean>;
 
   subscribe(
-    planId: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
+    planId: BigNumberish,
+    overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
 
   withdraw(
-    planId: PromiseOrValue<BigNumberish>,
-    stakeId: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
+    planId: BigNumberish,
+    stakeId: BigNumberish,
+    overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
 
   callStatic: {
     deposit(
-      planId: PromiseOrValue<BigNumberish>,
-      depositAmount: PromiseOrValue<BigNumberish>,
-      isToken2: PromiseOrValue<boolean>,
-      referrer: PromiseOrValue<string>,
+      planId: BigNumberish,
+      depositAmount: BigNumberish,
+      isSAVRToken: boolean,
+      referrer: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
     getAvailableStakeReward(
-      planId: PromiseOrValue<BigNumberish>,
-      userAddress: PromiseOrValue<string>,
-      stakeId: PromiseOrValue<BigNumberish>,
+      planId: BigNumberish,
+      userAddress: string,
+      stakeId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     getUserPlanInfo(
-      planId: PromiseOrValue<BigNumberish>,
-      userAddress: PromiseOrValue<string>,
+      planId: BigNumberish,
+      userAddress: string,
       overrides?: CallOverrides
     ): Promise<IStaking.UserStakingInfoStructOutput>;
 
     getUserStakes(
-      planId: PromiseOrValue<BigNumberish>,
-      userAddress: PromiseOrValue<string>,
+      planId: BigNumberish,
+      userAddress: string,
       overrides?: CallOverrides
     ): Promise<IStaking.StakeStructOutput[]>;
 
     hasAnySubscription(
-      user: PromiseOrValue<string>,
+      user: string,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
     hasSubscription(
-      planId: PromiseOrValue<BigNumberish>,
-      user: PromiseOrValue<string>,
+      planId: BigNumberish,
+      user: string,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
-    subscribe(
-      planId: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<void>;
+    subscribe(planId: BigNumberish, overrides?: CallOverrides): Promise<void>;
 
     withdraw(
-      planId: PromiseOrValue<BigNumberish>,
-      stakeId: PromiseOrValue<BigNumberish>,
+      planId: BigNumberish,
+      stakeId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
   };
@@ -351,103 +335,103 @@ export interface IStaking extends BaseContract {
 
   estimateGas: {
     deposit(
-      planId: PromiseOrValue<BigNumberish>,
-      depositAmount: PromiseOrValue<BigNumberish>,
-      isToken2: PromiseOrValue<boolean>,
-      referrer: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      planId: BigNumberish,
+      depositAmount: BigNumberish,
+      isSAVRToken: boolean,
+      referrer: string,
+      overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
 
     getAvailableStakeReward(
-      planId: PromiseOrValue<BigNumberish>,
-      userAddress: PromiseOrValue<string>,
-      stakeId: PromiseOrValue<BigNumberish>,
+      planId: BigNumberish,
+      userAddress: string,
+      stakeId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     getUserPlanInfo(
-      planId: PromiseOrValue<BigNumberish>,
-      userAddress: PromiseOrValue<string>,
+      planId: BigNumberish,
+      userAddress: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     getUserStakes(
-      planId: PromiseOrValue<BigNumberish>,
-      userAddress: PromiseOrValue<string>,
+      planId: BigNumberish,
+      userAddress: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     hasAnySubscription(
-      user: PromiseOrValue<string>,
+      user: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     hasSubscription(
-      planId: PromiseOrValue<BigNumberish>,
-      user: PromiseOrValue<string>,
+      planId: BigNumberish,
+      user: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     subscribe(
-      planId: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      planId: BigNumberish,
+      overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
 
     withdraw(
-      planId: PromiseOrValue<BigNumberish>,
-      stakeId: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      planId: BigNumberish,
+      stakeId: BigNumberish,
+      overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
   };
 
   populateTransaction: {
     deposit(
-      planId: PromiseOrValue<BigNumberish>,
-      depositAmount: PromiseOrValue<BigNumberish>,
-      isToken2: PromiseOrValue<boolean>,
-      referrer: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      planId: BigNumberish,
+      depositAmount: BigNumberish,
+      isSAVRToken: boolean,
+      referrer: string,
+      overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 
     getAvailableStakeReward(
-      planId: PromiseOrValue<BigNumberish>,
-      userAddress: PromiseOrValue<string>,
-      stakeId: PromiseOrValue<BigNumberish>,
+      planId: BigNumberish,
+      userAddress: string,
+      stakeId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     getUserPlanInfo(
-      planId: PromiseOrValue<BigNumberish>,
-      userAddress: PromiseOrValue<string>,
+      planId: BigNumberish,
+      userAddress: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     getUserStakes(
-      planId: PromiseOrValue<BigNumberish>,
-      userAddress: PromiseOrValue<string>,
+      planId: BigNumberish,
+      userAddress: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     hasAnySubscription(
-      user: PromiseOrValue<string>,
+      user: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     hasSubscription(
-      planId: PromiseOrValue<BigNumberish>,
-      user: PromiseOrValue<string>,
+      planId: BigNumberish,
+      user: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     subscribe(
-      planId: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      planId: BigNumberish,
+      overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 
     withdraw(
-      planId: PromiseOrValue<BigNumberish>,
-      stakeId: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      planId: BigNumberish,
+      stakeId: BigNumberish,
+      overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
   };
 }

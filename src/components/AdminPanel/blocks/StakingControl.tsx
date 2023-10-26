@@ -33,8 +33,8 @@ export const StakingControl = () => {
               subscriptionCost={plan.subscriptionCost}
               apr={plan.apr.toString()}
               isActive={plan.isActive}
-              totalStakesSav={plan.totalStakesToken1No.toNumber()}
-              totalStakesSavr={plan.totalStakesToken2No.toNumber()}
+              totalStakesSav={plan.totalStakesSavTokenNo.toNumber()}
+              totalStakesSavr={plan.totalStakesSavrTokenNo.toNumber()}
               claimedStakesSav={claimsCountData?.[plan.stakingPlanId]?.sav || 0}
               claimedStakesSavr={claimsCountData?.[plan.stakingPlanId]?.savr || 0}
               onActivate={() =>

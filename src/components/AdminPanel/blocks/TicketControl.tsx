@@ -5,7 +5,7 @@ import { ControlField } from '@/components/AdminPanel/common/ControlField';
 import { MintRaffleTicket } from '@/components/AdminPanel/common/MintRaffleTicket';
 import { Balance } from '@/components/Balance/Balance';
 import { Button } from '@/components/ui/Button/Button';
-import { useLotteryControl } from '@/hooks/lottery/useLottery';
+import { useRaffleControl } from '@/hooks/raffle/useRaffle';
 import { useTickets, useTicketSupply } from '@/hooks/useTickets';
 import { bigNumberToString } from '@/utils/number';
 
@@ -13,7 +13,7 @@ export const TicketControl = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const { mintTickets } = useTickets();
-  const { ticketPriceRequest, updateTicketPrice } = useLotteryControl();
+  const { ticketPriceRequest, updateTicketPrice } = useRaffleControl();
   const ticketSupply = useTicketSupply();
 
   return (

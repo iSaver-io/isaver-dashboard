@@ -19,6 +19,6 @@ const db = getFirestore(app);
 
 const configCollection = collection(db, 'parameters');
 const configDoc = doc(db, '/parameters/config');
-const rafflesCollection = collection(db, 'lottery_params');
+const rafflesCollection = collection(db, 'raffle_params');
 
 export { app, auth, configCollection, configDoc, db, rafflesCollection };

@@ -67,7 +67,7 @@ export const Staking: FC<StakingProps> = ({ isPageView }) => {
         await deposit.mutateAsync({
           planId: selectedPlan,
           amount: amountBN,
-          isToken2: token === TOKENS.SAVR,
+          isSAVRToken: token === TOKENS.SAVR,
           referrer: localReferrer !== address ? localReferrer : undefined,
         });
         closeModal();
@@ -81,7 +81,7 @@ export const Staking: FC<StakingProps> = ({ isPageView }) => {
   const totalStakeSav = useMemo(
     () =>
       activeStakingPlansWithUserInfo.reduce(
-        (acc, plan) => acc.add(plan.currentToken1Staked || 0),
+        (acc, plan) => acc.add(plan.currentSavTokenStaked || 0),
         BigNumber.from(0)
       ),
     [activeStakingPlansWithUserInfo]
@@ -89,7 +89,7 @@ export const Staking: FC<StakingProps> = ({ isPageView }) => {
   const totalStakeSavR = useMemo(
     () =>
       activeStakingPlansWithUserInfo.reduce(
-        (acc, plan) => acc.add(plan.currentToken2Staked || 0),
+        (acc, plan) => acc.add(plan.currentSavrTokenStaked || 0),
         BigNumber.from(0)
       ),
     [activeStakingPlansWithUserInfo]
@@ -249,10 +249,10 @@ export const Staking: FC<StakingProps> = ({ isPageView }) => {
               subscriptionCost={planData.subscriptionCost}
               subscriptionDuration={planData.subscriptionDuration}
               stakingDuration={planData.stakingDuration}
-              poolSize={planData.currentToken1Locked.add(planData.currentToken2Locked)}
+              poolSize={planData.currentSavTokenLocked.add(planData.currentSavrTokenLocked)}
               apr={planData.apr.toString()}
-              userStakeSav={planData.currentToken1Staked || 0}
-              userStakeSavR={planData.currentToken2Staked || 0}
+              userStakeSav={planData.currentSavTokenStaked || 0}
+              userStakeSavR={planData.currentSavrTokenStaked || 0}
               userTotalReward={planData.totalReward}
               isClaimAvailable={planData.hasReadyStakes}
               onSubscribe={() => handleSubscribe(planData.stakingPlanId)}

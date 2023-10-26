@@ -2,6 +2,7 @@
 /* tslint:disable */
 /* eslint-disable */
 export type { BasicToken } from "./BasicToken";
+export type { ISaverAvatars } from "./ISaverAvatars";
+export type { ISaverSAVRToken } from "./ISaverSAVRToken";
+export type { ISaverSAVToken } from "./ISaverSAVToken";
 export type { Ticket } from "./Ticket";
-export type { Token1 } from "./Token1";
-export type { Token2 } from "./Token2";

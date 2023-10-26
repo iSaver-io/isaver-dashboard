@@ -15,12 +15,12 @@ export const Addresses = () => {
         <Text textStyle="textMedium" mb="8px" fontSize="18px">
           Contracts
         </Text>
-        <AddressInfo title="SAV (ERC20)" address={contracts.Token1} />
-        <AddressInfo title="SAVR (ERC20)" address={contracts.Token2} />
+        <AddressInfo title="SAV (ERC20)" address={contracts.ISaverSAVToken} />
+        <AddressInfo title="SAVR (ERC20)" address={contracts.ISaverSAVRToken} />
         <AddressInfo title="Staking" address={contracts.Staking} />
         <AddressInfo title="Referral Manager" address={contracts.ReferralManager} />
-        <AddressInfo title="Teams" address={contracts.Squads} />
-        <AddressInfo title="Raffles" address={contracts.Lottery} />
+        <AddressInfo title="Teams" address={contracts.Teams} />
+        <AddressInfo title="Raffles" address={contracts.Raffles} />
         <AddressInfo title="Raffle Ticket (ERC1155)" address={contracts.Ticket} />
         <AddressInfo title="Token exchange" address={contracts.VendorSell} />
         <AddressInfo title="Vesting" address={contracts.TokenVesting} />
