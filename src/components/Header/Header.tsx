@@ -19,8 +19,8 @@ import { TopNotification } from '@/components/TopNotification/TopNotification';
 import { Button } from '@/components/ui/Button/Button';
 import { ConnectWalletButton } from '@/components/ui/ConnectWalletButton/ConnectWalletButton';
 import { useUserReferralInfo } from '@/hooks/referral/useReferralManager';
-import { useSquads } from '@/hooks/squads/useSquads';
 import { useStakingPlansUserInfo } from '@/hooks/staking/useStaking';
+import { useTeams } from '@/hooks/teams/useTeams';
 import { useLocalReferrer } from '@/hooks/useLocalReferrer';
 import { useLogger } from '@/hooks/useLogger';
 import { useNavigateByHash } from '@/hooks/useNavigateByHash';
@@ -38,7 +38,7 @@ export const Header: FC<HeaderProps> = ({ isLandingView }) => {
   const { resetLocalReferrer } = useLocalReferrer();
   const { hasEndingSubscription } = useStakingPlansUserInfo();
   const { hasEndingReferralSubscription } = useUserReferralInfo();
-  const { hasEndingSquadsSubscription } = useSquads();
+  const { hasEndingTeamsSubscription } = useTeams();
   const navigate = useNavigateByHash();
   const bp = useBreakpoint({ ssr: false });
   const logger = useLogger({
@@ -51,7 +51,7 @@ export const Header: FC<HeaderProps> = ({ isLandingView }) => {
 
   const hasNotification =
     isConnected &&
-    (hasEndingSubscription || hasEndingReferralSubscription || hasEndingSquadsSubscription);
+    (hasEndingSubscription || hasEndingReferralSubscription || hasEndingTeamsSubscription);
 
   const handleDisconnect = useCallback(() => {
     resetLocalReferrer();

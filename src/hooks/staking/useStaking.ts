@@ -5,7 +5,7 @@ import { useAccount } from 'wagmi';
 
 import { useStakingContract } from '@/hooks/contracts/useStakingContract';
 import { TOKENS } from '@/hooks/contracts/useTokenContract';
-import { HELPER_USER_SQUADS_INFO_REQUEST } from '@/hooks/useHelper';
+import { HELPER_USER_TEAMS_INFO_REQUEST } from '@/hooks/useHelper';
 import { useNotification } from '@/hooks/useNotification';
 import { SAV_BALANCE_REQUEST, SAVR_BALANCE_REQUEST } from '@/hooks/useTokenBalance';
 import { useTokens } from '@/hooks/useTokens';
@@ -152,7 +152,7 @@ export const useActiveStakingPlansWithUserInfo = () => {
                     if (stake.isClaimed) {
                       return acc;
                     }
-                    if (!stake.isToken2) {
+                    if (!stake.isSAVRToken) {
                       acc.totalDeposit = acc.totalDeposit.add(stake.amount);
                     }
                     acc.totalReward = acc.totalReward.add(stake.profit);
@@ -182,7 +182,9 @@ export const useActiveStakingPlansWithUserInfo = () => {
           })
           .filter(
             (plan) =>
-              plan.isActive || plan.currentToken1Staked?.gt(0) || plan.currentToken2Staked?.gt(0)
+              plan.isActive ||
+              plan.currentSavTokenStaked?.gt(0) ||
+              plan.currentSavrTokenStaked?.gt(0)
           )
       : [];
   }, [stakingPlansRequest.data, userPlansInfoRequest.data, userStakesRequest]);
@@ -197,14 +199,14 @@ export const useStakingMetrics = () => {
 
   const tvlSav = useMemo(() => {
     return stakingPlansRequest.data?.reduce(
-      (acc, plan) => acc.add(plan.currentToken1Locked),
+      (acc, plan) => acc.add(plan.currentSavTokenLocked),
       BigNumber.from(0)
     );
   }, [stakingPlansRequest.data]);
 
   const tvlSavr = useMemo(() => {
     return stakingPlansRequest.data?.reduce(
-      (acc, plan) => acc.add(plan.currentToken2Locked),
+      (acc, plan) => acc.add(plan.currentSavrTokenLocked),
       BigNumber.from(0)
     );
   }, [stakingPlansRequest.data]);
@@ -273,16 +275,16 @@ export const useStakingActions = () => {
     async ({
       planId,
       amount,
-      isToken2,
+      isSAVRToken,
       referrer,
     }: {
       planId: number;
       amount: BigNumberish;
-      isToken2: boolean;
+      isSAVRToken: boolean;
       referrer?: string;
     }) => {
       await tokens.increaseAllowanceIfRequired.mutateAsync({
-        token: isToken2 ? TOKENS.SAVR : TOKENS.SAV,
+        token: isSAVRToken ? TOKENS.SAVR : TOKENS.SAV,
         spender: stakingContract.address,
         requiredAmount: amount,
       });
@@ -292,11 +294,11 @@ export const useStakingActions = () => {
       );
       if (!stakingPlan) throw new Error('Staking plan not found');
 
-      const txHash = await stakingContract.deposit({ planId, amount, isToken2, referrer });
+      const txHash = await stakingContract.deposit({ planId, amount, isSAVRToken, referrer });
       success({
         title: 'Success',
         description: `You have deposited ${bigNumberToString(amount)} ${
-          isToken2 ? 'SAVR' : 'SAV'
+          isSAVRToken ? 'SAVR' : 'SAV'
         } in ${getReadableDuration(stakingPlan.stakingDuration)} Staking pool`,
         txHash,
       });
@@ -306,7 +308,7 @@ export const useStakingActions = () => {
         queryClient.invalidateQueries({ queryKey: [STAKING_PLANS_REQUEST] });
         queryClient.invalidateQueries({ queryKey: [USER_STAKING_INFO_REQUEST] });
         queryClient.invalidateQueries({ queryKey: [USER_STAKES_REQUEST] });
-        queryClient.invalidateQueries({ queryKey: [HELPER_USER_SQUADS_INFO_REQUEST] });
+        queryClient.invalidateQueries({ queryKey: [HELPER_USER_TEAMS_INFO_REQUEST] });
         queryClient.invalidateQueries({ queryKey: [SAV_BALANCE_REQUEST] });
         queryClient.invalidateQueries({ queryKey: [SAVR_BALANCE_REQUEST] });
       },
@@ -324,7 +326,7 @@ export const useStakingActions = () => {
         ?.stakes?.[stakeId];
       success({
         title: 'Success',
-        description: getWithdrawMessage(stake?.isToken2 ? 0 : stake?.amount, stake?.profit),
+        description: getWithdrawMessage(stake?.isSAVRToken ? 0 : stake?.amount, stake?.profit),
         txHash,
       });
     },

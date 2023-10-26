@@ -20,18 +20,17 @@ import type {
   TypedEvent,
   TypedListener,
   OnEvent,
-  PromiseOrValue,
 } from "../../common";
 
 export declare namespace IReferralManager {
   export type AddDividendsParamsStruct = {
-    user: PromiseOrValue<string>;
-    reward: PromiseOrValue<BigNumberish>;
-    referral: PromiseOrValue<string>;
-    level: PromiseOrValue<BigNumberish>;
-    depositAmount: PromiseOrValue<BigNumberish>;
-    stakingPlanId: PromiseOrValue<BigNumberish>;
-    reason: PromiseOrValue<BigNumberish>;
+    user: string;
+    reward: BigNumberish;
+    referral: string;
+    level: BigNumberish;
+    depositAmount: BigNumberish;
+    stakingPlanId: BigNumberish;
+    reason: BigNumberish;
   };
 
   export type AddDividendsParamsStructOutput = [
@@ -53,10 +52,10 @@ export declare namespace IReferralManager {
   };
 
   export type ReferralStruct = {
-    referralAddress: PromiseOrValue<string>;
-    level: PromiseOrValue<BigNumberish>;
-    activationDate: PromiseOrValue<BigNumberish>;
-    isReferralSubscriptionActive: PromiseOrValue<boolean>;
+    referralAddress: string;
+    level: BigNumberish;
+    activationDate: BigNumberish;
+    isReferralSubscriptionActive: boolean;
   };
 
   export type ReferralStructOutput = [string, BigNumber, BigNumber, boolean] & {
@@ -95,7 +94,7 @@ export interface IReferralManagerInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "calculateRefReward",
-    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
+    values: [BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "getReferralLevels",
@@ -103,19 +102,19 @@ export interface IReferralManagerInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "getUserReferralsByLevel",
-    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
+    values: [string, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "getUserReferrer",
-    values: [PromiseOrValue<string>]
+    values: [string]
   ): string;
   encodeFunctionData(
     functionFragment: "setUserReferrer",
-    values: [PromiseOrValue<string>, PromiseOrValue<string>]
+    values: [string, string]
   ): string;
   encodeFunctionData(
     functionFragment: "userHasSubscription",
-    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
+    values: [string, BigNumberish]
   ): string;
 
   decodeFunctionResult(
@@ -179,74 +178,68 @@ export interface IReferralManager extends BaseContract {
   functions: {
     addUserDividends(
       params: IReferralManager.AddDividendsParamsStruct,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
 
     calculateRefReward(
-      amount: PromiseOrValue<BigNumberish>,
-      level: PromiseOrValue<BigNumberish>,
+      amount: BigNumberish,
+      level: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
     getReferralLevels(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     getUserReferralsByLevel(
-      userAddress: PromiseOrValue<string>,
-      level: PromiseOrValue<BigNumberish>,
+      userAddress: string,
+      level: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[IReferralManager.ReferralStructOutput[]]>;
 
-    getUserReferrer(
-      user: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<[string]>;
+    getUserReferrer(user: string, overrides?: CallOverrides): Promise<[string]>;
 
     setUserReferrer(
-      user: PromiseOrValue<string>,
-      referrer: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      user: string,
+      referrer: string,
+      overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
 
     userHasSubscription(
-      user: PromiseOrValue<string>,
-      level: PromiseOrValue<BigNumberish>,
+      user: string,
+      level: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
   };
 
   addUserDividends(
     params: IReferralManager.AddDividendsParamsStruct,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
+    overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
 
   calculateRefReward(
-    amount: PromiseOrValue<BigNumberish>,
-    level: PromiseOrValue<BigNumberish>,
+    amount: BigNumberish,
+    level: BigNumberish,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
   getReferralLevels(overrides?: CallOverrides): Promise<BigNumber>;
 
   getUserReferralsByLevel(
-    userAddress: PromiseOrValue<string>,
-    level: PromiseOrValue<BigNumberish>,
+    userAddress: string,
+    level: BigNumberish,
     overrides?: CallOverrides
   ): Promise<IReferralManager.ReferralStructOutput[]>;
 
-  getUserReferrer(
-    user: PromiseOrValue<string>,
-    overrides?: CallOverrides
-  ): Promise<string>;
+  getUserReferrer(user: string, overrides?: CallOverrides): Promise<string>;
 
   setUserReferrer(
-    user: PromiseOrValue<string>,
-    referrer: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
+    user: string,
+    referrer: string,
+    overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
 
   userHasSubscription(
-    user: PromiseOrValue<string>,
-    level: PromiseOrValue<BigNumberish>,
+    user: string,
+    level: BigNumberish,
     overrides?: CallOverrides
   ): Promise<boolean>;
 
@@ -257,33 +250,30 @@ export interface IReferralManager extends BaseContract {
     ): Promise<void>;
 
     calculateRefReward(
-      amount: PromiseOrValue<BigNumberish>,
-      level: PromiseOrValue<BigNumberish>,
+      amount: BigNumberish,
+      level: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     getReferralLevels(overrides?: CallOverrides): Promise<BigNumber>;
 
     getUserReferralsByLevel(
-      userAddress: PromiseOrValue<string>,
-      level: PromiseOrValue<BigNumberish>,
+      userAddress: string,
+      level: BigNumberish,
       overrides?: CallOverrides
     ): Promise<IReferralManager.ReferralStructOutput[]>;
 
-    getUserReferrer(
-      user: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<string>;
+    getUserReferrer(user: string, overrides?: CallOverrides): Promise<string>;
 
     setUserReferrer(
-      user: PromiseOrValue<string>,
-      referrer: PromiseOrValue<string>,
+      user: string,
+      referrer: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
     userHasSubscription(
-      user: PromiseOrValue<string>,
-      level: PromiseOrValue<BigNumberish>,
+      user: string,
+      level: BigNumberish,
       overrides?: CallOverrides
     ): Promise<boolean>;
   };
@@ -293,37 +283,37 @@ export interface IReferralManager extends BaseContract {
   estimateGas: {
     addUserDividends(
       params: IReferralManager.AddDividendsParamsStruct,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
 
     calculateRefReward(
-      amount: PromiseOrValue<BigNumberish>,
-      level: PromiseOrValue<BigNumberish>,
+      amount: BigNumberish,
+      level: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     getReferralLevels(overrides?: CallOverrides): Promise<BigNumber>;
 
     getUserReferralsByLevel(
-      userAddress: PromiseOrValue<string>,
-      level: PromiseOrValue<BigNumberish>,
+      userAddress: string,
+      level: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     getUserReferrer(
-      user: PromiseOrValue<string>,
+      user: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     setUserReferrer(
-      user: PromiseOrValue<string>,
-      referrer: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      user: string,
+      referrer: string,
+      overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
 
     userHasSubscription(
-      user: PromiseOrValue<string>,
-      level: PromiseOrValue<BigNumberish>,
+      user: string,
+      level: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
   };
@@ -331,37 +321,37 @@ export interface IReferralManager extends BaseContract {
   populateTransaction: {
     addUserDividends(
       params: IReferralManager.AddDividendsParamsStruct,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 
     calculateRefReward(
-      amount: PromiseOrValue<BigNumberish>,
-      level: PromiseOrValue<BigNumberish>,
+      amount: BigNumberish,
+      level: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     getReferralLevels(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getUserReferralsByLevel(
-      userAddress: PromiseOrValue<string>,
-      level: PromiseOrValue<BigNumberish>,
+      userAddress: string,
+      level: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     getUserReferrer(
-      user: PromiseOrValue<string>,
+      user: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     setUserReferrer(
-      user: PromiseOrValue<string>,
-      referrer: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      user: string,
+      referrer: string,
+      overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 
     userHasSubscription(
-      user: PromiseOrValue<string>,
-      level: PromiseOrValue<BigNumberish>,
+      user: string,
+      level: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
   };

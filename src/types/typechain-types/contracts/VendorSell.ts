@@ -9,6 +9,7 @@ import type {
   CallOverrides,
   ContractTransaction,
   Overrides,
+  PayableOverrides,
   PopulatedTransaction,
   Signer,
   utils,
@@ -24,15 +25,15 @@ import type {
   TypedEvent,
   TypedListener,
   OnEvent,
-  PromiseOrValue,
 } from "../common";
 
 export interface VendorSellInterface extends utils.Interface {
   functions: {
     "DEFAULT_ADMIN_ROLE()": FunctionFragment;
-    "DIVIDER()": FunctionFragment;
+    "UPGRADER_ROLE()": FunctionFragment;
     "buyTokens(uint256)": FunctionFragment;
     "changeToken()": FunctionFragment;
+    "divider()": FunctionFragment;
     "getChangeTokenReserve()": FunctionFragment;
     "getEquivalentChangeTokenEstimate(uint256)": FunctionFragment;
     "getEquivalentTokenEstimate(uint256)": FunctionFragment;
@@ -40,30 +41,34 @@ export interface VendorSellInterface extends utils.Interface {
     "getTokenReserve()": FunctionFragment;
     "grantRole(bytes32,address)": FunctionFragment;
     "hasRole(bytes32,address)": FunctionFragment;
+    "initialize(address,address,uint256)": FunctionFragment;
     "pause()": FunctionFragment;
     "paused()": FunctionFragment;
+    "proxiableUUID()": FunctionFragment;
     "renounceRole(bytes32,address)": FunctionFragment;
     "revokeRole(bytes32,address)": FunctionFragment;
     "sellTokenFee()": FunctionFragment;
     "sellTokens(uint256)": FunctionFragment;
     "supportsInterface(bytes4)": FunctionFragment;
     "swapRate()": FunctionFragment;
-    "token()": FunctionFragment;
     "unpause()": FunctionFragment;
     "updateChangeToken(address)": FunctionFragment;
+    "updateDivider(uint256)": FunctionFragment;
     "updateSellFee(uint256)": FunctionFragment;
     "updateSwapRate(uint256)": FunctionFragment;
-    "updateToken(address)": FunctionFragment;
-    "withdrawChangeToken(uint256)": FunctionFragment;
-    "withdrawToken(uint256)": FunctionFragment;
+    "upgradeTo(address)": FunctionFragment;
+    "upgradeToAndCall(address,bytes)": FunctionFragment;
+    "withdrawLiquidityChangeToken(address,uint256)": FunctionFragment;
+    "withdrawLiquidityToken(address,uint256)": FunctionFragment;
   };
 
   getFunction(
     nameOrSignatureOrTopic:
       | "DEFAULT_ADMIN_ROLE"
-      | "DIVIDER"
+      | "UPGRADER_ROLE"
       | "buyTokens"
       | "changeToken"
+      | "divider"
       | "getChangeTokenReserve"
       | "getEquivalentChangeTokenEstimate"
       | "getEquivalentTokenEstimate"
@@ -71,52 +76,59 @@ export interface VendorSellInterface extends utils.Interface {
       | "getTokenReserve"
       | "grantRole"
       | "hasRole"
+      | "initialize"
       | "pause"
       | "paused"
+      | "proxiableUUID"
       | "renounceRole"
       | "revokeRole"
       | "sellTokenFee"
       | "sellTokens"
       | "supportsInterface"
       | "swapRate"
-      | "token"
       | "unpause"
       | "updateChangeToken"
+      | "updateDivider"
       | "updateSellFee"
       | "updateSwapRate"
-      | "updateToken"
-      | "withdrawChangeToken"
-      | "withdrawToken"
+      | "upgradeTo"
+      | "upgradeToAndCall"
+      | "withdrawLiquidityChangeToken"
+      | "withdrawLiquidityToken"
   ): FunctionFragment;
 
   encodeFunctionData(
     functionFragment: "DEFAULT_ADMIN_ROLE",
     values?: undefined
   ): string;
-  encodeFunctionData(functionFragment: "DIVIDER", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "UPGRADER_ROLE",
+    values?: undefined
+  ): string;
   encodeFunctionData(
     functionFragment: "buyTokens",
-    values: [PromiseOrValue<BigNumberish>]
+    values: [BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "changeToken",
     values?: undefined
   ): string;
+  encodeFunctionData(functionFragment: "divider", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "getChangeTokenReserve",
     values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "getEquivalentChangeTokenEstimate",
-    values: [PromiseOrValue<BigNumberish>]
+    values: [BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "getEquivalentTokenEstimate",
-    values: [PromiseOrValue<BigNumberish>]
+    values: [BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "getRoleAdmin",
-    values: [PromiseOrValue<BytesLike>]
+    values: [BytesLike]
   ): string;
   encodeFunctionData(
     functionFragment: "getTokenReserve",
@@ -124,21 +136,29 @@ export interface VendorSellInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "grantRole",
-    values: [PromiseOrValue<BytesLike>, PromiseOrValue<string>]
+    values: [BytesLike, string]
   ): string;
   encodeFunctionData(
     functionFragment: "hasRole",
-    values: [PromiseOrValue<BytesLike>, PromiseOrValue<string>]
+    values: [BytesLike, string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "initialize",
+    values: [string, string, BigNumberish]
   ): string;
   encodeFunctionData(functionFragment: "pause", values?: undefined): string;
   encodeFunctionData(functionFragment: "paused", values?: undefined): string;
   encodeFunctionData(
+    functionFragment: "proxiableUUID",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "renounceRole",
-    values: [PromiseOrValue<BytesLike>, PromiseOrValue<string>]
+    values: [BytesLike, string]
   ): string;
   encodeFunctionData(
     functionFragment: "revokeRole",
-    values: [PromiseOrValue<BytesLike>, PromiseOrValue<string>]
+    values: [BytesLike, string]
   ): string;
   encodeFunctionData(
     functionFragment: "sellTokenFee",
@@ -146,50 +166,58 @@ export interface VendorSellInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "sellTokens",
-    values: [PromiseOrValue<BigNumberish>]
+    values: [BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "supportsInterface",
-    values: [PromiseOrValue<BytesLike>]
+    values: [BytesLike]
   ): string;
   encodeFunctionData(functionFragment: "swapRate", values?: undefined): string;
-  encodeFunctionData(functionFragment: "token", values?: undefined): string;
   encodeFunctionData(functionFragment: "unpause", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "updateChangeToken",
-    values: [PromiseOrValue<string>]
+    values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "updateDivider",
+    values: [BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "updateSellFee",
-    values: [PromiseOrValue<BigNumberish>]
+    values: [BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "updateSwapRate",
-    values: [PromiseOrValue<BigNumberish>]
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(functionFragment: "upgradeTo", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "upgradeToAndCall",
+    values: [string, BytesLike]
   ): string;
   encodeFunctionData(
-    functionFragment: "updateToken",
-    values: [PromiseOrValue<string>]
+    functionFragment: "withdrawLiquidityChangeToken",
+    values: [string, BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "withdrawChangeToken",
-    values: [PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "withdrawToken",
-    values: [PromiseOrValue<BigNumberish>]
+    functionFragment: "withdrawLiquidityToken",
+    values: [string, BigNumberish]
   ): string;
 
   decodeFunctionResult(
     functionFragment: "DEFAULT_ADMIN_ROLE",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "DIVIDER", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "UPGRADER_ROLE",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "buyTokens", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "changeToken",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "divider", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getChangeTokenReserve",
     data: BytesLike
@@ -212,8 +240,13 @@ export interface VendorSellInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "grantRole", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "hasRole", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "initialize", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "pause", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "paused", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "proxiableUUID",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "renounceRole",
     data: BytesLike
@@ -229,10 +262,13 @@ export interface VendorSellInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "swapRate", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "token", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "unpause", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "updateChangeToken",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "updateDivider",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -243,20 +279,25 @@ export interface VendorSellInterface extends utils.Interface {
     functionFragment: "updateSwapRate",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "upgradeTo", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "updateToken",
+    functionFragment: "upgradeToAndCall",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "withdrawChangeToken",
+    functionFragment: "withdrawLiquidityChangeToken",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "withdrawToken",
+    functionFragment: "withdrawLiquidityToken",
     data: BytesLike
   ): Result;
 
   events: {
+    "AdminChanged(address,address)": EventFragment;
+    "BeaconUpgraded(address)": EventFragment;
+    "Initialized(uint8)": EventFragment;
+    "LiquidityWithdrawnByAdmin(address,address,uint256)": EventFragment;
     "Paused(address)": EventFragment;
     "RoleAdminChanged(bytes32,bytes32,bytes32)": EventFragment;
     "RoleGranted(bytes32,address,address)": EventFragment;
@@ -264,9 +305,13 @@ export interface VendorSellInterface extends utils.Interface {
     "TokensPurchased(address,uint256,uint256)": EventFragment;
     "TokensSold(address,uint256,uint256)": EventFragment;
     "Unpaused(address)": EventFragment;
-    "Withdrawn(address,uint256)": EventFragment;
+    "Upgraded(address)": EventFragment;
   };
 
+  getEvent(nameOrSignatureOrTopic: "AdminChanged"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "BeaconUpgraded"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "LiquidityWithdrawnByAdmin"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Paused"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleAdminChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleGranted"): EventFragment;
@@ -274,8 +319,49 @@ export interface VendorSellInterface extends utils.Interface {
   getEvent(nameOrSignatureOrTopic: "TokensPurchased"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "TokensSold"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Unpaused"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Withdrawn"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Upgraded"): EventFragment;
 }
+
+export interface AdminChangedEventObject {
+  previousAdmin: string;
+  newAdmin: string;
+}
+export type AdminChangedEvent = TypedEvent<
+  [string, string],
+  AdminChangedEventObject
+>;
+
+export type AdminChangedEventFilter = TypedEventFilter<AdminChangedEvent>;
+
+export interface BeaconUpgradedEventObject {
+  beacon: string;
+}
+export type BeaconUpgradedEvent = TypedEvent<
+  [string],
+  BeaconUpgradedEventObject
+>;
+
+export type BeaconUpgradedEventFilter = TypedEventFilter<BeaconUpgradedEvent>;
+
+export interface InitializedEventObject {
+  version: number;
+}
+export type InitializedEvent = TypedEvent<[number], InitializedEventObject>;
+
+export type InitializedEventFilter = TypedEventFilter<InitializedEvent>;
+
+export interface LiquidityWithdrawnByAdminEventObject {
+  recipient: string;
+  token: string;
+  amount: BigNumber;
+}
+export type LiquidityWithdrawnByAdminEvent = TypedEvent<
+  [string, string, BigNumber],
+  LiquidityWithdrawnByAdminEventObject
+>;
+
+export type LiquidityWithdrawnByAdminEventFilter =
+  TypedEventFilter<LiquidityWithdrawnByAdminEvent>;
 
 export interface PausedEventObject {
   account: string;
@@ -352,16 +438,12 @@ export type UnpausedEvent = TypedEvent<[string], UnpausedEventObject>;
 
 export type UnpausedEventFilter = TypedEventFilter<UnpausedEvent>;
 
-export interface WithdrawnEventObject {
-  token: string;
-  amount: BigNumber;
+export interface UpgradedEventObject {
+  implementation: string;
 }
-export type WithdrawnEvent = TypedEvent<
-  [string, BigNumber],
-  WithdrawnEventObject
->;
+export type UpgradedEvent = TypedEvent<[string], UpgradedEventObject>;
 
-export type WithdrawnEventFilter = TypedEventFilter<WithdrawnEvent>;
+export type UpgradedEventFilter = TypedEventFilter<UpgradedEvent>;
 
 export interface VendorSell extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
@@ -392,388 +474,470 @@ export interface VendorSell extends BaseContract {
   functions: {
     DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<[string]>;
 
-    DIVIDER(overrides?: CallOverrides): Promise<[BigNumber]>;
+    UPGRADER_ROLE(overrides?: CallOverrides): Promise<[string]>;
 
     buyTokens(
-      _amountChangeToken: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      _amountChangeToken: BigNumberish,
+      overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
 
     changeToken(overrides?: CallOverrides): Promise<[string]>;
 
+    divider(overrides?: CallOverrides): Promise<[BigNumber]>;
+
     getChangeTokenReserve(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     getEquivalentChangeTokenEstimate(
-      _amountToken: PromiseOrValue<BigNumberish>,
+      _amountToken: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
     getEquivalentTokenEstimate(
-      _amountChangeToken: PromiseOrValue<BigNumberish>,
+      _amountChangeToken: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
-    getRoleAdmin(
-      role: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<[string]>;
+    getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<[string]>;
 
     getTokenReserve(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     grantRole(
-      role: PromiseOrValue<BytesLike>,
-      account: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
 
     hasRole(
-      role: PromiseOrValue<BytesLike>,
-      account: PromiseOrValue<string>,
+      role: BytesLike,
+      account: string,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
+    initialize(
+      contractManagerAddress_: string,
+      changeTokenAddress_: string,
+      swapRate_: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
+
     pause(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
 
     paused(overrides?: CallOverrides): Promise<[boolean]>;
 
+    proxiableUUID(overrides?: CallOverrides): Promise<[string]>;
+
     renounceRole(
-      role: PromiseOrValue<BytesLike>,
-      account: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
 
     revokeRole(
-      role: PromiseOrValue<BytesLike>,
-      account: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
 
     sellTokenFee(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     sellTokens(
-      _amountToken: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      _amountToken: BigNumberish,
+      overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
 
     supportsInterface(
-      interfaceId: PromiseOrValue<BytesLike>,
+      interfaceId: BytesLike,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
     swapRate(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    token(overrides?: CallOverrides): Promise<[string]>;
-
     unpause(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
 
     updateChangeToken(
-      token_: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      token_: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
+
+    updateDivider(
+      divider_: BigNumberish,
+      overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
 
     updateSellFee(
-      sellTokenFee_: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      sellTokenFee_: BigNumberish,
+      overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
 
     updateSwapRate(
-      swapRate_: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      swapRate_: BigNumberish,
+      overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
 
-    updateToken(
-      token_: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    upgradeTo(
+      newImplementation: string,
+      overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
 
-    withdrawChangeToken(
-      amount: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    upgradeToAndCall(
+      newImplementation: string,
+      data: BytesLike,
+      overrides?: PayableOverrides & { from?: string }
     ): Promise<ContractTransaction>;
 
-    withdrawToken(
-      amount: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    withdrawLiquidityChangeToken(
+      recipient: string,
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
+
+    withdrawLiquidityToken(
+      recipient: string,
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
   };
 
   DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
 
-  DIVIDER(overrides?: CallOverrides): Promise<BigNumber>;
+  UPGRADER_ROLE(overrides?: CallOverrides): Promise<string>;
 
   buyTokens(
-    _amountChangeToken: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
+    _amountChangeToken: BigNumberish,
+    overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
 
   changeToken(overrides?: CallOverrides): Promise<string>;
 
+  divider(overrides?: CallOverrides): Promise<BigNumber>;
+
   getChangeTokenReserve(overrides?: CallOverrides): Promise<BigNumber>;
 
   getEquivalentChangeTokenEstimate(
-    _amountToken: PromiseOrValue<BigNumberish>,
+    _amountToken: BigNumberish,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
   getEquivalentTokenEstimate(
-    _amountChangeToken: PromiseOrValue<BigNumberish>,
+    _amountChangeToken: BigNumberish,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
-  getRoleAdmin(
-    role: PromiseOrValue<BytesLike>,
-    overrides?: CallOverrides
-  ): Promise<string>;
+  getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<string>;
 
   getTokenReserve(overrides?: CallOverrides): Promise<BigNumber>;
 
   grantRole(
-    role: PromiseOrValue<BytesLike>,
-    account: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
+    role: BytesLike,
+    account: string,
+    overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
 
   hasRole(
-    role: PromiseOrValue<BytesLike>,
-    account: PromiseOrValue<string>,
+    role: BytesLike,
+    account: string,
     overrides?: CallOverrides
   ): Promise<boolean>;
 
+  initialize(
+    contractManagerAddress_: string,
+    changeTokenAddress_: string,
+    swapRate_: BigNumberish,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
   pause(
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
+    overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
 
   paused(overrides?: CallOverrides): Promise<boolean>;
 
+  proxiableUUID(overrides?: CallOverrides): Promise<string>;
+
   renounceRole(
-    role: PromiseOrValue<BytesLike>,
-    account: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
+    role: BytesLike,
+    account: string,
+    overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
 
   revokeRole(
-    role: PromiseOrValue<BytesLike>,
-    account: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
+    role: BytesLike,
+    account: string,
+    overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
 
   sellTokenFee(overrides?: CallOverrides): Promise<BigNumber>;
 
   sellTokens(
-    _amountToken: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
+    _amountToken: BigNumberish,
+    overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
 
   supportsInterface(
-    interfaceId: PromiseOrValue<BytesLike>,
+    interfaceId: BytesLike,
     overrides?: CallOverrides
   ): Promise<boolean>;
 
   swapRate(overrides?: CallOverrides): Promise<BigNumber>;
 
-  token(overrides?: CallOverrides): Promise<string>;
-
   unpause(
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
+    overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
 
   updateChangeToken(
-    token_: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
+    token_: string,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  updateDivider(
+    divider_: BigNumberish,
+    overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
 
   updateSellFee(
-    sellTokenFee_: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
+    sellTokenFee_: BigNumberish,
+    overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
 
   updateSwapRate(
-    swapRate_: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
+    swapRate_: BigNumberish,
+    overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
 
-  updateToken(
-    token_: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  upgradeTo(
+    newImplementation: string,
+    overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
 
-  withdrawChangeToken(
-    amount: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  upgradeToAndCall(
+    newImplementation: string,
+    data: BytesLike,
+    overrides?: PayableOverrides & { from?: string }
   ): Promise<ContractTransaction>;
 
-  withdrawToken(
-    amount: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  withdrawLiquidityChangeToken(
+    recipient: string,
+    amount: BigNumberish,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  withdrawLiquidityToken(
+    recipient: string,
+    amount: BigNumberish,
+    overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
 
   callStatic: {
     DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
 
-    DIVIDER(overrides?: CallOverrides): Promise<BigNumber>;
+    UPGRADER_ROLE(overrides?: CallOverrides): Promise<string>;
 
     buyTokens(
-      _amountChangeToken: PromiseOrValue<BigNumberish>,
+      _amountChangeToken: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
     changeToken(overrides?: CallOverrides): Promise<string>;
 
+    divider(overrides?: CallOverrides): Promise<BigNumber>;
+
     getChangeTokenReserve(overrides?: CallOverrides): Promise<BigNumber>;
 
     getEquivalentChangeTokenEstimate(
-      _amountToken: PromiseOrValue<BigNumberish>,
+      _amountToken: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     getEquivalentTokenEstimate(
-      _amountChangeToken: PromiseOrValue<BigNumberish>,
+      _amountChangeToken: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    getRoleAdmin(
-      role: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<string>;
+    getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<string>;
 
     getTokenReserve(overrides?: CallOverrides): Promise<BigNumber>;
 
     grantRole(
-      role: PromiseOrValue<BytesLike>,
-      account: PromiseOrValue<string>,
+      role: BytesLike,
+      account: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
     hasRole(
-      role: PromiseOrValue<BytesLike>,
-      account: PromiseOrValue<string>,
+      role: BytesLike,
+      account: string,
       overrides?: CallOverrides
     ): Promise<boolean>;
+
+    initialize(
+      contractManagerAddress_: string,
+      changeTokenAddress_: string,
+      swapRate_: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     pause(overrides?: CallOverrides): Promise<void>;
 
     paused(overrides?: CallOverrides): Promise<boolean>;
 
+    proxiableUUID(overrides?: CallOverrides): Promise<string>;
+
     renounceRole(
-      role: PromiseOrValue<BytesLike>,
-      account: PromiseOrValue<string>,
+      role: BytesLike,
+      account: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
     revokeRole(
-      role: PromiseOrValue<BytesLike>,
-      account: PromiseOrValue<string>,
+      role: BytesLike,
+      account: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
     sellTokenFee(overrides?: CallOverrides): Promise<BigNumber>;
 
     sellTokens(
-      _amountToken: PromiseOrValue<BigNumberish>,
+      _amountToken: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
     supportsInterface(
-      interfaceId: PromiseOrValue<BytesLike>,
+      interfaceId: BytesLike,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
     swapRate(overrides?: CallOverrides): Promise<BigNumber>;
 
-    token(overrides?: CallOverrides): Promise<string>;
-
     unpause(overrides?: CallOverrides): Promise<void>;
 
-    updateChangeToken(
-      token_: PromiseOrValue<string>,
+    updateChangeToken(token_: string, overrides?: CallOverrides): Promise<void>;
+
+    updateDivider(
+      divider_: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
     updateSellFee(
-      sellTokenFee_: PromiseOrValue<BigNumberish>,
+      sellTokenFee_: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
     updateSwapRate(
-      swapRate_: PromiseOrValue<BigNumberish>,
+      swapRate_: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    updateToken(
-      token_: PromiseOrValue<string>,
+    upgradeTo(
+      newImplementation: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    withdrawChangeToken(
-      amount: PromiseOrValue<BigNumberish>,
+    upgradeToAndCall(
+      newImplementation: string,
+      data: BytesLike,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    withdrawToken(
-      amount: PromiseOrValue<BigNumberish>,
+    withdrawLiquidityChangeToken(
+      recipient: string,
+      amount: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    withdrawLiquidityToken(
+      recipient: string,
+      amount: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
   };
 
   filters: {
+    "AdminChanged(address,address)"(
+      previousAdmin?: null,
+      newAdmin?: null
+    ): AdminChangedEventFilter;
+    AdminChanged(
+      previousAdmin?: null,
+      newAdmin?: null
+    ): AdminChangedEventFilter;
+
+    "BeaconUpgraded(address)"(
+      beacon?: string | null
+    ): BeaconUpgradedEventFilter;
+    BeaconUpgraded(beacon?: string | null): BeaconUpgradedEventFilter;
+
+    "Initialized(uint8)"(version?: null): InitializedEventFilter;
+    Initialized(version?: null): InitializedEventFilter;
+
+    "LiquidityWithdrawnByAdmin(address,address,uint256)"(
+      recipient?: string | null,
+      token?: string | null,
+      amount?: null
+    ): LiquidityWithdrawnByAdminEventFilter;
+    LiquidityWithdrawnByAdmin(
+      recipient?: string | null,
+      token?: string | null,
+      amount?: null
+    ): LiquidityWithdrawnByAdminEventFilter;
+
     "Paused(address)"(account?: null): PausedEventFilter;
     Paused(account?: null): PausedEventFilter;
 
     "RoleAdminChanged(bytes32,bytes32,bytes32)"(
-      role?: PromiseOrValue<BytesLike> | null,
-      previousAdminRole?: PromiseOrValue<BytesLike> | null,
-      newAdminRole?: PromiseOrValue<BytesLike> | null
+      role?: BytesLike | null,
+      previousAdminRole?: BytesLike | null,
+      newAdminRole?: BytesLike | null
     ): RoleAdminChangedEventFilter;
     RoleAdminChanged(
-      role?: PromiseOrValue<BytesLike> | null,
-      previousAdminRole?: PromiseOrValue<BytesLike> | null,
-      newAdminRole?: PromiseOrValue<BytesLike> | null
+      role?: BytesLike | null,
+      previousAdminRole?: BytesLike | null,
+      newAdminRole?: BytesLike | null
     ): RoleAdminChangedEventFilter;
 
     "RoleGranted(bytes32,address,address)"(
-      role?: PromiseOrValue<BytesLike> | null,
-      account?: PromiseOrValue<string> | null,
-      sender?: PromiseOrValue<string> | null
+      role?: BytesLike | null,
+      account?: string | null,
+      sender?: string | null
     ): RoleGrantedEventFilter;
     RoleGranted(
-      role?: PromiseOrValue<BytesLike> | null,
-      account?: PromiseOrValue<string> | null,
-      sender?: PromiseOrValue<string> | null
+      role?: BytesLike | null,
+      account?: string | null,
+      sender?: string | null
     ): RoleGrantedEventFilter;
 
     "RoleRevoked(bytes32,address,address)"(
-      role?: PromiseOrValue<BytesLike> | null,
-      account?: PromiseOrValue<string> | null,
-      sender?: PromiseOrValue<string> | null
+      role?: BytesLike | null,
+      account?: string | null,
+      sender?: string | null
     ): RoleRevokedEventFilter;
     RoleRevoked(
-      role?: PromiseOrValue<BytesLike> | null,
-      account?: PromiseOrValue<string> | null,
-      sender?: PromiseOrValue<string> | null
+      role?: BytesLike | null,
+      account?: string | null,
+      sender?: string | null
     ): RoleRevokedEventFilter;
 
     "TokensPurchased(address,uint256,uint256)"(
-      buyer?: PromiseOrValue<string> | null,
+      buyer?: string | null,
       amountToken?: null,
       amountChangeToken?: null
     ): TokensPurchasedEventFilter;
     TokensPurchased(
-      buyer?: PromiseOrValue<string> | null,
+      buyer?: string | null,
       amountToken?: null,
       amountChangeToken?: null
     ): TokensPurchasedEventFilter;
 
     "TokensSold(address,uint256,uint256)"(
-      seller?: PromiseOrValue<string> | null,
+      seller?: string | null,
       amountToken?: null,
       amountChangeToken?: null
     ): TokensSoldEventFilter;
     TokensSold(
-      seller?: PromiseOrValue<string> | null,
+      seller?: string | null,
       amountToken?: null,
       amountChangeToken?: null
     ): TokensSoldEventFilter;
@@ -781,125 +945,137 @@ export interface VendorSell extends BaseContract {
     "Unpaused(address)"(account?: null): UnpausedEventFilter;
     Unpaused(account?: null): UnpausedEventFilter;
 
-    "Withdrawn(address,uint256)"(
-      token?: PromiseOrValue<string> | null,
-      amount?: null
-    ): WithdrawnEventFilter;
-    Withdrawn(
-      token?: PromiseOrValue<string> | null,
-      amount?: null
-    ): WithdrawnEventFilter;
+    "Upgraded(address)"(implementation?: string | null): UpgradedEventFilter;
+    Upgraded(implementation?: string | null): UpgradedEventFilter;
   };
 
   estimateGas: {
     DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
 
-    DIVIDER(overrides?: CallOverrides): Promise<BigNumber>;
+    UPGRADER_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
 
     buyTokens(
-      _amountChangeToken: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      _amountChangeToken: BigNumberish,
+      overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
 
     changeToken(overrides?: CallOverrides): Promise<BigNumber>;
 
+    divider(overrides?: CallOverrides): Promise<BigNumber>;
+
     getChangeTokenReserve(overrides?: CallOverrides): Promise<BigNumber>;
 
     getEquivalentChangeTokenEstimate(
-      _amountToken: PromiseOrValue<BigNumberish>,
+      _amountToken: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     getEquivalentTokenEstimate(
-      _amountChangeToken: PromiseOrValue<BigNumberish>,
+      _amountChangeToken: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     getRoleAdmin(
-      role: PromiseOrValue<BytesLike>,
+      role: BytesLike,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     getTokenReserve(overrides?: CallOverrides): Promise<BigNumber>;
 
     grantRole(
-      role: PromiseOrValue<BytesLike>,
-      account: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
 
     hasRole(
-      role: PromiseOrValue<BytesLike>,
-      account: PromiseOrValue<string>,
+      role: BytesLike,
+      account: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    pause(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    initialize(
+      contractManagerAddress_: string,
+      changeTokenAddress_: string,
+      swapRate_: BigNumberish,
+      overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
+
+    pause(overrides?: Overrides & { from?: string }): Promise<BigNumber>;
 
     paused(overrides?: CallOverrides): Promise<BigNumber>;
 
+    proxiableUUID(overrides?: CallOverrides): Promise<BigNumber>;
+
     renounceRole(
-      role: PromiseOrValue<BytesLike>,
-      account: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
 
     revokeRole(
-      role: PromiseOrValue<BytesLike>,
-      account: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
 
     sellTokenFee(overrides?: CallOverrides): Promise<BigNumber>;
 
     sellTokens(
-      _amountToken: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      _amountToken: BigNumberish,
+      overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
 
     supportsInterface(
-      interfaceId: PromiseOrValue<BytesLike>,
+      interfaceId: BytesLike,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     swapRate(overrides?: CallOverrides): Promise<BigNumber>;
 
-    token(overrides?: CallOverrides): Promise<BigNumber>;
-
-    unpause(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
+    unpause(overrides?: Overrides & { from?: string }): Promise<BigNumber>;
 
     updateChangeToken(
-      token_: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      token_: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+
+    updateDivider(
+      divider_: BigNumberish,
+      overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
 
     updateSellFee(
-      sellTokenFee_: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      sellTokenFee_: BigNumberish,
+      overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
 
     updateSwapRate(
-      swapRate_: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      swapRate_: BigNumberish,
+      overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
 
-    updateToken(
-      token_: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    upgradeTo(
+      newImplementation: string,
+      overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
 
-    withdrawChangeToken(
-      amount: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    upgradeToAndCall(
+      newImplementation: string,
+      data: BytesLike,
+      overrides?: PayableOverrides & { from?: string }
     ): Promise<BigNumber>;
 
-    withdrawToken(
-      amount: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    withdrawLiquidityChangeToken(
+      recipient: string,
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+
+    withdrawLiquidityToken(
+      recipient: string,
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
   };
 
@@ -908,114 +1084,136 @@ export interface VendorSell extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    DIVIDER(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    UPGRADER_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     buyTokens(
-      _amountChangeToken: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      _amountChangeToken: BigNumberish,
+      overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 
     changeToken(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    divider(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getChangeTokenReserve(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     getEquivalentChangeTokenEstimate(
-      _amountToken: PromiseOrValue<BigNumberish>,
+      _amountToken: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     getEquivalentTokenEstimate(
-      _amountChangeToken: PromiseOrValue<BigNumberish>,
+      _amountChangeToken: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     getRoleAdmin(
-      role: PromiseOrValue<BytesLike>,
+      role: BytesLike,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     getTokenReserve(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     grantRole(
-      role: PromiseOrValue<BytesLike>,
-      account: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 
     hasRole(
-      role: PromiseOrValue<BytesLike>,
-      account: PromiseOrValue<string>,
+      role: BytesLike,
+      account: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    initialize(
+      contractManagerAddress_: string,
+      changeTokenAddress_: string,
+      swapRate_: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
     pause(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 
     paused(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    proxiableUUID(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     renounceRole(
-      role: PromiseOrValue<BytesLike>,
-      account: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 
     revokeRole(
-      role: PromiseOrValue<BytesLike>,
-      account: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 
     sellTokenFee(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     sellTokens(
-      _amountToken: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      _amountToken: BigNumberish,
+      overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 
     supportsInterface(
-      interfaceId: PromiseOrValue<BytesLike>,
+      interfaceId: BytesLike,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     swapRate(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    token(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
     unpause(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 
     updateChangeToken(
-      token_: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      token_: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    updateDivider(
+      divider_: BigNumberish,
+      overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 
     updateSellFee(
-      sellTokenFee_: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      sellTokenFee_: BigNumberish,
+      overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 
     updateSwapRate(
-      swapRate_: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      swapRate_: BigNumberish,
+      overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 
-    updateToken(
-      token_: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    upgradeTo(
+      newImplementation: string,
+      overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 
-    withdrawChangeToken(
-      amount: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    upgradeToAndCall(
+      newImplementation: string,
+      data: BytesLike,
+      overrides?: PayableOverrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 
-    withdrawToken(
-      amount: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    withdrawLiquidityChangeToken(
+      recipient: string,
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    withdrawLiquidityToken(
+      recipient: string,
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
   };
 }

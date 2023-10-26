@@ -21,140 +21,63 @@ import type {
   TypedEvent,
   TypedListener,
   OnEvent,
-  PromiseOrValue,
 } from "../../common";
 
-export interface BlacklistInterface extends utils.Interface {
+export interface BlackListInterface extends utils.Interface {
   functions: {
-    "isAddressInBlacklist(address)": FunctionFragment;
-    "isAddressInWhiteList(address)": FunctionFragment;
-    "isWhitelistRestrictionMode()": FunctionFragment;
+    "isAddressInBlackList(address)": FunctionFragment;
   };
 
-  getFunction(
-    nameOrSignatureOrTopic:
-      | "isAddressInBlacklist"
-      | "isAddressInWhiteList"
-      | "isWhitelistRestrictionMode"
-  ): FunctionFragment;
+  getFunction(nameOrSignatureOrTopic: "isAddressInBlackList"): FunctionFragment;
 
   encodeFunctionData(
-    functionFragment: "isAddressInBlacklist",
-    values: [PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "isAddressInWhiteList",
-    values: [PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "isWhitelistRestrictionMode",
-    values?: undefined
+    functionFragment: "isAddressInBlackList",
+    values: [string]
   ): string;
 
   decodeFunctionResult(
-    functionFragment: "isAddressInBlacklist",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "isAddressInWhiteList",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "isWhitelistRestrictionMode",
+    functionFragment: "isAddressInBlackList",
     data: BytesLike
   ): Result;
 
   events: {
-    "BlacklistAdded(address[],address)": EventFragment;
-    "BlacklistRemoved(address[],address)": EventFragment;
-    "WhitelistAdded(address[],address)": EventFragment;
-    "WhitelistDisabled(address)": EventFragment;
-    "WhitelistEnabled(address)": EventFragment;
-    "WhitelistRemoved(address[],address)": EventFragment;
+    "BlackListAdded(address[],address)": EventFragment;
+    "BlackListRemoved(address[],address)": EventFragment;
   };
 
-  getEvent(nameOrSignatureOrTopic: "BlacklistAdded"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "BlacklistRemoved"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "WhitelistAdded"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "WhitelistDisabled"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "WhitelistEnabled"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "WhitelistRemoved"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "BlackListAdded"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "BlackListRemoved"): EventFragment;
 }
 
-export interface BlacklistAddedEventObject {
+export interface BlackListAddedEventObject {
   _addresses: string[];
   admin: string;
 }
-export type BlacklistAddedEvent = TypedEvent<
+export type BlackListAddedEvent = TypedEvent<
   [string[], string],
-  BlacklistAddedEventObject
+  BlackListAddedEventObject
 >;
 
-export type BlacklistAddedEventFilter = TypedEventFilter<BlacklistAddedEvent>;
+export type BlackListAddedEventFilter = TypedEventFilter<BlackListAddedEvent>;
 
-export interface BlacklistRemovedEventObject {
+export interface BlackListRemovedEventObject {
   _addresses: string[];
   admin: string;
 }
-export type BlacklistRemovedEvent = TypedEvent<
+export type BlackListRemovedEvent = TypedEvent<
   [string[], string],
-  BlacklistRemovedEventObject
+  BlackListRemovedEventObject
 >;
 
-export type BlacklistRemovedEventFilter =
-  TypedEventFilter<BlacklistRemovedEvent>;
+export type BlackListRemovedEventFilter =
+  TypedEventFilter<BlackListRemovedEvent>;
 
-export interface WhitelistAddedEventObject {
-  _addresses: string[];
-  admin: string;
-}
-export type WhitelistAddedEvent = TypedEvent<
-  [string[], string],
-  WhitelistAddedEventObject
->;
-
-export type WhitelistAddedEventFilter = TypedEventFilter<WhitelistAddedEvent>;
-
-export interface WhitelistDisabledEventObject {
-  admin: string;
-}
-export type WhitelistDisabledEvent = TypedEvent<
-  [string],
-  WhitelistDisabledEventObject
->;
-
-export type WhitelistDisabledEventFilter =
-  TypedEventFilter<WhitelistDisabledEvent>;
-
-export interface WhitelistEnabledEventObject {
-  admin: string;
-}
-export type WhitelistEnabledEvent = TypedEvent<
-  [string],
-  WhitelistEnabledEventObject
->;
-
-export type WhitelistEnabledEventFilter =
-  TypedEventFilter<WhitelistEnabledEvent>;
-
-export interface WhitelistRemovedEventObject {
-  _addresses: string[];
-  admin: string;
-}
-export type WhitelistRemovedEvent = TypedEvent<
-  [string[], string],
-  WhitelistRemovedEventObject
->;
-
-export type WhitelistRemovedEventFilter =
-  TypedEventFilter<WhitelistRemovedEvent>;
-
-export interface Blacklist extends BaseContract {
+export interface BlackList extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: BlacklistInterface;
+  interface: BlackListInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,
@@ -176,109 +99,51 @@ export interface Blacklist extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
-    isAddressInBlacklist(
-      _address: PromiseOrValue<string>,
+    isAddressInBlackList(
+      _address: string,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
-
-    isAddressInWhiteList(
-      _address: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
-
-    isWhitelistRestrictionMode(overrides?: CallOverrides): Promise<[boolean]>;
   };
 
-  isAddressInBlacklist(
-    _address: PromiseOrValue<string>,
+  isAddressInBlackList(
+    _address: string,
     overrides?: CallOverrides
   ): Promise<boolean>;
-
-  isAddressInWhiteList(
-    _address: PromiseOrValue<string>,
-    overrides?: CallOverrides
-  ): Promise<boolean>;
-
-  isWhitelistRestrictionMode(overrides?: CallOverrides): Promise<boolean>;
 
   callStatic: {
-    isAddressInBlacklist(
-      _address: PromiseOrValue<string>,
+    isAddressInBlackList(
+      _address: string,
       overrides?: CallOverrides
     ): Promise<boolean>;
-
-    isAddressInWhiteList(
-      _address: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
-
-    isWhitelistRestrictionMode(overrides?: CallOverrides): Promise<boolean>;
   };
 
   filters: {
-    "BlacklistAdded(address[],address)"(
+    "BlackListAdded(address[],address)"(
       _addresses?: null,
       admin?: null
-    ): BlacklistAddedEventFilter;
-    BlacklistAdded(_addresses?: null, admin?: null): BlacklistAddedEventFilter;
+    ): BlackListAddedEventFilter;
+    BlackListAdded(_addresses?: null, admin?: null): BlackListAddedEventFilter;
 
-    "BlacklistRemoved(address[],address)"(
+    "BlackListRemoved(address[],address)"(
       _addresses?: null,
       admin?: null
-    ): BlacklistRemovedEventFilter;
-    BlacklistRemoved(
+    ): BlackListRemovedEventFilter;
+    BlackListRemoved(
       _addresses?: null,
       admin?: null
-    ): BlacklistRemovedEventFilter;
-
-    "WhitelistAdded(address[],address)"(
-      _addresses?: null,
-      admin?: null
-    ): WhitelistAddedEventFilter;
-    WhitelistAdded(_addresses?: null, admin?: null): WhitelistAddedEventFilter;
-
-    "WhitelistDisabled(address)"(admin?: null): WhitelistDisabledEventFilter;
-    WhitelistDisabled(admin?: null): WhitelistDisabledEventFilter;
-
-    "WhitelistEnabled(address)"(admin?: null): WhitelistEnabledEventFilter;
-    WhitelistEnabled(admin?: null): WhitelistEnabledEventFilter;
-
-    "WhitelistRemoved(address[],address)"(
-      _addresses?: null,
-      admin?: null
-    ): WhitelistRemovedEventFilter;
-    WhitelistRemoved(
-      _addresses?: null,
-      admin?: null
-    ): WhitelistRemovedEventFilter;
+    ): BlackListRemovedEventFilter;
   };
 
   estimateGas: {
-    isAddressInBlacklist(
-      _address: PromiseOrValue<string>,
+    isAddressInBlackList(
+      _address: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
-
-    isAddressInWhiteList(
-      _address: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    isWhitelistRestrictionMode(overrides?: CallOverrides): Promise<BigNumber>;
   };
 
   populateTransaction: {
-    isAddressInBlacklist(
-      _address: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    isAddressInWhiteList(
-      _address: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    isWhitelistRestrictionMode(
+    isAddressInBlackList(
+      _address: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
   };

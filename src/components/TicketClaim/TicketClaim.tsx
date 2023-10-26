@@ -12,12 +12,12 @@ import {
 import { useAccount } from 'wagmi';
 
 import { ReactComponent as CheckIcon } from '@/assets/images/icons/check_ticket.svg';
-import { BuyLotteryTicketsModal } from '@/components/Lottery/BuyLotteryTicketsModal';
+import { BuyRaffleTicketsModal } from '@/components/Raffle/BuyRaffleTicketsModal';
 import { Button } from '@/components/ui/Button/Button';
 import { ConnectWalletButton } from '@/components/ui/ConnectWalletButton/ConnectWalletButton';
 import { useBuyTicketsLogger } from '@/hooks/logger/useBuyTicketsLogger';
-import { useLottery, useLotteryControl } from '@/hooks/lottery/useLottery';
-import { useLotteryMiniGame } from '@/hooks/lottery/useLotteryMiniGame';
+import { useRaffle, useRaffleControl } from '@/hooks/raffle/useRaffle';
+import { useRaffleMiniGame } from '@/hooks/raffle/useRaffleMiniGame';
 import { useCountdown } from '@/hooks/useCountdown';
 import { useLogger } from '@/hooks/useLogger';
 import { bigNumberToString } from '@/utils/number';
@@ -45,8 +45,8 @@ export const TicketClaim = () => {
     actionGroup: 'conversions',
   });
 
-  const { ticketPrice } = useLotteryControl();
-  const { buyTickets } = useLottery();
+  const { ticketPrice } = useRaffleControl();
+  const { buyTickets } = useRaffle();
   const {
     claimPeriod,
     claimStreakForTicket,
@@ -56,7 +56,7 @@ export const TicketClaim = () => {
     isMintAvailable,
     claimDay,
     mintMyTicket,
-  } = useLotteryMiniGame();
+  } = useRaffleMiniGame();
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -236,7 +236,7 @@ export const TicketClaim = () => {
       </Box>
 
       {isOpen ? (
-        <BuyLotteryTicketsModal
+        <BuyRaffleTicketsModal
           ticketPrice={ticketPrice}
           onBuy={buyTickets.mutateAsync}
           onClose={onClose}

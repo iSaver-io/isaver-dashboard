@@ -150,9 +150,9 @@ export const StakingTable = ({
               <Td>
                 <Flex alignItems="center">
                   <Box mr="4px">
-                    {stake.isToken2 ? <SavrIcon height="26px" /> : <SavIcon height="26px" />}
+                    {stake.isSavrToken ? <SavrIcon height="26px" /> : <SavIcon height="26px" />}
                   </Box>
-                  {bigNumberToString(stake.amount)} {stake.isToken2 ? 'SAVR' : 'SAV'}
+                  {bigNumberToString(stake.amount)} {stake.isSavrToken ? 'SAVR' : 'SAV'}
                 </Flex>
               </Td>
               <Td textAlign="center">{getReadableDuration(stake.period)}</Td>

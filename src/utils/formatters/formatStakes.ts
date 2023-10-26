@@ -25,7 +25,7 @@ export const formatStakes = (
     profit: stake.profit,
     reward: calculateStakeReward(stake),
     isClaimed: stake.isClaimed,
-    isToken2: stake.isToken2,
+    isSavrToken: stake.isSAVRToken,
     stakingPlanId: stake.stakingPlanId,
     stakeId: stake.stakeId,
     period: getStakingDuration(stake.stakingPlanId),

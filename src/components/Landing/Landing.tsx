@@ -4,10 +4,10 @@ import { Box } from '@chakra-ui/react';
 import { About } from '@/components/Landing/About';
 import { Banner } from '@/components/Landing/Banner';
 import { Benefits } from '@/components/Landing/Benefits';
-import { Lottery } from '@/components/Landing/Lottery';
 import { Main } from '@/components/Landing/Main';
 import { Numbers } from '@/components/Landing/Numbers';
 import { Plans } from '@/components/Landing/Plans';
+import { Raffle } from '@/components/Landing/Raffle';
 
 import './Landing.scss';
 
@@ -28,7 +28,7 @@ export const Landing = () => {
         <Plans />
       </Box>
       <Box className="main-container" overflow="visible">
-        <Lottery />
+        <Raffle />
       </Box>
       <Banner />
     </Box>

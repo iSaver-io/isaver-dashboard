@@ -2,10 +2,10 @@ import React from 'react';
 import { Box, Container } from '@chakra-ui/react';
 
 import { WalletPortfolio } from '@/components/Dashboard/WalletPortfolio';
-import { LotteryList } from '@/components/Lottery/LotteryList';
+import { RaffleList } from '@/components/Raffle/RaffleList';
 import { ReferralInfo } from '@/components/Referral/ReferralInfo';
-import { SquadsList } from '@/components/Squads/SquadsList';
 import { Staking } from '@/components/Staking/Staking';
+import { TeamsList } from '@/components/Teams/TeamsList';
 import { TicketClaim } from '@/components/TicketClaim/TicketClaim';
 import { useDocumentTitle, useMetaDescription } from '@/hooks/useMeta';
 
@@ -29,7 +29,7 @@ export const Dashboard = () => {
         <ReferralInfo />
 
         <Box mt="30px">
-          <SquadsList />
+          <TeamsList />
         </Box>
       </Box>
 
@@ -38,7 +38,7 @@ export const Dashboard = () => {
       </Box>
 
       <Box mt={{ sm: '100px', xl: '150px' }} mb={{ sm: '100px', xl: '150px' }} id="raffles">
-        <LotteryList />
+        <RaffleList />
       </Box>
     </Container>
   );

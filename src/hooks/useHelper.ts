@@ -3,13 +3,13 @@ import { useQueries, useQuery } from '@tanstack/react-query';
 import { ethers } from 'ethers';
 
 import { useHelperContract } from '@/hooks/contracts/useHelperContract';
-import { useLotteryRoundById } from '@/hooks/lottery/useLotteryRoundById';
+import { useRaffleRoundById } from '@/hooks/raffle/useRaffleRoundById';
 import { useUserReferralInfo } from '@/hooks/referral/useReferralManager';
-import { SQUADS_SUBSCRIPTION_ENDING_NOTIFICATION } from '@/hooks/squads/useSquads';
 import { useStakingPlans } from '@/hooks/staking/useStaking';
+import { TEAMS_SUBSCRIPTION_ENDING_NOTIFICATION } from '@/hooks/teams/useTeams';
 import { RawReferral } from '@/types';
 import { formatReferrals } from '@/utils/formatters/formatReferrals';
-import { calculateLotteryWinnersPrize } from '@/utils/formatters/lottery';
+import { calculateRaffleWinnersPrize } from '@/utils/formatters/raffle';
 
 export const HELPER_REFERRALS_LIST_REQUEST = 'helper-referrals-list';
 export const useHelperReferralsFullInfoByLevel = (account?: string, levels?: number[]) => {
@@ -41,51 +41,51 @@ export const useHelperReferralsFullInfoByLevel = (account?: string, levels?: num
   return referralsFullInfoList;
 };
 
-export const HELPER_USER_SQUADS_INFO_REQUEST = 'helper-user-squads-info';
-export const useHelperUserSquadsFullInfo = (account?: string) => {
+export const HELPER_USER_TEAMS_INFO_REQUEST = 'helper-user-teams-info';
+export const useHelperUserTeamsFullInfo = (account?: string) => {
   const helperContract = useHelperContract();
   const { stakingPlansRequest } = useStakingPlans();
 
-  const userSquadsInfoRequest = useQuery([HELPER_USER_SQUADS_INFO_REQUEST, { account }], async () =>
-    helperContract.getUserSquadsInfo(account || ethers.constants.AddressZero)
+  const userTeamsInfoRequest = useQuery([HELPER_USER_TEAMS_INFO_REQUEST, { account }], async () =>
+    helperContract.getUserTeamsInfo(account || ethers.constants.AddressZero)
   );
 
-  const userSquadsInfo = useMemo(() => {
+  const userTeamsInfo = useMemo(() => {
     const currentTime = Date.now() / 1000;
     return (
-      userSquadsInfoRequest.data
+      userTeamsInfoRequest.data
         ?.filter(({ plan }) => plan.isActive)
-        .map(({ plan, squadStatus, members, userHasSufficientStaking }) => ({
+        .map(({ plan, teamStatus, members, userHasSufficientStaking }) => ({
           plan: { ...plan },
-          squadStatus: { ...squadStatus },
+          teamStatus: { ...teamStatus },
           members,
           userHasSufficientStaking,
           stakingPlan: stakingPlansRequest.data?.[plan.stakingPlanId.toNumber()],
           isSubscriptionEnding:
-            squadStatus.subscription.toNumber() > 0 &&
-            squadStatus.subscription.toNumber() - currentTime <
-              SQUADS_SUBSCRIPTION_ENDING_NOTIFICATION,
+            teamStatus.subscription.toNumber() > 0 &&
+            teamStatus.subscription.toNumber() - currentTime <
+              TEAMS_SUBSCRIPTION_ENDING_NOTIFICATION,
         })) || []
     );
-  }, [stakingPlansRequest.data, userSquadsInfoRequest.data]);
+  }, [stakingPlansRequest.data, userTeamsInfoRequest.data]);
 
   return {
-    userSquadsInfoRequest,
-    userSquadsInfo,
+    userTeamsInfoRequest,
+    userTeamsInfo,
   };
 };
 
-export const HELPER_LOTTERY_ROUND_WINNERS_REQUEST = 'helper-lottery-round-winners';
-export const useHelperLotteryRoundWinners = (roundId?: number) => {
+export const HELPER_RAFFLE_ROUND_WINNERS_REQUEST = 'helper-raffle-round-winners';
+export const useHelperRaffleRoundWinners = (roundId?: number) => {
   const helperContract = useHelperContract();
-  const { round } = useLotteryRoundById(roundId);
+  const { round } = useRaffleRoundById(roundId);
 
   const roundWinnersRequest = useQuery(
-    [HELPER_LOTTERY_ROUND_WINNERS_REQUEST],
-    async () => helperContract.getLotteryRoundWinnersWithTickets(roundId),
+    [HELPER_RAFFLE_ROUND_WINNERS_REQUEST],
+    async () => helperContract.getRafflesRoundWinnersWithTickets(roundId),
     {
       enabled: roundId !== undefined && Boolean(round),
-      select: (winners) => calculateLotteryWinnersPrize(winners, round),
+      select: (winners) => calculateRaffleWinnersPrize(winners, round),
     }
   );
 

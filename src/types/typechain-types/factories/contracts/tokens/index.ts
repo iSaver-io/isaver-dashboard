@@ -2,6 +2,7 @@
 /* tslint:disable */
 /* eslint-disable */
 export { BasicToken__factory } from "./BasicToken__factory";
+export { ISaverAvatars__factory } from "./ISaverAvatars__factory";
+export { ISaverSAVRToken__factory } from "./ISaverSAVRToken__factory";
+export { ISaverSAVToken__factory } from "./ISaverSAVToken__factory";
 export { Ticket__factory } from "./Ticket__factory";
-export { Token1__factory } from "./Token1__factory";
-export { Token2__factory } from "./Token2__factory";

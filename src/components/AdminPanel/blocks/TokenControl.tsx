@@ -17,10 +17,10 @@ export const TokenControl: FC<TokenControlProps> = ({ token }) => {
     isPaused,
     pause,
     unpause,
-    addToBlacklist,
-    addToWhitelist,
-    removeFromBlacklist,
-    removeFromWhitelist,
+    addToBlackList,
+    addToWhiteList,
+    removeFromBlackList,
+    removeFromWhiteList,
   } = useTokenControl(token);
 
   const isSav = token === ContractsEnum.SAV;
@@ -35,7 +35,7 @@ export const TokenControl: FC<TokenControlProps> = ({ token }) => {
         </Text>
       ) : null}
       <Text ml="12px" textStyle="button" color="green.400">
-        {isSav ? 'Blacklist' : 'Whitelist'}
+        {isSav ? 'BlackList' : 'WhiteList'}
       </Text>
     </Flex>
   );
@@ -64,24 +64,24 @@ export const TokenControl: FC<TokenControlProps> = ({ token }) => {
 
         <ControlField
           label="Add to blacklist"
-          onSubmit={addToBlacklist.mutateAsync}
+          onSubmit={addToBlackList.mutateAsync}
           tip="Split addresses with comma"
         />
         <ControlField
           label="Remove from blacklist"
-          onSubmit={removeFromBlacklist.mutateAsync}
+          onSubmit={removeFromBlackList.mutateAsync}
           tip="Split addresses with comma"
         />
         {!isSav ? (
           <>
             <ControlField
               label="Add to whitelist"
-              onSubmit={addToWhitelist.mutateAsync}
+              onSubmit={addToWhiteList.mutateAsync}
               tip="Split addresses with comma"
             />
             <ControlField
               label="Remove from whitelist"
-              onSubmit={removeFromWhitelist.mutateAsync}
+              onSubmit={removeFromWhiteList.mutateAsync}
               tip="Split addresses with comma"
             />
           </>

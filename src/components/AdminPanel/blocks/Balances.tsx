@@ -9,10 +9,10 @@ import { useTokenSupply } from '@/hooks/useTokenSupply';
 
 export const Balances = () => {
   const { vestingPool } = useAccounts();
-  const { Lottery, ReferralManager, VendorSell } = useContractsAddresses();
+  const { Raffles, ReferralManager, VendorSell } = useContractsAddresses();
 
   const stakingAvailableTokens = useStakingAvailableTokens();
-  const lotteryBalance = useSavRBalance(Lottery);
+  const raffleBalance = useSavRBalance(Raffles);
   const referralBalance = useSavRBalance(ReferralManager);
   const vendorBalance = useSavBalance(VendorSell);
   const vendorChangeBalance = useUsdtBalance(VendorSell);
@@ -23,7 +23,7 @@ export const Balances = () => {
 
   const isLoading =
     stakingAvailableTokens.isLoading ||
-    lotteryBalance.isLoading ||
+    raffleBalance.isLoading ||
     referralBalance.isLoading ||
     vendorBalance.isLoading ||
     vendorChangeBalance.isLoading ||
@@ -67,7 +67,7 @@ export const Balances = () => {
       <Balance label="Staking rewards balance" balance={stakingAvailableTokens.data} symbol="SAV" />
       <Balance label="Staking TVL (SAV)" balance={tvlSav} symbol="SAV" minLimit={0} />
       <Balance label="Staking TVL (SAVR)" balance={tvlSavr} symbol="SAVR" minLimit={0} />
-      <Balance label="Lottery rewards balance" balance={lotteryBalance.data} symbol="SAVR" />
+      <Balance label="Raffle rewards balance" balance={raffleBalance.data} symbol="SAVR" />
       <Balance label="Referral rewards balance" balance={referralBalance.data} symbol="SAVR" />
       <Balance label="Exchange balance (SAV)" balance={vendorBalance.data} symbol="SAV" />
       <Balance

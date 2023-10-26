@@ -29,7 +29,7 @@ export const useVendorSellContract = () => {
   };
 
   const getDivider = () => {
-    return contract.DIVIDER();
+    return contract.divider();
   };
 
   const buyTokens = async (spendAmount: BigNumberish) => {

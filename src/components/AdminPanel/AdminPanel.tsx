@@ -14,11 +14,11 @@ import { useDocumentTitle } from '@/hooks/useMeta';
 import { Addresses } from './blocks/Addresses';
 import { Balances } from './blocks/Balances';
 import { ExchangeControl } from './blocks/ExchangeControl';
-import { LotteryControl } from './blocks/LotteryControl';
+import { RaffleControl } from './blocks/RaffleControl';
 import { ReferralControl } from './blocks/ReferralControl';
-import { SquadsControl } from './blocks/SquadsControl';
 import { StakingControl } from './blocks/StakingControl';
 import { StakingTVL } from './blocks/StakingTVL';
+import { TeamsControl } from './blocks/TeamsControl';
 import { TicketControl } from './blocks/TicketControl';
 import { TokenControl } from './blocks/TokenControl';
 import { TopNotificationControl } from './blocks/TopNotificationControl';
@@ -37,9 +37,9 @@ export const AdminPanel = () => {
   const isSavRAdmin = useHasRole(ContractsEnum.SAVR);
   const isStakingAdmin = useHasRole(ContractsEnum.Staking);
   const isReferralAdmin = useHasRole(ContractsEnum.ReferralManager);
-  const isSquadsAdmin = useHasRole(ContractsEnum.Squads);
-  const isLotteryAdmin = useHasRole(ContractsEnum.Lottery);
-  const isLotteryOperator = useHasRole(ContractsEnum.Lottery, 'operator');
+  const isTeamsAdmin = useHasRole(ContractsEnum.Teams);
+  const isRaffleAdmin = useHasRole(ContractsEnum.Raffles);
+  const isRaffleOperator = useHasRole(ContractsEnum.Raffles, 'operator');
   const isTicketAdmin = useHasRole(ContractsEnum.Ticket);
   const isTicketMinter = useHasRole(ContractsEnum.Ticket, 'minter');
   const isVestingAdmin = useHasRole(ContractsEnum.TokenVesting);
@@ -51,9 +51,9 @@ export const AdminPanel = () => {
       isSavRAdmin,
       isStakingAdmin,
       isReferralAdmin,
-      isSquadsAdmin,
-      isLotteryAdmin,
-      isLotteryOperator,
+      isTeamsAdmin,
+      isRaffleAdmin,
+      isRaffleOperator,
       isVestingAdmin,
       isVendorSellAdmin,
     ],
@@ -62,9 +62,9 @@ export const AdminPanel = () => {
       isSavRAdmin,
       isStakingAdmin,
       isReferralAdmin,
-      isSquadsAdmin,
-      isLotteryAdmin,
-      isLotteryOperator,
+      isTeamsAdmin,
+      isRaffleAdmin,
+      isRaffleOperator,
       isVestingAdmin,
       isVendorSellAdmin,
     ]
@@ -105,10 +105,10 @@ export const AdminPanel = () => {
       {isStakingAdmin ? <StakingTVL /> : null}
       {isStakingAdmin ? <StakingControl /> : null}
       {isReferralAdmin ? <ReferralControl /> : null}
-      {isSquadsAdmin ? <SquadsControl /> : null}
+      {isTeamsAdmin ? <TeamsControl /> : null}
       {isVendorSellAdmin ? <ExchangeControl /> : null}
       {isTicketAdmin || isTicketMinter ? <TicketControl /> : null}
-      {isLotteryAdmin || isLotteryOperator ? <LotteryControl /> : null}
+      {isRaffleAdmin || isRaffleOperator ? <RaffleControl /> : null}
       {isVestingAdmin ? <VestingControl /> : null}
       <TopNotificationControl />
       <AdminSection title="Database authentication">

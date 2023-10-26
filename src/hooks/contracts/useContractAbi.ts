@@ -5,14 +5,14 @@ import Contracts from '@/config/contracts.json';
 import { useChainId } from './useChainId';
 
 export enum ContractsEnum {
-  'SAV' = 'Token1',
-  'SAVR' = 'Token2',
+  'SAV' = 'ISaverSAVToken',
+  'SAVR' = 'ISaverSAVRToken',
   'Staking' = 'Staking',
   'ReferralManager' = 'ReferralManager',
-  'Squads' = 'Squads',
+  'Teams' = 'Teams',
   'Helper' = 'Helper',
   'VendorSell' = 'VendorSell',
-  'Lottery' = 'Lottery',
+  'Raffles' = 'Raffles',
   'Ticket' = 'Ticket',
   'TokenVesting' = 'TokenVesting',
   'TokenVesting_OLD' = 'TokenVesting_OLD',
@@ -31,6 +31,7 @@ export const useContractAbi = ({
   const { chain } = useNetwork();
 
   const chainId = useChainId();
+  console.log(contract, Contracts);
 
   //   TODO: fix TS return type
   const contractData = (Contracts as any)[chainId][0].contracts[contract];

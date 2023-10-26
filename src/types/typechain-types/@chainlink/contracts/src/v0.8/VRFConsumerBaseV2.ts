@@ -20,7 +20,6 @@ import type {
   TypedEvent,
   TypedListener,
   OnEvent,
-  PromiseOrValue,
 } from "../../../../common";
 
 export interface VRFConsumerBaseV2Interface extends utils.Interface {
@@ -34,7 +33,7 @@ export interface VRFConsumerBaseV2Interface extends utils.Interface {
 
   encodeFunctionData(
     functionFragment: "rawFulfillRandomWords",
-    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>[]]
+    values: [BigNumberish, BigNumberish[]]
   ): string;
 
   decodeFunctionResult(
@@ -73,22 +72,22 @@ export interface VRFConsumerBaseV2 extends BaseContract {
 
   functions: {
     rawFulfillRandomWords(
-      requestId: PromiseOrValue<BigNumberish>,
-      randomWords: PromiseOrValue<BigNumberish>[],
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      requestId: BigNumberish,
+      randomWords: BigNumberish[],
+      overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
   };
 
   rawFulfillRandomWords(
-    requestId: PromiseOrValue<BigNumberish>,
-    randomWords: PromiseOrValue<BigNumberish>[],
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
+    requestId: BigNumberish,
+    randomWords: BigNumberish[],
+    overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
 
   callStatic: {
     rawFulfillRandomWords(
-      requestId: PromiseOrValue<BigNumberish>,
-      randomWords: PromiseOrValue<BigNumberish>[],
+      requestId: BigNumberish,
+      randomWords: BigNumberish[],
       overrides?: CallOverrides
     ): Promise<void>;
   };
@@ -97,17 +96,17 @@ export interface VRFConsumerBaseV2 extends BaseContract {
 
   estimateGas: {
     rawFulfillRandomWords(
-      requestId: PromiseOrValue<BigNumberish>,
-      randomWords: PromiseOrValue<BigNumberish>[],
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      requestId: BigNumberish,
+      randomWords: BigNumberish[],
+      overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
   };
 
   populateTransaction: {
     rawFulfillRandomWords(
-      requestId: PromiseOrValue<BigNumberish>,
-      randomWords: PromiseOrValue<BigNumberish>[],
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      requestId: BigNumberish,
+      randomWords: BigNumberish[],
+      overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
   };
 }
