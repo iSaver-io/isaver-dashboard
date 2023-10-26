@@ -5,10 +5,10 @@ import { AdminPanel } from './components/AdminPanel/AdminPanel';
 import { Dashboard } from './components/Dashboard/Dashboard';
 import { ExchangePage } from './components/Exchange/ExchangePage';
 import { Layout } from './components/Layout/Layout';
-import { LotteryPage } from './components/Lottery/LotteryPage';
 import { MyVesting } from './components/MyVeting/MyVesting';
-import { SquadsPage } from './components/Squads/SquadsPage';
+import { RafflePage } from './components/Raffle/RafflePage';
 import { StakingPage } from './components/Staking/StakingPage';
+import { TeamsPage } from './components/Teams/TeamsPage';
 
 const Landing = React.lazy(() => import('@/components/Landing/Landing'));
 
@@ -28,10 +28,10 @@ const landingRoute = {
 const appRoutes = [
   { path: '/', name: 'Dashboard', element: <Dashboard />, nodeRef: createRef() },
   { path: '/staking', name: 'Staking', element: <StakingPage />, nodeRef: createRef() },
-  { path: '/team', name: 'Squads', element: <SquadsPage />, nodeRef: createRef() },
+  { path: '/team', name: 'Teams', element: <TeamsPage />, nodeRef: createRef() },
   { path: '/exchange', name: 'Exchange', element: <ExchangePage />, nodeRef: createRef() },
   { path: '/vesting', name: 'Vesting', element: <MyVesting />, nodeRef: createRef() },
-  { path: '/raffles/:id', name: 'Raffle', element: <LotteryPage />, nodeRef: createRef() },
+  { path: '/raffles/:id', name: 'Raffle', element: <RafflePage />, nodeRef: createRef() },
   { path: '/admin-panel', name: 'Admin panel', element: <AdminPanel />, nodeRef: createRef() },
 ];
 

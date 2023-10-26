@@ -23,8 +23,8 @@ import { ReactComponent as StarsIcon } from '@/assets/images/icons/stars.svg';
 import { ReactComponent as TabletIcon } from '@/assets/images/icons/tablet.svg';
 import { ReactComponent as WalletIcon } from '@/assets/images/icons/wallet.svg';
 import { useUserReferralInfo } from '@/hooks/referral/useReferralManager';
-import { useSquads } from '@/hooks/squads/useSquads';
 import { useStakingPlansUserInfo } from '@/hooks/staking/useStaking';
+import { useTeams } from '@/hooks/teams/useTeams';
 import { useLogger } from '@/hooks/useLogger';
 import { useNavigateByHash } from '@/hooks/useNavigateByHash';
 import { APP_URL, isLanding, WHITEPAPER_URL } from '@/router';
@@ -32,7 +32,7 @@ import { APP_URL, isLanding, WHITEPAPER_URL } from '@/router';
 export const Menu = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) => {
   const { hasEndingSubscription } = useStakingPlansUserInfo();
   const { hasEndingReferralSubscription } = useUserReferralInfo();
-  const { hasEndingSquadsSubscription } = useSquads();
+  const { hasEndingTeamsSubscription } = useTeams();
   const navigate = useNavigateByHash();
   const logger = useLogger({
     event: 'cross',
@@ -108,12 +108,12 @@ export const Menu = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void
             text="Team"
             icon={<StarsIcon />}
             onClick={() => handleNavigateWithLogger('/team')}
-            hasAlert={hasEndingReferralSubscription || hasEndingSquadsSubscription}
+            hasAlert={hasEndingReferralSubscription || hasEndingTeamsSubscription}
             textAlert={
               hasEndingReferralSubscription
                 ? 'Check your levels'
-                : hasEndingSquadsSubscription
-                ? 'Check your squads'
+                : hasEndingTeamsSubscription
+                ? 'Check your teams'
                 : undefined
             }
           />

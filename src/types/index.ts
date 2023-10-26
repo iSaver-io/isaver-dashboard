@@ -24,7 +24,7 @@ export type Stake = {
   profit: BigNumber;
   reward: BigNumber;
   isClaimed: boolean;
-  isToken2: boolean;
+  isSavrToken: boolean;
   stakingPlanId: number;
   stakeId: number;
   period: number;
@@ -35,11 +35,11 @@ export type RawReferral = {
   referralAddress: string;
   level: BigNumber;
   activationDate: BigNumber;
-  token1Balance: BigNumber;
-  token2Balance: BigNumber;
+  savTokenBalance: BigNumber;
+  savrTokenBalance: BigNumber;
   isStakingSubscriptionActive: boolean;
   isReferralSubscriptionActive: boolean;
-  isSquadSubscriptionActive: boolean;
+  isTeamSubscriptionActive: boolean;
 };
 
 export type Referral = {
@@ -50,7 +50,7 @@ export type Referral = {
   savrBalance: BigNumber;
   isStakingSubscriptionActive: boolean;
   isReferralSubscriptionActive: boolean;
-  isSquadSubscriptionActive: boolean;
+  isTeamSubscriptionActive: boolean;
   isLevelSubscriptionActive: boolean;
 };
 
@@ -71,10 +71,10 @@ export type StakingPlan = {
   subscriptionDurationDays: number;
 };
 
-export type SquadPlan = {
+export type TeamPlan = {
   subscriptionCost: BigNumber;
   reward: BigNumber;
   stakingThreshold: BigNumber;
-  squadSize: number;
+  TeamSize: number;
   stakingPlanId: number;
 };

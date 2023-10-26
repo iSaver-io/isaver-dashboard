@@ -23,19 +23,19 @@ export const useHelperContract = () => {
     return res.map((r) => ({ ...r }));
   };
 
-  const getUserSquadsInfo = async (address: string) => {
-    const res = await contract.getUserSquadsInfo(address);
-    return res.map(({ plan, squadStatus, members, userHasSufficientStaking }) => ({
+  const getUserTeamsInfo = async (address: string) => {
+    const res = await contract.getUserTeamsInfo(address);
+    return res.map(({ plan, teamStatus, members, userHasSufficientStaking }) => ({
       plan: { ...plan },
-      squadStatus: { ...squadStatus },
+      teamStatus: { ...teamStatus },
       members,
       userHasSufficientStaking,
     }));
   };
 
-  const getLotteryRoundWinnersWithTickets = async (roundId?: number) => {
+  const getRafflesRoundWinnersWithTickets = async (roundId?: number) => {
     return roundId !== undefined
-      ? await contract.getLotteryRoundWinnersWithTickets(roundId)
+      ? await contract.getRafflesRoundWinnersWithTickets(roundId)
       : Promise.reject('Round id is undefined');
   };
 
@@ -43,7 +43,7 @@ export const useHelperContract = () => {
     contract,
     address: contractAddress,
     getReferralsFullInfoByLevel,
-    getUserSquadsInfo,
-    getLotteryRoundWinnersWithTickets,
+    getUserTeamsInfo,
+    getRafflesRoundWinnersWithTickets,
   };
 };

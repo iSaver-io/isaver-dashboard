@@ -1,0 +1,137 @@
+@import '~@/assets/styles/vars.scss';
+
+.raffle-description {
+  &__table {
+    &,
+    tr,
+    td,
+    th {
+      border: 1px solid rgba(255, 255, 255, 0.5);
+    }
+    th {
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+    td {
+      font-weight: 500;
+    }
+
+    td,
+    th {
+      font-size: 18px;
+      text-align: center;
+      padding: 13px 20px;
+    }
+  }
+}
+
+.raffle-summary {
+  &__table {
+    width: 100%;
+
+    th {
+      padding: 25px 0;
+      font-weight: 600;
+      font-size: 16px;
+      line-height: 19.5px;
+    }
+    td {
+      padding: 15px 0;
+      font-weight: 500;
+      font-size: 16px;
+      text-transform: lowercase;
+      line-height: 23.4px;
+    }
+
+    &,
+    tr,
+    td,
+    th {
+      border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+    }
+  }
+
+  &__cell {
+    &--heading {
+      text-transform: uppercase;
+    }
+
+    &--level {
+      text-align: left;
+      width: 52px;
+    }
+    &--wallet {
+      text-align: center;
+    }
+    &--tickets {
+      width: 100px;
+      text-align: right;
+    }
+    &--prize {
+      width: 140px;
+      text-align: right;
+    }
+  }
+}
+
+@media screen and (max-width: $xl2) {
+  .raffle-description {
+    &__table {
+      td,
+      th {
+        font-size: 16px;
+        padding: 13px 16px;
+      }
+    }
+  }
+
+  .raffle-summary {
+    &__table {
+      th {
+        padding: 15px 0;
+        font-size: 12px;
+      }
+      td {
+        padding: 10px 0;
+        font-size: 12px;
+        font-weight: 400;
+      }
+    }
+
+    &__cell {
+      &--level {
+        width: 30px;
+      }
+      &--tickets {
+        width: 70px;
+      }
+      &--prize {
+        width: 120px;
+      }
+    }
+  }
+}
+@media screen and (max-width: $xl) {
+  .raffle-description {
+    &__table {
+      td,
+      th {
+        font-size: 14px;
+        padding: 11px 2px;
+      }
+    }
+  }
+}
+@media screen and (max-width: $lg) {
+}
+@media screen and (max-width: $md) {
+  .raffle-description {
+    &__table {
+      td,
+      th {
+        font-size: 14px;
+        padding: 11px 4px;
+      }
+    }
+  }
+}

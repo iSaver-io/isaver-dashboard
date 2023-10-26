@@ -22,7 +22,7 @@ export const formatReferralsToExport = (referrals: Referral[]) => {
     bigNumberToNumber(referral.savrBalance),
     referral.isStakingSubscriptionActive,
     referral.isReferralSubscriptionActive,
-    referral.isSquadSubscriptionActive,
+    referral.isTeamSubscriptionActive,
     referral.isLevelSubscriptionActive,
   ]);
 

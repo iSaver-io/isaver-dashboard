@@ -69,17 +69,17 @@ export const useStakingContract = () => {
     planId,
     amount,
     referrer,
-    isToken2,
+    isSAVRToken,
   }: {
     planId: number;
     amount: BigNumberish;
-    isToken2: boolean;
+    isSAVRToken: boolean;
     referrer?: string;
   }) => {
     const tx = await contract.deposit(
       planId,
       amount,
-      isToken2,
+      isSAVRToken,
       referrer || ethers.constants.AddressZero
     );
     return waitForTransaction(tx);

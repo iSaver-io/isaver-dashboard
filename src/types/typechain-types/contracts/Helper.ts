@@ -9,6 +9,7 @@ import type {
   CallOverrides,
   ContractTransaction,
   Overrides,
+  PayableOverrides,
   PopulatedTransaction,
   Signer,
   utils,
@@ -24,31 +25,30 @@ import type {
   TypedEvent,
   TypedListener,
   OnEvent,
-  PromiseOrValue,
 } from "../common";
 
 export declare namespace Helper {
-  export type LotteryWinnersWithTicketsStruct = {
-    level: PromiseOrValue<BigNumberish>;
-    winnerAddress: PromiseOrValue<string>;
-    enteredTickets: PromiseOrValue<BigNumberish>;
+  export type RafflesWinnersWithTicketsStruct = {
+    level: BigNumberish;
+    winnerAddress: string;
+    enteredTickets: BigNumberish;
   };
 
-  export type LotteryWinnersWithTicketsStructOutput = [
+  export type RafflesWinnersWithTicketsStructOutput = [
     BigNumber,
     string,
     BigNumber
   ] & { level: BigNumber; winnerAddress: string; enteredTickets: BigNumber };
 
   export type ReferralFullInfoStruct = {
-    referralAddress: PromiseOrValue<string>;
-    level: PromiseOrValue<BigNumberish>;
-    activationDate: PromiseOrValue<BigNumberish>;
-    token1Balance: PromiseOrValue<BigNumberish>;
-    token2Balance: PromiseOrValue<BigNumberish>;
-    isReferralSubscriptionActive: PromiseOrValue<boolean>;
-    isStakingSubscriptionActive: PromiseOrValue<boolean>;
-    isSquadSubscriptionActive: PromiseOrValue<boolean>;
+    referralAddress: string;
+    level: BigNumberish;
+    activationDate: BigNumberish;
+    savTokenBalance: BigNumberish;
+    savrTokenBalance: BigNumberish;
+    isReferralSubscriptionActive: boolean;
+    isStakingSubscriptionActive: boolean;
+    isTeamSubscriptionActive: boolean;
   };
 
   export type ReferralFullInfoStructOutput = [
@@ -64,45 +64,45 @@ export declare namespace Helper {
     referralAddress: string;
     level: BigNumber;
     activationDate: BigNumber;
-    token1Balance: BigNumber;
-    token2Balance: BigNumber;
+    savTokenBalance: BigNumber;
+    savrTokenBalance: BigNumber;
     isReferralSubscriptionActive: boolean;
     isStakingSubscriptionActive: boolean;
-    isSquadSubscriptionActive: boolean;
+    isTeamSubscriptionActive: boolean;
   };
 
-  export type UserSquadInfoStruct = {
-    squadStatus: ISquads.SquadStruct;
-    plan: ISquads.SquadPlanStruct;
-    members: PromiseOrValue<string>[];
-    userHasSufficientStaking: PromiseOrValue<boolean>;
+  export type UserTeamInfoStruct = {
+    teamStatus: ITeams.TeamStruct;
+    plan: ITeams.TeamPlanStruct;
+    members: string[];
+    userHasSufficientStaking: boolean;
   };
 
-  export type UserSquadInfoStructOutput = [
-    ISquads.SquadStructOutput,
-    ISquads.SquadPlanStructOutput,
+  export type UserTeamInfoStructOutput = [
+    ITeams.TeamStructOutput,
+    ITeams.TeamPlanStructOutput,
     string[],
     boolean
   ] & {
-    squadStatus: ISquads.SquadStructOutput;
-    plan: ISquads.SquadPlanStructOutput;
+    teamStatus: ITeams.TeamStructOutput;
+    plan: ITeams.TeamPlanStructOutput;
     members: string[];
     userHasSufficientStaking: boolean;
   };
 }
 
-export declare namespace ISquads {
-  export type SquadPlanStruct = {
-    squadPlanId: PromiseOrValue<BigNumberish>;
-    subscriptionCost: PromiseOrValue<BigNumberish>;
-    reward: PromiseOrValue<BigNumberish>;
-    stakingThreshold: PromiseOrValue<BigNumberish>;
-    squadSize: PromiseOrValue<BigNumberish>;
-    stakingPlanId: PromiseOrValue<BigNumberish>;
-    isActive: PromiseOrValue<boolean>;
+export declare namespace ITeams {
+  export type TeamPlanStruct = {
+    teamPlanId: BigNumberish;
+    subscriptionCost: BigNumberish;
+    reward: BigNumberish;
+    stakingThreshold: BigNumberish;
+    teamSize: BigNumberish;
+    stakingPlanId: BigNumberish;
+    isActive: boolean;
   };
 
-  export type SquadPlanStructOutput = [
+  export type TeamPlanStructOutput = [
     BigNumber,
     BigNumber,
     BigNumber,
@@ -111,133 +111,139 @@ export declare namespace ISquads {
     BigNumber,
     boolean
   ] & {
-    squadPlanId: BigNumber;
+    teamPlanId: BigNumber;
     subscriptionCost: BigNumber;
     reward: BigNumber;
     stakingThreshold: BigNumber;
-    squadSize: BigNumber;
+    teamSize: BigNumber;
     stakingPlanId: BigNumber;
     isActive: boolean;
   };
 
-  export type SquadStruct = {
-    subscription: PromiseOrValue<BigNumberish>;
-    squadsFilled: PromiseOrValue<BigNumberish>;
+  export type TeamStruct = {
+    subscription: BigNumberish;
+    teamsFilled: BigNumberish;
   };
 
-  export type SquadStructOutput = [BigNumber, BigNumber] & {
+  export type TeamStructOutput = [BigNumber, BigNumber] & {
     subscription: BigNumber;
-    squadsFilled: BigNumber;
+    teamsFilled: BigNumber;
   };
 }
 
 export interface HelperInterface extends utils.Interface {
   functions: {
-    "getLotteryRoundWinnersWithTickets(uint256)": FunctionFragment;
+    "DEFAULT_ADMIN_ROLE()": FunctionFragment;
+    "UPGRADER_ROLE()": FunctionFragment;
+    "getRafflesRoundWinnersWithTickets(uint256)": FunctionFragment;
+    "getRoleAdmin(bytes32)": FunctionFragment;
     "getUserReferralsFullInfoByLevel(address,uint256)": FunctionFragment;
-    "getUserSquadInfo((uint256,uint256,uint256,uint256,uint256,uint256,bool),address)": FunctionFragment;
-    "getUserSquadsInfo(address)": FunctionFragment;
-    "lottery()": FunctionFragment;
-    "owner()": FunctionFragment;
-    "referralManager()": FunctionFragment;
-    "renounceOwnership()": FunctionFragment;
-    "squads()": FunctionFragment;
-    "staking()": FunctionFragment;
-    "token1()": FunctionFragment;
-    "token2()": FunctionFragment;
-    "transferOwnership(address)": FunctionFragment;
-    "updateLottery(address)": FunctionFragment;
-    "updateReferralManager(address)": FunctionFragment;
-    "updateSquads(address)": FunctionFragment;
-    "updateStaking(address)": FunctionFragment;
-    "updateToken1(address)": FunctionFragment;
-    "updateToken2(address)": FunctionFragment;
+    "getUserTeamInfo((uint256,uint256,uint256,uint256,uint256,uint256,bool),address)": FunctionFragment;
+    "getUserTeamsInfo(address)": FunctionFragment;
+    "grantRole(bytes32,address)": FunctionFragment;
+    "hasRole(bytes32,address)": FunctionFragment;
+    "initialize(address)": FunctionFragment;
+    "proxiableUUID()": FunctionFragment;
+    "renounceRole(bytes32,address)": FunctionFragment;
+    "revokeRole(bytes32,address)": FunctionFragment;
+    "supportsInterface(bytes4)": FunctionFragment;
+    "upgradeTo(address)": FunctionFragment;
+    "upgradeToAndCall(address,bytes)": FunctionFragment;
   };
 
   getFunction(
     nameOrSignatureOrTopic:
-      | "getLotteryRoundWinnersWithTickets"
+      | "DEFAULT_ADMIN_ROLE"
+      | "UPGRADER_ROLE"
+      | "getRafflesRoundWinnersWithTickets"
+      | "getRoleAdmin"
       | "getUserReferralsFullInfoByLevel"
-      | "getUserSquadInfo"
-      | "getUserSquadsInfo"
-      | "lottery"
-      | "owner"
-      | "referralManager"
-      | "renounceOwnership"
-      | "squads"
-      | "staking"
-      | "token1"
-      | "token2"
-      | "transferOwnership"
-      | "updateLottery"
-      | "updateReferralManager"
-      | "updateSquads"
-      | "updateStaking"
-      | "updateToken1"
-      | "updateToken2"
+      | "getUserTeamInfo"
+      | "getUserTeamsInfo"
+      | "grantRole"
+      | "hasRole"
+      | "initialize"
+      | "proxiableUUID"
+      | "renounceRole"
+      | "revokeRole"
+      | "supportsInterface"
+      | "upgradeTo"
+      | "upgradeToAndCall"
   ): FunctionFragment;
 
   encodeFunctionData(
-    functionFragment: "getLotteryRoundWinnersWithTickets",
-    values: [PromiseOrValue<BigNumberish>]
+    functionFragment: "DEFAULT_ADMIN_ROLE",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "UPGRADER_ROLE",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getRafflesRoundWinnersWithTickets",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getRoleAdmin",
+    values: [BytesLike]
   ): string;
   encodeFunctionData(
     functionFragment: "getUserReferralsFullInfoByLevel",
-    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
+    values: [string, BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "getUserSquadInfo",
-    values: [ISquads.SquadPlanStruct, PromiseOrValue<string>]
+    functionFragment: "getUserTeamInfo",
+    values: [ITeams.TeamPlanStruct, string]
   ): string;
   encodeFunctionData(
-    functionFragment: "getUserSquadsInfo",
-    values: [PromiseOrValue<string>]
+    functionFragment: "getUserTeamsInfo",
+    values: [string]
   ): string;
-  encodeFunctionData(functionFragment: "lottery", values?: undefined): string;
-  encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "referralManager",
+    functionFragment: "grantRole",
+    values: [BytesLike, string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "hasRole",
+    values: [BytesLike, string]
+  ): string;
+  encodeFunctionData(functionFragment: "initialize", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "proxiableUUID",
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "renounceOwnership",
-    values?: undefined
-  ): string;
-  encodeFunctionData(functionFragment: "squads", values?: undefined): string;
-  encodeFunctionData(functionFragment: "staking", values?: undefined): string;
-  encodeFunctionData(functionFragment: "token1", values?: undefined): string;
-  encodeFunctionData(functionFragment: "token2", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "transferOwnership",
-    values: [PromiseOrValue<string>]
+    functionFragment: "renounceRole",
+    values: [BytesLike, string]
   ): string;
   encodeFunctionData(
-    functionFragment: "updateLottery",
-    values: [PromiseOrValue<string>]
+    functionFragment: "revokeRole",
+    values: [BytesLike, string]
   ): string;
   encodeFunctionData(
-    functionFragment: "updateReferralManager",
-    values: [PromiseOrValue<string>]
+    functionFragment: "supportsInterface",
+    values: [BytesLike]
   ): string;
+  encodeFunctionData(functionFragment: "upgradeTo", values: [string]): string;
   encodeFunctionData(
-    functionFragment: "updateSquads",
-    values: [PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "updateStaking",
-    values: [PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "updateToken1",
-    values: [PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "updateToken2",
-    values: [PromiseOrValue<string>]
+    functionFragment: "upgradeToAndCall",
+    values: [string, BytesLike]
   ): string;
 
   decodeFunctionResult(
-    functionFragment: "getLotteryRoundWinnersWithTickets",
+    functionFragment: "DEFAULT_ADMIN_ROLE",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "UPGRADER_ROLE",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getRafflesRoundWinnersWithTickets",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getRoleAdmin",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -245,74 +251,125 @@ export interface HelperInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "getUserSquadInfo",
+    functionFragment: "getUserTeamInfo",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "getUserSquadsInfo",
+    functionFragment: "getUserTeamsInfo",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "lottery", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "grantRole", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "hasRole", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "initialize", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "referralManager",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "renounceOwnership",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "squads", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "staking", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "token1", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "token2", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "transferOwnership",
+    functionFragment: "proxiableUUID",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "updateLottery",
+    functionFragment: "renounceRole",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "revokeRole", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "updateReferralManager",
+    functionFragment: "supportsInterface",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "upgradeTo", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "updateSquads",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "updateStaking",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "updateToken1",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "updateToken2",
+    functionFragment: "upgradeToAndCall",
     data: BytesLike
   ): Result;
 
   events: {
-    "OwnershipTransferred(address,address)": EventFragment;
+    "AdminChanged(address,address)": EventFragment;
+    "BeaconUpgraded(address)": EventFragment;
+    "Initialized(uint8)": EventFragment;
+    "RoleAdminChanged(bytes32,bytes32,bytes32)": EventFragment;
+    "RoleGranted(bytes32,address,address)": EventFragment;
+    "RoleRevoked(bytes32,address,address)": EventFragment;
+    "Upgraded(address)": EventFragment;
   };
 
-  getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "AdminChanged"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "BeaconUpgraded"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "RoleAdminChanged"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "RoleGranted"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "RoleRevoked"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Upgraded"): EventFragment;
 }
 
-export interface OwnershipTransferredEventObject {
-  previousOwner: string;
-  newOwner: string;
+export interface AdminChangedEventObject {
+  previousAdmin: string;
+  newAdmin: string;
 }
-export type OwnershipTransferredEvent = TypedEvent<
+export type AdminChangedEvent = TypedEvent<
   [string, string],
-  OwnershipTransferredEventObject
+  AdminChangedEventObject
 >;
 
-export type OwnershipTransferredEventFilter =
-  TypedEventFilter<OwnershipTransferredEvent>;
+export type AdminChangedEventFilter = TypedEventFilter<AdminChangedEvent>;
+
+export interface BeaconUpgradedEventObject {
+  beacon: string;
+}
+export type BeaconUpgradedEvent = TypedEvent<
+  [string],
+  BeaconUpgradedEventObject
+>;
+
+export type BeaconUpgradedEventFilter = TypedEventFilter<BeaconUpgradedEvent>;
+
+export interface InitializedEventObject {
+  version: number;
+}
+export type InitializedEvent = TypedEvent<[number], InitializedEventObject>;
+
+export type InitializedEventFilter = TypedEventFilter<InitializedEvent>;
+
+export interface RoleAdminChangedEventObject {
+  role: string;
+  previousAdminRole: string;
+  newAdminRole: string;
+}
+export type RoleAdminChangedEvent = TypedEvent<
+  [string, string, string],
+  RoleAdminChangedEventObject
+>;
+
+export type RoleAdminChangedEventFilter =
+  TypedEventFilter<RoleAdminChangedEvent>;
+
+export interface RoleGrantedEventObject {
+  role: string;
+  account: string;
+  sender: string;
+}
+export type RoleGrantedEvent = TypedEvent<
+  [string, string, string],
+  RoleGrantedEventObject
+>;
+
+export type RoleGrantedEventFilter = TypedEventFilter<RoleGrantedEvent>;
+
+export interface RoleRevokedEventObject {
+  role: string;
+  account: string;
+  sender: string;
+}
+export type RoleRevokedEvent = TypedEvent<
+  [string, string, string],
+  RoleRevokedEventObject
+>;
+
+export type RoleRevokedEventFilter = TypedEventFilter<RoleRevokedEvent>;
+
+export interface UpgradedEventObject {
+  implementation: string;
+}
+export type UpgradedEvent = TypedEvent<[string], UpgradedEventObject>;
+
+export type UpgradedEventFilter = TypedEventFilter<UpgradedEvent>;
 
 export interface Helper extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
@@ -341,394 +398,448 @@ export interface Helper extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
-    getLotteryRoundWinnersWithTickets(
-      roundId: PromiseOrValue<BigNumberish>,
+    DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<[string]>;
+
+    UPGRADER_ROLE(overrides?: CallOverrides): Promise<[string]>;
+
+    getRafflesRoundWinnersWithTickets(
+      roundId: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<[Helper.LotteryWinnersWithTicketsStructOutput[]]>;
+    ): Promise<[Helper.RafflesWinnersWithTicketsStructOutput[]]>;
+
+    getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<[string]>;
 
     getUserReferralsFullInfoByLevel(
-      user: PromiseOrValue<string>,
-      level: PromiseOrValue<BigNumberish>,
+      user: string,
+      level: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[Helper.ReferralFullInfoStructOutput[]]>;
 
-    getUserSquadInfo(
-      plan: ISquads.SquadPlanStruct,
-      user: PromiseOrValue<string>,
+    getUserTeamInfo(
+      plan: ITeams.TeamPlanStruct,
+      user: string,
       overrides?: CallOverrides
-    ): Promise<[Helper.UserSquadInfoStructOutput]>;
+    ): Promise<[Helper.UserTeamInfoStructOutput]>;
 
-    getUserSquadsInfo(
-      user: PromiseOrValue<string>,
+    getUserTeamsInfo(
+      user: string,
       overrides?: CallOverrides
-    ): Promise<[Helper.UserSquadInfoStructOutput[]]>;
+    ): Promise<[Helper.UserTeamInfoStructOutput[]]>;
 
-    lottery(overrides?: CallOverrides): Promise<[string]>;
-
-    owner(overrides?: CallOverrides): Promise<[string]>;
-
-    referralManager(overrides?: CallOverrides): Promise<[string]>;
-
-    renounceOwnership(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    grantRole(
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
 
-    squads(overrides?: CallOverrides): Promise<[string]>;
+    hasRole(
+      role: BytesLike,
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
 
-    staking(overrides?: CallOverrides): Promise<[string]>;
-
-    token1(overrides?: CallOverrides): Promise<[string]>;
-
-    token2(overrides?: CallOverrides): Promise<[string]>;
-
-    transferOwnership(
-      newOwner: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    initialize(
+      contractManagerAddress: string,
+      overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
 
-    updateLottery(
-      _lottery: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    proxiableUUID(overrides?: CallOverrides): Promise<[string]>;
+
+    renounceRole(
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
 
-    updateReferralManager(
-      _referralManager: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    revokeRole(
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
 
-    updateSquads(
-      _squads: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    supportsInterface(
+      interfaceId: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
+
+    upgradeTo(
+      newImplementation: string,
+      overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
 
-    updateStaking(
-      _staking: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    updateToken1(
-      _token1: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    updateToken2(
-      _token2: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    upgradeToAndCall(
+      newImplementation: string,
+      data: BytesLike,
+      overrides?: PayableOverrides & { from?: string }
     ): Promise<ContractTransaction>;
   };
 
-  getLotteryRoundWinnersWithTickets(
-    roundId: PromiseOrValue<BigNumberish>,
+  DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
+
+  UPGRADER_ROLE(overrides?: CallOverrides): Promise<string>;
+
+  getRafflesRoundWinnersWithTickets(
+    roundId: BigNumberish,
     overrides?: CallOverrides
-  ): Promise<Helper.LotteryWinnersWithTicketsStructOutput[]>;
+  ): Promise<Helper.RafflesWinnersWithTicketsStructOutput[]>;
+
+  getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<string>;
 
   getUserReferralsFullInfoByLevel(
-    user: PromiseOrValue<string>,
-    level: PromiseOrValue<BigNumberish>,
+    user: string,
+    level: BigNumberish,
     overrides?: CallOverrides
   ): Promise<Helper.ReferralFullInfoStructOutput[]>;
 
-  getUserSquadInfo(
-    plan: ISquads.SquadPlanStruct,
-    user: PromiseOrValue<string>,
+  getUserTeamInfo(
+    plan: ITeams.TeamPlanStruct,
+    user: string,
     overrides?: CallOverrides
-  ): Promise<Helper.UserSquadInfoStructOutput>;
+  ): Promise<Helper.UserTeamInfoStructOutput>;
 
-  getUserSquadsInfo(
-    user: PromiseOrValue<string>,
+  getUserTeamsInfo(
+    user: string,
     overrides?: CallOverrides
-  ): Promise<Helper.UserSquadInfoStructOutput[]>;
+  ): Promise<Helper.UserTeamInfoStructOutput[]>;
 
-  lottery(overrides?: CallOverrides): Promise<string>;
-
-  owner(overrides?: CallOverrides): Promise<string>;
-
-  referralManager(overrides?: CallOverrides): Promise<string>;
-
-  renounceOwnership(
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  grantRole(
+    role: BytesLike,
+    account: string,
+    overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
 
-  squads(overrides?: CallOverrides): Promise<string>;
+  hasRole(
+    role: BytesLike,
+    account: string,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
 
-  staking(overrides?: CallOverrides): Promise<string>;
-
-  token1(overrides?: CallOverrides): Promise<string>;
-
-  token2(overrides?: CallOverrides): Promise<string>;
-
-  transferOwnership(
-    newOwner: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  initialize(
+    contractManagerAddress: string,
+    overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
 
-  updateLottery(
-    _lottery: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  proxiableUUID(overrides?: CallOverrides): Promise<string>;
+
+  renounceRole(
+    role: BytesLike,
+    account: string,
+    overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
 
-  updateReferralManager(
-    _referralManager: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  revokeRole(
+    role: BytesLike,
+    account: string,
+    overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
 
-  updateSquads(
-    _squads: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  supportsInterface(
+    interfaceId: BytesLike,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
+  upgradeTo(
+    newImplementation: string,
+    overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
 
-  updateStaking(
-    _staking: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  updateToken1(
-    _token1: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  updateToken2(
-    _token2: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  upgradeToAndCall(
+    newImplementation: string,
+    data: BytesLike,
+    overrides?: PayableOverrides & { from?: string }
   ): Promise<ContractTransaction>;
 
   callStatic: {
-    getLotteryRoundWinnersWithTickets(
-      roundId: PromiseOrValue<BigNumberish>,
+    DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
+
+    UPGRADER_ROLE(overrides?: CallOverrides): Promise<string>;
+
+    getRafflesRoundWinnersWithTickets(
+      roundId: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<Helper.LotteryWinnersWithTicketsStructOutput[]>;
+    ): Promise<Helper.RafflesWinnersWithTicketsStructOutput[]>;
+
+    getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<string>;
 
     getUserReferralsFullInfoByLevel(
-      user: PromiseOrValue<string>,
-      level: PromiseOrValue<BigNumberish>,
+      user: string,
+      level: BigNumberish,
       overrides?: CallOverrides
     ): Promise<Helper.ReferralFullInfoStructOutput[]>;
 
-    getUserSquadInfo(
-      plan: ISquads.SquadPlanStruct,
-      user: PromiseOrValue<string>,
+    getUserTeamInfo(
+      plan: ITeams.TeamPlanStruct,
+      user: string,
       overrides?: CallOverrides
-    ): Promise<Helper.UserSquadInfoStructOutput>;
+    ): Promise<Helper.UserTeamInfoStructOutput>;
 
-    getUserSquadsInfo(
-      user: PromiseOrValue<string>,
+    getUserTeamsInfo(
+      user: string,
       overrides?: CallOverrides
-    ): Promise<Helper.UserSquadInfoStructOutput[]>;
+    ): Promise<Helper.UserTeamInfoStructOutput[]>;
 
-    lottery(overrides?: CallOverrides): Promise<string>;
-
-    owner(overrides?: CallOverrides): Promise<string>;
-
-    referralManager(overrides?: CallOverrides): Promise<string>;
-
-    renounceOwnership(overrides?: CallOverrides): Promise<void>;
-
-    squads(overrides?: CallOverrides): Promise<string>;
-
-    staking(overrides?: CallOverrides): Promise<string>;
-
-    token1(overrides?: CallOverrides): Promise<string>;
-
-    token2(overrides?: CallOverrides): Promise<string>;
-
-    transferOwnership(
-      newOwner: PromiseOrValue<string>,
+    grantRole(
+      role: BytesLike,
+      account: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    updateLottery(
-      _lottery: PromiseOrValue<string>,
+    hasRole(
+      role: BytesLike,
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
+    initialize(
+      contractManagerAddress: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    updateReferralManager(
-      _referralManager: PromiseOrValue<string>,
+    proxiableUUID(overrides?: CallOverrides): Promise<string>;
+
+    renounceRole(
+      role: BytesLike,
+      account: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    updateSquads(
-      _squads: PromiseOrValue<string>,
+    revokeRole(
+      role: BytesLike,
+      account: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    updateStaking(
-      _staking: PromiseOrValue<string>,
+    supportsInterface(
+      interfaceId: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
+    upgradeTo(
+      newImplementation: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    updateToken1(
-      _token1: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    updateToken2(
-      _token2: PromiseOrValue<string>,
+    upgradeToAndCall(
+      newImplementation: string,
+      data: BytesLike,
       overrides?: CallOverrides
     ): Promise<void>;
   };
 
   filters: {
-    "OwnershipTransferred(address,address)"(
-      previousOwner?: PromiseOrValue<string> | null,
-      newOwner?: PromiseOrValue<string> | null
-    ): OwnershipTransferredEventFilter;
-    OwnershipTransferred(
-      previousOwner?: PromiseOrValue<string> | null,
-      newOwner?: PromiseOrValue<string> | null
-    ): OwnershipTransferredEventFilter;
+    "AdminChanged(address,address)"(
+      previousAdmin?: null,
+      newAdmin?: null
+    ): AdminChangedEventFilter;
+    AdminChanged(
+      previousAdmin?: null,
+      newAdmin?: null
+    ): AdminChangedEventFilter;
+
+    "BeaconUpgraded(address)"(
+      beacon?: string | null
+    ): BeaconUpgradedEventFilter;
+    BeaconUpgraded(beacon?: string | null): BeaconUpgradedEventFilter;
+
+    "Initialized(uint8)"(version?: null): InitializedEventFilter;
+    Initialized(version?: null): InitializedEventFilter;
+
+    "RoleAdminChanged(bytes32,bytes32,bytes32)"(
+      role?: BytesLike | null,
+      previousAdminRole?: BytesLike | null,
+      newAdminRole?: BytesLike | null
+    ): RoleAdminChangedEventFilter;
+    RoleAdminChanged(
+      role?: BytesLike | null,
+      previousAdminRole?: BytesLike | null,
+      newAdminRole?: BytesLike | null
+    ): RoleAdminChangedEventFilter;
+
+    "RoleGranted(bytes32,address,address)"(
+      role?: BytesLike | null,
+      account?: string | null,
+      sender?: string | null
+    ): RoleGrantedEventFilter;
+    RoleGranted(
+      role?: BytesLike | null,
+      account?: string | null,
+      sender?: string | null
+    ): RoleGrantedEventFilter;
+
+    "RoleRevoked(bytes32,address,address)"(
+      role?: BytesLike | null,
+      account?: string | null,
+      sender?: string | null
+    ): RoleRevokedEventFilter;
+    RoleRevoked(
+      role?: BytesLike | null,
+      account?: string | null,
+      sender?: string | null
+    ): RoleRevokedEventFilter;
+
+    "Upgraded(address)"(implementation?: string | null): UpgradedEventFilter;
+    Upgraded(implementation?: string | null): UpgradedEventFilter;
   };
 
   estimateGas: {
-    getLotteryRoundWinnersWithTickets(
-      roundId: PromiseOrValue<BigNumberish>,
+    DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
+
+    UPGRADER_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getRafflesRoundWinnersWithTickets(
+      roundId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getRoleAdmin(
+      role: BytesLike,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     getUserReferralsFullInfoByLevel(
-      user: PromiseOrValue<string>,
-      level: PromiseOrValue<BigNumberish>,
+      user: string,
+      level: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    getUserSquadInfo(
-      plan: ISquads.SquadPlanStruct,
-      user: PromiseOrValue<string>,
+    getUserTeamInfo(
+      plan: ITeams.TeamPlanStruct,
+      user: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    getUserSquadsInfo(
-      user: PromiseOrValue<string>,
+    getUserTeamsInfo(
+      user: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    lottery(overrides?: CallOverrides): Promise<BigNumber>;
-
-    owner(overrides?: CallOverrides): Promise<BigNumber>;
-
-    referralManager(overrides?: CallOverrides): Promise<BigNumber>;
-
-    renounceOwnership(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    grantRole(
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
 
-    squads(overrides?: CallOverrides): Promise<BigNumber>;
-
-    staking(overrides?: CallOverrides): Promise<BigNumber>;
-
-    token1(overrides?: CallOverrides): Promise<BigNumber>;
-
-    token2(overrides?: CallOverrides): Promise<BigNumber>;
-
-    transferOwnership(
-      newOwner: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    hasRole(
+      role: BytesLike,
+      account: string,
+      overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    updateLottery(
-      _lottery: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    initialize(
+      contractManagerAddress: string,
+      overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
 
-    updateReferralManager(
-      _referralManager: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    proxiableUUID(overrides?: CallOverrides): Promise<BigNumber>;
+
+    renounceRole(
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
 
-    updateSquads(
-      _squads: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    revokeRole(
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
 
-    updateStaking(
-      _staking: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    supportsInterface(
+      interfaceId: BytesLike,
+      overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    updateToken1(
-      _token1: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    upgradeTo(
+      newImplementation: string,
+      overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
 
-    updateToken2(
-      _token2: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    upgradeToAndCall(
+      newImplementation: string,
+      data: BytesLike,
+      overrides?: PayableOverrides & { from?: string }
     ): Promise<BigNumber>;
   };
 
   populateTransaction: {
-    getLotteryRoundWinnersWithTickets(
-      roundId: PromiseOrValue<BigNumberish>,
+    DEFAULT_ADMIN_ROLE(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    UPGRADER_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    getRafflesRoundWinnersWithTickets(
+      roundId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getRoleAdmin(
+      role: BytesLike,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     getUserReferralsFullInfoByLevel(
-      user: PromiseOrValue<string>,
-      level: PromiseOrValue<BigNumberish>,
+      user: string,
+      level: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    getUserSquadInfo(
-      plan: ISquads.SquadPlanStruct,
-      user: PromiseOrValue<string>,
+    getUserTeamInfo(
+      plan: ITeams.TeamPlanStruct,
+      user: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    getUserSquadsInfo(
-      user: PromiseOrValue<string>,
+    getUserTeamsInfo(
+      user: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    lottery(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    referralManager(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    renounceOwnership(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    grantRole(
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 
-    squads(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    staking(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    token1(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    token2(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    transferOwnership(
-      newOwner: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    hasRole(
+      role: BytesLike,
+      account: string,
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    updateLottery(
-      _lottery: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    initialize(
+      contractManagerAddress: string,
+      overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 
-    updateReferralManager(
-      _referralManager: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    proxiableUUID(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    renounceRole(
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 
-    updateSquads(
-      _squads: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    revokeRole(
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 
-    updateStaking(
-      _staking: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    supportsInterface(
+      interfaceId: BytesLike,
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    updateToken1(
-      _token1: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    upgradeTo(
+      newImplementation: string,
+      overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 
-    updateToken2(
-      _token2: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    upgradeToAndCall(
+      newImplementation: string,
+      data: BytesLike,
+      overrides?: PayableOverrides & { from?: string }
     ): Promise<PopulatedTransaction>;
   };
 }
