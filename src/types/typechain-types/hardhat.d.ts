@@ -215,11 +215,11 @@ declare module 'hardhat/types/runtime' {
     getContractFactory(
       name: 'BlackList',
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.Blacklist__factory>;
+    ): Promise<Contracts.BlackList__factory>;
     getContractFactory(
       name: 'ERC20BlackList',
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.ERC20Blacklist__factory>;
+    ): Promise<Contracts.ERC20BlackList__factory>;
     getContractFactory(
       name: 'WhiteList',
       signerOrOptions?: ethers.Signer | FactoryOptions
