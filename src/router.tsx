@@ -11,6 +11,7 @@ import { StakingPage } from './components/Staking/StakingPage';
 import { TeamsPage } from './components/Teams/TeamsPage';
 
 const Landing = React.lazy(() => import('@/components/Landing/Landing'));
+const AvatarLanding = React.lazy(() => import('@/components/AvatarLanding/AvatarLanding'));
 
 export const LANDING_URL = 'https://isaver.io';
 export const APP_URL = 'https://dashboard.isaver.io';
@@ -33,6 +34,12 @@ const appRoutes = [
   { path: '/vesting', name: 'Vesting', element: <MyVesting />, nodeRef: createRef() },
   { path: '/raffles/:id', name: 'Raffle', element: <RafflePage />, nodeRef: createRef() },
   { path: '/admin-panel', name: 'Admin panel', element: <AdminPanel />, nodeRef: createRef() },
+  {
+    path: '/avatar-landing',
+    name: 'Avatar landing',
+    element: <AvatarLanding />,
+    nodeRef: createRef(),
+  },
 ];
 
 export const routes = isLanding
