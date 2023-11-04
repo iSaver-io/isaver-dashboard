@@ -36,6 +36,7 @@ const colors = {
   red: '#c95b5b',
   gray: {
     200: '#4d6655',
+    400: '#6e978a',
   },
   bgGreen: {
     50: '#174033',
@@ -88,12 +89,12 @@ const textStyles = {
     textTransform: 'uppercase',
   },
   h2: {
-    fontSize: { lg: '26px', xl: '38px' },
+    fontSize: { base: '26px', xl: '38px' },
     fontWeight: 'bold',
     lineHeight: '130%',
   },
   h3: {
-    fontSize: ['26px'],
+    fontSize: { base: '18px', xl: '26px' },
     fontWeight: '700',
     lineHeight: '130%',
   },
@@ -108,7 +109,7 @@ const textStyles = {
     lineHeight: '130%',
   },
   text2: {
-    fontSize: ['16px'],
+    fontSize: { sm: '14px', xl: '16px' },
     fontWeight: '500',
     lineHeight: '130%',
   },
@@ -140,6 +141,11 @@ const textStyles = {
     fontFamily: 'PT Sans',
   },
   textSansSmall: {
+    fontSize: '14px',
+    lineHeight: '130%',
+    fontFamily: 'PT Sans',
+  },
+  textSansExtraSmall: {
     fontSize: '12px',
     lineHeight: '130%',
     fontFamily: 'PT Sans',
@@ -148,6 +154,12 @@ const textStyles = {
     fontSize: ['16px'],
     fontWeight: '600',
     lineHeight: '20px',
+    textTransform: 'uppercase',
+  },
+  buttonSmall: {
+    fontSize: ['12px'],
+    fontWeight: '600',
+    lineHeight: '130%',
     textTransform: 'uppercase',
   },
   menuDefault: {
