@@ -62,7 +62,7 @@ export const RaffleHeading = ({
           {title}
         </Text>
 
-        <Text textStyle="textSansSmall" fontSize={{ '2xl': '26px' }}>
+        <Text textStyle="textSansExtraSmall" fontSize={{ '2xl': '26px' }}>
           Total Tickets in this round: {totalTickets}
         </Text>
       </Flex>
