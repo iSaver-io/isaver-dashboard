@@ -1,6 +1,8 @@
 import { useEffect } from 'react';
 import { Box } from '@chakra-ui/react';
 
+import { useDocumentTitle } from '@/hooks/useMeta';
+
 import { AvatarsSlider } from './AvatarsSlider';
 import { Banner } from './Banner';
 import { HowItWorks } from './HowItWorks';
@@ -13,6 +15,8 @@ import { VisualTraits } from './VisualTraits';
 import './AvatarLanding.scss';
 
 const AvatarLanding = () => {
+  useDocumentTitle('iSaver | Avatars');
+
   useEffect(() => {
     const backgroundElement = document.querySelector('.background');
     if (backgroundElement) {

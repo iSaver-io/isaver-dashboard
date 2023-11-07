@@ -1,5 +1,6 @@
 import Slider from 'react-slick';
 import { Box, Button, Flex, Input, Text, useBreakpoint, useNumberInput } from '@chakra-ui/react';
+import { useAccount } from 'wagmi';
 
 import MinusIcon from './images/minus.svg';
 import PlusIcon from './images/plus.svg';
@@ -65,6 +66,16 @@ const settings = {
       breakpoint: 1023,
       settings: {
         slidesToShow: 1,
+        className: 'slider variable-width',
+        centerMode: true,
+        variableWidth: true,
+      },
+    },
+    {
+      breakpoint: 479,
+      settings: {
+        slidesToShow: 1,
+        centerMode: false,
       },
     },
   ],
@@ -116,6 +127,7 @@ export const Powers = () => {
 };
 
 const PowersCard = ({ image, name, description, price, color }: PowersCardProps) => {
+  const { isConnected } = useAccount();
   const { getInputProps, getIncrementButtonProps, getDecrementButtonProps, value } = useNumberInput(
     {
       step: 1,
@@ -161,7 +173,7 @@ const PowersCard = ({ image, name, description, price, color }: PowersCardProps)
           </Text>
         </Text>
       </Flex>
-      <Button w="100%" mt="15px" h="35px">
+      <Button isDisabled={!isConnected} w="100%" mt="15px" h="35px">
         <Text textStyle="buttonSmall">MINT</Text>
       </Button>
     </Box>
