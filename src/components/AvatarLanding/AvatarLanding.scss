@@ -110,6 +110,7 @@
     bottom: 25%;
     right: -25%;
     z-index: 0;
+    pointer-events: none;
   }
 
   &__description {
@@ -123,6 +124,7 @@
     padding: 0 20px 20px;
     border-radius: 5px;
     margin: 0 auto;
+    box-shadow: 0 6px 11px rgba(0, 0, 0, 0.25);
 
     &__counter {
       border: 1px solid;
@@ -181,6 +183,7 @@
 
   .slick-list {
     cursor: grab;
+    padding-bottom: 20px;
 
     &:active {
       cursor: grabbing;
@@ -188,6 +191,7 @@
   }
 
   .slick-dots {
+    margin-top: 10px;
     li {
       width: 15px;
       height: 15px;
@@ -288,15 +292,14 @@
 
   .powers {  
     &__description {
-      width: 100%;
+      max-width: 100%;
     }
 
     &__image {
-      width: 100%;
-      margin: 0 auto;
-      max-width: 720px !important;
-      position: static;
-      transform: translateY(0);
+      max-width: 850px !important;
+      transform: translate(-50%, -15px);
+      top: 0;
+      left: 50%;
     }
 
     &__description {
@@ -304,8 +307,12 @@
       text-align: center;
     }
 
+    &-card {
+      margin: 0 10px 15px;
+    }
+
     &__slider {
-      margin-top: -100px;
+      margin-top: 500px;
       position: relative;
       padding-bottom: 80px;
 
@@ -331,20 +338,33 @@
 }
 
 @media screen and (max-width: $lg) {
+  .visual-traits {
+    &__slider {
+      margin-top: 20px;
+    }
+  }
+
   .powers {
-    padding-bottom: 400px;
-    
     &__image {
-      width: 640px;
-      position: absolute;
       top: auto;
-      bottom: -120px;
       left: 50%;
-      transform: translate(-50%, 0);
+      transform: translate(-50%, -180px);
+    }
+  }
+}
+
+@media screen and (max-width: $md) {
+  .powers {
+    &__image {
+      width: 700px;
     }
 
     &__slider {
-      margin-top: 0;
+      margin-top: 400px;
+    }
+
+    &-card {
+      margin: 0 auto 15px;
     }
   }
 }

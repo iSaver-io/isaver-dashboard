@@ -35,8 +35,8 @@ const appRoutes = [
   { path: '/raffles/:id', name: 'Raffle', element: <RafflePage />, nodeRef: createRef() },
   { path: '/admin-panel', name: 'Admin panel', element: <AdminPanel />, nodeRef: createRef() },
   {
-    path: '/avatar-landing',
-    name: 'Avatar landing',
+    path: '/avatars',
+    name: 'Avatars landing',
     element: <AvatarLanding />,
     nodeRef: createRef(),
   },
