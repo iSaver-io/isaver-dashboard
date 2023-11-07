@@ -88,7 +88,6 @@ const secondary = defineStyle({
   borderColor: 'green.100',
 
   _hover: {
-    color: 'gray.400',
     bgColor: 'green.400',
     borderColor: 'green.400',
     _disabled: {
