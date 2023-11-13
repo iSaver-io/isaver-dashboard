@@ -27,7 +27,7 @@ import { useStakingPlansUserInfo } from '@/hooks/staking/useStaking';
 import { useTeams } from '@/hooks/teams/useTeams';
 import { useLogger } from '@/hooks/useLogger';
 import { useNavigateByHash } from '@/hooks/useNavigateByHash';
-import { APP_URL, isLanding, WHITEPAPER_URL } from '@/router';
+import { APP_URL, isDashboard, WHITEPAPER_URL } from '@/router';
 
 export const Menu = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) => {
   const { hasEndingSubscription } = useStakingPlansUserInfo();
@@ -51,8 +51,13 @@ export const Menu = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void
     (to: string) => {
       const label = to.replace('/', '').replace('#', '');
       logger({ label });
-      navigate(to);
-      onClose();
+
+      if (isDashboard) {
+        navigate(to);
+        onClose();
+      } else {
+        window.open(APP_URL + to, '_self');
+      }
     },
     [navigate, onClose, logger]
   );
@@ -93,9 +98,7 @@ export const Menu = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void
           <NavMenuItem
             text="Dashboard"
             icon={<HouseIcon />}
-            onClick={() =>
-              isLanding ? window.open(APP_URL) : handleNavigateWithLogger('/#dashboard')
-            }
+            onClick={() => handleNavigateWithLogger('/#dashboard')}
           />
           <NavMenuItem
             text="Staking"
