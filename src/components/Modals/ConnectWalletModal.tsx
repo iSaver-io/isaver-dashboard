@@ -73,7 +73,7 @@ export const ConnectWalletModal: FC<ConnectWalletModalProps> = ({ onClose, isOpe
             isLoading={isConnectLoading && pendingConnector?.id === metamaskConnector.id}
           />
           <ConnectButton
-            text="WalletConnectV2"
+            text="WalletConnect"
             icon={<WalletConnectIcon />}
             onClick={() => handleConnect(walletConnector)}
             isLoading={isConnectLoading && pendingConnector?.id === walletConnector.id}
