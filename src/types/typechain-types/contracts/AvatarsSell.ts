@@ -4,6 +4,7 @@
 import type {
   BaseContract,
   BigNumber,
+  BigNumberish,
   BytesLike,
   CallOverrides,
   ContractTransaction,
@@ -26,36 +27,35 @@ import type {
   OnEvent,
 } from "../common";
 
-export interface ContractManagerInterface extends utils.Interface {
+export interface AvatarsSellInterface extends utils.Interface {
   functions: {
     "DEFAULT_ADMIN_ROLE()": FunctionFragment;
     "UPGRADER_ROLE()": FunctionFragment;
-    "getAvatarsAddress()": FunctionFragment;
-    "getPowersAddress()": FunctionFragment;
-    "getRafflesAddress()": FunctionFragment;
-    "getReferralManagerAddress()": FunctionFragment;
+    "basePrice()": FunctionFragment;
+    "baseTimestamp()": FunctionFragment;
+    "buyAvatar()": FunctionFragment;
+    "buyPower(uint256,uint256)": FunctionFragment;
+    "divider()": FunctionFragment;
+    "getCurrentAvatarPrice()": FunctionFragment;
     "getRoleAdmin(bytes32)": FunctionFragment;
-    "getSavTokenAddress()": FunctionFragment;
-    "getSavrTokenAddress()": FunctionFragment;
-    "getStakingAddress()": FunctionFragment;
-    "getTeamsAddress()": FunctionFragment;
-    "getTicketAddress()": FunctionFragment;
     "grantRole(bytes32,address)": FunctionFragment;
     "hasRole(bytes32,address)": FunctionFragment;
-    "initialize()": FunctionFragment;
+    "inflationPeriod()": FunctionFragment;
+    "inflationRate()": FunctionFragment;
+    "initialize(address,uint256)": FunctionFragment;
+    "pause()": FunctionFragment;
+    "paused()": FunctionFragment;
+    "powerPrices(uint256)": FunctionFragment;
     "proxiableUUID()": FunctionFragment;
     "renounceRole(bytes32,address)": FunctionFragment;
     "revokeRole(bytes32,address)": FunctionFragment;
     "supportsInterface(bytes4)": FunctionFragment;
-    "updateAvatars(address)": FunctionFragment;
-    "updatePowers(address)": FunctionFragment;
-    "updateRaffles(address)": FunctionFragment;
-    "updateReferralManager(address)": FunctionFragment;
-    "updateSavToken(address)": FunctionFragment;
-    "updateSavrToken(address)": FunctionFragment;
-    "updateStaking(address)": FunctionFragment;
-    "updateTeams(address)": FunctionFragment;
-    "updateTicket(address)": FunctionFragment;
+    "unpause()": FunctionFragment;
+    "updateBasePrice(uint256)": FunctionFragment;
+    "updateDivider(uint256)": FunctionFragment;
+    "updateInflationPeriod(uint256)": FunctionFragment;
+    "updateInflationRate(uint256)": FunctionFragment;
+    "updatePowerPrice(uint256,uint256)": FunctionFragment;
     "upgradeTo(address)": FunctionFragment;
     "upgradeToAndCall(address,bytes)": FunctionFragment;
   };
@@ -64,32 +64,31 @@ export interface ContractManagerInterface extends utils.Interface {
     nameOrSignatureOrTopic:
       | "DEFAULT_ADMIN_ROLE"
       | "UPGRADER_ROLE"
-      | "getAvatarsAddress"
-      | "getPowersAddress"
-      | "getRafflesAddress"
-      | "getReferralManagerAddress"
+      | "basePrice"
+      | "baseTimestamp"
+      | "buyAvatar"
+      | "buyPower"
+      | "divider"
+      | "getCurrentAvatarPrice"
       | "getRoleAdmin"
-      | "getSavTokenAddress"
-      | "getSavrTokenAddress"
-      | "getStakingAddress"
-      | "getTeamsAddress"
-      | "getTicketAddress"
       | "grantRole"
       | "hasRole"
+      | "inflationPeriod"
+      | "inflationRate"
       | "initialize"
+      | "pause"
+      | "paused"
+      | "powerPrices"
       | "proxiableUUID"
       | "renounceRole"
       | "revokeRole"
       | "supportsInterface"
-      | "updateAvatars"
-      | "updatePowers"
-      | "updateRaffles"
-      | "updateReferralManager"
-      | "updateSavToken"
-      | "updateSavrToken"
-      | "updateStaking"
-      | "updateTeams"
-      | "updateTicket"
+      | "unpause"
+      | "updateBasePrice"
+      | "updateDivider"
+      | "updateInflationPeriod"
+      | "updateInflationRate"
+      | "updatePowerPrice"
       | "upgradeTo"
       | "upgradeToAndCall"
   ): FunctionFragment;
@@ -102,45 +101,24 @@ export interface ContractManagerInterface extends utils.Interface {
     functionFragment: "UPGRADER_ROLE",
     values?: undefined
   ): string;
+  encodeFunctionData(functionFragment: "basePrice", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "getAvatarsAddress",
+    functionFragment: "baseTimestamp",
     values?: undefined
   ): string;
+  encodeFunctionData(functionFragment: "buyAvatar", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "getPowersAddress",
-    values?: undefined
+    functionFragment: "buyPower",
+    values: [BigNumberish, BigNumberish]
   ): string;
+  encodeFunctionData(functionFragment: "divider", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "getRafflesAddress",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getReferralManagerAddress",
+    functionFragment: "getCurrentAvatarPrice",
     values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "getRoleAdmin",
     values: [BytesLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getSavTokenAddress",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getSavrTokenAddress",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getStakingAddress",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getTeamsAddress",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getTicketAddress",
-    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "grantRole",
@@ -151,8 +129,22 @@ export interface ContractManagerInterface extends utils.Interface {
     values: [BytesLike, string]
   ): string;
   encodeFunctionData(
-    functionFragment: "initialize",
+    functionFragment: "inflationPeriod",
     values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "inflationRate",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "initialize",
+    values: [string, BigNumberish]
+  ): string;
+  encodeFunctionData(functionFragment: "pause", values?: undefined): string;
+  encodeFunctionData(functionFragment: "paused", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "powerPrices",
+    values: [BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "proxiableUUID",
@@ -170,38 +162,26 @@ export interface ContractManagerInterface extends utils.Interface {
     functionFragment: "supportsInterface",
     values: [BytesLike]
   ): string;
+  encodeFunctionData(functionFragment: "unpause", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "updateAvatars",
-    values: [string]
+    functionFragment: "updateBasePrice",
+    values: [BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "updatePowers",
-    values: [string]
+    functionFragment: "updateDivider",
+    values: [BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "updateRaffles",
-    values: [string]
+    functionFragment: "updateInflationPeriod",
+    values: [BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "updateReferralManager",
-    values: [string]
+    functionFragment: "updateInflationRate",
+    values: [BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "updateSavToken",
-    values: [string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "updateSavrToken",
-    values: [string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "updateStaking",
-    values: [string]
-  ): string;
-  encodeFunctionData(functionFragment: "updateTeams", values: [string]): string;
-  encodeFunctionData(
-    functionFragment: "updateTicket",
-    values: [string]
+    functionFragment: "updatePowerPrice",
+    values: [BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(functionFragment: "upgradeTo", values: [string]): string;
   encodeFunctionData(
@@ -217,49 +197,39 @@ export interface ContractManagerInterface extends utils.Interface {
     functionFragment: "UPGRADER_ROLE",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "basePrice", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "getAvatarsAddress",
+    functionFragment: "baseTimestamp",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "buyAvatar", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "buyPower", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "divider", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "getPowersAddress",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "getRafflesAddress",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "getReferralManagerAddress",
+    functionFragment: "getCurrentAvatarPrice",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "getRoleAdmin",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(
-    functionFragment: "getSavTokenAddress",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "getSavrTokenAddress",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "getStakingAddress",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "getTeamsAddress",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "getTicketAddress",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "grantRole", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "hasRole", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "inflationPeriod",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "inflationRate",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "initialize", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "pause", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "paused", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "powerPrices",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "proxiableUUID",
     data: BytesLike
@@ -273,40 +243,25 @@ export interface ContractManagerInterface extends utils.Interface {
     functionFragment: "supportsInterface",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "unpause", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "updateAvatars",
+    functionFragment: "updateBasePrice",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "updatePowers",
+    functionFragment: "updateDivider",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "updateRaffles",
+    functionFragment: "updateInflationPeriod",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "updateReferralManager",
+    functionFragment: "updateInflationRate",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "updateSavToken",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "updateSavrToken",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "updateStaking",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "updateTeams",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "updateTicket",
+    functionFragment: "updatePowerPrice",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "upgradeTo", data: BytesLike): Result;
@@ -317,20 +272,36 @@ export interface ContractManagerInterface extends utils.Interface {
 
   events: {
     "AdminChanged(address,address)": EventFragment;
+    "AvatarBought(address,uint256,uint256)": EventFragment;
+    "BasePowerPriceUpdated(uint256,uint256)": EventFragment;
+    "BasePriceUpdated(uint256)": EventFragment;
     "BeaconUpgraded(address)": EventFragment;
+    "InflationPeriodUpdated(uint256)": EventFragment;
+    "InflationRateUpdated(uint256)": EventFragment;
     "Initialized(uint8)": EventFragment;
+    "Paused(address)": EventFragment;
+    "PowerBought(address,uint256,uint256,uint256)": EventFragment;
     "RoleAdminChanged(bytes32,bytes32,bytes32)": EventFragment;
     "RoleGranted(bytes32,address,address)": EventFragment;
     "RoleRevoked(bytes32,address,address)": EventFragment;
+    "Unpaused(address)": EventFragment;
     "Upgraded(address)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "AdminChanged"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "AvatarBought"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "BasePowerPriceUpdated"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "BasePriceUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "BeaconUpgraded"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "InflationPeriodUpdated"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "InflationRateUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Paused"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "PowerBought"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleAdminChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleGranted"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleRevoked"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Unpaused"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Upgraded"): EventFragment;
 }
 
@@ -345,6 +316,41 @@ export type AdminChangedEvent = TypedEvent<
 
 export type AdminChangedEventFilter = TypedEventFilter<AdminChangedEvent>;
 
+export interface AvatarBoughtEventObject {
+  buyer: string;
+  tokenId: BigNumber;
+  price: BigNumber;
+}
+export type AvatarBoughtEvent = TypedEvent<
+  [string, BigNumber, BigNumber],
+  AvatarBoughtEventObject
+>;
+
+export type AvatarBoughtEventFilter = TypedEventFilter<AvatarBoughtEvent>;
+
+export interface BasePowerPriceUpdatedEventObject {
+  powerId: BigNumber;
+  newPowerPrice: BigNumber;
+}
+export type BasePowerPriceUpdatedEvent = TypedEvent<
+  [BigNumber, BigNumber],
+  BasePowerPriceUpdatedEventObject
+>;
+
+export type BasePowerPriceUpdatedEventFilter =
+  TypedEventFilter<BasePowerPriceUpdatedEvent>;
+
+export interface BasePriceUpdatedEventObject {
+  newBasePrice: BigNumber;
+}
+export type BasePriceUpdatedEvent = TypedEvent<
+  [BigNumber],
+  BasePriceUpdatedEventObject
+>;
+
+export type BasePriceUpdatedEventFilter =
+  TypedEventFilter<BasePriceUpdatedEvent>;
+
 export interface BeaconUpgradedEventObject {
   beacon: string;
 }
@@ -355,12 +361,54 @@ export type BeaconUpgradedEvent = TypedEvent<
 
 export type BeaconUpgradedEventFilter = TypedEventFilter<BeaconUpgradedEvent>;
 
+export interface InflationPeriodUpdatedEventObject {
+  newInflationPeriod: BigNumber;
+}
+export type InflationPeriodUpdatedEvent = TypedEvent<
+  [BigNumber],
+  InflationPeriodUpdatedEventObject
+>;
+
+export type InflationPeriodUpdatedEventFilter =
+  TypedEventFilter<InflationPeriodUpdatedEvent>;
+
+export interface InflationRateUpdatedEventObject {
+  newInflationRate: BigNumber;
+}
+export type InflationRateUpdatedEvent = TypedEvent<
+  [BigNumber],
+  InflationRateUpdatedEventObject
+>;
+
+export type InflationRateUpdatedEventFilter =
+  TypedEventFilter<InflationRateUpdatedEvent>;
+
 export interface InitializedEventObject {
   version: number;
 }
 export type InitializedEvent = TypedEvent<[number], InitializedEventObject>;
 
 export type InitializedEventFilter = TypedEventFilter<InitializedEvent>;
+
+export interface PausedEventObject {
+  account: string;
+}
+export type PausedEvent = TypedEvent<[string], PausedEventObject>;
+
+export type PausedEventFilter = TypedEventFilter<PausedEvent>;
+
+export interface PowerBoughtEventObject {
+  buyer: string;
+  powerId: BigNumber;
+  amount: BigNumber;
+  price: BigNumber;
+}
+export type PowerBoughtEvent = TypedEvent<
+  [string, BigNumber, BigNumber, BigNumber],
+  PowerBoughtEventObject
+>;
+
+export type PowerBoughtEventFilter = TypedEventFilter<PowerBoughtEvent>;
 
 export interface RoleAdminChangedEventObject {
   role: string;
@@ -399,6 +447,13 @@ export type RoleRevokedEvent = TypedEvent<
 
 export type RoleRevokedEventFilter = TypedEventFilter<RoleRevokedEvent>;
 
+export interface UnpausedEventObject {
+  account: string;
+}
+export type UnpausedEvent = TypedEvent<[string], UnpausedEventObject>;
+
+export type UnpausedEventFilter = TypedEventFilter<UnpausedEvent>;
+
 export interface UpgradedEventObject {
   implementation: string;
 }
@@ -406,12 +461,12 @@ export type UpgradedEvent = TypedEvent<[string], UpgradedEventObject>;
 
 export type UpgradedEventFilter = TypedEventFilter<UpgradedEvent>;
 
-export interface ContractManager extends BaseContract {
+export interface AvatarsSell extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: ContractManagerInterface;
+  interface: AvatarsSellInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,
@@ -437,25 +492,25 @@ export interface ContractManager extends BaseContract {
 
     UPGRADER_ROLE(overrides?: CallOverrides): Promise<[string]>;
 
-    getAvatarsAddress(overrides?: CallOverrides): Promise<[string]>;
+    basePrice(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    getPowersAddress(overrides?: CallOverrides): Promise<[string]>;
+    baseTimestamp(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    getRafflesAddress(overrides?: CallOverrides): Promise<[string]>;
+    buyAvatar(
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
 
-    getReferralManagerAddress(overrides?: CallOverrides): Promise<[string]>;
+    buyPower(
+      powerId: BigNumberish,
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
+
+    divider(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    getCurrentAvatarPrice(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<[string]>;
-
-    getSavTokenAddress(overrides?: CallOverrides): Promise<[string]>;
-
-    getSavrTokenAddress(overrides?: CallOverrides): Promise<[string]>;
-
-    getStakingAddress(overrides?: CallOverrides): Promise<[string]>;
-
-    getTeamsAddress(overrides?: CallOverrides): Promise<[string]>;
-
-    getTicketAddress(overrides?: CallOverrides): Promise<[string]>;
 
     grantRole(
       role: BytesLike,
@@ -469,9 +524,26 @@ export interface ContractManager extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
+    inflationPeriod(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    inflationRate(overrides?: CallOverrides): Promise<[BigNumber]>;
+
     initialize(
+      contractManagerAddress_: string,
+      basePrice_: BigNumberish,
       overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
+
+    pause(
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
+
+    paused(overrides?: CallOverrides): Promise<[boolean]>;
+
+    powerPrices(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
 
     proxiableUUID(overrides?: CallOverrides): Promise<[string]>;
 
@@ -492,48 +564,33 @@ export interface ContractManager extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
-    updateAvatars(
-      _avatars: string,
+    unpause(
       overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
 
-    updatePowers(
-      _powers: string,
+    updateBasePrice(
+      _basePrice: BigNumberish,
       overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
 
-    updateRaffles(
-      _raffles: string,
+    updateDivider(
+      divider_: BigNumberish,
       overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
 
-    updateReferralManager(
-      _referralManager: string,
+    updateInflationPeriod(
+      _inflationPeriod: BigNumberish,
       overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
 
-    updateSavToken(
-      _savToken: string,
+    updateInflationRate(
+      _inflationRate: BigNumberish,
       overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
 
-    updateSavrToken(
-      _savrToken: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    updateStaking(
-      _staking: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    updateTeams(
-      _teams: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    updateTicket(
-      _ticket: string,
+    updatePowerPrice(
+      powerId: BigNumberish,
+      price: BigNumberish,
       overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
 
@@ -553,25 +610,25 @@ export interface ContractManager extends BaseContract {
 
   UPGRADER_ROLE(overrides?: CallOverrides): Promise<string>;
 
-  getAvatarsAddress(overrides?: CallOverrides): Promise<string>;
+  basePrice(overrides?: CallOverrides): Promise<BigNumber>;
 
-  getPowersAddress(overrides?: CallOverrides): Promise<string>;
+  baseTimestamp(overrides?: CallOverrides): Promise<BigNumber>;
 
-  getRafflesAddress(overrides?: CallOverrides): Promise<string>;
+  buyAvatar(
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
 
-  getReferralManagerAddress(overrides?: CallOverrides): Promise<string>;
+  buyPower(
+    powerId: BigNumberish,
+    amount: BigNumberish,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  divider(overrides?: CallOverrides): Promise<BigNumber>;
+
+  getCurrentAvatarPrice(overrides?: CallOverrides): Promise<BigNumber>;
 
   getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<string>;
-
-  getSavTokenAddress(overrides?: CallOverrides): Promise<string>;
-
-  getSavrTokenAddress(overrides?: CallOverrides): Promise<string>;
-
-  getStakingAddress(overrides?: CallOverrides): Promise<string>;
-
-  getTeamsAddress(overrides?: CallOverrides): Promise<string>;
-
-  getTicketAddress(overrides?: CallOverrides): Promise<string>;
 
   grantRole(
     role: BytesLike,
@@ -585,9 +642,26 @@ export interface ContractManager extends BaseContract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
+  inflationPeriod(overrides?: CallOverrides): Promise<BigNumber>;
+
+  inflationRate(overrides?: CallOverrides): Promise<BigNumber>;
+
   initialize(
+    contractManagerAddress_: string,
+    basePrice_: BigNumberish,
     overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
+
+  pause(
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  paused(overrides?: CallOverrides): Promise<boolean>;
+
+  powerPrices(
+    arg0: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
 
   proxiableUUID(overrides?: CallOverrides): Promise<string>;
 
@@ -608,48 +682,33 @@ export interface ContractManager extends BaseContract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
-  updateAvatars(
-    _avatars: string,
+  unpause(
     overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
 
-  updatePowers(
-    _powers: string,
+  updateBasePrice(
+    _basePrice: BigNumberish,
     overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
 
-  updateRaffles(
-    _raffles: string,
+  updateDivider(
+    divider_: BigNumberish,
     overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
 
-  updateReferralManager(
-    _referralManager: string,
+  updateInflationPeriod(
+    _inflationPeriod: BigNumberish,
     overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
 
-  updateSavToken(
-    _savToken: string,
+  updateInflationRate(
+    _inflationRate: BigNumberish,
     overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
 
-  updateSavrToken(
-    _savrToken: string,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  updateStaking(
-    _staking: string,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  updateTeams(
-    _teams: string,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  updateTicket(
-    _ticket: string,
+  updatePowerPrice(
+    powerId: BigNumberish,
+    price: BigNumberish,
     overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
 
@@ -669,25 +728,23 @@ export interface ContractManager extends BaseContract {
 
     UPGRADER_ROLE(overrides?: CallOverrides): Promise<string>;
 
-    getAvatarsAddress(overrides?: CallOverrides): Promise<string>;
+    basePrice(overrides?: CallOverrides): Promise<BigNumber>;
 
-    getPowersAddress(overrides?: CallOverrides): Promise<string>;
+    baseTimestamp(overrides?: CallOverrides): Promise<BigNumber>;
 
-    getRafflesAddress(overrides?: CallOverrides): Promise<string>;
+    buyAvatar(overrides?: CallOverrides): Promise<void>;
 
-    getReferralManagerAddress(overrides?: CallOverrides): Promise<string>;
+    buyPower(
+      powerId: BigNumberish,
+      amount: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    divider(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getCurrentAvatarPrice(overrides?: CallOverrides): Promise<BigNumber>;
 
     getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<string>;
-
-    getSavTokenAddress(overrides?: CallOverrides): Promise<string>;
-
-    getSavrTokenAddress(overrides?: CallOverrides): Promise<string>;
-
-    getStakingAddress(overrides?: CallOverrides): Promise<string>;
-
-    getTeamsAddress(overrides?: CallOverrides): Promise<string>;
-
-    getTicketAddress(overrides?: CallOverrides): Promise<string>;
 
     grantRole(
       role: BytesLike,
@@ -701,7 +758,24 @@ export interface ContractManager extends BaseContract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
-    initialize(overrides?: CallOverrides): Promise<void>;
+    inflationPeriod(overrides?: CallOverrides): Promise<BigNumber>;
+
+    inflationRate(overrides?: CallOverrides): Promise<BigNumber>;
+
+    initialize(
+      contractManagerAddress_: string,
+      basePrice_: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    pause(overrides?: CallOverrides): Promise<void>;
+
+    paused(overrides?: CallOverrides): Promise<boolean>;
+
+    powerPrices(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     proxiableUUID(overrides?: CallOverrides): Promise<string>;
 
@@ -722,29 +796,33 @@ export interface ContractManager extends BaseContract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
-    updateAvatars(_avatars: string, overrides?: CallOverrides): Promise<void>;
+    unpause(overrides?: CallOverrides): Promise<void>;
 
-    updatePowers(_powers: string, overrides?: CallOverrides): Promise<void>;
-
-    updateRaffles(_raffles: string, overrides?: CallOverrides): Promise<void>;
-
-    updateReferralManager(
-      _referralManager: string,
+    updateBasePrice(
+      _basePrice: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    updateSavToken(_savToken: string, overrides?: CallOverrides): Promise<void>;
-
-    updateSavrToken(
-      _savrToken: string,
+    updateDivider(
+      divider_: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    updateStaking(_staking: string, overrides?: CallOverrides): Promise<void>;
+    updateInflationPeriod(
+      _inflationPeriod: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
-    updateTeams(_teams: string, overrides?: CallOverrides): Promise<void>;
+    updateInflationRate(
+      _inflationRate: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
-    updateTicket(_ticket: string, overrides?: CallOverrides): Promise<void>;
+    updatePowerPrice(
+      powerId: BigNumberish,
+      price: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     upgradeTo(
       newImplementation: string,
@@ -768,13 +846,68 @@ export interface ContractManager extends BaseContract {
       newAdmin?: null
     ): AdminChangedEventFilter;
 
+    "AvatarBought(address,uint256,uint256)"(
+      buyer?: string | null,
+      tokenId?: BigNumberish | null,
+      price?: null
+    ): AvatarBoughtEventFilter;
+    AvatarBought(
+      buyer?: string | null,
+      tokenId?: BigNumberish | null,
+      price?: null
+    ): AvatarBoughtEventFilter;
+
+    "BasePowerPriceUpdated(uint256,uint256)"(
+      powerId?: BigNumberish | null,
+      newPowerPrice?: null
+    ): BasePowerPriceUpdatedEventFilter;
+    BasePowerPriceUpdated(
+      powerId?: BigNumberish | null,
+      newPowerPrice?: null
+    ): BasePowerPriceUpdatedEventFilter;
+
+    "BasePriceUpdated(uint256)"(
+      newBasePrice?: null
+    ): BasePriceUpdatedEventFilter;
+    BasePriceUpdated(newBasePrice?: null): BasePriceUpdatedEventFilter;
+
     "BeaconUpgraded(address)"(
       beacon?: string | null
     ): BeaconUpgradedEventFilter;
     BeaconUpgraded(beacon?: string | null): BeaconUpgradedEventFilter;
 
+    "InflationPeriodUpdated(uint256)"(
+      newInflationPeriod?: null
+    ): InflationPeriodUpdatedEventFilter;
+    InflationPeriodUpdated(
+      newInflationPeriod?: null
+    ): InflationPeriodUpdatedEventFilter;
+
+    "InflationRateUpdated(uint256)"(
+      newInflationRate?: null
+    ): InflationRateUpdatedEventFilter;
+    InflationRateUpdated(
+      newInflationRate?: null
+    ): InflationRateUpdatedEventFilter;
+
     "Initialized(uint8)"(version?: null): InitializedEventFilter;
     Initialized(version?: null): InitializedEventFilter;
+
+    "Paused(address)"(account?: null): PausedEventFilter;
+    Paused(account?: null): PausedEventFilter;
+
+    "PowerBought(address,uint256,uint256,uint256)"(
+      buyer?: string | null,
+      powerId?: BigNumberish | null,
+      amount?: null,
+      price?: null
+    ): PowerBoughtEventFilter;
+    PowerBought(
+      buyer?: string | null,
+      powerId?: BigNumberish | null,
+      amount?: null,
+      price?: null
+    ): PowerBoughtEventFilter;
 
     "RoleAdminChanged(bytes32,bytes32,bytes32)"(
       role?: BytesLike | null,
@@ -809,6 +942,9 @@ export interface ContractManager extends BaseContract {
       sender?: string | null
     ): RoleRevokedEventFilter;
 
+    "Unpaused(address)"(account?: null): UnpausedEventFilter;
+    Unpaused(account?: null): UnpausedEventFilter;
+
     "Upgraded(address)"(implementation?: string | null): UpgradedEventFilter;
     Upgraded(implementation?: string | null): UpgradedEventFilter;
   };
@@ -818,28 +954,26 @@ export interface ContractManager extends BaseContract {
 
     UPGRADER_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
 
-    getAvatarsAddress(overrides?: CallOverrides): Promise<BigNumber>;
+    basePrice(overrides?: CallOverrides): Promise<BigNumber>;
 
-    getPowersAddress(overrides?: CallOverrides): Promise<BigNumber>;
+    baseTimestamp(overrides?: CallOverrides): Promise<BigNumber>;
 
-    getRafflesAddress(overrides?: CallOverrides): Promise<BigNumber>;
+    buyAvatar(overrides?: Overrides & { from?: string }): Promise<BigNumber>;
 
-    getReferralManagerAddress(overrides?: CallOverrides): Promise<BigNumber>;
+    buyPower(
+      powerId: BigNumberish,
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+
+    divider(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getCurrentAvatarPrice(overrides?: CallOverrides): Promise<BigNumber>;
 
     getRoleAdmin(
       role: BytesLike,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
-
-    getSavTokenAddress(overrides?: CallOverrides): Promise<BigNumber>;
-
-    getSavrTokenAddress(overrides?: CallOverrides): Promise<BigNumber>;
-
-    getStakingAddress(overrides?: CallOverrides): Promise<BigNumber>;
-
-    getTeamsAddress(overrides?: CallOverrides): Promise<BigNumber>;
-
-    getTicketAddress(overrides?: CallOverrides): Promise<BigNumber>;
 
     grantRole(
       role: BytesLike,
@@ -853,7 +987,24 @@ export interface ContractManager extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    initialize(overrides?: Overrides & { from?: string }): Promise<BigNumber>;
+    inflationPeriod(overrides?: CallOverrides): Promise<BigNumber>;
+
+    inflationRate(overrides?: CallOverrides): Promise<BigNumber>;
+
+    initialize(
+      contractManagerAddress_: string,
+      basePrice_: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+
+    pause(overrides?: Overrides & { from?: string }): Promise<BigNumber>;
+
+    paused(overrides?: CallOverrides): Promise<BigNumber>;
+
+    powerPrices(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     proxiableUUID(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -874,48 +1025,31 @@ export interface ContractManager extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    updateAvatars(
-      _avatars: string,
+    unpause(overrides?: Overrides & { from?: string }): Promise<BigNumber>;
+
+    updateBasePrice(
+      _basePrice: BigNumberish,
       overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
 
-    updatePowers(
-      _powers: string,
+    updateDivider(
+      divider_: BigNumberish,
       overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
 
-    updateRaffles(
-      _raffles: string,
+    updateInflationPeriod(
+      _inflationPeriod: BigNumberish,
       overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
 
-    updateReferralManager(
-      _referralManager: string,
+    updateInflationRate(
+      _inflationRate: BigNumberish,
       overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
 
-    updateSavToken(
-      _savToken: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    updateSavrToken(
-      _savrToken: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    updateStaking(
-      _staking: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    updateTeams(
-      _teams: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    updateTicket(
-      _ticket: string,
+    updatePowerPrice(
+      powerId: BigNumberish,
+      price: BigNumberish,
       overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
 
@@ -938,13 +1072,23 @@ export interface ContractManager extends BaseContract {
 
     UPGRADER_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    getAvatarsAddress(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    basePrice(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    getPowersAddress(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    baseTimestamp(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    getRafflesAddress(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    buyAvatar(
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
 
-    getReferralManagerAddress(
+    buyPower(
+      powerId: BigNumberish,
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    divider(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    getCurrentAvatarPrice(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -952,20 +1096,6 @@ export interface ContractManager extends BaseContract {
       role: BytesLike,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
-
-    getSavTokenAddress(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    getSavrTokenAddress(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    getStakingAddress(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    getTeamsAddress(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    getTicketAddress(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     grantRole(
       role: BytesLike,
@@ -979,8 +1109,25 @@ export interface ContractManager extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    inflationPeriod(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    inflationRate(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     initialize(
+      contractManagerAddress_: string,
+      basePrice_: BigNumberish,
       overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    pause(
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    paused(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    powerPrices(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     proxiableUUID(overrides?: CallOverrides): Promise<PopulatedTransaction>;
@@ -1002,48 +1149,33 @@ export interface ContractManager extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    updateAvatars(
-      _avatars: string,
+    unpause(
       overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 
-    updatePowers(
-      _powers: string,
+    updateBasePrice(
+      _basePrice: BigNumberish,
       overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 
-    updateRaffles(
-      _raffles: string,
+    updateDivider(
+      divider_: BigNumberish,
       overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 
-    updateReferralManager(
-      _referralManager: string,
+    updateInflationPeriod(
+      _inflationPeriod: BigNumberish,
       overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 
-    updateSavToken(
-      _savToken: string,
+    updateInflationRate(
+      _inflationRate: BigNumberish,
       overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 
-    updateSavrToken(
-      _savrToken: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    updateStaking(
-      _staking: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    updateTeams(
-      _teams: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    updateTicket(
-      _ticket: string,
+    updatePowerPrice(
+      powerId: BigNumberish,
+      price: BigNumberish,
       overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 

@@ -9,6 +9,7 @@ import type * as mocks from "./mocks";
 export type { mocks };
 import type * as tokens from "./tokens";
 export type { tokens };
+export type { AvatarsSell } from "./AvatarsSell";
 export type { ContractManager } from "./ContractManager";
 export type { Helper } from "./Helper";
 export type { Raffles } from "./Raffles";

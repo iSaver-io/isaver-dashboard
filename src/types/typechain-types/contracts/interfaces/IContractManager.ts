@@ -21,6 +21,8 @@ import type {
 
 export interface IContractManagerInterface extends utils.Interface {
   functions: {
+    "getAvatarsAddress()": FunctionFragment;
+    "getPowersAddress()": FunctionFragment;
     "getRafflesAddress()": FunctionFragment;
     "getReferralManagerAddress()": FunctionFragment;
     "getSavTokenAddress()": FunctionFragment;
@@ -32,6 +34,8 @@ export interface IContractManagerInterface extends utils.Interface {
 
   getFunction(
     nameOrSignatureOrTopic:
+      | "getAvatarsAddress"
+      | "getPowersAddress"
       | "getRafflesAddress"
       | "getReferralManagerAddress"
       | "getSavTokenAddress"
@@ -41,6 +45,14 @@ export interface IContractManagerInterface extends utils.Interface {
       | "getTicketAddress"
   ): FunctionFragment;
 
+  encodeFunctionData(
+    functionFragment: "getAvatarsAddress",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getPowersAddress",
+    values?: undefined
+  ): string;
   encodeFunctionData(
     functionFragment: "getRafflesAddress",
     values?: undefined
@@ -70,6 +82,14 @@ export interface IContractManagerInterface extends utils.Interface {
     values?: undefined
   ): string;
 
+  decodeFunctionResult(
+    functionFragment: "getAvatarsAddress",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getPowersAddress",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "getRafflesAddress",
     data: BytesLike
@@ -129,6 +149,10 @@ export interface IContractManager extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
+    getAvatarsAddress(overrides?: CallOverrides): Promise<[string]>;
+
+    getPowersAddress(overrides?: CallOverrides): Promise<[string]>;
+
     getRafflesAddress(overrides?: CallOverrides): Promise<[string]>;
 
     getReferralManagerAddress(overrides?: CallOverrides): Promise<[string]>;
@@ -143,6 +167,10 @@ export interface IContractManager extends BaseContract {
 
     getTicketAddress(overrides?: CallOverrides): Promise<[string]>;
   };
+
+  getAvatarsAddress(overrides?: CallOverrides): Promise<string>;
+
+  getPowersAddress(overrides?: CallOverrides): Promise<string>;
 
   getRafflesAddress(overrides?: CallOverrides): Promise<string>;
 
@@ -159,6 +187,10 @@ export interface IContractManager extends BaseContract {
   getTicketAddress(overrides?: CallOverrides): Promise<string>;
 
   callStatic: {
+    getAvatarsAddress(overrides?: CallOverrides): Promise<string>;
+
+    getPowersAddress(overrides?: CallOverrides): Promise<string>;
+
     getRafflesAddress(overrides?: CallOverrides): Promise<string>;
 
     getReferralManagerAddress(overrides?: CallOverrides): Promise<string>;
@@ -177,6 +209,10 @@ export interface IContractManager extends BaseContract {
   filters: {};
 
   estimateGas: {
+    getAvatarsAddress(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getPowersAddress(overrides?: CallOverrides): Promise<BigNumber>;
+
     getRafflesAddress(overrides?: CallOverrides): Promise<BigNumber>;
 
     getReferralManagerAddress(overrides?: CallOverrides): Promise<BigNumber>;
@@ -193,6 +229,10 @@ export interface IContractManager extends BaseContract {
   };
 
   populateTransaction: {
+    getAvatarsAddress(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    getPowersAddress(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     getRafflesAddress(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getReferralManagerAddress(

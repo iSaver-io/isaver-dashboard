@@ -27,186 +27,80 @@ import type {
   OnEvent,
 } from "../../common";
 
-export declare namespace ISaverAvatars {
-  export type LayerAttributesStruct = {
-    background: string;
-    letter: string;
-    body: string;
-    skin: string;
-    eyes: string;
-    emotion: string;
-    horns: string;
-    clothes: string;
-    accessory: string;
-  };
-
-  export type LayerAttributesStructOutput = [
-    string,
-    string,
-    string,
-    string,
-    string,
-    string,
-    string,
-    string,
-    string
-  ] & {
-    background: string;
-    letter: string;
-    body: string;
-    skin: string;
-    eyes: string;
-    emotion: string;
-    horns: string;
-    clothes: string;
-    accessory: string;
-  };
-
-  export type OtherAttributesStruct = {
-    psychotype: string;
-    genotype: string;
-    hobby: string;
-    vitality: string;
-    diligence: string;
-    intelligence: string;
-    name: string;
-    telegram: string;
-  };
-
-  export type OtherAttributesStructOutput = [
-    string,
-    string,
-    string,
-    string,
-    string,
-    string,
-    string,
-    string
-  ] & {
-    psychotype: string;
-    genotype: string;
-    hobby: string;
-    vitality: string;
-    diligence: string;
-    intelligence: string;
-    name: string;
-    telegram: string;
-  };
-
-  export type BirthdayStruct = { value: string; timestamp: string };
-
-  export type BirthdayStructOutput = [string, string] & {
-    value: string;
-    timestamp: string;
-  };
-
-  export type AttributesStruct = {
-    layerAttributes: ISaverAvatars.LayerAttributesStruct;
-    otherAttributes: ISaverAvatars.OtherAttributesStruct;
-    birthday: ISaverAvatars.BirthdayStruct;
-  };
-
-  export type AttributesStructOutput = [
-    ISaverAvatars.LayerAttributesStructOutput,
-    ISaverAvatars.OtherAttributesStructOutput,
-    ISaverAvatars.BirthdayStructOutput
-  ] & {
-    layerAttributes: ISaverAvatars.LayerAttributesStructOutput;
-    otherAttributes: ISaverAvatars.OtherAttributesStructOutput;
-    birthday: ISaverAvatars.BirthdayStructOutput;
-  };
-}
-
-export interface ISaverAvatarsInterface extends utils.Interface {
+export interface ISaverPowersInterface extends utils.Interface {
   functions: {
     "DEFAULT_ADMIN_ROLE()": FunctionFragment;
     "MINTER_ROLE()": FunctionFragment;
-    "TOTAL_NFTs()": FunctionFragment;
     "UPGRADER_ROLE()": FunctionFragment;
-    "approve(address,uint256)": FunctionFragment;
-    "balanceOf(address)": FunctionFragment;
+    "balanceOf(address,uint256)": FunctionFragment;
+    "balanceOfBatch(address[],uint256[])": FunctionFragment;
+    "burn(address,uint256,uint256)": FunctionFragment;
+    "burnBatch(address,uint256[],uint256[])": FunctionFragment;
     "contractURI()": FunctionFragment;
-    "getApproved(uint256)": FunctionFragment;
     "getRoleAdmin(bytes32)": FunctionFragment;
     "grantRole(bytes32,address)": FunctionFragment;
     "hasRole(bytes32,address)": FunctionFragment;
     "initialize()": FunctionFragment;
     "isApprovedForAll(address,address)": FunctionFragment;
-    "name()": FunctionFragment;
-    "ownerOf(uint256)": FunctionFragment;
+    "mint(address,uint256,uint256,bytes)": FunctionFragment;
+    "mintBatch(address,uint256[],uint256[],bytes)": FunctionFragment;
     "proxiableUUID()": FunctionFragment;
     "renounceRole(bytes32,address)": FunctionFragment;
     "revokeRole(bytes32,address)": FunctionFragment;
-    "safeMint(address)": FunctionFragment;
-    "safeTransferFrom(address,address,uint256)": FunctionFragment;
-    "safeTransferFrom(address,address,uint256,bytes)": FunctionFragment;
+    "safeBatchTransferFrom(address,address,uint256[],uint256[],bytes)": FunctionFragment;
+    "safeTransferFrom(address,address,uint256,uint256,bytes)": FunctionFragment;
     "setApprovalForAll(address,bool)": FunctionFragment;
     "setContractDescription(string)": FunctionFragment;
     "setContractExternalUrl(string)": FunctionFragment;
     "setContractImageUrl(string)": FunctionFragment;
-    "setTokenAttributes(((string,string,string,string,string,string,string,string,string),(string,string,string,string,string,string,string,string),(string,string))[])": FunctionFragment;
-    "setTokenDescription(string)": FunctionFragment;
+    "setTokenData(uint256,string,string,string,string,string)": FunctionFragment;
+    "setTokenDescription(uint256,string)": FunctionFragment;
     "setTokenExternalUrl(string)": FunctionFragment;
     "setTokenImageBaseUrl(string)": FunctionFragment;
-    "setTokenName(uint256,string)": FunctionFragment;
-    "setTokenTelegram(uint256,string)": FunctionFragment;
     "supportsInterface(bytes4)": FunctionFragment;
-    "symbol()": FunctionFragment;
-    "tokenAttributes(uint256)": FunctionFragment;
-    "tokenByIndex(uint256)": FunctionFragment;
-    "tokenId()": FunctionFragment;
-    "tokenOfOwnerByIndex(address,uint256)": FunctionFragment;
+    "tokenData(uint256)": FunctionFragment;
     "tokenURI(uint256)": FunctionFragment;
-    "totalSupply()": FunctionFragment;
-    "transferFrom(address,address,uint256)": FunctionFragment;
     "upgradeTo(address)": FunctionFragment;
     "upgradeToAndCall(address,bytes)": FunctionFragment;
+    "uri(uint256)": FunctionFragment;
   };
 
   getFunction(
     nameOrSignatureOrTopic:
       | "DEFAULT_ADMIN_ROLE"
       | "MINTER_ROLE"
-      | "TOTAL_NFTs"
       | "UPGRADER_ROLE"
-      | "approve"
       | "balanceOf"
+      | "balanceOfBatch"
+      | "burn"
+      | "burnBatch"
       | "contractURI"
-      | "getApproved"
       | "getRoleAdmin"
       | "grantRole"
       | "hasRole"
       | "initialize"
       | "isApprovedForAll"
-      | "name"
-      | "ownerOf"
+      | "mint"
+      | "mintBatch"
       | "proxiableUUID"
       | "renounceRole"
       | "revokeRole"
-      | "safeMint"
-      | "safeTransferFrom(address,address,uint256)"
-      | "safeTransferFrom(address,address,uint256,bytes)"
+      | "safeBatchTransferFrom"
+      | "safeTransferFrom"
       | "setApprovalForAll"
       | "setContractDescription"
       | "setContractExternalUrl"
       | "setContractImageUrl"
-      | "setTokenAttributes"
+      | "setTokenData"
       | "setTokenDescription"
       | "setTokenExternalUrl"
       | "setTokenImageBaseUrl"
-      | "setTokenName"
-      | "setTokenTelegram"
       | "supportsInterface"
-      | "symbol"
-      | "tokenAttributes"
-      | "tokenByIndex"
-      | "tokenId"
-      | "tokenOfOwnerByIndex"
+      | "tokenData"
       | "tokenURI"
-      | "totalSupply"
-      | "transferFrom"
       | "upgradeTo"
       | "upgradeToAndCall"
+      | "uri"
   ): FunctionFragment;
 
   encodeFunctionData(
@@ -218,25 +112,28 @@ export interface ISaverAvatarsInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "TOTAL_NFTs",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
     functionFragment: "UPGRADER_ROLE",
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "approve",
+    functionFragment: "balanceOf",
     values: [string, BigNumberish]
   ): string;
-  encodeFunctionData(functionFragment: "balanceOf", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "balanceOfBatch",
+    values: [string[], BigNumberish[]]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "burn",
+    values: [string, BigNumberish, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "burnBatch",
+    values: [string, BigNumberish[], BigNumberish[]]
+  ): string;
   encodeFunctionData(
     functionFragment: "contractURI",
     values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getApproved",
-    values: [BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "getRoleAdmin",
@@ -258,10 +155,13 @@ export interface ISaverAvatarsInterface extends utils.Interface {
     functionFragment: "isApprovedForAll",
     values: [string, string]
   ): string;
-  encodeFunctionData(functionFragment: "name", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "ownerOf",
-    values: [BigNumberish]
+    functionFragment: "mint",
+    values: [string, BigNumberish, BigNumberish, BytesLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "mintBatch",
+    values: [string, BigNumberish[], BigNumberish[], BytesLike]
   ): string;
   encodeFunctionData(
     functionFragment: "proxiableUUID",
@@ -275,14 +175,13 @@ export interface ISaverAvatarsInterface extends utils.Interface {
     functionFragment: "revokeRole",
     values: [BytesLike, string]
   ): string;
-  encodeFunctionData(functionFragment: "safeMint", values: [string]): string;
   encodeFunctionData(
-    functionFragment: "safeTransferFrom(address,address,uint256)",
-    values: [string, string, BigNumberish]
+    functionFragment: "safeBatchTransferFrom",
+    values: [string, string, BigNumberish[], BigNumberish[], BytesLike]
   ): string;
   encodeFunctionData(
-    functionFragment: "safeTransferFrom(address,address,uint256,bytes)",
-    values: [string, string, BigNumberish, BytesLike]
+    functionFragment: "safeTransferFrom",
+    values: [string, string, BigNumberish, BigNumberish, BytesLike]
   ): string;
   encodeFunctionData(
     functionFragment: "setApprovalForAll",
@@ -301,12 +200,12 @@ export interface ISaverAvatarsInterface extends utils.Interface {
     values: [string]
   ): string;
   encodeFunctionData(
-    functionFragment: "setTokenAttributes",
-    values: [ISaverAvatars.AttributesStruct[]]
+    functionFragment: "setTokenData",
+    values: [BigNumberish, string, string, string, string, string]
   ): string;
   encodeFunctionData(
     functionFragment: "setTokenDescription",
-    values: [string]
+    values: [BigNumberish, string]
   ): string;
   encodeFunctionData(
     functionFragment: "setTokenExternalUrl",
@@ -317,48 +216,23 @@ export interface ISaverAvatarsInterface extends utils.Interface {
     values: [string]
   ): string;
   encodeFunctionData(
-    functionFragment: "setTokenName",
-    values: [BigNumberish, string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setTokenTelegram",
-    values: [BigNumberish, string]
-  ): string;
-  encodeFunctionData(
     functionFragment: "supportsInterface",
     values: [BytesLike]
   ): string;
-  encodeFunctionData(functionFragment: "symbol", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "tokenAttributes",
+    functionFragment: "tokenData",
     values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "tokenByIndex",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(functionFragment: "tokenId", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "tokenOfOwnerByIndex",
-    values: [string, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "tokenURI",
     values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "totalSupply",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "transferFrom",
-    values: [string, string, BigNumberish]
   ): string;
   encodeFunctionData(functionFragment: "upgradeTo", values: [string]): string;
   encodeFunctionData(
     functionFragment: "upgradeToAndCall",
     values: [string, BytesLike]
   ): string;
+  encodeFunctionData(functionFragment: "uri", values: [BigNumberish]): string;
 
   decodeFunctionResult(
     functionFragment: "DEFAULT_ADMIN_ROLE",
@@ -368,19 +242,19 @@ export interface ISaverAvatarsInterface extends utils.Interface {
     functionFragment: "MINTER_ROLE",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "TOTAL_NFTs", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "UPGRADER_ROLE",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "approve", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "contractURI",
+    functionFragment: "balanceOfBatch",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "burn", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "burnBatch", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "getApproved",
+    functionFragment: "contractURI",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -394,8 +268,8 @@ export interface ISaverAvatarsInterface extends utils.Interface {
     functionFragment: "isApprovedForAll",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "ownerOf", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "mint", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "mintBatch", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "proxiableUUID",
     data: BytesLike
@@ -405,13 +279,12 @@ export interface ISaverAvatarsInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "revokeRole", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "safeMint", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "safeTransferFrom(address,address,uint256)",
+    functionFragment: "safeBatchTransferFrom",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "safeTransferFrom(address,address,uint256,bytes)",
+    functionFragment: "safeTransferFrom",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -431,7 +304,7 @@ export interface ISaverAvatarsInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "setTokenAttributes",
+    functionFragment: "setTokenData",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -447,72 +320,42 @@ export interface ISaverAvatarsInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "setTokenName",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setTokenTelegram",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "supportsInterface",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "symbol", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "tokenAttributes",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "tokenByIndex",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "tokenId", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "tokenOfOwnerByIndex",
-    data: BytesLike
-  ): Result;
+  decodeFunctionResult(functionFragment: "tokenData", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "tokenURI", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "totalSupply",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "transferFrom",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "upgradeTo", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "upgradeToAndCall",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "uri", data: BytesLike): Result;
 
   events: {
     "AdminChanged(address,address)": EventFragment;
-    "Approval(address,address,uint256)": EventFragment;
     "ApprovalForAll(address,address,bool)": EventFragment;
-    "BatchMetadataUpdate(uint256,uint256)": EventFragment;
     "BeaconUpgraded(address)": EventFragment;
     "Initialized(uint8)": EventFragment;
-    "MetadataUpdate(uint256)": EventFragment;
     "RoleAdminChanged(bytes32,bytes32,bytes32)": EventFragment;
     "RoleGranted(bytes32,address,address)": EventFragment;
     "RoleRevoked(bytes32,address,address)": EventFragment;
-    "Transfer(address,address,uint256)": EventFragment;
+    "TransferBatch(address,address,address,uint256[],uint256[])": EventFragment;
+    "TransferSingle(address,address,address,uint256,uint256)": EventFragment;
+    "URI(string,uint256)": EventFragment;
     "Upgraded(address)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "AdminChanged"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Approval"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ApprovalForAll"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "BatchMetadataUpdate"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "BeaconUpgraded"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "MetadataUpdate"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleAdminChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleGranted"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleRevoked"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Transfer"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "TransferBatch"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "TransferSingle"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "URI"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Upgraded"): EventFragment;
 }
 
@@ -527,20 +370,8 @@ export type AdminChangedEvent = TypedEvent<
 
 export type AdminChangedEventFilter = TypedEventFilter<AdminChangedEvent>;
 
-export interface ApprovalEventObject {
-  owner: string;
-  approved: string;
-  tokenId: BigNumber;
-}
-export type ApprovalEvent = TypedEvent<
-  [string, string, BigNumber],
-  ApprovalEventObject
->;
-
-export type ApprovalEventFilter = TypedEventFilter<ApprovalEvent>;
-
 export interface ApprovalForAllEventObject {
-  owner: string;
+  account: string;
   operator: string;
   approved: boolean;
 }
@@ -550,18 +381,6 @@ export type ApprovalForAllEvent = TypedEvent<
 >;
 
 export type ApprovalForAllEventFilter = TypedEventFilter<ApprovalForAllEvent>;
-
-export interface BatchMetadataUpdateEventObject {
-  _fromTokenId: BigNumber;
-  _toTokenId: BigNumber;
-}
-export type BatchMetadataUpdateEvent = TypedEvent<
-  [BigNumber, BigNumber],
-  BatchMetadataUpdateEventObject
->;
-
-export type BatchMetadataUpdateEventFilter =
-  TypedEventFilter<BatchMetadataUpdateEvent>;
 
 export interface BeaconUpgradedEventObject {
   beacon: string;
@@ -579,16 +398,6 @@ export interface InitializedEventObject {
 export type InitializedEvent = TypedEvent<[number], InitializedEventObject>;
 
 export type InitializedEventFilter = TypedEventFilter<InitializedEvent>;
-
-export interface MetadataUpdateEventObject {
-  _tokenId: BigNumber;
-}
-export type MetadataUpdateEvent = TypedEvent<
-  [BigNumber],
-  MetadataUpdateEventObject
->;
-
-export type MetadataUpdateEventFilter = TypedEventFilter<MetadataUpdateEvent>;
 
 export interface RoleAdminChangedEventObject {
   role: string;
@@ -627,17 +436,41 @@ export type RoleRevokedEvent = TypedEvent<
 
 export type RoleRevokedEventFilter = TypedEventFilter<RoleRevokedEvent>;
 
-export interface TransferEventObject {
+export interface TransferBatchEventObject {
+  operator: string;
   from: string;
   to: string;
-  tokenId: BigNumber;
+  ids: BigNumber[];
+  values: BigNumber[];
 }
-export type TransferEvent = TypedEvent<
-  [string, string, BigNumber],
-  TransferEventObject
+export type TransferBatchEvent = TypedEvent<
+  [string, string, string, BigNumber[], BigNumber[]],
+  TransferBatchEventObject
 >;
 
-export type TransferEventFilter = TypedEventFilter<TransferEvent>;
+export type TransferBatchEventFilter = TypedEventFilter<TransferBatchEvent>;
+
+export interface TransferSingleEventObject {
+  operator: string;
+  from: string;
+  to: string;
+  id: BigNumber;
+  value: BigNumber;
+}
+export type TransferSingleEvent = TypedEvent<
+  [string, string, string, BigNumber, BigNumber],
+  TransferSingleEventObject
+>;
+
+export type TransferSingleEventFilter = TypedEventFilter<TransferSingleEvent>;
+
+export interface URIEventObject {
+  value: string;
+  id: BigNumber;
+}
+export type URIEvent = TypedEvent<[string, BigNumber], URIEventObject>;
+
+export type URIEventFilter = TypedEventFilter<URIEvent>;
 
 export interface UpgradedEventObject {
   implementation: string;
@@ -646,12 +479,12 @@ export type UpgradedEvent = TypedEvent<[string], UpgradedEventObject>;
 
 export type UpgradedEventFilter = TypedEventFilter<UpgradedEvent>;
 
-export interface ISaverAvatars extends BaseContract {
+export interface ISaverPowers extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: ISaverAvatarsInterface;
+  interface: ISaverPowersInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,
@@ -677,24 +510,35 @@ export interface ISaverAvatars extends BaseContract {
 
     MINTER_ROLE(overrides?: CallOverrides): Promise<[string]>;
 
-    TOTAL_NFTs(overrides?: CallOverrides): Promise<[BigNumber]>;
-
     UPGRADER_ROLE(overrides?: CallOverrides): Promise<[string]>;
 
-    approve(
-      to: string,
-      tokenId: BigNumberish,
+    balanceOf(
+      account: string,
+      id: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    balanceOfBatch(
+      accounts: string[],
+      ids: BigNumberish[],
+      overrides?: CallOverrides
+    ): Promise<[BigNumber[]]>;
+
+    burn(
+      account: string,
+      id: BigNumberish,
+      value: BigNumberish,
       overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
 
-    balanceOf(owner: string, overrides?: CallOverrides): Promise<[BigNumber]>;
+    burnBatch(
+      account: string,
+      ids: BigNumberish[],
+      values: BigNumberish[],
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
 
     contractURI(overrides?: CallOverrides): Promise<[string]>;
-
-    getApproved(
-      tokenId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[string]>;
 
     getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<[string]>;
 
@@ -715,17 +559,26 @@ export interface ISaverAvatars extends BaseContract {
     ): Promise<ContractTransaction>;
 
     isApprovedForAll(
-      owner: string,
+      account: string,
       operator: string,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
-    name(overrides?: CallOverrides): Promise<[string]>;
-
-    ownerOf(
+    mint(
+      to: string,
       tokenId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[string]>;
+      amount: BigNumberish,
+      data: BytesLike,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
+
+    mintBatch(
+      to: string,
+      tokenIds: BigNumberish[],
+      amounts: BigNumberish[],
+      data: BytesLike,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
 
     proxiableUUID(overrides?: CallOverrides): Promise<[string]>;
 
@@ -741,22 +594,20 @@ export interface ISaverAvatars extends BaseContract {
       overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
 
-    safeMint(
+    safeBatchTransferFrom(
+      from: string,
       to: string,
+      ids: BigNumberish[],
+      amounts: BigNumberish[],
+      data: BytesLike,
       overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
 
-    "safeTransferFrom(address,address,uint256)"(
+    safeTransferFrom(
       from: string,
       to: string,
-      tokenId: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    "safeTransferFrom(address,address,uint256,bytes)"(
-      from: string,
-      to: string,
-      tokenId: BigNumberish,
+      id: BigNumberish,
+      amount: BigNumberish,
       data: BytesLike,
       overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
@@ -782,12 +633,18 @@ export interface ISaverAvatars extends BaseContract {
       overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
 
-    setTokenAttributes(
-      _attributes: ISaverAvatars.AttributesStruct[],
+    setTokenData(
+      tokenId: BigNumberish,
+      name: string,
+      asset: string,
+      tier: string,
+      tokenType: string,
+      description: string,
       overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
 
     setTokenDescription(
+      tokenId: BigNumberish,
       _description: string,
       overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
@@ -802,66 +659,28 @@ export interface ISaverAvatars extends BaseContract {
       overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
 
-    setTokenName(
-      _tokenId: BigNumberish,
-      _name: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    setTokenTelegram(
-      _tokenId: BigNumberish,
-      _telegram: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
     supportsInterface(
       interfaceId: BytesLike,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
-    symbol(overrides?: CallOverrides): Promise<[string]>;
-
-    tokenAttributes(
+    tokenData(
       arg0: BigNumberish,
       overrides?: CallOverrides
     ): Promise<
-      [
-        ISaverAvatars.LayerAttributesStructOutput,
-        ISaverAvatars.OtherAttributesStructOutput,
-        ISaverAvatars.BirthdayStructOutput
-      ] & {
-        layerAttributes: ISaverAvatars.LayerAttributesStructOutput;
-        otherAttributes: ISaverAvatars.OtherAttributesStructOutput;
-        birthday: ISaverAvatars.BirthdayStructOutput;
+      [string, string, string, string, string] & {
+        name: string;
+        asset: string;
+        tier: string;
+        tokenType: string;
+        description: string;
       }
     >;
 
-    tokenByIndex(
-      index: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    tokenId(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    tokenOfOwnerByIndex(
-      owner: string,
-      index: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
     tokenURI(
-      _tokenId: BigNumberish,
+      tokenId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[string]>;
-
-    totalSupply(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    transferFrom(
-      from: string,
-      to: string,
-      tokenId: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
 
     upgradeTo(
       newImplementation: string,
@@ -873,30 +692,43 @@ export interface ISaverAvatars extends BaseContract {
       data: BytesLike,
       overrides?: PayableOverrides & { from?: string }
     ): Promise<ContractTransaction>;
+
+    uri(arg0: BigNumberish, overrides?: CallOverrides): Promise<[string]>;
   };
 
   DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
 
   MINTER_ROLE(overrides?: CallOverrides): Promise<string>;
 
-  TOTAL_NFTs(overrides?: CallOverrides): Promise<BigNumber>;
-
   UPGRADER_ROLE(overrides?: CallOverrides): Promise<string>;
 
-  approve(
-    to: string,
-    tokenId: BigNumberish,
+  balanceOf(
+    account: string,
+    id: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  balanceOfBatch(
+    accounts: string[],
+    ids: BigNumberish[],
+    overrides?: CallOverrides
+  ): Promise<BigNumber[]>;
+
+  burn(
+    account: string,
+    id: BigNumberish,
+    value: BigNumberish,
     overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
 
-  balanceOf(owner: string, overrides?: CallOverrides): Promise<BigNumber>;
+  burnBatch(
+    account: string,
+    ids: BigNumberish[],
+    values: BigNumberish[],
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
 
   contractURI(overrides?: CallOverrides): Promise<string>;
-
-  getApproved(
-    tokenId: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<string>;
 
   getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<string>;
 
@@ -917,14 +749,26 @@ export interface ISaverAvatars extends BaseContract {
   ): Promise<ContractTransaction>;
 
   isApprovedForAll(
-    owner: string,
+    account: string,
     operator: string,
     overrides?: CallOverrides
   ): Promise<boolean>;
 
-  name(overrides?: CallOverrides): Promise<string>;
+  mint(
+    to: string,
+    tokenId: BigNumberish,
+    amount: BigNumberish,
+    data: BytesLike,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
 
-  ownerOf(tokenId: BigNumberish, overrides?: CallOverrides): Promise<string>;
+  mintBatch(
+    to: string,
+    tokenIds: BigNumberish[],
+    amounts: BigNumberish[],
+    data: BytesLike,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
 
   proxiableUUID(overrides?: CallOverrides): Promise<string>;
 
@@ -940,22 +784,20 @@ export interface ISaverAvatars extends BaseContract {
     overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
 
-  safeMint(
+  safeBatchTransferFrom(
+    from: string,
     to: string,
+    ids: BigNumberish[],
+    amounts: BigNumberish[],
+    data: BytesLike,
     overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
 
-  "safeTransferFrom(address,address,uint256)"(
+  safeTransferFrom(
     from: string,
     to: string,
-    tokenId: BigNumberish,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  "safeTransferFrom(address,address,uint256,bytes)"(
-    from: string,
-    to: string,
-    tokenId: BigNumberish,
+    id: BigNumberish,
+    amount: BigNumberish,
     data: BytesLike,
     overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
@@ -981,12 +823,18 @@ export interface ISaverAvatars extends BaseContract {
     overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
 
-  setTokenAttributes(
-    _attributes: ISaverAvatars.AttributesStruct[],
+  setTokenData(
+    tokenId: BigNumberish,
+    name: string,
+    asset: string,
+    tier: string,
+    tokenType: string,
+    description: string,
     overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
 
   setTokenDescription(
+    tokenId: BigNumberish,
     _description: string,
     overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
@@ -1001,63 +849,25 @@ export interface ISaverAvatars extends BaseContract {
     overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
 
-  setTokenName(
-    _tokenId: BigNumberish,
-    _name: string,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  setTokenTelegram(
-    _tokenId: BigNumberish,
-    _telegram: string,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
   supportsInterface(
     interfaceId: BytesLike,
     overrides?: CallOverrides
   ): Promise<boolean>;
 
-  symbol(overrides?: CallOverrides): Promise<string>;
-
-  tokenAttributes(
+  tokenData(
     arg0: BigNumberish,
     overrides?: CallOverrides
   ): Promise<
-    [
-      ISaverAvatars.LayerAttributesStructOutput,
-      ISaverAvatars.OtherAttributesStructOutput,
-      ISaverAvatars.BirthdayStructOutput
-    ] & {
-      layerAttributes: ISaverAvatars.LayerAttributesStructOutput;
-      otherAttributes: ISaverAvatars.OtherAttributesStructOutput;
-      birthday: ISaverAvatars.BirthdayStructOutput;
+    [string, string, string, string, string] & {
+      name: string;
+      asset: string;
+      tier: string;
+      tokenType: string;
+      description: string;
     }
   >;
 
-  tokenByIndex(
-    index: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  tokenId(overrides?: CallOverrides): Promise<BigNumber>;
-
-  tokenOfOwnerByIndex(
-    owner: string,
-    index: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  tokenURI(_tokenId: BigNumberish, overrides?: CallOverrides): Promise<string>;
-
-  totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
-
-  transferFrom(
-    from: string,
-    to: string,
-    tokenId: BigNumberish,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
+  tokenURI(tokenId: BigNumberish, overrides?: CallOverrides): Promise<string>;
 
   upgradeTo(
     newImplementation: string,
@@ -1070,29 +880,42 @@ export interface ISaverAvatars extends BaseContract {
     overrides?: PayableOverrides & { from?: string }
   ): Promise<ContractTransaction>;
 
+  uri(arg0: BigNumberish, overrides?: CallOverrides): Promise<string>;
+
   callStatic: {
     DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
 
     MINTER_ROLE(overrides?: CallOverrides): Promise<string>;
 
-    TOTAL_NFTs(overrides?: CallOverrides): Promise<BigNumber>;
-
     UPGRADER_ROLE(overrides?: CallOverrides): Promise<string>;
 
-    approve(
-      to: string,
-      tokenId: BigNumberish,
+    balanceOf(
+      account: string,
+      id: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    balanceOfBatch(
+      accounts: string[],
+      ids: BigNumberish[],
+      overrides?: CallOverrides
+    ): Promise<BigNumber[]>;
+
+    burn(
+      account: string,
+      id: BigNumberish,
+      value: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    balanceOf(owner: string, overrides?: CallOverrides): Promise<BigNumber>;
+    burnBatch(
+      account: string,
+      ids: BigNumberish[],
+      values: BigNumberish[],
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     contractURI(overrides?: CallOverrides): Promise<string>;
-
-    getApproved(
-      tokenId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<string>;
 
     getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<string>;
 
@@ -1111,14 +934,26 @@ export interface ISaverAvatars extends BaseContract {
     initialize(overrides?: CallOverrides): Promise<void>;
 
     isApprovedForAll(
-      owner: string,
+      account: string,
       operator: string,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
-    name(overrides?: CallOverrides): Promise<string>;
+    mint(
+      to: string,
+      tokenId: BigNumberish,
+      amount: BigNumberish,
+      data: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
-    ownerOf(tokenId: BigNumberish, overrides?: CallOverrides): Promise<string>;
+    mintBatch(
+      to: string,
+      tokenIds: BigNumberish[],
+      amounts: BigNumberish[],
+      data: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     proxiableUUID(overrides?: CallOverrides): Promise<string>;
 
@@ -1134,19 +969,20 @@ export interface ISaverAvatars extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    safeMint(to: string, overrides?: CallOverrides): Promise<void>;
-
-    "safeTransferFrom(address,address,uint256)"(
+    safeBatchTransferFrom(
       from: string,
       to: string,
-      tokenId: BigNumberish,
+      ids: BigNumberish[],
+      amounts: BigNumberish[],
+      data: BytesLike,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    "safeTransferFrom(address,address,uint256,bytes)"(
+    safeTransferFrom(
       from: string,
       to: string,
-      tokenId: BigNumberish,
+      id: BigNumberish,
+      amount: BigNumberish,
       data: BytesLike,
       overrides?: CallOverrides
     ): Promise<void>;
@@ -1172,12 +1008,18 @@ export interface ISaverAvatars extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    setTokenAttributes(
-      _attributes: ISaverAvatars.AttributesStruct[],
+    setTokenData(
+      tokenId: BigNumberish,
+      name: string,
+      asset: string,
+      tier: string,
+      tokenType: string,
+      description: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
     setTokenDescription(
+      tokenId: BigNumberish,
       _description: string,
       overrides?: CallOverrides
     ): Promise<void>;
@@ -1192,66 +1034,25 @@ export interface ISaverAvatars extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    setTokenName(
-      _tokenId: BigNumberish,
-      _name: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    setTokenTelegram(
-      _tokenId: BigNumberish,
-      _telegram: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
     supportsInterface(
       interfaceId: BytesLike,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
-    symbol(overrides?: CallOverrides): Promise<string>;
-
-    tokenAttributes(
+    tokenData(
       arg0: BigNumberish,
       overrides?: CallOverrides
     ): Promise<
-      [
-        ISaverAvatars.LayerAttributesStructOutput,
-        ISaverAvatars.OtherAttributesStructOutput,
-        ISaverAvatars.BirthdayStructOutput
-      ] & {
-        layerAttributes: ISaverAvatars.LayerAttributesStructOutput;
-        otherAttributes: ISaverAvatars.OtherAttributesStructOutput;
-        birthday: ISaverAvatars.BirthdayStructOutput;
+      [string, string, string, string, string] & {
+        name: string;
+        asset: string;
+        tier: string;
+        tokenType: string;
+        description: string;
       }
     >;
 
-    tokenByIndex(
-      index: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    tokenId(overrides?: CallOverrides): Promise<BigNumber>;
-
-    tokenOfOwnerByIndex(
-      owner: string,
-      index: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    tokenURI(
-      _tokenId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<string>;
-
-    totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
-
-    transferFrom(
-      from: string,
-      to: string,
-      tokenId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
+    tokenURI(tokenId: BigNumberish, overrides?: CallOverrides): Promise<string>;
 
     upgradeTo(
       newImplementation: string,
@@ -1263,6 +1064,8 @@ export interface ISaverAvatars extends BaseContract {
       data: BytesLike,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    uri(arg0: BigNumberish, overrides?: CallOverrides): Promise<string>;
   };
 
   filters: {
@@ -1275,36 +1078,16 @@ export interface ISaverAvatars extends BaseContract {
       newAdmin?: null
     ): AdminChangedEventFilter;
 
-    "Approval(address,address,uint256)"(
-      owner?: string | null,
-      approved?: string | null,
-      tokenId?: BigNumberish | null
-    ): ApprovalEventFilter;
-    Approval(
-      owner?: string | null,
-      approved?: string | null,
-      tokenId?: BigNumberish | null
-    ): ApprovalEventFilter;
-
     "ApprovalForAll(address,address,bool)"(
-      owner?: string | null,
+      account?: string | null,
       operator?: string | null,
       approved?: null
     ): ApprovalForAllEventFilter;
     ApprovalForAll(
-      owner?: string | null,
+      account?: string | null,
       operator?: string | null,
       approved?: null
     ): ApprovalForAllEventFilter;
-
-    "BatchMetadataUpdate(uint256,uint256)"(
-      _fromTokenId?: null,
-      _toTokenId?: null
-    ): BatchMetadataUpdateEventFilter;
-    BatchMetadataUpdate(
-      _fromTokenId?: null,
-      _toTokenId?: null
-    ): BatchMetadataUpdateEventFilter;
 
     "BeaconUpgraded(address)"(
       beacon?: string | null
@@ -1313,9 +1096,6 @@ export interface ISaverAvatars extends BaseContract {
 
     "Initialized(uint8)"(version?: null): InitializedEventFilter;
     Initialized(version?: null): InitializedEventFilter;
-
-    "MetadataUpdate(uint256)"(_tokenId?: null): MetadataUpdateEventFilter;
-    MetadataUpdate(_tokenId?: null): MetadataUpdateEventFilter;
 
     "RoleAdminChanged(bytes32,bytes32,bytes32)"(
       role?: BytesLike | null,
@@ -1350,16 +1130,41 @@ export interface ISaverAvatars extends BaseContract {
       sender?: string | null
     ): RoleRevokedEventFilter;
 
-    "Transfer(address,address,uint256)"(
+    "TransferBatch(address,address,address,uint256[],uint256[])"(
+      operator?: string | null,
       from?: string | null,
       to?: string | null,
-      tokenId?: BigNumberish | null
-    ): TransferEventFilter;
-    Transfer(
+      ids?: null,
+      values?: null
+    ): TransferBatchEventFilter;
+    TransferBatch(
+      operator?: string | null,
       from?: string | null,
       to?: string | null,
-      tokenId?: BigNumberish | null
-    ): TransferEventFilter;
+      ids?: null,
+      values?: null
+    ): TransferBatchEventFilter;
+
+    "TransferSingle(address,address,address,uint256,uint256)"(
+      operator?: string | null,
+      from?: string | null,
+      to?: string | null,
+      id?: null,
+      value?: null
+    ): TransferSingleEventFilter;
+    TransferSingle(
+      operator?: string | null,
+      from?: string | null,
+      to?: string | null,
+      id?: null,
+      value?: null
+    ): TransferSingleEventFilter;
+
+    "URI(string,uint256)"(
+      value?: null,
+      id?: BigNumberish | null
+    ): URIEventFilter;
+    URI(value?: null, id?: BigNumberish | null): URIEventFilter;
 
     "Upgraded(address)"(implementation?: string | null): UpgradedEventFilter;
     Upgraded(implementation?: string | null): UpgradedEventFilter;
@@ -1370,24 +1175,35 @@ export interface ISaverAvatars extends BaseContract {
 
     MINTER_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
 
-    TOTAL_NFTs(overrides?: CallOverrides): Promise<BigNumber>;
-
     UPGRADER_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
 
-    approve(
-      to: string,
-      tokenId: BigNumberish,
+    balanceOf(
+      account: string,
+      id: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    balanceOfBatch(
+      accounts: string[],
+      ids: BigNumberish[],
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    burn(
+      account: string,
+      id: BigNumberish,
+      value: BigNumberish,
       overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
 
-    balanceOf(owner: string, overrides?: CallOverrides): Promise<BigNumber>;
+    burnBatch(
+      account: string,
+      ids: BigNumberish[],
+      values: BigNumberish[],
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
 
     contractURI(overrides?: CallOverrides): Promise<BigNumber>;
-
-    getApproved(
-      tokenId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
 
     getRoleAdmin(
       role: BytesLike,
@@ -1409,16 +1225,25 @@ export interface ISaverAvatars extends BaseContract {
     initialize(overrides?: Overrides & { from?: string }): Promise<BigNumber>;
 
     isApprovedForAll(
-      owner: string,
+      account: string,
       operator: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    name(overrides?: CallOverrides): Promise<BigNumber>;
-
-    ownerOf(
+    mint(
+      to: string,
       tokenId: BigNumberish,
-      overrides?: CallOverrides
+      amount: BigNumberish,
+      data: BytesLike,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+
+    mintBatch(
+      to: string,
+      tokenIds: BigNumberish[],
+      amounts: BigNumberish[],
+      data: BytesLike,
+      overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
 
     proxiableUUID(overrides?: CallOverrides): Promise<BigNumber>;
@@ -1435,22 +1260,20 @@ export interface ISaverAvatars extends BaseContract {
       overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
 
-    safeMint(
+    safeBatchTransferFrom(
+      from: string,
       to: string,
+      ids: BigNumberish[],
+      amounts: BigNumberish[],
+      data: BytesLike,
       overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
 
-    "safeTransferFrom(address,address,uint256)"(
+    safeTransferFrom(
       from: string,
       to: string,
-      tokenId: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    "safeTransferFrom(address,address,uint256,bytes)"(
-      from: string,
-      to: string,
-      tokenId: BigNumberish,
+      id: BigNumberish,
+      amount: BigNumberish,
       data: BytesLike,
       overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
@@ -1476,12 +1299,18 @@ export interface ISaverAvatars extends BaseContract {
       overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
 
-    setTokenAttributes(
-      _attributes: ISaverAvatars.AttributesStruct[],
+    setTokenData(
+      tokenId: BigNumberish,
+      name: string,
+      asset: string,
+      tier: string,
+      tokenType: string,
+      description: string,
       overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
 
     setTokenDescription(
+      tokenId: BigNumberish,
       _description: string,
       overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
@@ -1496,55 +1325,19 @@ export interface ISaverAvatars extends BaseContract {
       overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
 
-    setTokenName(
-      _tokenId: BigNumberish,
-      _name: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    setTokenTelegram(
-      _tokenId: BigNumberish,
-      _telegram: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
     supportsInterface(
       interfaceId: BytesLike,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    symbol(overrides?: CallOverrides): Promise<BigNumber>;
-
-    tokenAttributes(
+    tokenData(
       arg0: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    tokenByIndex(
-      index: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    tokenId(overrides?: CallOverrides): Promise<BigNumber>;
-
-    tokenOfOwnerByIndex(
-      owner: string,
-      index: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     tokenURI(
-      _tokenId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
-
-    transferFrom(
-      from: string,
-      to: string,
       tokenId: BigNumberish,
-      overrides?: Overrides & { from?: string }
+      overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     upgradeTo(
@@ -1557,6 +1350,8 @@ export interface ISaverAvatars extends BaseContract {
       data: BytesLike,
       overrides?: PayableOverrides & { from?: string }
     ): Promise<BigNumber>;
+
+    uri(arg0: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
   };
 
   populateTransaction: {
@@ -1566,27 +1361,35 @@ export interface ISaverAvatars extends BaseContract {
 
     MINTER_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    TOTAL_NFTs(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
     UPGRADER_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    approve(
-      to: string,
-      tokenId: BigNumberish,
+    balanceOf(
+      account: string,
+      id: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    balanceOfBatch(
+      accounts: string[],
+      ids: BigNumberish[],
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    burn(
+      account: string,
+      id: BigNumberish,
+      value: BigNumberish,
       overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 
-    balanceOf(
-      owner: string,
-      overrides?: CallOverrides
+    burnBatch(
+      account: string,
+      ids: BigNumberish[],
+      values: BigNumberish[],
+      overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 
     contractURI(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    getApproved(
-      tokenId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
 
     getRoleAdmin(
       role: BytesLike,
@@ -1610,16 +1413,25 @@ export interface ISaverAvatars extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     isApprovedForAll(
-      owner: string,
+      account: string,
       operator: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    name(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    ownerOf(
+    mint(
+      to: string,
       tokenId: BigNumberish,
-      overrides?: CallOverrides
+      amount: BigNumberish,
+      data: BytesLike,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    mintBatch(
+      to: string,
+      tokenIds: BigNumberish[],
+      amounts: BigNumberish[],
+      data: BytesLike,
+      overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 
     proxiableUUID(overrides?: CallOverrides): Promise<PopulatedTransaction>;
@@ -1636,22 +1448,20 @@ export interface ISaverAvatars extends BaseContract {
       overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 
-    safeMint(
+    safeBatchTransferFrom(
+      from: string,
       to: string,
+      ids: BigNumberish[],
+      amounts: BigNumberish[],
+      data: BytesLike,
       overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 
-    "safeTransferFrom(address,address,uint256)"(
+    safeTransferFrom(
       from: string,
       to: string,
-      tokenId: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    "safeTransferFrom(address,address,uint256,bytes)"(
-      from: string,
-      to: string,
-      tokenId: BigNumberish,
+      id: BigNumberish,
+      amount: BigNumberish,
       data: BytesLike,
       overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
@@ -1677,12 +1487,18 @@ export interface ISaverAvatars extends BaseContract {
       overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 
-    setTokenAttributes(
-      _attributes: ISaverAvatars.AttributesStruct[],
+    setTokenData(
+      tokenId: BigNumberish,
+      name: string,
+      asset: string,
+      tier: string,
+      tokenType: string,
+      description: string,
       overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 
     setTokenDescription(
+      tokenId: BigNumberish,
       _description: string,
       overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
@@ -1697,55 +1513,19 @@ export interface ISaverAvatars extends BaseContract {
       overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 
-    setTokenName(
-      _tokenId: BigNumberish,
-      _name: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    setTokenTelegram(
-      _tokenId: BigNumberish,
-      _telegram: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
     supportsInterface(
       interfaceId: BytesLike,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    symbol(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    tokenAttributes(
+    tokenData(
       arg0: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    tokenByIndex(
-      index: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    tokenId(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    tokenOfOwnerByIndex(
-      owner: string,
-      index: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     tokenURI(
-      _tokenId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    totalSupply(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    transferFrom(
-      from: string,
-      to: string,
       tokenId: BigNumberish,
-      overrides?: Overrides & { from?: string }
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     upgradeTo(
@@ -1757,6 +1537,11 @@ export interface ISaverAvatars extends BaseContract {
       newImplementation: string,
       data: BytesLike,
       overrides?: PayableOverrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    uri(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
   };
 }
