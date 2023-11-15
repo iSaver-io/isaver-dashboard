@@ -1,6 +1,9 @@
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import Slider from 'react-slick';
 import { Box, Button, Flex, Input, Text, useBreakpoint, useNumberInput } from '@chakra-ui/react';
 import { useAccount } from 'wagmi';
+
+import { useBuyPowers, usePowerPrices } from '@/hooks/useAvatarsSell';
 
 import MinusIcon from './images/minus.svg';
 import PlusIcon from './images/plus.svg';
@@ -11,6 +14,7 @@ import PowerCImage from './images/powers/c.png';
 import PowerDImage from './images/powers/d.png';
 
 type PowersCardProps = {
+  id: number;
   name: string;
   description: string;
   image: string;
@@ -18,39 +22,43 @@ type PowersCardProps = {
   price: number;
 };
 
-const POWERS: PowersCardProps[] = [
+let POWERS: PowersCardProps[] = [
   {
+    id: 1,
     name: 'Power a',
     description:
       // eslint-disable-next-line prettier/prettier
       'Unlocks access to an additional 5 Levels of the iSaver Referral Program for 365 days after activation. Each additional level will earn you 1% in SAVR from your friends\' earnings.',
     image: PowerAImage,
     color: 'white',
-    price: 1,
+    price: 0,
   },
   {
+    id: 2,
     name: 'Power b',
     description:
       'Unlocks access to the SAVR Staking Pool for 365 days after activation. Use this pool to maximize your income on iSaver platform.',
     image: PowerBImage,
     color: 'sav',
-    price: 2,
+    price: 0,
   },
   {
+    id: 3,
     name: 'Power c',
     description:
       'Increases the APR/APY of all Staking Pools on the iSaver platform for 365 days after activation.',
     image: PowerCImage,
     color: 'green.100',
-    price: 3,
+    price: 0,
   },
   {
+    id: 4,
     name: 'Power d',
     description:
       'Increases the number of iSaver Raffle Tickets minted for completing PUZZLES - mini free-to-play game on the iSaver platform.',
     image: PowerDImage,
     color: 'blue',
-    price: 4,
+    price: 0,
   },
 ];
 
@@ -82,8 +90,19 @@ const settings = {
 };
 
 export const Powers = () => {
+  const [powers, setPowers] = useState(POWERS);
+  const powerPrices = usePowerPrices(powers.map((power) => power.id));
   const bp = useBreakpoint({ ssr: false });
   const is2XL = ['2xl'].includes(bp);
+
+  useEffect(() => {
+    setPowers((currentPowers) =>
+      currentPowers.map((power) => ({
+        ...power,
+        price: powerPrices[power.id] || power.price,
+      }))
+    );
+  }, [powerPrices]);
 
   return (
     <>
@@ -106,7 +125,7 @@ export const Powers = () => {
         <img className="powers__image" src={PowersImage} alt="Avatars unlock access to 4 Powers" />
         {is2XL ? (
           <Flex justifyContent="space-between" gap="20px" mt="200px">
-            {POWERS.map((power) => (
+            {powers.map((power) => (
               <PowersCard key={power.name} {...power} />
             ))}
           </Flex>
@@ -116,7 +135,7 @@ export const Powers = () => {
         <Box className="powers__slider">
           <Box className="powers__slider__background" bgColor="bgGreen.50" />
           <Slider {...settings}>
-            {POWERS.map((power) => (
+            {powers.map((power) => (
               <PowersCard key={power.name} {...power} />
             ))}
           </Slider>
@@ -126,7 +145,8 @@ export const Powers = () => {
   );
 };
 
-const PowersCard = ({ image, name, description, price, color }: PowersCardProps) => {
+const PowersCard = ({ id, image, name, description, price, color }: PowersCardProps) => {
+  const buyPowers = useBuyPowers();
   const { isConnected } = useAccount();
   const { getInputProps, getIncrementButtonProps, getDecrementButtonProps, value } = useNumberInput(
     {
@@ -141,6 +161,10 @@ const PowersCard = ({ image, name, description, price, color }: PowersCardProps)
   const inc = getIncrementButtonProps();
   const dec = getDecrementButtonProps();
   const inputProps = getInputProps();
+
+  const handleBuyPower = useCallback(() => {
+    buyPowers.mutateAsync({ id, amount: value });
+  }, [buyPowers, id, value]);
 
   return (
     <Box className="powers-card" bg="bgGreen.50">
@@ -173,7 +197,7 @@ const PowersCard = ({ image, name, description, price, color }: PowersCardProps)
           </Text>
         </Text>
       </Flex>
-      <Button isDisabled={!isConnected} w="100%" mt="15px" h="35px">
+      <Button isDisabled={!isConnected} onClick={handleBuyPower} w="100%" mt="15px" h="35px">
         <Text textStyle="buttonSmall">MINT</Text>
       </Button>
     </Box>

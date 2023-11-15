@@ -3,6 +3,7 @@
 /* eslint-disable */
 export { BasicToken__factory } from "./BasicToken__factory";
 export { ISaverAvatars__factory } from "./ISaverAvatars__factory";
+export { ISaverPowers__factory } from "./ISaverPowers__factory";
 export { ISaverSAVRToken__factory } from "./ISaverSAVRToken__factory";
 export { ISaverSAVToken__factory } from "./ISaverSAVToken__factory";
 export { Ticket__factory } from "./Ticket__factory";
