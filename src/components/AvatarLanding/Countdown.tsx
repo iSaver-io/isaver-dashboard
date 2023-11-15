@@ -1,13 +1,11 @@
 import { Flex, Text } from '@chakra-ui/react';
 
+import { useNextInflationTimestamp } from '@/hooks/useAvatarsSell';
 import { useCountdown } from '@/hooks/useCountdown';
 
-// mock
-const deadline = new Date();
-deadline.setMonth(deadline.getMonth() + 1);
-
 export const Countdown = () => {
-  const { stamps } = useCountdown(deadline.getTime());
+  const timestamp = useNextInflationTimestamp();
+  const { stamps } = useCountdown(timestamp!);
 
   return (
     <Flex gap={{ base: '5px', xl: '15px' }} mt="20px">
