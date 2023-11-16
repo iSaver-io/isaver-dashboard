@@ -20,6 +20,10 @@ export const useAvatarsSellContract = () => {
     signerOrProvider: signer || provider,
   }) as unknown as AvatarsSell;
 
+  const getBasePrice = () => {
+    return contract.basePrice();
+  };
+
   const getAvatarPrice = () => {
     return contract.getCurrentAvatarPrice();
   };
@@ -54,9 +58,30 @@ export const useAvatarsSellContract = () => {
     return waitForTransaction(tx);
   };
 
+  const updateBasePrice = async (price: BigNumberish) => {
+    const tx = await contract.updateBasePrice(price);
+    return waitForTransaction(tx);
+  };
+
+  const updateInflationRate = async (rate: BigNumberish) => {
+    const tx = await contract.updateInflationRate(rate);
+    return waitForTransaction(tx);
+  };
+
+  const updateInflationPeriod = async (period: BigNumberish) => {
+    const tx = await contract.updateInflationPeriod(period);
+    return waitForTransaction(tx);
+  };
+
+  const updatePowerPrice = async (id: BigNumberish, price: BigNumberish) => {
+    const tx = await contract.updatePowerPrice(id, price);
+    return waitForTransaction(tx);
+  };
+
   return {
     contract,
     address: contractAddress,
+    getBasePrice,
     getAvatarPrice,
     getInflationRate,
     getInflationPeriod,
@@ -65,5 +90,9 @@ export const useAvatarsSellContract = () => {
     getDivider,
     buyAvatar,
     buyPower,
+    updateBasePrice,
+    updateInflationRate,
+    updateInflationPeriod,
+    updatePowerPrice,
   };
 };
