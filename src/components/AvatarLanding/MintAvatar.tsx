@@ -26,7 +26,7 @@ export const MintAvatar = () => {
       </Text>
       {avatarNextPrice && nextInflationTimestamp ? (
         <>
-          <Countdown />
+          <Countdown timestamp={nextInflationTimestamp} />
           <div className="mint-avatar__line" />
           <Flex
             mt="20px"

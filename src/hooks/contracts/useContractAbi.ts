@@ -17,6 +17,8 @@ export enum ContractsEnum {
   'TokenVesting' = 'TokenVesting',
   'TokenVesting_OLD' = 'TokenVesting_OLD',
   'AvatarsSell' = 'AvatarsSell',
+  'ISaverAvatars' = 'ISaverAvatars',
+  'ISaverPowers' = 'ISaverPowers',
 }
 
 type ContractAbi = {

@@ -1,10 +1,8 @@
 import { Flex, Text } from '@chakra-ui/react';
 
-import { useNextInflationTimestamp } from '@/hooks/useAvatarsSell';
 import { useCountdown } from '@/hooks/useCountdown';
 
-export const Countdown = () => {
-  const timestamp = useNextInflationTimestamp();
+export const Countdown = ({ timestamp }: { timestamp: number }) => {
   const { stamps } = useCountdown(timestamp!);
 
   return (
