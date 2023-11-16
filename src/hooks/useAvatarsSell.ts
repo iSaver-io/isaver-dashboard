@@ -10,6 +10,7 @@ import { useConnectWallet } from './useConnectWallet';
 import { useNotification } from './useNotification';
 import { useTokens } from './useTokens';
 
+const BASE_PRICE_REQUEST = 'base-price-request';
 const AVATAR_PRICE_REQUEST = 'avatar-price-request';
 const POWER_PRICE_REQUEST = 'power-price-request';
 const DIVIDER_REQUEST = 'divider-request';
@@ -190,6 +191,7 @@ export const useBuyAvatar = () => {
     }
   );
 };
+
 export const useBuyPowers = () => {
   const avatarsSellContract = useAvatarsSellContract();
   const { savToken } = useTokens();
@@ -232,4 +234,99 @@ export const useBuyPowers = () => {
       },
     }
   );
+};
+
+export const useAvatarsSell = () => {
+  const avatarsSellContract = useAvatarsSellContract();
+
+  const basePriceRequest = useQuery(
+    [BASE_PRICE_REQUEST],
+    async () => await avatarsSellContract.getBasePrice()
+  );
+
+  const inflationPeriodRequest = useQuery(
+    [INFLATION_PERIOD_REQUEST],
+    async () => await avatarsSellContract.getInflationPeriod()
+  );
+
+  const inflationRateRequest = useQuery(
+    [INFLATION_RATE_REQUEST],
+    async () => await avatarsSellContract.getInflationRate()
+  );
+
+  return {
+    basePrice: basePriceRequest.data ? bigNumberToNumber(basePriceRequest.data) : null,
+    inflationPeriod: inflationPeriodRequest.data
+      ? inflationPeriodRequest.data.toNumber() / 60 / 60
+      : null,
+    inflationRate: inflationRateRequest.data ? inflationRateRequest.data.toNumber() : null,
+  };
+};
+
+export const useAvatarsSellControl = () => {
+  const avatarsSellContract = useAvatarsSellContract();
+  const queryClient = useQueryClient();
+  const { success, handleError } = useNotification();
+
+  const updateBasePrice = useMutation(
+    ['update-base-price'],
+    async (price: number) => {
+      const txHash = await avatarsSellContract.updateBasePrice(Number(price));
+      success({ title: 'Success', description: 'Base Price updated', txHash });
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries([BASE_PRICE_REQUEST, AVATAR_PRICE_REQUEST]);
+      },
+      onError: handleError,
+    }
+  );
+
+  const updateInflationRate = useMutation(
+    ['update-inflation-rate'],
+    async (rate: number) => {
+      const txHash = await avatarsSellContract.updateInflationRate(rate);
+      success({ title: 'Success', description: 'Rate updated', txHash });
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries([INFLATION_RATE_REQUEST]);
+      },
+      onError: handleError,
+    }
+  );
+
+  const updateInflationPeriod = useMutation(
+    ['update-inflation-period'],
+    async (period: number) => {
+      const txHash = await avatarsSellContract.updateInflationPeriod(period * 60 * 60);
+      success({ title: 'Success', description: 'Period updated', txHash });
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries([INFLATION_PERIOD_REQUEST]);
+      },
+      onError: handleError,
+    }
+  );
+
+  const updatePowerPrice = useMutation(
+    ['update-power-price'],
+    async ({ id, price }: { id: number; price: number }) => {
+      const txHash = await avatarsSellContract.updatePowerPrice(id, price);
+      success({ title: 'Success', description: `Price for power ${id} updated`, txHash });
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries([POWER_PRICE_REQUEST]);
+      },
+      onError: handleError,
+    }
+  );
+  return {
+    updateBasePrice,
+    updateInflationRate,
+    updateInflationPeriod,
+    updatePowerPrice,
+  };
 };
