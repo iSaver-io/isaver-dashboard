@@ -192,7 +192,7 @@ export const WalletPortfolio = () => {
               gap={2}
               direction={{ sm: 'column', md: 'row' }}
               margin={{ sm: '12px 0 20px', md: '15px 0', '2xl': '20px 0' }}
-              textStyle={{ sm: 'textSansSmall', '2xl': 'textSansBold' }}
+              textStyle={{ sm: 'textSansExtraSmall', '2xl': 'textSansBold' }}
             >
               <Flex alignItems="baseline" width="50%" whiteSpace="nowrap">
                 <Text mr="8px">Total Value Locked</Text>

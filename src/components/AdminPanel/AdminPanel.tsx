@@ -12,6 +12,7 @@ import { ContractsEnum } from '@/hooks/contracts/useContractAbi';
 import { useDocumentTitle } from '@/hooks/useMeta';
 
 import { Addresses } from './blocks/Addresses';
+import { AvatarsSellControl } from './blocks/AvatarsSellControl';
 import { Balances } from './blocks/Balances';
 import { ExchangeControl } from './blocks/ExchangeControl';
 import { RaffleControl } from './blocks/RaffleControl';
@@ -44,6 +45,7 @@ export const AdminPanel = () => {
   const isTicketMinter = useHasRole(ContractsEnum.Ticket, 'minter');
   const isVestingAdmin = useHasRole(ContractsEnum.TokenVesting);
   const isVendorSellAdmin = useHasRole(ContractsEnum.VendorSell);
+  const isAvatarsSellAdmin = useHasRole(ContractsEnum.AvatarsSell);
 
   const adminContracts = useMemo(
     () => [
@@ -56,6 +58,7 @@ export const AdminPanel = () => {
       isRaffleOperator,
       isVestingAdmin,
       isVendorSellAdmin,
+      isAvatarsSellAdmin,
     ],
     [
       isSavAdmin,
@@ -67,6 +70,7 @@ export const AdminPanel = () => {
       isRaffleOperator,
       isVestingAdmin,
       isVendorSellAdmin,
+      isAvatarsSellAdmin,
     ]
   );
 
@@ -110,6 +114,7 @@ export const AdminPanel = () => {
       {isTicketAdmin || isTicketMinter ? <TicketControl /> : null}
       {isRaffleAdmin || isRaffleOperator ? <RaffleControl /> : null}
       {isVestingAdmin ? <VestingControl /> : null}
+      {isAvatarsSellAdmin ? <AvatarsSellControl /> : null}
       <TopNotificationControl />
       <AdminSection title="Database authentication">
         {isAuthorized ? (

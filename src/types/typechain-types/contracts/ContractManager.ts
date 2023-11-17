@@ -30,6 +30,8 @@ export interface ContractManagerInterface extends utils.Interface {
   functions: {
     "DEFAULT_ADMIN_ROLE()": FunctionFragment;
     "UPGRADER_ROLE()": FunctionFragment;
+    "getAvatarsAddress()": FunctionFragment;
+    "getPowersAddress()": FunctionFragment;
     "getRafflesAddress()": FunctionFragment;
     "getReferralManagerAddress()": FunctionFragment;
     "getRoleAdmin(bytes32)": FunctionFragment;
@@ -45,6 +47,8 @@ export interface ContractManagerInterface extends utils.Interface {
     "renounceRole(bytes32,address)": FunctionFragment;
     "revokeRole(bytes32,address)": FunctionFragment;
     "supportsInterface(bytes4)": FunctionFragment;
+    "updateAvatars(address)": FunctionFragment;
+    "updatePowers(address)": FunctionFragment;
     "updateRaffles(address)": FunctionFragment;
     "updateReferralManager(address)": FunctionFragment;
     "updateSavToken(address)": FunctionFragment;
@@ -60,6 +64,8 @@ export interface ContractManagerInterface extends utils.Interface {
     nameOrSignatureOrTopic:
       | "DEFAULT_ADMIN_ROLE"
       | "UPGRADER_ROLE"
+      | "getAvatarsAddress"
+      | "getPowersAddress"
       | "getRafflesAddress"
       | "getReferralManagerAddress"
       | "getRoleAdmin"
@@ -75,6 +81,8 @@ export interface ContractManagerInterface extends utils.Interface {
       | "renounceRole"
       | "revokeRole"
       | "supportsInterface"
+      | "updateAvatars"
+      | "updatePowers"
       | "updateRaffles"
       | "updateReferralManager"
       | "updateSavToken"
@@ -92,6 +100,14 @@ export interface ContractManagerInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "UPGRADER_ROLE",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getAvatarsAddress",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getPowersAddress",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -155,6 +171,14 @@ export interface ContractManagerInterface extends utils.Interface {
     values: [BytesLike]
   ): string;
   encodeFunctionData(
+    functionFragment: "updateAvatars",
+    values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "updatePowers",
+    values: [string]
+  ): string;
+  encodeFunctionData(
     functionFragment: "updateRaffles",
     values: [string]
   ): string;
@@ -191,6 +215,14 @@ export interface ContractManagerInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "UPGRADER_ROLE",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getAvatarsAddress",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getPowersAddress",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -239,6 +271,14 @@ export interface ContractManagerInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "revokeRole", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "supportsInterface",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "updateAvatars",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "updatePowers",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -397,6 +437,10 @@ export interface ContractManager extends BaseContract {
 
     UPGRADER_ROLE(overrides?: CallOverrides): Promise<[string]>;
 
+    getAvatarsAddress(overrides?: CallOverrides): Promise<[string]>;
+
+    getPowersAddress(overrides?: CallOverrides): Promise<[string]>;
+
     getRafflesAddress(overrides?: CallOverrides): Promise<[string]>;
 
     getReferralManagerAddress(overrides?: CallOverrides): Promise<[string]>;
@@ -447,6 +491,16 @@ export interface ContractManager extends BaseContract {
       interfaceId: BytesLike,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
+
+    updateAvatars(
+      _avatars: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
+
+    updatePowers(
+      _powers: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
 
     updateRaffles(
       _raffles: string,
@@ -499,6 +553,10 @@ export interface ContractManager extends BaseContract {
 
   UPGRADER_ROLE(overrides?: CallOverrides): Promise<string>;
 
+  getAvatarsAddress(overrides?: CallOverrides): Promise<string>;
+
+  getPowersAddress(overrides?: CallOverrides): Promise<string>;
+
   getRafflesAddress(overrides?: CallOverrides): Promise<string>;
 
   getReferralManagerAddress(overrides?: CallOverrides): Promise<string>;
@@ -549,6 +607,16 @@ export interface ContractManager extends BaseContract {
     interfaceId: BytesLike,
     overrides?: CallOverrides
   ): Promise<boolean>;
+
+  updateAvatars(
+    _avatars: string,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  updatePowers(
+    _powers: string,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
 
   updateRaffles(
     _raffles: string,
@@ -601,6 +669,10 @@ export interface ContractManager extends BaseContract {
 
     UPGRADER_ROLE(overrides?: CallOverrides): Promise<string>;
 
+    getAvatarsAddress(overrides?: CallOverrides): Promise<string>;
+
+    getPowersAddress(overrides?: CallOverrides): Promise<string>;
+
     getRafflesAddress(overrides?: CallOverrides): Promise<string>;
 
     getReferralManagerAddress(overrides?: CallOverrides): Promise<string>;
@@ -649,6 +721,10 @@ export interface ContractManager extends BaseContract {
       interfaceId: BytesLike,
       overrides?: CallOverrides
     ): Promise<boolean>;
+
+    updateAvatars(_avatars: string, overrides?: CallOverrides): Promise<void>;
+
+    updatePowers(_powers: string, overrides?: CallOverrides): Promise<void>;
 
     updateRaffles(_raffles: string, overrides?: CallOverrides): Promise<void>;
 
@@ -742,6 +818,10 @@ export interface ContractManager extends BaseContract {
 
     UPGRADER_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
 
+    getAvatarsAddress(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getPowersAddress(overrides?: CallOverrides): Promise<BigNumber>;
+
     getRafflesAddress(overrides?: CallOverrides): Promise<BigNumber>;
 
     getReferralManagerAddress(overrides?: CallOverrides): Promise<BigNumber>;
@@ -792,6 +872,16 @@ export interface ContractManager extends BaseContract {
     supportsInterface(
       interfaceId: BytesLike,
       overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    updateAvatars(
+      _avatars: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+
+    updatePowers(
+      _powers: string,
+      overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
 
     updateRaffles(
@@ -847,6 +937,10 @@ export interface ContractManager extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     UPGRADER_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    getAvatarsAddress(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    getPowersAddress(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getRafflesAddress(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
@@ -906,6 +1000,16 @@ export interface ContractManager extends BaseContract {
     supportsInterface(
       interfaceId: BytesLike,
       overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    updateAvatars(
+      _avatars: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    updatePowers(
+      _powers: string,
+      overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 
     updateRaffles(

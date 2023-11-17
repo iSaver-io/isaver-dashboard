@@ -118,10 +118,10 @@ export const InputAmount: FC<InputAmountProps> = ({
         )}
       </InputGroup>
       <Flex mt="8px" height="16px" alignItems="center" justifyContent="space-between">
-        <Text textStyle="textSansSmall" color="red">
+        <Text textStyle="textSansExtraSmall" color="red">
           {/* {isGreaterThanMax ? 'Not enough funds' : null} */}
         </Text>
-        <Text textStyle="textSansSmall">
+        <Text textStyle="textSansExtraSmall">
           {hasMax ? (
             <>
               You have: <span>{total}</span>

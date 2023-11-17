@@ -11,18 +11,29 @@ import { StakingPage } from './components/Staking/StakingPage';
 import { TeamsPage } from './components/Teams/TeamsPage';
 
 const Landing = React.lazy(() => import('@/components/Landing/Landing'));
+const AvatarLanding = React.lazy(() => import('@/components/AvatarLanding/AvatarLanding'));
 
 export const LANDING_URL = 'https://isaver.io';
 export const APP_URL = 'https://dashboard.isaver.io';
 export const WHITEPAPER_URL = 'https://isaver.gitbook.io/isaver';
-export const isLanding = process.env.REACT_APP_IS_LANDING;
+export const AVATARS_URL = 'https://avatars.isaver.io';
+export const isLanding = Boolean(process.env.REACT_APP_IS_LANDING);
+export const isAvatarsLanding = Boolean(process.env.REACT_APP_IS_AVATARS_LANDING);
+export const isDashboard = !isLanding && !isAvatarsLanding;
 export const isDevelopment = process.env.NODE_ENV === 'development';
 
 export const LANDING_PATH = '/';
+export const AVATARS_LANDING_PATH = '/';
 const landingRoute = {
   path: LANDING_PATH,
   name: 'Landing',
   element: <Landing />,
+  nodeRef: createRef(),
+};
+const avatarsLandingRoute = {
+  path: AVATARS_LANDING_PATH,
+  name: 'Avatars Landing',
+  element: <AvatarLanding />,
   nodeRef: createRef(),
 };
 const appRoutes = [
@@ -37,8 +48,14 @@ const appRoutes = [
 
 export const routes = isLanding
   ? [landingRoute]
+  : isAvatarsLanding
+  ? [avatarsLandingRoute]
   : isDevelopment
-  ? [...appRoutes, { ...landingRoute, path: '/landing' }]
+  ? [
+      ...appRoutes,
+      { ...landingRoute, path: '/landing' },
+      { ...avatarsLandingRoute, path: '/avatars' },
+    ]
   : appRoutes;
 
 export const router = createBrowserRouter([

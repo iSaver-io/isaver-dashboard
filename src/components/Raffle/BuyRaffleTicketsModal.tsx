@@ -129,7 +129,7 @@ export const BuyRaffleTicketsModal: FC<BuyRaffleTicketsModalProps> = ({
             <Spacer />
             SAV
           </Box>
-          <Text textStyle="textSansSmall" textAlign="right" mt="8px" height="16px" mb="10px">
+          <Text textStyle="textSansExtraSmall" textAlign="right" mt="8px" height="16px" mb="10px">
             You have: {bigNumberToString(savBalance || 0)} SAV
           </Text>
         </ModalBody>

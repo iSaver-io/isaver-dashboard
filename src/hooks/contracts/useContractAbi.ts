@@ -16,6 +16,9 @@ export enum ContractsEnum {
   'Ticket' = 'Ticket',
   'TokenVesting' = 'TokenVesting',
   'TokenVesting_OLD' = 'TokenVesting_OLD',
+  'AvatarsSell' = 'AvatarsSell',
+  'ISaverAvatars' = 'ISaverAvatars',
+  'ISaverPowers' = 'ISaverPowers',
 }
 
 type ContractAbi = {
@@ -31,7 +34,6 @@ export const useContractAbi = ({
   const { chain } = useNetwork();
 
   const chainId = useChainId();
-  console.log(contract, Contracts);
 
   //   TODO: fix TS return type
   const contractData = (Contracts as any)[chainId][0].contracts[contract];

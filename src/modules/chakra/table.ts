@@ -14,7 +14,7 @@ const baseStyle = definePartsStyle({
   },
   tbody: {},
   tr: {
-    textStyle: 'textSansSmall',
+    textStyle: 'textSansExtraSmall',
     fontSize: '14px',
     _even: {
       bgColor: 'rgba(42, 96, 47, 0.5)',

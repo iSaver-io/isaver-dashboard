@@ -154,6 +154,7 @@ export interface ISaverAvatarsInterface extends utils.Interface {
     "symbol()": FunctionFragment;
     "tokenAttributes(uint256)": FunctionFragment;
     "tokenByIndex(uint256)": FunctionFragment;
+    "tokenId()": FunctionFragment;
     "tokenOfOwnerByIndex(address,uint256)": FunctionFragment;
     "tokenURI(uint256)": FunctionFragment;
     "totalSupply()": FunctionFragment;
@@ -199,6 +200,7 @@ export interface ISaverAvatarsInterface extends utils.Interface {
       | "symbol"
       | "tokenAttributes"
       | "tokenByIndex"
+      | "tokenId"
       | "tokenOfOwnerByIndex"
       | "tokenURI"
       | "totalSupply"
@@ -335,6 +337,7 @@ export interface ISaverAvatarsInterface extends utils.Interface {
     functionFragment: "tokenByIndex",
     values: [BigNumberish]
   ): string;
+  encodeFunctionData(functionFragment: "tokenId", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "tokenOfOwnerByIndex",
     values: [string, BigNumberish]
@@ -464,6 +467,7 @@ export interface ISaverAvatarsInterface extends utils.Interface {
     functionFragment: "tokenByIndex",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "tokenId", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "tokenOfOwnerByIndex",
     data: BytesLike
@@ -799,14 +803,14 @@ export interface ISaverAvatars extends BaseContract {
     ): Promise<ContractTransaction>;
 
     setTokenName(
-      tokenId: BigNumberish,
-      name: string,
+      _tokenId: BigNumberish,
+      _name: string,
       overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
 
     setTokenTelegram(
-      tokenId: BigNumberish,
-      telegram: string,
+      _tokenId: BigNumberish,
+      _telegram: string,
       overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
 
@@ -837,6 +841,8 @@ export interface ISaverAvatars extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
+    tokenId(overrides?: CallOverrides): Promise<[BigNumber]>;
+
     tokenOfOwnerByIndex(
       owner: string,
       index: BigNumberish,
@@ -844,7 +850,7 @@ export interface ISaverAvatars extends BaseContract {
     ): Promise<[BigNumber]>;
 
     tokenURI(
-      tokenId: BigNumberish,
+      _tokenId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[string]>;
 
@@ -996,14 +1002,14 @@ export interface ISaverAvatars extends BaseContract {
   ): Promise<ContractTransaction>;
 
   setTokenName(
-    tokenId: BigNumberish,
-    name: string,
+    _tokenId: BigNumberish,
+    _name: string,
     overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
 
   setTokenTelegram(
-    tokenId: BigNumberish,
-    telegram: string,
+    _tokenId: BigNumberish,
+    _telegram: string,
     overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
 
@@ -1034,13 +1040,15 @@ export interface ISaverAvatars extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
+  tokenId(overrides?: CallOverrides): Promise<BigNumber>;
+
   tokenOfOwnerByIndex(
     owner: string,
     index: BigNumberish,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
-  tokenURI(tokenId: BigNumberish, overrides?: CallOverrides): Promise<string>;
+  tokenURI(_tokenId: BigNumberish, overrides?: CallOverrides): Promise<string>;
 
   totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1185,14 +1193,14 @@ export interface ISaverAvatars extends BaseContract {
     ): Promise<void>;
 
     setTokenName(
-      tokenId: BigNumberish,
-      name: string,
+      _tokenId: BigNumberish,
+      _name: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
     setTokenTelegram(
-      tokenId: BigNumberish,
-      telegram: string,
+      _tokenId: BigNumberish,
+      _telegram: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1223,13 +1231,18 @@ export interface ISaverAvatars extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    tokenId(overrides?: CallOverrides): Promise<BigNumber>;
+
     tokenOfOwnerByIndex(
       owner: string,
       index: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    tokenURI(tokenId: BigNumberish, overrides?: CallOverrides): Promise<string>;
+    tokenURI(
+      _tokenId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<string>;
 
     totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1484,14 +1497,14 @@ export interface ISaverAvatars extends BaseContract {
     ): Promise<BigNumber>;
 
     setTokenName(
-      tokenId: BigNumberish,
-      name: string,
+      _tokenId: BigNumberish,
+      _name: string,
       overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
 
     setTokenTelegram(
-      tokenId: BigNumberish,
-      telegram: string,
+      _tokenId: BigNumberish,
+      _telegram: string,
       overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
 
@@ -1512,6 +1525,8 @@ export interface ISaverAvatars extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    tokenId(overrides?: CallOverrides): Promise<BigNumber>;
+
     tokenOfOwnerByIndex(
       owner: string,
       index: BigNumberish,
@@ -1519,7 +1534,7 @@ export interface ISaverAvatars extends BaseContract {
     ): Promise<BigNumber>;
 
     tokenURI(
-      tokenId: BigNumberish,
+      _tokenId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1683,14 +1698,14 @@ export interface ISaverAvatars extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     setTokenName(
-      tokenId: BigNumberish,
-      name: string,
+      _tokenId: BigNumberish,
+      _name: string,
       overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 
     setTokenTelegram(
-      tokenId: BigNumberish,
-      telegram: string,
+      _tokenId: BigNumberish,
+      _telegram: string,
       overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 
@@ -1711,6 +1726,8 @@ export interface ISaverAvatars extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    tokenId(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     tokenOfOwnerByIndex(
       owner: string,
       index: BigNumberish,
@@ -1718,7 +1735,7 @@ export interface ISaverAvatars extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     tokenURI(
-      tokenId: BigNumberish,
+      _tokenId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
