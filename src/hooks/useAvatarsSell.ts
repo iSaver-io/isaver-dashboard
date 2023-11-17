@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useMutation, useQueries, useQuery, useQueryClient } from '@tanstack/react-query';
-import { BigNumber, BigNumberish } from 'ethers';
+import { BigNumber, BigNumberish, ethers } from 'ethers';
 import { useAccount } from 'wagmi';
 
 import { bigNumberToNumber, bigNumberToString } from '@/utils/number';
@@ -270,8 +270,9 @@ export const useAvatarsSellControl = () => {
 
   const updateBasePrice = useMutation(
     ['update-base-price'],
-    async (price: number) => {
-      const txHash = await avatarsSellContract.updateBasePrice(Number(price));
+    async (price: string) => {
+      const priceInWei = ethers.utils.parseEther(price);
+      const txHash = await avatarsSellContract.updateBasePrice(priceInWei);
       success({ title: 'Success', description: 'Base Price updated', txHash });
     },
     {
@@ -312,8 +313,9 @@ export const useAvatarsSellControl = () => {
 
   const updatePowerPrice = useMutation(
     ['update-power-price'],
-    async ({ id, price }: { id: number; price: number }) => {
-      const txHash = await avatarsSellContract.updatePowerPrice(id, price);
+    async ({ id, price }: { id: number; price: string }) => {
+      const priceInWei = ethers.utils.parseEther(price);
+      const txHash = await avatarsSellContract.updatePowerPrice(id, priceInWei);
       success({ title: 'Success', description: `Price for power ${id} updated`, txHash });
     },
     {
