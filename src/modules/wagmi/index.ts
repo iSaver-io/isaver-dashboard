@@ -9,7 +9,9 @@ import { publicProvider } from 'wagmi/providers/public';
 window.Buffer = require('buffer/').Buffer;
 
 const { chains, provider, webSocketProvider } = configureChains(
-  process.env.NODE_ENV === 'production' ? [polygon] : [polygon, polygonMumbai, hardhat, localhost],
+  // TODO: for Episode 2 development
+  // process.env.NODE_ENV === 'production' ? [polygon] : [polygon, polygonMumbai, hardhat, localhost],
+  process.env.NODE_ENV === 'production' ? [polygonMumbai] : [polygonMumbai, hardhat, localhost],
   [
     alchemyProvider({
       apiKey: process.env.REACT_APP_ALCHEMY_KEY || '',
