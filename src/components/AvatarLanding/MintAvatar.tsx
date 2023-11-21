@@ -65,7 +65,12 @@ export const MintAvatar = () => {
       )}
       {isConnected ? (
         <>
-          <Button onClick={handleBuy} w="200px" mt={{ base: '30px', lg: '50px' }}>
+          <Button
+            onClick={handleBuy}
+            isLoading={buyAvatar.isLoading}
+            w="200px"
+            mt={{ base: '30px', lg: '50px' }}
+          >
             Mint now
           </Button>
           <Button variant="outlinedWhite" as={Link} to="/" mt="10px" w="200px">

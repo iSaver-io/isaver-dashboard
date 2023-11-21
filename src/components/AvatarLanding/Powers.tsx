@@ -28,7 +28,7 @@ let POWERS: PowersCardProps[] = [
     name: 'Power a',
     description:
       // eslint-disable-next-line prettier/prettier
-      'Unlocks access to an additional 5 Levels of the iSaver Referral Program for 365 days after activation. Each additional level will earn you 1% in SAVR from your friends\' earnings.',
+      'Unlocks access to an additional 5 Levels of the iSaver Referral Program for 365 days after activation. Each additional level will earn you 1% in SAVR from your friends` earnings.',
     image: PowerAImage,
     color: 'white',
     price: 0,
@@ -197,7 +197,14 @@ const PowersCard = ({ id, image, name, description, price, color }: PowersCardPr
           </Text>
         </Text>
       </Flex>
-      <Button isDisabled={!isConnected} onClick={handleBuyPower} w="100%" mt="15px" h="35px">
+      <Button
+        isDisabled={!isConnected}
+        onClick={handleBuyPower}
+        isLoading={buyPowers.isLoading}
+        w="100%"
+        mt="15px"
+        h="35px"
+      >
         <Text textStyle="buttonSmall">MINT</Text>
       </Button>
     </Box>
