@@ -48,8 +48,8 @@ export const useAvatarPrices = () => {
 
   const avatarPrice = useMemo(() => {
     return avatarPriceRequest.data
-      ? bigNumberToString(avatarPriceRequest.data, { decimals: 18, precision: 3 })
-      : 0.0;
+      ? bigNumberToNumber(avatarPriceRequest.data, { decimals: 18, precision: 2 })
+      : 0;
   }, [avatarPriceRequest.data]);
 
   const avatarNextPrice = useMemo(() => {
@@ -61,7 +61,7 @@ export const useAvatarPrices = () => {
       const rateMultiplier = inflationRate.add(divider);
 
       const nextPrice = avatarPrice.mul(rateMultiplier).div(divider);
-      return bigNumberToString(nextPrice, { decimals: 18, precision: 3 });
+      return bigNumberToNumber(nextPrice, { decimals: 18, precision: 2 });
     }
 
     return null;
