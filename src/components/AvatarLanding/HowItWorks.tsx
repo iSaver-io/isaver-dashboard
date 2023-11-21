@@ -55,9 +55,10 @@ export const HowItWorks = () => {
           </Text>
         </div>
       </Grid>
-      <Button variant="link" as={Link} to="/" mt="30px">
+      {/* Отображаем кнопку только если больше 4 блоков */}
+      {/* <Button variant="link" as={Link} to="/" mt="30px">
         See more
-      </Button>
+      </Button> */}
     </Flex>
   );
 };
