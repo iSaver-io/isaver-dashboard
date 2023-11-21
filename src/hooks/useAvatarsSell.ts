@@ -48,7 +48,9 @@ export const useAvatarPrices = () => {
 
   const avatarPrice = useMemo(() => {
     return avatarPriceRequest.data
-      ? bigNumberToNumber(avatarPriceRequest.data, { decimals: 18, precision: 2 })
+      ? Math.ceil(
+          bigNumberToNumber(avatarPriceRequest.data, { decimals: 18, precision: 2 }) * 100
+        ) / 100
       : 0;
   }, [avatarPriceRequest.data]);
 
@@ -61,7 +63,9 @@ export const useAvatarPrices = () => {
       const rateMultiplier = inflationRate.add(divider);
 
       const nextPrice = avatarPrice.mul(rateMultiplier).div(divider);
-      return bigNumberToNumber(nextPrice, { decimals: 18, precision: 2 });
+      const nextPriceNumber = bigNumberToNumber(nextPrice, { decimals: 18, precision: 2 });
+      // Округляем вверх сотые
+      return Math.ceil(nextPriceNumber * 100) / 100;
     }
 
     return null;
