@@ -1,6 +1,16 @@
-import { Flex, Text } from '@chakra-ui/react';
+import { useCallback } from 'react';
+import { Box, Flex, Text } from '@chakra-ui/react';
+
+import { Button } from '@/components/ui/Button/Button';
+import { useScrollToHash } from '@/hooks/useScrollToHash';
 
 export const Main = () => {
+  const scroll = useScrollToHash();
+
+  const scrollToMint = useCallback(() => {
+    scroll('mint');
+  }, [scroll]);
+
   return (
     <Flex
       flexDirection="column"
@@ -11,7 +21,7 @@ export const Main = () => {
       <Text textStyle="h1" as="h1" fontSize={{ sm: '26px', xl: '90px' }} margin={0}>
         AVATARS
       </Text>
-      <Text textStyle="text2" textAlign="center" maxW="842px">
+      <Text textStyle={{ sm: 'note', lg: 'text2' }} textAlign="center" maxW="842px">
         They came from <TextHighlight>deep space</TextHighlight> and settled on the Polygon
         blockchain to open up all the possibilities of the iSaver ecosystem to everyone and help
         Earthlings create a decentralized world. Each of them is unique and has a number of{' '}
@@ -20,6 +30,11 @@ export const Main = () => {
         <TextHighlight>Powers</TextHighlight> that allow to increase the income of every user of the
         ecosystem. We're only getting started. <TextHighlight>It will be exciting!</TextHighlight>
       </Text>
+      <Box mt="10px">
+        <Button px="54px" onClick={scrollToMint}>
+          Generate
+        </Button>
+      </Box>
     </Flex>
   );
 };

@@ -18,7 +18,7 @@
     flex-direction: column;
     align-items: center;
     justify-content: space-between;
-    gap: 40px;
+    gap: 70px;
   }
 
   &__item {
@@ -32,8 +32,8 @@
   &__avatar {
     margin: 0 auto;
     object-fit: contain;
-    max-width: 400px;
-    max-height: 400px;
+    max-width: 460px;
+    max-height: 460px;
     width: 100%;
     height: 100%;
   }
@@ -56,24 +56,24 @@
     padding: 20px;
     box-shadow: 3px 4px 20px rgba(0, 0, 0, 0.25);
 
-  .slick-slide & {
-    margin-top: 20px;
-    max-width: 460px;
+    .slick-slide & {
+      margin-top: 20px;
+      max-width: 460px;
 
-    &:first {
-      margin-top: 0;
+      &:first {
+        margin-top: 0;
+      }
     }
-  }
 
-   &:nth-child(-n+3) {
+    &:nth-child(-n + 3) {
       background-color: #174033;
     }
-    
-    &:nth-child(n+4):nth-child(-n+6) {
+
+    &:nth-child(n + 4):nth-child(-n + 6) {
       background-color: $color-gray;
     }
-    
-    &:nth-child(n+7):nth-child(-n+9) {
+
+    &:nth-child(n + 7):nth-child(-n + 9) {
       background-color: $color-dark-green;
     }
   }
@@ -94,9 +94,9 @@
 .mint-avatar {
   &__line {
     max-width: 780px;
-    width: 100%; 
+    width: 100%;
     height: 4px;
-    background: linear-gradient(to right, transparent 20%, #A5ED5D 50%, transparent 80%);
+    background: linear-gradient(to right, transparent 20%, #a5ed5d 50%, transparent 80%);
   }
 }
 
@@ -132,23 +132,23 @@
       padding: 7px 15px;
       width: 115px;
 
-        &__button {
-          padding: 0  !important;
-          min-width: auto !important;
+      &__button {
+        padding: 0 !important;
+        min-width: auto !important;
 
-          &[aria-disabled=true] {
-            background-color: transparent !important;
-          }
+        &[aria-disabled='true'] {
+          background-color: transparent !important;
         }
+      }
 
-        &__input {
-          padding: 0  !important;
-          height: auto !important;
-          width: 30px !important;
-          background: transparent !important;
-          font-size: 12px !important;
-          text-align: center;
-        }
+      &__input {
+        padding: 0 !important;
+        height: auto !important;
+        width: 30px !important;
+        background: transparent !important;
+        font-size: 12px !important;
+        text-align: center;
+      }
     }
   }
 }
@@ -167,7 +167,7 @@
 .banner {
   max-width: 1300px;
   padding: 90px 70px;
-  margin: 100px auto;
+  margin: 120px auto 0;
   border-radius: 6px;
   background: url(./images/banner.jpg) no-repeat center center / cover;
 }
@@ -256,7 +256,12 @@
 }
 
 @media screen and (max-width: $xl2) {
-  .powers {  
+  .visual-traits {
+    &__column {
+      gap: 40px;
+    }
+  }
+  .powers {
     &__image {
       bottom: auto;
       top: 50%;
@@ -275,6 +280,9 @@
 
 @media screen and (max-width: $xl) {
   .visual-traits {
+    &__slider {
+      margin-top: 20px;
+    }
     &__item {
       margin: 30px auto 0;
 
@@ -290,7 +298,7 @@
     }
   }
 
-  .powers {  
+  .powers {
     &__description {
       max-width: 100%;
     }
@@ -339,11 +347,10 @@
 
 @media screen and (max-width: $lg) {
   .visual-traits {
-    &__slider {
-      margin-top: 20px;
+    &__avatar {
+      padding: 0 40px;
     }
   }
-
   .powers {
     &__image {
       top: auto;
@@ -354,6 +361,14 @@
 }
 
 @media screen and (max-width: $md) {
+  .visual-traits {
+    &__slider {
+      margin-top: 0;
+    }
+    &__avatar {
+      padding: 0;
+    }
+  }
   .powers {
     &__image {
       width: 700px;

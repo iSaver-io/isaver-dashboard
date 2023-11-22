@@ -134,6 +134,11 @@ const textStyles = {
     fontWeight: '600',
     lineHeight: '130%',
   },
+  note: {
+    fontSize: { sm: '12px', md: '14px' },
+    fontWeight: '500',
+    lineHeight: '130%',
+  },
   textSansBold: {
     fontSize: { sm: '16px', '2xl': '18px' },
     fontWeight: '700',

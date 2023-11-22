@@ -21,8 +21,8 @@ export const MintAvatar = () => {
 
   return (
     <Flex flexDirection="column" alignItems="center">
-      <Text textStyle="h2" as="h2" textTransform="uppercase" textAlign="center">
-        generate your avatar
+      <Text textStyle="h2" as="h2" textTransform="uppercase" textAlign="center" id="mint">
+        Generate your avatar
       </Text>
       {avatarNextPrice && nextInflationTimestamp ? (
         <>
@@ -32,19 +32,22 @@ export const MintAvatar = () => {
             mt="20px"
             gap={{ base: '10px', lg: '42px' }}
             flexDir={{ base: 'column', lg: 'row' }}
+            alignItems="center"
           >
-            <Text textStyle="text1">
-              <Text as="span" color="gray.200">
-                Price Now:
-              </Text>{' '}
-              {avatarPrice} SAV
-            </Text>
-            <Text textStyle="text1">
+            <Flex flexDirection="row" gap="15px" flexWrap="nowrap" alignItems="center">
+              <Text as="span">Price Now:</Text>
+              <Text as="span" textStyle="h3">
+                {avatarPrice} SAV
+              </Text>
+            </Flex>
+            <Flex flexDirection="row" gap="15px" flexWrap="nowrap" alignItems="center">
               <Text as="span" color="gray.200">
                 Next Price:
               </Text>{' '}
-              {avatarNextPrice} SAV
-            </Text>
+              <Text as="span" textStyle="text1">
+                {avatarNextPrice} SAV
+              </Text>
+            </Flex>
           </Flex>
         </>
       ) : (

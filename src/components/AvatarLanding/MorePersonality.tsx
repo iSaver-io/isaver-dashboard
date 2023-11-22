@@ -40,21 +40,21 @@ const TRAITS_DATA: TraitsItemType[] = [
     title: 'Intelligence',
     description:
       // eslint-disable-next-line prettier/prettier
-      'The higher your Avatar\'s intelligence, the better chances you have to succeed in challenges of the next episodes.',
+      'The higher your Avatar`s intelligence, the better chances you have to succeed in challenges of the next episodes.',
     icon: IntelligenceIcon,
   },
   {
     title: 'Diligence',
     description:
       // eslint-disable-next-line prettier/prettier
-      'The higher your Avatar\'s diligence, the better chances you have to succeed in challenges of the next episodes.',
+      'The higher your Avatar`s diligence, the better chances you have to succeed in challenges of the next episodes.',
     icon: DiligenceIcon,
   },
   {
     title: 'Vitality',
     description:
       // eslint-disable-next-line prettier/prettier
-      'The higher your Avatar\'s vitality, the better chances you have to succeed in challenges of the next episodes.',
+      'The higher your Avatar`s vitality, the better chances you have to succeed in challenges of the next episodes.',
     icon: VitalityIcon,
   },
   {
@@ -96,7 +96,7 @@ export const MorePersonality = () => {
       flexDirection="column"
       alignItems="center"
       gap="50px"
-      mt="70px"
+      mt={{ sm: '50px', xl: '70px', '2xl': '100px' }}
       px={isDesktop ? '40px' : '10px'}
     >
       <Text textStyle="h3" as="h3">
