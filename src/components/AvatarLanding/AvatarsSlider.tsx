@@ -1,4 +1,4 @@
-import Slider from 'react-slick';
+import Slider, { Settings } from 'react-slick';
 import { Box } from '@chakra-ui/react';
 
 import Image1 from './images/slider/1.png';
@@ -17,21 +17,37 @@ import Image12 from './images/slider/12.png';
 import 'slick-carousel/slick/slick.scss';
 import 'slick-carousel/slick/slick-theme.scss';
 
-const settings = {
+const settings: Settings = {
   className: 'center',
   centerMode: true,
   centerPadding: '-15px',
   dots: true,
   infinite: true,
-  speed: 200,
-  slidesToShow: 5,
+  speed: 400,
+  slidesToShow: 7,
   slidesToScroll: 1,
   autoplay: true,
+  autoplaySpeed: 5000,
+  adaptiveHeight: true,
+
   responsive: [
+    {
+      breakpoint: 1499,
+      settings: {
+        slidesToShow: 6,
+      },
+    },
     {
       breakpoint: 1023,
       settings: {
         arrows: false,
+        slidesToShow: 5,
+      },
+    },
+    {
+      breakpoint: 639,
+      settings: {
+        slidesToShow: 4,
       },
     },
     {
@@ -62,7 +78,7 @@ const images = [
 
 export const AvatarsSlider = () => {
   return (
-    <Box mt="50px">
+    <Box mt={{ sm: '30px', '2xl': '50px' }}>
       <Slider {...settings}>
         {images.map((image, index) => (
           <Box key={index} pr={{ sm: '5px', xl: '30px' }}>

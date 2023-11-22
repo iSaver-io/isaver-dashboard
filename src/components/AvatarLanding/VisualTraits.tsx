@@ -77,7 +77,7 @@ const settings = {
   dots: true,
   slidesToShow: 1,
   arrows: false,
-  speed: 200,
+  speed: 400,
   rows: 1,
   slidesPerRow: 3,
   adaptiveHeight: true,
@@ -92,12 +92,15 @@ export const VisualTraits = () => {
       <Text textStyle="h2" as="h2">
         TRAITS & BENEFITS
       </Text>
-      <Flex flexDirection="column" alignItems="center" gap="50px" mt="30px" w="100%">
-        <Text textStyle="h3" as="h3">
-          VISUAL TRAITS
-        </Text>
+      <Flex
+        flexDirection="column"
+        alignItems="center"
+        gap="50px"
+        mt={{ sm: '20px', xl: '30px', '2xl': '50px' }}
+        w="100%"
+      >
         {isDesktop ? (
-          <Flex gap="40px">
+          <Flex gap="52px">
             <Flex className="visual-traits__column">
               {TRAITS_DATA.slice(0, 4).map((trait) => (
                 <TraitsItem key={trait.title} {...trait} />

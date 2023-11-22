@@ -65,7 +65,7 @@ let POWERS: PowersCardProps[] = [
 const settings = {
   dots: true,
   infinite: false,
-  speed: 200,
+  speed: 400,
   slidesToShow: 3,
   slidesToScroll: 1,
   arrows: false,
@@ -112,10 +112,10 @@ export const Powers = () => {
         px={{ base: '10px', xl: '30px' }}
       >
         <Box className="powers__description">
-          <Text textStyle="h2" as="h2" textTransform="uppercase">
+          <Text mb={{ sm: '30px' }} textStyle="h2" as="h2" textTransform="uppercase">
             Powers
           </Text>
-          <Text textStyle="text1">
+          <Text textStyle={{ sm: 'text2', xl: 'text1' }}>
             Avatars unlock access to 4 Powers: A, B, C and D. Each Power represents a specialized
             NFT. The Powers will give you a greater impact from your investment and activity on the
             iSaver platform. You can choose to activate one or all of the Powers, depending on your
