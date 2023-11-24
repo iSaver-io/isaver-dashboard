@@ -59,6 +59,7 @@
   "scripts": {
     "start": "craco start",
     "build": "craco build",
+    "build-avatars": "sh ./build-avatars.sh",
     "test": "craco test",
     "eject": "craco eject",
     "theme": "chakra-cli tokens src/modules/chakra/index.ts"
