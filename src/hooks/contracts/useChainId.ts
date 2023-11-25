@@ -2,14 +2,14 @@ import { useNetwork } from 'wagmi';
 
 import { ChainIDsEnum } from '@/config/index';
 
+const isMainnetBuild = process.env.REACT_APP_IS_MAINNET;
+
 export const useChainId = () => {
   const { chain } = useNetwork();
 
   // let chainId = process.env.NODE_ENV === 'production' ? ChainIDsEnum.mainnet : ChainIDsEnum.hardhat;
 
-  // TODO: for Episode 2 development
-  // let chainId = ChainIDsEnum.mainnet;
-  let chainId = ChainIDsEnum.mumbai;
+  let chainId = isMainnetBuild ? ChainIDsEnum.mainnet : ChainIDsEnum.mumbai;
   if (chain?.network === 'matic') {
     chainId = ChainIDsEnum.mainnet;
   }

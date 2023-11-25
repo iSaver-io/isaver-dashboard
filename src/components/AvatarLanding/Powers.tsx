@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import Slider from 'react-slick';
 import { Box, Button, Flex, Input, Text, useBreakpoint, useNumberInput } from '@chakra-ui/react';
 import { useAccount } from 'wagmi';
@@ -91,6 +91,7 @@ const settings = {
 
 export const Powers = () => {
   const [powers, setPowers] = useState(POWERS);
+  const [powersKey, setPowersKey] = useState(0);
   const powerPrices = usePowerPrices(powers.map((power) => power.id));
   const bp = useBreakpoint({ ssr: false });
   const is2XL = ['2xl'].includes(bp);
@@ -103,6 +104,11 @@ export const Powers = () => {
       }))
     );
   }, [powerPrices]);
+
+  // Для ремаунта компонентов и сброса счетчиков
+  const handleBuy = useCallback(() => {
+    setPowersKey((val) => val + 1);
+  }, [setPowersKey]);
 
   return (
     <>
@@ -126,7 +132,7 @@ export const Powers = () => {
         {is2XL ? (
           <Flex justifyContent="space-between" gap="20px" mt="200px">
             {powers.map((power) => (
-              <PowersCard key={power.name} {...power} />
+              <PowersCard key={`${powersKey}-${power.name}`} {...power} buyCallback={handleBuy} />
             ))}
           </Flex>
         ) : null}
@@ -136,7 +142,7 @@ export const Powers = () => {
           <Box className="powers__slider__background" bgColor="bgGreen.50" />
           <Slider {...settings}>
             {powers.map((power) => (
-              <PowersCard key={power.name} {...power} />
+              <PowersCard key={`${powersKey}-${power.name}`} {...power} buyCallback={handleBuy} />
             ))}
           </Slider>
         </Box>
@@ -145,7 +151,15 @@ export const Powers = () => {
   );
 };
 
-const PowersCard = ({ id, image, name, description, price, color }: PowersCardProps) => {
+const PowersCard = ({
+  id,
+  image,
+  name,
+  description,
+  price,
+  color,
+  buyCallback,
+}: PowersCardProps & { buyCallback: () => void }) => {
   const buyPowers = useBuyPowers();
   const { isConnected } = useAccount();
   const { getInputProps, getIncrementButtonProps, getDecrementButtonProps, value } = useNumberInput(
@@ -163,8 +177,8 @@ const PowersCard = ({ id, image, name, description, price, color }: PowersCardPr
   const inputProps = getInputProps();
 
   const handleBuyPower = useCallback(() => {
-    buyPowers.mutateAsync({ id, amount: value });
-  }, [buyPowers, id, value]);
+    buyPowers.mutateAsync({ id, amount: value }).then(buyCallback);
+  }, [buyPowers, id, value, buyCallback]);
 
   return (
     <Box className="powers-card" bg="bgGreen.50">

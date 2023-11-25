@@ -60,7 +60,7 @@ const TRAITS_DATA: TraitsItemType[] = [
   {
     title: 'Psychotype',
     description:
-      'All Avatars have been tested with the MBTI to determine their psychotype. The Myers-Briggs classification identifies 16 personality types.',
+      'All Avatars have been tested with the MBTI to determine their psychotype. The Myers-Briggs classification identifies <a href="https://www.16personalities.com" target="_blank">16 personality types.</a>',
     icon: PsychotypeIcon,
   },
   {
@@ -133,9 +133,7 @@ const TraitsItem = ({ title, description, icon }: TraitsItemType) => {
         </Text>
         <img src={icon} alt={title} />
       </Flex>
-      <Text textStyle="text2" mt="15px">
-        {description}
-      </Text>
+      <Text textStyle="text2" mt="15px" dangerouslySetInnerHTML={{ __html: description }} />
     </div>
   );
 };
