@@ -3,17 +3,22 @@ import { Link } from 'react-router-dom';
 import { Button, Flex, Text } from '@chakra-ui/react';
 import { useAccount } from 'wagmi';
 
+import { ContractsEnum, useContractAbi } from '@/hooks/contracts/useContractAbi';
 import { useAvatarPrices, useBuyAvatar, useNextInflationTimestamp } from '@/hooks/useAvatarsSell';
+import { useAddressHasNFT } from '@/hooks/useNFTHolders';
 
 import { ConnectWalletButton } from '../ui/ConnectWalletButton/ConnectWalletButton';
 
 import { Countdown } from './Countdown';
 
 export const MintAvatar = () => {
-  const { isConnected } = useAccount();
+  const { isConnected, address } = useAccount();
   const { avatarPrice, avatarNextPrice } = useAvatarPrices();
   const nextInflationTimestamp = useNextInflationTimestamp();
   const buyAvatar = useBuyAvatar();
+
+  const { address: avatarsAddress } = useContractAbi({ contract: ContractsEnum.ISaverAvatars });
+  const { hasNFT } = useAddressHasNFT(avatarsAddress, address);
 
   const handleBuy = useCallback(() => {
     buyAvatar.mutateAsync();
@@ -76,9 +81,11 @@ export const MintAvatar = () => {
           >
             Mint now
           </Button>
-          <Button variant="outlinedWhite" as={Link} to="/" mt="10px" w="200px">
-            Activate
-          </Button>
+          {hasNFT ? (
+            <Button variant="outlinedWhite" as={Link} to="/" mt="10px" w="200px">
+              Activate
+            </Button>
+          ) : null}
         </>
       ) : (
         <ConnectWalletButton mt={{ base: '30px', lg: '50px' }} />

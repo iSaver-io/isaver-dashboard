@@ -76,6 +76,13 @@
     &:nth-child(n + 7):nth-child(-n + 9) {
       background-color: $color-dark-green;
     }
+
+    a {
+      color: var(--chakra-colors-blue);
+      &:hover {
+        text-decoration: underline;
+      }
+    }
   }
 
   .slick-slide:nth-child(1) &__item {
