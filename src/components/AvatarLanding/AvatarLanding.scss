@@ -46,6 +46,9 @@
 .other-traits {
   &__slider {
     width: 100%;
+    &.slick-slider > .slick-dots {
+      margin-top: 10px;
+    }
   }
 
   &__item {
@@ -174,7 +177,7 @@
 .banner {
   max-width: 1300px;
   padding: 90px 70px;
-  margin: 120px auto 0;
+  margin: 60px auto 0;
   border-radius: 6px;
   background: url(./images/banner.jpg) no-repeat center center / cover;
 }
@@ -276,11 +279,17 @@
     }
 
     &__slider {
-      margin-top: 250px;
+      margin: 250px auto 0;
+      max-width: 970px;
+
+      .slick-slider > .slick-dots {
+        margin-top: 20px;
+      }
     }
   }
 
   .banner {
+    margin-top: 40px;
     padding: 70px 40px;
   }
 }
@@ -329,7 +338,12 @@
     &__slider {
       margin-top: 500px;
       position: relative;
-      padding-bottom: 80px;
+      padding-bottom: 0;
+      max-width: unset;
+
+      .slick-slider > .slick-dots {
+        margin-top: 15px;
+      }
 
       &__background {
         position: absolute;
@@ -342,9 +356,9 @@
   }
 
   .banner {
+    margin-top: 70px;
     padding: 40px 30px;
     flex-direction: column;
-    gap: 30px;
     height: 550px;
     width: 100%;
     max-width: 600px;
@@ -365,13 +379,13 @@
       transform: translate(-50%, -180px);
     }
   }
+  .banner {
+    margin-top: 60px;
+  }
 }
 
 @media screen and (max-width: $md) {
   .visual-traits {
-    &__slider {
-      margin-top: 0;
-    }
     &__avatar {
       padding: 0;
     }

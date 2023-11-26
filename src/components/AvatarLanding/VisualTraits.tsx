@@ -21,52 +21,52 @@ type TraitsItemType = {
 const TRAITS_DATA: TraitsItemType[] = [
   {
     title: 'Eyes',
-    description: 'Oh, feel something in its unearthly eyes. We are sure of their 12 colors.',
+    description: 'Oh, feel something in its unearthly eyes. We are sure of their 12&nbsp;colors',
     image: EyesImage,
   },
   {
     title: 'Body',
     description:
-      'We are aware of 12 distinct types of Avatar bodies. You may prefer one or wish to collect them all.',
+      'We are aware of 12 distinct types of Avatar bodies. You may prefer one or wish to collect them all',
     image: BodyImage,
   },
   {
     title: 'Skin',
     description:
-      'Avatars came in 12 different colors. Yes, they are slightly different from Earthlings.',
+      'Avatars came in 12 different colors. Yes, they are slightly different from Earthlings',
     image: SkinImage,
   },
   {
     title: 'Horns',
-    description: 'Some Avatars have horns. The number of shapes and colors is unknown.',
+    description: 'Some Avatars have horns. The number of shapes and colors is unknown',
     image: HornsImage,
   },
   {
     title: 'Clothes',
     description:
-      'Incredibly, Avatars wear the clothes of Earthlings. This makes them even more like us.',
+      'Incredibly, Avatars wear the clothes of Earthlings. This makes them even more like us',
     image: ClothesImage,
   },
   {
     title: 'Emotion',
     description:
-      'Observations indicate that their emotions are similar to those of humans. Happiness, interest, surprise and many others.',
+      'Observations indicate that their emotions are similar to those of humans. Happiness, interest, surprise and many others',
     image: EmotionImage,
   },
   {
     title: 'Background',
     description:
-      'Your Avatar can have one of 72 different backgrounds. They selected these colors themselves.',
+      'Your Avatar can have one of 72&nbsp;different backgrounds. They selected these colors themselves',
     image: BackgroundImage,
   },
   {
     title: 'Letter',
-    description: 'No one has any idea yet why this letter is necessary.',
+    description: 'No one has any idea yet why this letter is necessary',
     image: LetterImage,
   },
   {
     title: 'Accessory',
-    description: 'What you will not find on the heads of some Avatars. There are very rare items.',
+    description: 'What you will not find on the heads of some Avatars. There are very rare items',
     image: AccessoryImage,
   },
 ];
@@ -89,7 +89,7 @@ export const VisualTraits = () => {
 
   return (
     <Flex flexDirection="column" alignItems="center" px={isDesktop ? '40px' : '10px'}>
-      <Text textStyle="h2" as="h2">
+      <Text textStyle="h2" as="h2" fontSize={{ sm: '26px', lg: '38px' }}>
         TRAITS & BENEFITS
       </Text>
       <Flex
@@ -141,9 +141,11 @@ const TraitsItem = ({ title, description, image }: TraitsItemType) => {
         <Text as="h4" textStyle="textBold" textTransform="uppercase" mt="14px" mb="10px">
           {title}
         </Text>
-        <Text className="visual-traits__description" textStyle="textSansSmall">
-          {description}
-        </Text>
+        <Text
+          className="visual-traits__description"
+          textStyle="textSansSmall"
+          dangerouslySetInnerHTML={{ __html: description }}
+        />
       </div>
     </Flex>
   );
