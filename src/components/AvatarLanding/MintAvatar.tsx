@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import { Link } from 'react-router-dom';
-import { Button, Flex, Text } from '@chakra-ui/react';
+import { Button, Flex, Text, useBreakpoint } from '@chakra-ui/react';
 import { useAccount } from 'wagmi';
 
 import { ContractsEnum, useContractAbi } from '@/hooks/contracts/useContractAbi';
@@ -16,6 +16,8 @@ export const MintAvatar = () => {
   const { avatarPrice, avatarNextPrice } = useAvatarPrices();
   const nextInflationTimestamp = useNextInflationTimestamp();
   const buyAvatar = useBuyAvatar();
+  const bp = useBreakpoint({ ssr: false });
+  const isSm = ['sm', 'md', 'lg'].includes(bp);
 
   const { address: avatarsAddress } = useContractAbi({ contract: ContractsEnum.ISaverAvatars });
   const { hasNFT } = useAddressHasNFT(avatarsAddress, address);
@@ -26,17 +28,27 @@ export const MintAvatar = () => {
 
   return (
     <Flex flexDirection="column" alignItems="center">
-      <Text textStyle="h2" as="h2" textTransform="uppercase" textAlign="center" id="mint">
-        Generate your avatar
+      <Text
+        mb={{ sm: '20px', md: '30px', '2xl': '50px' }}
+        textStyle="h2"
+        as="h2"
+        fontSize={{ sm: '26px', lg: '36px' }}
+        textTransform="uppercase"
+        textAlign="center"
+        id="mint"
+      >
+        Generate your
+        {isSm ? <br /> : ' '}
+        avatar
       </Text>
       {avatarNextPrice && nextInflationTimestamp ? (
         <>
           <Countdown timestamp={nextInflationTimestamp} />
           <div className="mint-avatar__line" />
           <Flex
-            mt="20px"
-            gap={{ base: '10px', lg: '42px' }}
-            flexDir={{ base: 'column', lg: 'row' }}
+            mt={{ sm: '15px', xl: '20px' }}
+            gap={{ sm: '10px', xl: '42px' }}
+            flexDir={{ sm: 'column', xl: 'row' }}
             alignItems="center"
           >
             <Flex flexDirection="row" gap="15px" flexWrap="nowrap" alignItems="center">
@@ -77,7 +89,7 @@ export const MintAvatar = () => {
             onClick={handleBuy}
             isLoading={buyAvatar.isLoading}
             w="200px"
-            mt={{ base: '30px', lg: '50px' }}
+            mt={{ sm: '30px', xl: '50px' }}
           >
             Mint now
           </Button>
@@ -88,7 +100,7 @@ export const MintAvatar = () => {
           ) : null}
         </>
       ) : (
-        <ConnectWalletButton mt={{ base: '30px', lg: '50px' }} />
+        <ConnectWalletButton mt={{ sm: '30px', xl: '50px' }} />
       )}
     </Flex>
   );

@@ -28,7 +28,7 @@ let POWERS: PowersCardProps[] = [
     name: 'Power a',
     description:
       // eslint-disable-next-line prettier/prettier
-      'Unlocks access to an additional 5 Levels of the iSaver Referral Program for 365 days after activation. Each additional level will earn you 1% in SAVR from your friends` earnings.',
+      'Unlocks access to an additional 5 Levels of the iSaver Referral Program for 365 days after activation. Each additional level will earn you 1% in SAVR from your friends` earnings',
     image: PowerAImage,
     color: 'white',
     price: 0,
@@ -37,7 +37,7 @@ let POWERS: PowersCardProps[] = [
     id: 2,
     name: 'Power b',
     description:
-      'Unlocks access to the SAVR Staking Pool for 365 days after activation. Use this pool to maximize your income on iSaver platform.',
+      'Unlocks access to the SAVR Staking Pool for 365 days after activation. Use this pool to maximize your income on the iSaver platform',
     image: PowerBImage,
     color: 'sav',
     price: 0,
@@ -46,7 +46,7 @@ let POWERS: PowersCardProps[] = [
     id: 3,
     name: 'Power c',
     description:
-      'Increases the APR/APY of all Staking Pools on the iSaver platform for 365 days after activation.',
+      'Increases the APR/APY of all Staking Pools on the iSaver platform for 365 days after activation',
     image: PowerCImage,
     color: 'green.100',
     price: 0,
@@ -55,7 +55,7 @@ let POWERS: PowersCardProps[] = [
     id: 4,
     name: 'Power d',
     description:
-      'Increases the number of iSaver Raffle Tickets minted for completing PUZZLES - mini free-to-play game on the iSaver platform.',
+      'Increases the number of iSaver Raffle Tickets minted for completing PUZZLES - mini free-to-play game on the iSaver platform',
     image: PowerDImage,
     color: 'blue',
     price: 0,
@@ -114,11 +114,16 @@ export const Powers = () => {
     <>
       <Box
         className="powers"
-        mt={{ base: '100px', xl: '200px', '2xl': '280px' }}
+        mt={{ sm: '60px', lg: '70px', xl: '200px', '2xl': '280px' }}
         px={{ base: '10px', xl: '30px' }}
       >
-        <Box className="powers__description">
-          <Text mb={{ sm: '30px' }} textStyle="h2" as="h2" textTransform="uppercase">
+        <Box className="powers__description" mb={{ sm: '30px', md: 'unset' }}>
+          <Text
+            mb={{ sm: '15px', md: '20px', lg: '30px' }}
+            textStyle="h2"
+            as="h2"
+            textTransform="uppercase"
+          >
             Powers
           </Text>
           <Text textStyle={{ sm: 'text2', xl: 'text1' }}>
@@ -130,7 +135,7 @@ export const Powers = () => {
         </Box>
         <img className="powers__image" src={PowersImage} alt="Avatars unlock access to 4 Powers" />
         {is2XL ? (
-          <Flex justifyContent="space-between" gap="20px" mt="200px">
+          <Flex justifyContent="space-between" gap="20px" mt="200px" key={powersKey}>
             {powers.map((power) => (
               <PowersCard key={`${powersKey}-${power.name}`} {...power} buyCallback={handleBuy} />
             ))}
@@ -138,7 +143,7 @@ export const Powers = () => {
         ) : null}
       </Box>
       {!is2XL ? (
-        <Box className="powers__slider">
+        <Box className="powers__slider" key={powersKey}>
           <Box className="powers__slider__background" bgColor="bgGreen.50" />
           <Slider {...settings}>
             {powers.map((power) => (

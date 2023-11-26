@@ -6,7 +6,7 @@ export const Countdown = ({ timestamp }: { timestamp: number }) => {
   const { stamps } = useCountdown(timestamp!);
 
   return (
-    <Flex gap={{ base: '5px', xl: '15px' }} mt="20px">
+    <Flex gap={{ base: '5px', xl: '15px' }}>
       <TimerStamp label="D" value={stamps.days} />
       <Text textStyle="sectionHeading">:</Text>
       <TimerStamp label="H" value={stamps.hours} />
