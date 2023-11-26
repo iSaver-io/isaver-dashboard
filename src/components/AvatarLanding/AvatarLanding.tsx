@@ -32,19 +32,26 @@ const AvatarLanding = () => {
 
   return (
     <Box overflowX="hidden">
-      <Box pt={{ sm: '50px', xl: '60px' }} pb={{ sm: '60px', '2xl': '80px' }}>
+      <Box pt={{ sm: '20px', md: '30px' }} pb={{ sm: '30px', xl: '40px', '2xl': '50px' }}>
         <Main />
         <AvatarsSlider />
       </Box>
-      <Box bgColor="bgGreen.50" pt={{ sm: '60px', '2xl': '80px' }} pb={{ sm: '50px', lg: '100px' }}>
+      <Box
+        bgColor="bgGreen.50"
+        pt={{ sm: '60px', lg: '70px', '2xl': '100px' }}
+        pb={{ sm: '60px', lg: '70px', '2xl': '100px' }}
+      >
         <VisualTraits />
         <MorePersonality />
       </Box>
-      <Box pt={{ sm: '50px', xl: '100px' }} pb={{ sm: '0', xl: '80px', '2xl': '100px' }}>
+      <Box
+        pt={{ sm: '50px', lg: '60px', xl: '70px', '2xl': '100px' }}
+        pb={{ sm: '0', xl: '40px', '2xl': '60px' }}
+      >
         <MintAvatar />
         <Powers />
       </Box>
-      <Box bgColor="bgGreen.50" py={{ sm: '100px' }}>
+      <Box bgColor="bgGreen.50" py={{ sm: '60px', lg: '70px', '2xl': '100px' }}>
         <HowItWorks />
         <Banner />
       </Box>

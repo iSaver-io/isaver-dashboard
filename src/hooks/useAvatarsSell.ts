@@ -181,10 +181,7 @@ export const useBuyAvatar = () => {
       const txHash = await avatarsSellContract.buyAvatar();
       success({
         title: 'Success',
-        description: `You have successfully purchased an avatar for ${bigNumberToString(
-          avatarPriceRequest.data,
-          { decimals: 18 }
-        )} SAV.`,
+        description: 'You have minted the Avatar',
         txHash,
       });
     },
@@ -213,6 +210,14 @@ export const useBuyPowers = () => {
 
       const allowance = await savToken.allowance(account, avatarsSellContract.address);
       const powerPrice = await avatarsSellContract.getPowerPrice(id);
+      const powerTypeMap: Record<string, string> = {
+        '1': 'A',
+        '2': 'B',
+        '3': 'C',
+        '4': 'D',
+      };
+      const idStr = id.toString();
+      const powerType = Object.keys(powerTypeMap).includes(idStr) ? powerTypeMap[idStr] : '';
 
       if (allowance.lt(powerPrice)) {
         const txHash = await savToken.approve(
@@ -225,10 +230,7 @@ export const useBuyPowers = () => {
       const txHash = await avatarsSellContract.buyPower(id, amount);
       success({
         title: 'Success',
-        description: `You have successfully purchased ${amount} powers for ${bigNumberToString(
-          powerPrice.mul(amount),
-          { decimals: 18 }
-        )} SAV.`,
+        description: `You have minted ${amount} Powers ${powerType}`,
         txHash,
       });
     },
