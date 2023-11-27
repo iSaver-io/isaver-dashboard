@@ -14,7 +14,7 @@ export const HowItWorks = () => {
       <Grid
         justifyContent="center"
         templateColumns={{ xl: 'repeat(2, 1fr)' }}
-        templateRows="repeat(2, 1fr)"
+        templateRows={{ xl: 'repeat(2, 1fr)' }}
         flexDir={{ sm: 'column' }}
         gap={{ sm: '20px', '2xl': '50px' }}
         mt={{ sm: '20px', md: '30px', '2xl': '50px' }}
