@@ -48,7 +48,7 @@ export const MintAvatar = () => {
           <Flex
             mt={{ sm: '15px', xl: '20px' }}
             gap={{ sm: '10px', xl: '42px' }}
-            flexDir={{ sm: 'column', xl: 'row' }}
+            flexDir={{ sm: 'column-reverse', xl: 'row' }}
             alignItems="center"
           >
             <Flex flexDirection="row" gap="15px" flexWrap="nowrap" alignItems="center">

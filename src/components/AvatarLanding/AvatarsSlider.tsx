@@ -78,7 +78,7 @@ const images = [
 
 export const AvatarsSlider = () => {
   return (
-    <Box mt={{ sm: '30px', '2xl': '50px' }}>
+    <Box className="avatars-slider" mt={{ sm: '30px', '2xl': '50px' }}>
       <Slider {...settings}>
         {images.map((image, index) => (
           <Box key={index} pr={{ sm: '5px', xl: '30px' }}>
