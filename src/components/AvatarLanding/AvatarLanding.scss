@@ -280,10 +280,16 @@
 
     &__slider {
       margin: 250px auto 0;
-      max-width: 970px;
 
       .slick-slider > .slick-dots {
         margin-top: 20px;
+      }
+
+      .slick-slide {
+        margin-right: 20px;
+        &:last-child {
+          margin-right: 0;
+        }
       }
     }
   }
@@ -295,6 +301,11 @@
 }
 
 @media screen and (max-width: $xl) {
+  .avatars-slider {
+    .slick-dots {
+      margin-top: 20px;
+    }
+  }
   .visual-traits {
     &__slider {
       margin-top: 20px;
@@ -339,10 +350,9 @@
       margin-top: 500px;
       position: relative;
       padding-bottom: 0;
-      max-width: unset;
 
       .slick-slider > .slick-dots {
-        margin-top: 15px;
+        margin-top: 10px;
       }
 
       &__background {
@@ -397,6 +407,9 @@
 
     &__slider {
       margin-top: 400px;
+      .slick-slider > .slick-dots {
+        margin-top: 0px;
+      }
     }
 
     &-card {

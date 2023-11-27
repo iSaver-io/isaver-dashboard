@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import Slider from 'react-slick';
+import Slider, { Settings } from 'react-slick';
 import { Box, Button, Flex, Input, Text, useBreakpoint, useNumberInput } from '@chakra-ui/react';
 import { useAccount } from 'wagmi';
 
@@ -62,27 +62,28 @@ let POWERS: PowersCardProps[] = [
   },
 ];
 
-const settings = {
+const settings: Settings = {
   dots: true,
   infinite: false,
   speed: 400,
-  slidesToShow: 3,
-  slidesToScroll: 1,
   arrows: false,
+  slidesToShow: 1,
+  className: 'slider variable-width',
+  centerMode: true,
+  variableWidth: true,
+  initialSlide: 1,
+
   responsive: [
     {
       breakpoint: 1023,
       settings: {
         slidesToShow: 1,
-        className: 'slider variable-width',
-        centerMode: true,
-        variableWidth: true,
+        initialSlide: 0,
       },
     },
     {
       breakpoint: 479,
       settings: {
-        slidesToShow: 1,
         centerMode: false,
       },
     },
