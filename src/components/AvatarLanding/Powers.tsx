@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import Slider, { Settings } from 'react-slick';
 import { Box, Button, Flex, Input, Text, useBreakpoint, useNumberInput } from '@chakra-ui/react';
 import { useAccount } from 'wagmi';
@@ -62,32 +62,21 @@ let POWERS: PowersCardProps[] = [
   },
 ];
 
-const settings: Settings = {
+const settingsMobile = {
   dots: true,
   infinite: false,
   speed: 400,
   arrows: false,
-  slidesToShow: 1,
   className: 'slider variable-width',
-  centerMode: true,
+  slidesToShow: 1,
   variableWidth: true,
-  initialSlide: 1,
+  initialSlide: 0,
+  centerMode: true,
+};
 
-  responsive: [
-    {
-      breakpoint: 1023,
-      settings: {
-        slidesToShow: 1,
-        initialSlide: 0,
-      },
-    },
-    {
-      breakpoint: 479,
-      settings: {
-        centerMode: false,
-      },
-    },
-  ],
+const settingsXl: Settings = {
+  ...settingsMobile,
+  initialSlide: 1,
 };
 
 export const Powers = () => {
@@ -96,6 +85,14 @@ export const Powers = () => {
   const powerPrices = usePowerPrices(powers.map((power) => power.id));
   const bp = useBreakpoint({ ssr: false });
   const is2XL = ['2xl'].includes(bp);
+  const isXL = ['xl'].includes(bp);
+
+  const sliderSettings = useMemo(() => {
+    if (isXL) {
+      return settingsXl;
+    }
+    return settingsMobile;
+  }, [isXL]);
 
   useEffect(() => {
     setPowers((currentPowers) =>
@@ -128,10 +125,10 @@ export const Powers = () => {
             Powers
           </Text>
           <Text textStyle={{ sm: 'text2', xl: 'text1' }}>
-            Avatars unlock access to 4 Powers: A, B, C and D. Each Power represents a specialized
-            NFT. The Powers will give you a greater impact from your investment and activity on the
-            iSaver platform. You can choose to activate one or all of the Powers, depending on your
-            goals. Once activated, each Power lasts for 365 days.
+            Avatars unlock access to 4 Powers: A, B, C&nbsp;and D. Each Power represents a
+            specialized NFT. The Powers will give you a greater impact from your investment and
+            activity on the iSaver platform. You can choose to activate one or all of the Powers,
+            depending on your goals. Once activated, each Power lasts for 365 days.
           </Text>
         </Box>
         <img className="powers__image" src={PowersImage} alt="Avatars unlock access to 4 Powers" />
@@ -146,7 +143,7 @@ export const Powers = () => {
       {!is2XL ? (
         <Box className="powers__slider" key={powersKey}>
           <Box className="powers__slider__background" bgColor="bgGreen.50" />
-          <Slider {...settings}>
+          <Slider {...sliderSettings}>
             {powers.map((power) => (
               <PowersCard key={`${powersKey}-${power.name}`} {...power} buyCallback={handleBuy} />
             ))}

@@ -128,8 +128,7 @@
   }
 
   &-card {
-    max-width: 310px;
-    width: 100%;
+    width: 310px;
     z-index: 1;
     padding: 0 20px 20px;
     border-radius: 5px;
@@ -278,18 +277,15 @@
       transform: translateY(-50%);
     }
 
+    &-card {
+      margin: 0 10px;
+    }
+
     &__slider {
       margin: 250px auto 0;
 
       .slick-slider > .slick-dots {
         margin-top: 20px;
-      }
-
-      .slick-slide {
-        margin-right: 20px;
-        &:last-child {
-          margin-right: 0;
-        }
       }
     }
   }
@@ -316,6 +312,12 @@
       &:first {
         margin-top: 0;
       }
+    }
+  }
+
+  .other-traits {
+    &__slider.slick-slider > .slick-dots {
+      margin-top: 5px;
     }
   }
 
@@ -400,6 +402,11 @@
       padding: 0;
     }
   }
+  .other-traits {
+    &__slider.slick-slider > .slick-dots {
+      margin-top: -10px;
+    }
+  }
   .powers {
     &__image {
       width: 700px;
@@ -410,10 +417,14 @@
       .slick-slider > .slick-dots {
         margin-top: 0px;
       }
+
+      .slick-track {
+        width: 1320px !important;
+      }
     }
 
     &-card {
-      margin: 0 auto 15px;
+      margin-bottom: 15px;
     }
   }
 }
