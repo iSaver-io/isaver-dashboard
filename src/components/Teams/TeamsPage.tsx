@@ -65,6 +65,7 @@ export const TeamsPage = () => {
         textStyle="button"
         alignSelf="flex-start"
         mb={{ sm: '30px', '2xl': '40px' }}
+        ml={{ sm: '10px', md: 'unset' }}
       >
         <ArrowBackIcon w="24px" h="24px" mr="10px" />
         Back
@@ -78,7 +79,12 @@ export const TeamsPage = () => {
         <ReferralsList />
       </Box>
 
-      <Text textStyle="h3" textTransform="uppercase" mb={{ sm: '20px', lg: '30px' }}>
+      <Text
+        paddingX={{ sm: '10px', md: 'unset' }}
+        textStyle="h3"
+        textTransform="uppercase"
+        mb={{ sm: '20px', lg: '30px' }}
+      >
         Your teams
       </Text>
 
@@ -86,7 +92,11 @@ export const TeamsPage = () => {
         <TeamsList isPageView />
       </Box>
 
-      <Flex justifyContent={{ xl: 'flex-end' }} mb={{ sm: '35px', lg: '50px' }}>
+      <Flex
+        paddingX={{ sm: '10px', md: 'unset' }}
+        justifyContent={{ xl: 'flex-end' }}
+        mb={{ sm: '35px', lg: '50px' }}
+      >
         <StatBlock
           containerWidth={{ sm: '200px', md: '320px' }}
           leftWidth="320px"

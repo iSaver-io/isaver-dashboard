@@ -19,7 +19,6 @@ import { StatBlock } from '@/components/ui/StatBlock/StatBlock';
 import { useRaffle } from '@/hooks/raffle/useRaffle';
 import { useRaffleRounds } from '@/hooks/raffle/useRaffleRounds';
 import { useLogger } from '@/hooks/useLogger';
-import { Raffles } from '@/types';
 import {
   getNextRaffleTimestamp,
   RaffleRoundType,
@@ -94,7 +93,7 @@ export const RaffleList = () => {
       : (finishedRounds as RaffleRoundType[]);
 
   return (
-    <Container variant="dashboard">
+    <Container variant="dashboard" paddingX={{ sm: '10px', md: 'unset' }}>
       <Flex direction={{ sm: 'column', xl: 'row' }} justifyContent="space-between" gap={5}>
         <Box>
           <Text textStyle="sectionHeading" mb="20px">
