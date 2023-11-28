@@ -20,8 +20,7 @@ export const Main = () => {
         They came from <TextHighlight>deep space</TextHighlight> and settled on the&nbsp;Polygon
         blockchain to open up all the possibilities of the&nbsp;iSaver ecosystem to everyone and
         help Earthlings create a decentralized world. Each of them is unique and has a&nbsp;number
-        of
-        <TextHighlight>characteristics</TextHighlight> that will have an impact on success in
+        of <TextHighlight>characteristics</TextHighlight> that will have an impact on success in
         the&nbsp;future NFT&nbsp;game. But for now Avatars already know how to rule the&nbsp;
         <TextHighlight>Powers</TextHighlight> that allow to increase the income of every user of
         the&nbsp;ecosystem. We're only getting started.{' '}
