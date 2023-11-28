@@ -98,7 +98,12 @@ export const ReferralsList = () => {
 
   return (
     <>
-      <Flex justifyContent="space-between" alignItems="center" mb={{ xl: '18px' }}>
+      <Flex
+        justifyContent="space-between"
+        alignItems="center"
+        mb={{ xl: '18px' }}
+        paddingX={{ sm: '10px', md: 'unset' }}
+      >
         <Menu variant="dark-transparent">
           <MenuButton
             as={Button}

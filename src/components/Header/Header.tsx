@@ -79,7 +79,7 @@ export const Header: FC<HeaderProps> = ({ isLandingView }) => {
     <Box className="app-header">
       <TopNotification />
 
-      <Container variant="header" padding="13px 0">
+      <Container variant="header" padding={{ sm: '13px 10px', md: '13px 0' }}>
         <Box
           as="a"
           cursor="pointer"

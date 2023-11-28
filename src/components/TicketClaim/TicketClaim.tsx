@@ -132,6 +132,7 @@ export const TicketClaim = () => {
         justifyContent="space-between"
         gap={5}
         flexWrap="wrap"
+        paddingX={{ sm: '10px', md: 'unset' }}
       >
         <Text textStyle="sectionHeading" width={{ sm: '100%', xl: '35%' }}>
           Play Everyday

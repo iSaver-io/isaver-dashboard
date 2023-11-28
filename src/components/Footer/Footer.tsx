@@ -151,11 +151,10 @@ export const Footer = () => {
           <Box className="footer-bottom__left">
             <Text className="footer-heading">Disclaimer</Text>
             <Text className="footer-text">
-              The contents and opinions of this website are those of iSaver.
-              <br />
-              iSaver is not responsible for any of your crypto losses. Please do not construe any of
-              the above statements as to financial advice. Cryptocurrency investment is subject to
-              high market risk!
+              The contents and opinions of this website are those of iSaver. iSaver&nbsp;is&nbsp;not
+              responsible for any of your crypto losses. Please do not construe any of the above
+              statements as to financial advice. Cryptocurrency investment is subject to high market
+              risk!
             </Text>
           </Box>
           <Flex
