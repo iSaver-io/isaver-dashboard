@@ -51,6 +51,7 @@ export const StakingPage = () => {
         textStyle="button"
         alignSelf="flex-start"
         mb={{ sm: '30px', '2xl': '40px' }}
+        ml={{ sm: '10px', md: 'unset' }}
       >
         <ArrowBackIcon w="24px" h="24px" mr="10px" />
         Back
@@ -60,7 +61,12 @@ export const StakingPage = () => {
         <Staking isPageView />
       </Box>
 
-      <Flex justifyContent="space-between" alignItems="center" mb={5}>
+      <Flex
+        justifyContent="space-between"
+        alignItems="center"
+        mb={5}
+        paddingX={{ sm: '10px', md: 'unset' }}
+      >
         <Text textStyle="h3" textTransform="uppercase" id="stakings-list">
           Your staking
         </Text>

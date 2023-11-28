@@ -12,7 +12,11 @@ export const Main = () => {
   }, [scroll]);
 
   return (
-    <Flex flexDirection="column" alignItems="center" paddingX={{ sm: '10px', xl: '90px' }}>
+    <Flex
+      flexDirection="column"
+      alignItems="center"
+      paddingX={{ sm: '16px', md: '26px', lg: '90px' }}
+    >
       <Text textStyle="h1" as="h1" fontSize={{ sm: '26px', md: '38px', xl: '90px' }} margin={0}>
         AVATARS
       </Text>

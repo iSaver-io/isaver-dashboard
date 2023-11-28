@@ -168,7 +168,7 @@ export const Staking: FC<StakingProps> = ({ isPageView }) => {
   );
 
   return (
-    <Container variant="dashboard">
+    <Container variant="dashboard" paddingX={{ sm: '10px', md: 'unset' }}>
       <Flex direction={{ sm: 'column', xl: 'row' }} justifyContent="space-between" gap={5}>
         <Box width={{ sm: '100%', xl: '55%' }}>
           <Text textStyle="sectionHeading" mb="20px">
@@ -240,7 +240,12 @@ export const Staking: FC<StakingProps> = ({ isPageView }) => {
             ))
           : null}
         {activeStakingPlansWithUserInfo.map((planData) => (
-          <GridItem colSpan={1} rowSpan={1} key={planData.stakingPlanId} width="100%">
+          <GridItem
+            colSpan={1}
+            rowSpan={1}
+            key={planData.stakingPlanId}
+            width={{ sm: '300px', md: '100%' }}
+          >
             <StakingPlan
               isActive={planData.isActive}
               isSubscribed={planData.isSubscribed}

@@ -119,6 +119,7 @@ export const ExchangePage = () => {
         textStyle="button"
         alignSelf="flex-start"
         mb={{ sm: '30px', xl: '40px' }}
+        ml={{ sm: '10px', md: 'unset' }}
       >
         <ArrowBackIcon w="24px" h="24px" mr="10px" />
         Back

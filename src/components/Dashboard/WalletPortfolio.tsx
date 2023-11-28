@@ -70,7 +70,7 @@ export const WalletPortfolio = () => {
 
   return (
     <Flex alignItems={{ sm: 'stretch', xl: 'center' }} direction={{ sm: 'column', xl: 'row' }}>
-      <Box flexGrow="1" mb={{ sm: '45px', xl: 'unset' }}>
+      <Box flexGrow="1" mb={{ sm: '45px', xl: 'unset' }} paddingX={{ sm: '10px', md: 'unset' }}>
         <Text textStyle="h1" as="h1" fontSize={{ sm: '38px', xl: '52px', '2xl': '90px' }}>
           DASHBOARD
         </Text>
