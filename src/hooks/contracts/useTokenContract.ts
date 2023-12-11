@@ -2,7 +2,7 @@ import EthDater from 'ethereum-block-by-date';
 import type { BigNumber } from 'ethers';
 import { useContract, useProvider, useSigner } from 'wagmi';
 
-import { Token1 } from '@/types.common';
+import { ISaverSAVRToken } from '@/types.common';
 import { BALANCE_HISTORY_PERIOD } from '@/utils/balance';
 import { queryThrowBlocks } from '@/utils/queryThrowBlocks';
 import { waitForTransaction } from '@/utils/waitForTransaction';
@@ -30,7 +30,7 @@ export const useTokenContract = (token: ContractsEnum.SAV | ContractsEnum.SAVR) 
     address,
     abi,
     signerOrProvider: signer || provider,
-  }) as unknown as Token1;
+  }) as unknown as ISaverSAVRToken;
 
   const balanceOf = async (address: string): Promise<BigNumber> => {
     return contract.balanceOf(address);
@@ -89,27 +89,24 @@ export const useTokenContract = (token: ContractsEnum.SAV | ContractsEnum.SAVR) 
   const paused = async () => {
     return contract.paused();
   };
-  const isWhitelistRestrictionMode = async () => {
-    return contract.isWhitelistRestrictionMode();
-  };
 
-  const addToBlacklist = async (addresses: string[]) => {
-    const tx = await contract.addToBlacklist(addresses);
+  const addToBlackList = async (addresses: string[]) => {
+    const tx = await contract.addToBlackList(addresses);
     return waitForTransaction(tx);
   };
 
-  const removeFromBlacklist = async (addresses: string[]) => {
-    const tx = await contract.removeFromBlacklist(addresses);
+  const removeFromBlackList = async (addresses: string[]) => {
+    const tx = await contract.removeFromBlackList(addresses);
     return waitForTransaction(tx);
   };
 
-  const addToWhitelist = async (addresses: string[]) => {
-    const tx = await contract.addToWhitelist(addresses);
+  const addToWhiteList = async (addresses: string[]) => {
+    const tx = await contract.addToWhiteList(addresses);
     return waitForTransaction(tx);
   };
 
-  const removeFromWhitelist = async (addresses: string[]) => {
-    const tx = await contract.removeFromWhitelist(addresses);
+  const removeFromWhiteList = async (addresses: string[]) => {
+    const tx = await contract.removeFromWhiteList(addresses);
     return waitForTransaction(tx);
   };
 
@@ -120,16 +117,6 @@ export const useTokenContract = (token: ContractsEnum.SAV | ContractsEnum.SAVR) 
 
   const unpause = async () => {
     const tx = await contract.unpause();
-    return waitForTransaction(tx);
-  };
-
-  const enableWhitelistMode = async () => {
-    const tx = await contract.onWhitelistMode();
-    return waitForTransaction(tx);
-  };
-
-  const disableWhitelistMode = async () => {
-    const tx = await contract.offWhitelistMode();
     return waitForTransaction(tx);
   };
 
@@ -145,14 +132,11 @@ export const useTokenContract = (token: ContractsEnum.SAV | ContractsEnum.SAVR) 
     totalSupply,
     // Administration
     paused,
-    isWhitelistRestrictionMode,
     pause,
     unpause,
-    addToBlacklist,
-    addToWhitelist,
-    removeFromBlacklist,
-    removeFromWhitelist,
-    enableWhitelistMode,
-    disableWhitelistMode,
+    addToBlackList,
+    addToWhiteList,
+    removeFromBlackList,
+    removeFromWhiteList,
   };
 };

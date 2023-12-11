@@ -187,7 +187,7 @@ const SubscriptionLevel: FC<SubscriptionLevelProps> = ({
           {isActive ? (
             <>
               <Divider orientation="vertical" ml="auto" mr="15px" />
-              <Text textStyle="textSansSmall">
+              <Text textStyle="textSansExtraSmall">
                 {isEnding ? '' : 'to '}
                 {getLocalDateString(subscriptionTill)}
               </Text>

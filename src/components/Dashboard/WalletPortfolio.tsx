@@ -70,7 +70,7 @@ export const WalletPortfolio = () => {
 
   return (
     <Flex alignItems={{ sm: 'stretch', xl: 'center' }} direction={{ sm: 'column', xl: 'row' }}>
-      <Box flexGrow="1" mb={{ sm: '45px', xl: 'unset' }}>
+      <Box flexGrow="1" mb={{ sm: '45px', xl: 'unset' }} paddingX={{ sm: '10px', md: 'unset' }}>
         <Text textStyle="h1" as="h1" fontSize={{ sm: '38px', xl: '52px', '2xl': '90px' }}>
           DASHBOARD
         </Text>
@@ -200,7 +200,7 @@ export const WalletPortfolio = () => {
               gap={2}
               direction={{ sm: 'column', md: 'row' }}
               margin={{ sm: '12px 0 20px', md: '15px 0', '2xl': '20px 0' }}
-              textStyle={{ sm: 'textSansSmall', '2xl': 'textSansBold' }}
+              textStyle={{ sm: 'textSansExtraSmall', '2xl': 'textSansBold' }}
             >
               <Flex alignItems="baseline" width="50%" whiteSpace="nowrap">
                 <Text mr="8px">Total Value Locked</Text>

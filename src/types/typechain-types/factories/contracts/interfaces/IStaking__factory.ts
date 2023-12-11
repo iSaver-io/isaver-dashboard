@@ -24,7 +24,7 @@ const _abi = [
       },
       {
         internalType: "bool",
-        name: "isToken2",
+        name: "isSAVRToken",
         type: "bool",
       },
       {
@@ -91,12 +91,12 @@ const _abi = [
           },
           {
             internalType: "uint256",
-            name: "currentToken1Staked",
+            name: "currentSavTokenStaked",
             type: "uint256",
           },
           {
             internalType: "uint256",
-            name: "currentToken2Staked",
+            name: "currentSavrTokenStaked",
             type: "uint256",
           },
           {
@@ -167,7 +167,7 @@ const _abi = [
           },
           {
             internalType: "bool",
-            name: "isToken2",
+            name: "isSAVRToken",
             type: "bool",
           },
         ],
@@ -253,7 +253,7 @@ const _abi = [
     stateMutability: "nonpayable",
     type: "function",
   },
-];
+] as const;
 
 export class IStaking__factory {
   static readonly abi = _abi;

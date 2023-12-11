@@ -67,7 +67,7 @@ export const Staking: FC<StakingProps> = ({ isPageView }) => {
         await deposit.mutateAsync({
           planId: selectedPlan,
           amount: amountBN,
-          isToken2: token === TOKENS.SAVR,
+          isSAVRToken: token === TOKENS.SAVR,
           referrer: localReferrer !== address ? localReferrer : undefined,
         });
         closeModal();
@@ -81,7 +81,7 @@ export const Staking: FC<StakingProps> = ({ isPageView }) => {
   const totalStakeSav = useMemo(
     () =>
       activeStakingPlansWithUserInfo.reduce(
-        (acc, plan) => acc.add(plan.currentToken1Staked || 0),
+        (acc, plan) => acc.add(plan.currentSavTokenStaked || 0),
         BigNumber.from(0)
       ),
     [activeStakingPlansWithUserInfo]
@@ -89,7 +89,7 @@ export const Staking: FC<StakingProps> = ({ isPageView }) => {
   const totalStakeSavR = useMemo(
     () =>
       activeStakingPlansWithUserInfo.reduce(
-        (acc, plan) => acc.add(plan.currentToken2Staked || 0),
+        (acc, plan) => acc.add(plan.currentSavrTokenStaked || 0),
         BigNumber.from(0)
       ),
     [activeStakingPlansWithUserInfo]
@@ -168,7 +168,7 @@ export const Staking: FC<StakingProps> = ({ isPageView }) => {
   );
 
   return (
-    <Container variant="dashboard">
+    <Container variant="dashboard" paddingX={{ sm: '10px', md: 'unset' }}>
       <Flex direction={{ sm: 'column', xl: 'row' }} justifyContent="space-between" gap={5}>
         <Box width={{ sm: '100%', xl: '55%' }}>
           <Text textStyle="sectionHeading" mb="20px">
@@ -240,7 +240,12 @@ export const Staking: FC<StakingProps> = ({ isPageView }) => {
             ))
           : null}
         {activeStakingPlansWithUserInfo.map((planData) => (
-          <GridItem colSpan={1} rowSpan={1} key={planData.stakingPlanId} width="100%">
+          <GridItem
+            colSpan={1}
+            rowSpan={1}
+            key={planData.stakingPlanId}
+            width={{ sm: '300px', md: '100%' }}
+          >
             <StakingPlan
               isActive={planData.isActive}
               isSubscribed={planData.isSubscribed}
@@ -249,10 +254,10 @@ export const Staking: FC<StakingProps> = ({ isPageView }) => {
               subscriptionCost={planData.subscriptionCost}
               subscriptionDuration={planData.subscriptionDuration}
               stakingDuration={planData.stakingDuration}
-              poolSize={planData.currentToken1Locked.add(planData.currentToken2Locked)}
+              poolSize={planData.currentSavTokenLocked.add(planData.currentSavrTokenLocked)}
               apr={planData.apr.toString()}
-              userStakeSav={planData.currentToken1Staked || 0}
-              userStakeSavR={planData.currentToken2Staked || 0}
+              userStakeSav={planData.currentSavTokenStaked || 0}
+              userStakeSavR={planData.currentSavrTokenStaked || 0}
               userTotalReward={planData.totalReward}
               isClaimAvailable={planData.hasReadyStakes}
               onSubscribe={() => handleSubscribe(planData.stakingPlanId)}

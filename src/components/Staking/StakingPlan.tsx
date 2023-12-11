@@ -203,7 +203,7 @@ export const StakingPlan: FC<StakingPlanProps> = ({
 const StakingParameter = ({ title, children }: { title: string; children: any }) => {
   return (
     <Flex alignItems="center">
-      <Box textStyle="textSansSmall" mr="10px" whiteSpace="nowrap">{`${title}`}</Box>
+      <Box textStyle="textSansExtraSmall" mr="10px" whiteSpace="nowrap">{`${title}`}</Box>
       <Box textStyle="textSansBold" whiteSpace="nowrap">
         {children}
       </Box>

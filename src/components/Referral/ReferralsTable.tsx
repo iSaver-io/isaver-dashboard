@@ -36,7 +36,7 @@ export const ReferralsTable: FC<ReferralsTableProps> = ({ referrals }) => {
       'savrBalance',
       'isStakingSubscriptionActive',
       'isReferralSubscriptionActive',
-      'isSquadSubscriptionActive',
+      'isTeamSubscriptionActive',
       'isLevelSubscriptionActive',
     ],
     {
@@ -145,7 +145,7 @@ export const ReferralsTable: FC<ReferralsTableProps> = ({ referrals }) => {
             </SortableTh>
             <SortableTh
               width="90px"
-              field="isSquadSubscriptionActive"
+              field="isTeamSubscriptionActive"
               currentSortField={currentSortField}
               currentSortType={currentSortType}
               onChangeSort={handleSort}
@@ -178,7 +178,7 @@ export const ReferralsTable: FC<ReferralsTableProps> = ({ referrals }) => {
                 {referral.isReferralSubscriptionActive ? GreenCircle : RedCircle}
               </Td>
               <Td textAlign="center">
-                {referral.isSquadSubscriptionActive ? GreenCircle : RedCircle}
+                {referral.isTeamSubscriptionActive ? GreenCircle : RedCircle}
               </Td>
               <Td textAlign="center">
                 {referral.isLevelSubscriptionActive ? GreenCircle : RedCircle}

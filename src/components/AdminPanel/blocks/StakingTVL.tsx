@@ -62,7 +62,7 @@ export const StakingTVL = () => {
         )
         .map((stake) => ({
           ...stake,
-          reward: stake.isToken2 ? stake.profit : stake.amount.add(stake.profit),
+          reward: stake.isSAVRToken ? stake.profit : stake.amount.add(stake.profit),
         })),
     [stakesDataRequest.data, startDate, endDate]
   );
@@ -200,7 +200,7 @@ export const StakingTVL = () => {
                       </Td>
                       <Td textAlign="center">
                         {bigNumberToString(
-                          stake.isToken2 ? stake.profit : stake.amount.add(stake.profit)
+                          stake.isSAVRToken ? stake.profit : stake.amount.add(stake.profit)
                         )}{' '}
                         SAV
                       </Td>

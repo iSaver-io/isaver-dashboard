@@ -63,7 +63,7 @@ export const useVestingContract_OLD = () => {
   }) as unknown as TokenVesting;
 
   const getVestingSchedule = async (id: string) => {
-    return contract.getVestingSchedule(id);
+    return contract.getVestingScheduleById(id);
   };
 
   const computeReleasableAmount = async (id: string) => {

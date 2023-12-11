@@ -10,11 +10,11 @@ export const formatReferrals = (referrals: RawReferral[], userLevels: BigNumber[
     level: referral.level.toNumber(),
     referralAddress: referral.referralAddress,
     activationDate: referral.activationDate.toNumber(),
-    savBalance: referral.token1Balance,
-    savrBalance: referral.token2Balance,
+    savBalance: referral.savTokenBalance,
+    savrBalance: referral.savrTokenBalance,
     isStakingSubscriptionActive: referral.isStakingSubscriptionActive,
     isReferralSubscriptionActive: referral.isReferralSubscriptionActive,
-    isSquadSubscriptionActive: referral.isSquadSubscriptionActive,
+    isTeamSubscriptionActive: referral.isTeamSubscriptionActive,
     isLevelSubscriptionActive: hasSubscription(referral.level.toNumber() - 1),
   }));
 };

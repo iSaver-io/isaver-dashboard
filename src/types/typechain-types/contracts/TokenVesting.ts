@@ -25,25 +25,22 @@ import type {
   TypedEvent,
   TypedListener,
   OnEvent,
-  PromiseOrValue,
 } from "../common";
 
 export declare namespace TokenVesting {
   export type VestingScheduleStruct = {
-    initialized: PromiseOrValue<boolean>;
-    beneficiary: PromiseOrValue<string>;
-    cliff: PromiseOrValue<BigNumberish>;
-    start: PromiseOrValue<BigNumberish>;
-    duration: PromiseOrValue<BigNumberish>;
-    slicePeriodSeconds: PromiseOrValue<BigNumberish>;
-    revocable: PromiseOrValue<boolean>;
-    amountTotal: PromiseOrValue<BigNumberish>;
-    released: PromiseOrValue<BigNumberish>;
-    revoked: PromiseOrValue<boolean>;
+    beneficiary: string;
+    cliff: BigNumberish;
+    start: BigNumberish;
+    duration: BigNumberish;
+    slicePeriodSeconds: BigNumberish;
+    revocable: boolean;
+    amountTotal: BigNumberish;
+    released: BigNumberish;
+    revoked: boolean;
   };
 
   export type VestingScheduleStructOutput = [
-    boolean,
     string,
     BigNumber,
     BigNumber,
@@ -54,7 +51,6 @@ export declare namespace TokenVesting {
     BigNumber,
     boolean
   ] & {
-    initialized: boolean;
     beneficiary: string;
     cliff: BigNumber;
     start: BigNumber;
@@ -67,9 +63,9 @@ export declare namespace TokenVesting {
   };
 
   export type VestingScheduleWithReleaseAmountStruct = {
-    id: PromiseOrValue<BigNumberish>;
+    id: BigNumberish;
     schedule: TokenVesting.VestingScheduleStruct;
-    releaseAmount: PromiseOrValue<BigNumberish>;
+    releaseAmount: BigNumberish;
   };
 
   export type VestingScheduleWithReleaseAmountStructOutput = [
@@ -86,13 +82,12 @@ export declare namespace TokenVesting {
 export interface TokenVestingInterface extends utils.Interface {
   functions: {
     "DEFAULT_ADMIN_ROLE()": FunctionFragment;
+    "UPGRADER_ROLE()": FunctionFragment;
     "computeReleasableAmount(uint256)": FunctionFragment;
     "createVestingSchedule(address,uint256,uint256,uint256,uint256,bool,uint256)": FunctionFragment;
     "createVestingSchedules(address[],uint256,uint256,uint256,uint256,bool,uint256)": FunctionFragment;
     "getReservesBalance()": FunctionFragment;
     "getRoleAdmin(bytes32)": FunctionFragment;
-    "getToken()": FunctionFragment;
-    "getVestingSchedule(uint256)": FunctionFragment;
     "getVestingScheduleById(uint256)": FunctionFragment;
     "getVestingSchedules()": FunctionFragment;
     "getVestingSchedulesByBeneficiary(address)": FunctionFragment;
@@ -118,13 +113,12 @@ export interface TokenVestingInterface extends utils.Interface {
   getFunction(
     nameOrSignatureOrTopic:
       | "DEFAULT_ADMIN_ROLE"
+      | "UPGRADER_ROLE"
       | "computeReleasableAmount"
       | "createVestingSchedule"
       | "createVestingSchedules"
       | "getReservesBalance"
       | "getRoleAdmin"
-      | "getToken"
-      | "getVestingSchedule"
       | "getVestingScheduleById"
       | "getVestingSchedules"
       | "getVestingSchedulesByBeneficiary"
@@ -152,31 +146,35 @@ export interface TokenVestingInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
+    functionFragment: "UPGRADER_ROLE",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "computeReleasableAmount",
-    values: [PromiseOrValue<BigNumberish>]
+    values: [BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "createVestingSchedule",
     values: [
-      PromiseOrValue<string>,
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<boolean>,
-      PromiseOrValue<BigNumberish>
+      string,
+      BigNumberish,
+      BigNumberish,
+      BigNumberish,
+      BigNumberish,
+      boolean,
+      BigNumberish
     ]
   ): string;
   encodeFunctionData(
     functionFragment: "createVestingSchedules",
     values: [
-      PromiseOrValue<string>[],
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<boolean>,
-      PromiseOrValue<BigNumberish>
+      string[],
+      BigNumberish,
+      BigNumberish,
+      BigNumberish,
+      BigNumberish,
+      boolean,
+      BigNumberish
     ]
   ): string;
   encodeFunctionData(
@@ -185,16 +183,11 @@ export interface TokenVestingInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "getRoleAdmin",
-    values: [PromiseOrValue<BytesLike>]
-  ): string;
-  encodeFunctionData(functionFragment: "getToken", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "getVestingSchedule",
-    values: [PromiseOrValue<BigNumberish>]
+    values: [BytesLike]
   ): string;
   encodeFunctionData(
     functionFragment: "getVestingScheduleById",
-    values: [PromiseOrValue<BigNumberish>]
+    values: [BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "getVestingSchedules",
@@ -202,7 +195,7 @@ export interface TokenVestingInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "getVestingSchedulesByBeneficiary",
-    values: [PromiseOrValue<string>]
+    values: [string]
   ): string;
   encodeFunctionData(
     functionFragment: "getVestingSchedulesCount",
@@ -210,11 +203,11 @@ export interface TokenVestingInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "getVestingSchedulesCountByBeneficiary",
-    values: [PromiseOrValue<string>]
+    values: [string]
   ): string;
   encodeFunctionData(
     functionFragment: "getVestingSchedulesIdsByBeneficiary",
-    values: [PromiseOrValue<string>]
+    values: [string]
   ): string;
   encodeFunctionData(
     functionFragment: "getVestingSchedulesTotalAmount",
@@ -222,19 +215,19 @@ export interface TokenVestingInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "getVestingSchedulesWithReleasableAmountByBeneficiary",
-    values: [PromiseOrValue<string>]
+    values: [string]
   ): string;
   encodeFunctionData(
     functionFragment: "grantRole",
-    values: [PromiseOrValue<BytesLike>, PromiseOrValue<string>]
+    values: [BytesLike, string]
   ): string;
   encodeFunctionData(
     functionFragment: "hasRole",
-    values: [PromiseOrValue<BytesLike>, PromiseOrValue<string>]
+    values: [BytesLike, string]
   ): string;
   encodeFunctionData(
     functionFragment: "initialize",
-    values: [PromiseOrValue<string>, PromiseOrValue<string>]
+    values: [string, string]
   ): string;
   encodeFunctionData(
     functionFragment: "proxiableUUID",
@@ -242,39 +235,40 @@ export interface TokenVestingInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "release",
-    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
+    values: [BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "renounceRole",
-    values: [PromiseOrValue<BytesLike>, PromiseOrValue<string>]
+    values: [BytesLike, string]
   ): string;
   encodeFunctionData(
     functionFragment: "revoke",
-    values: [PromiseOrValue<BigNumberish>]
+    values: [BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "revokeRole",
-    values: [PromiseOrValue<BytesLike>, PromiseOrValue<string>]
+    values: [BytesLike, string]
   ): string;
   encodeFunctionData(
     functionFragment: "supportsInterface",
-    values: [PromiseOrValue<BytesLike>]
+    values: [BytesLike]
   ): string;
   encodeFunctionData(
     functionFragment: "updateVestingPool",
-    values: [PromiseOrValue<string>]
+    values: [string]
   ): string;
-  encodeFunctionData(
-    functionFragment: "upgradeTo",
-    values: [PromiseOrValue<string>]
-  ): string;
+  encodeFunctionData(functionFragment: "upgradeTo", values: [string]): string;
   encodeFunctionData(
     functionFragment: "upgradeToAndCall",
-    values: [PromiseOrValue<string>, PromiseOrValue<BytesLike>]
+    values: [string, BytesLike]
   ): string;
 
   decodeFunctionResult(
     functionFragment: "DEFAULT_ADMIN_ROLE",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "UPGRADER_ROLE",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -295,11 +289,6 @@ export interface TokenVestingInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "getRoleAdmin",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "getToken", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "getVestingSchedule",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -518,49 +507,41 @@ export interface TokenVesting extends BaseContract {
   functions: {
     DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<[string]>;
 
+    UPGRADER_ROLE(overrides?: CallOverrides): Promise<[string]>;
+
     computeReleasableAmount(
-      vestingScheduleId: PromiseOrValue<BigNumberish>,
+      vestingScheduleId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
     createVestingSchedule(
-      _beneficiary: PromiseOrValue<string>,
-      _start: PromiseOrValue<BigNumberish>,
-      _cliff: PromiseOrValue<BigNumberish>,
-      _duration: PromiseOrValue<BigNumberish>,
-      _slicePeriodSeconds: PromiseOrValue<BigNumberish>,
-      _revocable: PromiseOrValue<boolean>,
-      _amount: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      _beneficiary: string,
+      _start: BigNumberish,
+      _cliff: BigNumberish,
+      _duration: BigNumberish,
+      _slicePeriodSeconds: BigNumberish,
+      _revocable: boolean,
+      _amount: BigNumberish,
+      overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
 
     createVestingSchedules(
-      _beneficiaries: PromiseOrValue<string>[],
-      _start: PromiseOrValue<BigNumberish>,
-      _cliff: PromiseOrValue<BigNumberish>,
-      _duration: PromiseOrValue<BigNumberish>,
-      _slicePeriodSeconds: PromiseOrValue<BigNumberish>,
-      _revocable: PromiseOrValue<boolean>,
-      _amount: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      _beneficiaries: string[],
+      _start: BigNumberish,
+      _cliff: BigNumberish,
+      _duration: BigNumberish,
+      _slicePeriodSeconds: BigNumberish,
+      _revocable: boolean,
+      _amount: BigNumberish,
+      overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
 
     getReservesBalance(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    getRoleAdmin(
-      role: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<[string]>;
-
-    getToken(overrides?: CallOverrides): Promise<[string]>;
-
-    getVestingSchedule(
-      vestingScheduleId: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<[TokenVesting.VestingScheduleStructOutput]>;
+    getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<[string]>;
 
     getVestingScheduleById(
-      id: PromiseOrValue<BigNumberish>,
+      id: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[TokenVesting.VestingScheduleStructOutput]>;
 
@@ -569,19 +550,19 @@ export interface TokenVesting extends BaseContract {
     ): Promise<[TokenVesting.VestingScheduleStructOutput[]]>;
 
     getVestingSchedulesByBeneficiary(
-      beneficiary: PromiseOrValue<string>,
+      beneficiary: string,
       overrides?: CallOverrides
     ): Promise<[TokenVesting.VestingScheduleStructOutput[]]>;
 
     getVestingSchedulesCount(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     getVestingSchedulesCountByBeneficiary(
-      _beneficiary: PromiseOrValue<string>,
+      _beneficiary: string,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
     getVestingSchedulesIdsByBeneficiary(
-      _beneficiary: PromiseOrValue<string>,
+      _beneficiary: string,
       overrides?: CallOverrides
     ): Promise<[BigNumber[]]>;
 
@@ -590,120 +571,112 @@ export interface TokenVesting extends BaseContract {
     ): Promise<[BigNumber]>;
 
     getVestingSchedulesWithReleasableAmountByBeneficiary(
-      beneficiary: PromiseOrValue<string>,
+      beneficiary: string,
       overrides?: CallOverrides
     ): Promise<[TokenVesting.VestingScheduleWithReleaseAmountStructOutput[]]>;
 
     grantRole(
-      role: PromiseOrValue<BytesLike>,
-      account: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
 
     hasRole(
-      role: PromiseOrValue<BytesLike>,
-      account: PromiseOrValue<string>,
+      role: BytesLike,
+      account: string,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
     initialize(
-      token_: PromiseOrValue<string>,
-      pool_: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      contractManagerAddress: string,
+      vestingPoolAddress: string,
+      overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
 
     proxiableUUID(overrides?: CallOverrides): Promise<[string]>;
 
     release(
-      vestingScheduleId: PromiseOrValue<BigNumberish>,
-      amount: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      vestingScheduleId: BigNumberish,
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
 
     renounceRole(
-      role: PromiseOrValue<BytesLike>,
-      account: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
 
     revoke(
-      vestingScheduleId: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      vestingScheduleId: BigNumberish,
+      overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
 
     revokeRole(
-      role: PromiseOrValue<BytesLike>,
-      account: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
 
     supportsInterface(
-      interfaceId: PromiseOrValue<BytesLike>,
+      interfaceId: BytesLike,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
     updateVestingPool(
-      pool: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      pool: string,
+      overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
 
     upgradeTo(
-      newImplementation: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      newImplementation: string,
+      overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
 
     upgradeToAndCall(
-      newImplementation: PromiseOrValue<string>,
-      data: PromiseOrValue<BytesLike>,
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
+      newImplementation: string,
+      data: BytesLike,
+      overrides?: PayableOverrides & { from?: string }
     ): Promise<ContractTransaction>;
   };
 
   DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
 
+  UPGRADER_ROLE(overrides?: CallOverrides): Promise<string>;
+
   computeReleasableAmount(
-    vestingScheduleId: PromiseOrValue<BigNumberish>,
+    vestingScheduleId: BigNumberish,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
   createVestingSchedule(
-    _beneficiary: PromiseOrValue<string>,
-    _start: PromiseOrValue<BigNumberish>,
-    _cliff: PromiseOrValue<BigNumberish>,
-    _duration: PromiseOrValue<BigNumberish>,
-    _slicePeriodSeconds: PromiseOrValue<BigNumberish>,
-    _revocable: PromiseOrValue<boolean>,
-    _amount: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
+    _beneficiary: string,
+    _start: BigNumberish,
+    _cliff: BigNumberish,
+    _duration: BigNumberish,
+    _slicePeriodSeconds: BigNumberish,
+    _revocable: boolean,
+    _amount: BigNumberish,
+    overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
 
   createVestingSchedules(
-    _beneficiaries: PromiseOrValue<string>[],
-    _start: PromiseOrValue<BigNumberish>,
-    _cliff: PromiseOrValue<BigNumberish>,
-    _duration: PromiseOrValue<BigNumberish>,
-    _slicePeriodSeconds: PromiseOrValue<BigNumberish>,
-    _revocable: PromiseOrValue<boolean>,
-    _amount: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
+    _beneficiaries: string[],
+    _start: BigNumberish,
+    _cliff: BigNumberish,
+    _duration: BigNumberish,
+    _slicePeriodSeconds: BigNumberish,
+    _revocable: boolean,
+    _amount: BigNumberish,
+    overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
 
   getReservesBalance(overrides?: CallOverrides): Promise<BigNumber>;
 
-  getRoleAdmin(
-    role: PromiseOrValue<BytesLike>,
-    overrides?: CallOverrides
-  ): Promise<string>;
-
-  getToken(overrides?: CallOverrides): Promise<string>;
-
-  getVestingSchedule(
-    vestingScheduleId: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<TokenVesting.VestingScheduleStructOutput>;
+  getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<string>;
 
   getVestingScheduleById(
-    id: PromiseOrValue<BigNumberish>,
+    id: BigNumberish,
     overrides?: CallOverrides
   ): Promise<TokenVesting.VestingScheduleStructOutput>;
 
@@ -712,139 +685,131 @@ export interface TokenVesting extends BaseContract {
   ): Promise<TokenVesting.VestingScheduleStructOutput[]>;
 
   getVestingSchedulesByBeneficiary(
-    beneficiary: PromiseOrValue<string>,
+    beneficiary: string,
     overrides?: CallOverrides
   ): Promise<TokenVesting.VestingScheduleStructOutput[]>;
 
   getVestingSchedulesCount(overrides?: CallOverrides): Promise<BigNumber>;
 
   getVestingSchedulesCountByBeneficiary(
-    _beneficiary: PromiseOrValue<string>,
+    _beneficiary: string,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
   getVestingSchedulesIdsByBeneficiary(
-    _beneficiary: PromiseOrValue<string>,
+    _beneficiary: string,
     overrides?: CallOverrides
   ): Promise<BigNumber[]>;
 
   getVestingSchedulesTotalAmount(overrides?: CallOverrides): Promise<BigNumber>;
 
   getVestingSchedulesWithReleasableAmountByBeneficiary(
-    beneficiary: PromiseOrValue<string>,
+    beneficiary: string,
     overrides?: CallOverrides
   ): Promise<TokenVesting.VestingScheduleWithReleaseAmountStructOutput[]>;
 
   grantRole(
-    role: PromiseOrValue<BytesLike>,
-    account: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
+    role: BytesLike,
+    account: string,
+    overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
 
   hasRole(
-    role: PromiseOrValue<BytesLike>,
-    account: PromiseOrValue<string>,
+    role: BytesLike,
+    account: string,
     overrides?: CallOverrides
   ): Promise<boolean>;
 
   initialize(
-    token_: PromiseOrValue<string>,
-    pool_: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
+    contractManagerAddress: string,
+    vestingPoolAddress: string,
+    overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
 
   proxiableUUID(overrides?: CallOverrides): Promise<string>;
 
   release(
-    vestingScheduleId: PromiseOrValue<BigNumberish>,
-    amount: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
+    vestingScheduleId: BigNumberish,
+    amount: BigNumberish,
+    overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
 
   renounceRole(
-    role: PromiseOrValue<BytesLike>,
-    account: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
+    role: BytesLike,
+    account: string,
+    overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
 
   revoke(
-    vestingScheduleId: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
+    vestingScheduleId: BigNumberish,
+    overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
 
   revokeRole(
-    role: PromiseOrValue<BytesLike>,
-    account: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
+    role: BytesLike,
+    account: string,
+    overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
 
   supportsInterface(
-    interfaceId: PromiseOrValue<BytesLike>,
+    interfaceId: BytesLike,
     overrides?: CallOverrides
   ): Promise<boolean>;
 
   updateVestingPool(
-    pool: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
+    pool: string,
+    overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
 
   upgradeTo(
-    newImplementation: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
+    newImplementation: string,
+    overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
 
   upgradeToAndCall(
-    newImplementation: PromiseOrValue<string>,
-    data: PromiseOrValue<BytesLike>,
-    overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
+    newImplementation: string,
+    data: BytesLike,
+    overrides?: PayableOverrides & { from?: string }
   ): Promise<ContractTransaction>;
 
   callStatic: {
     DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
 
+    UPGRADER_ROLE(overrides?: CallOverrides): Promise<string>;
+
     computeReleasableAmount(
-      vestingScheduleId: PromiseOrValue<BigNumberish>,
+      vestingScheduleId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     createVestingSchedule(
-      _beneficiary: PromiseOrValue<string>,
-      _start: PromiseOrValue<BigNumberish>,
-      _cliff: PromiseOrValue<BigNumberish>,
-      _duration: PromiseOrValue<BigNumberish>,
-      _slicePeriodSeconds: PromiseOrValue<BigNumberish>,
-      _revocable: PromiseOrValue<boolean>,
-      _amount: PromiseOrValue<BigNumberish>,
+      _beneficiary: string,
+      _start: BigNumberish,
+      _cliff: BigNumberish,
+      _duration: BigNumberish,
+      _slicePeriodSeconds: BigNumberish,
+      _revocable: boolean,
+      _amount: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
     createVestingSchedules(
-      _beneficiaries: PromiseOrValue<string>[],
-      _start: PromiseOrValue<BigNumberish>,
-      _cliff: PromiseOrValue<BigNumberish>,
-      _duration: PromiseOrValue<BigNumberish>,
-      _slicePeriodSeconds: PromiseOrValue<BigNumberish>,
-      _revocable: PromiseOrValue<boolean>,
-      _amount: PromiseOrValue<BigNumberish>,
+      _beneficiaries: string[],
+      _start: BigNumberish,
+      _cliff: BigNumberish,
+      _duration: BigNumberish,
+      _slicePeriodSeconds: BigNumberish,
+      _revocable: boolean,
+      _amount: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
     getReservesBalance(overrides?: CallOverrides): Promise<BigNumber>;
 
-    getRoleAdmin(
-      role: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<string>;
-
-    getToken(overrides?: CallOverrides): Promise<string>;
-
-    getVestingSchedule(
-      vestingScheduleId: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<TokenVesting.VestingScheduleStructOutput>;
+    getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<string>;
 
     getVestingScheduleById(
-      id: PromiseOrValue<BigNumberish>,
+      id: BigNumberish,
       overrides?: CallOverrides
     ): Promise<TokenVesting.VestingScheduleStructOutput>;
 
@@ -853,19 +818,19 @@ export interface TokenVesting extends BaseContract {
     ): Promise<TokenVesting.VestingScheduleStructOutput[]>;
 
     getVestingSchedulesByBeneficiary(
-      beneficiary: PromiseOrValue<string>,
+      beneficiary: string,
       overrides?: CallOverrides
     ): Promise<TokenVesting.VestingScheduleStructOutput[]>;
 
     getVestingSchedulesCount(overrides?: CallOverrides): Promise<BigNumber>;
 
     getVestingSchedulesCountByBeneficiary(
-      _beneficiary: PromiseOrValue<string>,
+      _beneficiary: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     getVestingSchedulesIdsByBeneficiary(
-      _beneficiary: PromiseOrValue<string>,
+      _beneficiary: string,
       overrides?: CallOverrides
     ): Promise<BigNumber[]>;
 
@@ -874,71 +839,68 @@ export interface TokenVesting extends BaseContract {
     ): Promise<BigNumber>;
 
     getVestingSchedulesWithReleasableAmountByBeneficiary(
-      beneficiary: PromiseOrValue<string>,
+      beneficiary: string,
       overrides?: CallOverrides
     ): Promise<TokenVesting.VestingScheduleWithReleaseAmountStructOutput[]>;
 
     grantRole(
-      role: PromiseOrValue<BytesLike>,
-      account: PromiseOrValue<string>,
+      role: BytesLike,
+      account: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
     hasRole(
-      role: PromiseOrValue<BytesLike>,
-      account: PromiseOrValue<string>,
+      role: BytesLike,
+      account: string,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
     initialize(
-      token_: PromiseOrValue<string>,
-      pool_: PromiseOrValue<string>,
+      contractManagerAddress: string,
+      vestingPoolAddress: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
     proxiableUUID(overrides?: CallOverrides): Promise<string>;
 
     release(
-      vestingScheduleId: PromiseOrValue<BigNumberish>,
-      amount: PromiseOrValue<BigNumberish>,
+      vestingScheduleId: BigNumberish,
+      amount: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
     renounceRole(
-      role: PromiseOrValue<BytesLike>,
-      account: PromiseOrValue<string>,
+      role: BytesLike,
+      account: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
     revoke(
-      vestingScheduleId: PromiseOrValue<BigNumberish>,
+      vestingScheduleId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
     revokeRole(
-      role: PromiseOrValue<BytesLike>,
-      account: PromiseOrValue<string>,
+      role: BytesLike,
+      account: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
     supportsInterface(
-      interfaceId: PromiseOrValue<BytesLike>,
+      interfaceId: BytesLike,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
-    updateVestingPool(
-      pool: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<void>;
+    updateVestingPool(pool: string, overrides?: CallOverrides): Promise<void>;
 
     upgradeTo(
-      newImplementation: PromiseOrValue<string>,
+      newImplementation: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
     upgradeToAndCall(
-      newImplementation: PromiseOrValue<string>,
-      data: PromiseOrValue<BytesLike>,
+      newImplementation: string,
+      data: BytesLike,
       overrides?: CallOverrides
     ): Promise<void>;
   };
@@ -954,148 +916,135 @@ export interface TokenVesting extends BaseContract {
     ): AdminChangedEventFilter;
 
     "BeaconUpgraded(address)"(
-      beacon?: PromiseOrValue<string> | null
+      beacon?: string | null
     ): BeaconUpgradedEventFilter;
-    BeaconUpgraded(
-      beacon?: PromiseOrValue<string> | null
-    ): BeaconUpgradedEventFilter;
+    BeaconUpgraded(beacon?: string | null): BeaconUpgradedEventFilter;
 
     "Initialized(uint8)"(version?: null): InitializedEventFilter;
     Initialized(version?: null): InitializedEventFilter;
 
     "Released(uint256,address,uint256)"(
-      vestingScheduleId?: PromiseOrValue<BigNumberish> | null,
-      to?: PromiseOrValue<string> | null,
+      vestingScheduleId?: BigNumberish | null,
+      to?: string | null,
       amount?: null
     ): ReleasedEventFilter;
     Released(
-      vestingScheduleId?: PromiseOrValue<BigNumberish> | null,
-      to?: PromiseOrValue<string> | null,
+      vestingScheduleId?: BigNumberish | null,
+      to?: string | null,
       amount?: null
     ): ReleasedEventFilter;
 
     "Revoked(uint256)"(
-      vestingScheduleId?: PromiseOrValue<BigNumberish> | null
+      vestingScheduleId?: BigNumberish | null
     ): RevokedEventFilter;
-    Revoked(
-      vestingScheduleId?: PromiseOrValue<BigNumberish> | null
-    ): RevokedEventFilter;
+    Revoked(vestingScheduleId?: BigNumberish | null): RevokedEventFilter;
 
     "RoleAdminChanged(bytes32,bytes32,bytes32)"(
-      role?: PromiseOrValue<BytesLike> | null,
-      previousAdminRole?: PromiseOrValue<BytesLike> | null,
-      newAdminRole?: PromiseOrValue<BytesLike> | null
+      role?: BytesLike | null,
+      previousAdminRole?: BytesLike | null,
+      newAdminRole?: BytesLike | null
     ): RoleAdminChangedEventFilter;
     RoleAdminChanged(
-      role?: PromiseOrValue<BytesLike> | null,
-      previousAdminRole?: PromiseOrValue<BytesLike> | null,
-      newAdminRole?: PromiseOrValue<BytesLike> | null
+      role?: BytesLike | null,
+      previousAdminRole?: BytesLike | null,
+      newAdminRole?: BytesLike | null
     ): RoleAdminChangedEventFilter;
 
     "RoleGranted(bytes32,address,address)"(
-      role?: PromiseOrValue<BytesLike> | null,
-      account?: PromiseOrValue<string> | null,
-      sender?: PromiseOrValue<string> | null
+      role?: BytesLike | null,
+      account?: string | null,
+      sender?: string | null
     ): RoleGrantedEventFilter;
     RoleGranted(
-      role?: PromiseOrValue<BytesLike> | null,
-      account?: PromiseOrValue<string> | null,
-      sender?: PromiseOrValue<string> | null
+      role?: BytesLike | null,
+      account?: string | null,
+      sender?: string | null
     ): RoleGrantedEventFilter;
 
     "RoleRevoked(bytes32,address,address)"(
-      role?: PromiseOrValue<BytesLike> | null,
-      account?: PromiseOrValue<string> | null,
-      sender?: PromiseOrValue<string> | null
+      role?: BytesLike | null,
+      account?: string | null,
+      sender?: string | null
     ): RoleRevokedEventFilter;
     RoleRevoked(
-      role?: PromiseOrValue<BytesLike> | null,
-      account?: PromiseOrValue<string> | null,
-      sender?: PromiseOrValue<string> | null
+      role?: BytesLike | null,
+      account?: string | null,
+      sender?: string | null
     ): RoleRevokedEventFilter;
 
     "ScheduleCreated(address,uint256)"(
-      beneficiary?: PromiseOrValue<string> | null,
-      vestingScheduleId?: PromiseOrValue<BigNumberish> | null
+      beneficiary?: string | null,
+      vestingScheduleId?: BigNumberish | null
     ): ScheduleCreatedEventFilter;
     ScheduleCreated(
-      beneficiary?: PromiseOrValue<string> | null,
-      vestingScheduleId?: PromiseOrValue<BigNumberish> | null
+      beneficiary?: string | null,
+      vestingScheduleId?: BigNumberish | null
     ): ScheduleCreatedEventFilter;
 
-    "Upgraded(address)"(
-      implementation?: PromiseOrValue<string> | null
-    ): UpgradedEventFilter;
-    Upgraded(
-      implementation?: PromiseOrValue<string> | null
-    ): UpgradedEventFilter;
+    "Upgraded(address)"(implementation?: string | null): UpgradedEventFilter;
+    Upgraded(implementation?: string | null): UpgradedEventFilter;
   };
 
   estimateGas: {
     DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
 
+    UPGRADER_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
+
     computeReleasableAmount(
-      vestingScheduleId: PromiseOrValue<BigNumberish>,
+      vestingScheduleId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     createVestingSchedule(
-      _beneficiary: PromiseOrValue<string>,
-      _start: PromiseOrValue<BigNumberish>,
-      _cliff: PromiseOrValue<BigNumberish>,
-      _duration: PromiseOrValue<BigNumberish>,
-      _slicePeriodSeconds: PromiseOrValue<BigNumberish>,
-      _revocable: PromiseOrValue<boolean>,
-      _amount: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      _beneficiary: string,
+      _start: BigNumberish,
+      _cliff: BigNumberish,
+      _duration: BigNumberish,
+      _slicePeriodSeconds: BigNumberish,
+      _revocable: boolean,
+      _amount: BigNumberish,
+      overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
 
     createVestingSchedules(
-      _beneficiaries: PromiseOrValue<string>[],
-      _start: PromiseOrValue<BigNumberish>,
-      _cliff: PromiseOrValue<BigNumberish>,
-      _duration: PromiseOrValue<BigNumberish>,
-      _slicePeriodSeconds: PromiseOrValue<BigNumberish>,
-      _revocable: PromiseOrValue<boolean>,
-      _amount: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      _beneficiaries: string[],
+      _start: BigNumberish,
+      _cliff: BigNumberish,
+      _duration: BigNumberish,
+      _slicePeriodSeconds: BigNumberish,
+      _revocable: boolean,
+      _amount: BigNumberish,
+      overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
 
     getReservesBalance(overrides?: CallOverrides): Promise<BigNumber>;
 
     getRoleAdmin(
-      role: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    getToken(overrides?: CallOverrides): Promise<BigNumber>;
-
-    getVestingSchedule(
-      vestingScheduleId: PromiseOrValue<BigNumberish>,
+      role: BytesLike,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     getVestingScheduleById(
-      id: PromiseOrValue<BigNumberish>,
+      id: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     getVestingSchedules(overrides?: CallOverrides): Promise<BigNumber>;
 
     getVestingSchedulesByBeneficiary(
-      beneficiary: PromiseOrValue<string>,
+      beneficiary: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     getVestingSchedulesCount(overrides?: CallOverrides): Promise<BigNumber>;
 
     getVestingSchedulesCountByBeneficiary(
-      _beneficiary: PromiseOrValue<string>,
+      _beneficiary: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     getVestingSchedulesIdsByBeneficiary(
-      _beneficiary: PromiseOrValue<string>,
+      _beneficiary: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1104,72 +1053,72 @@ export interface TokenVesting extends BaseContract {
     ): Promise<BigNumber>;
 
     getVestingSchedulesWithReleasableAmountByBeneficiary(
-      beneficiary: PromiseOrValue<string>,
+      beneficiary: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     grantRole(
-      role: PromiseOrValue<BytesLike>,
-      account: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
 
     hasRole(
-      role: PromiseOrValue<BytesLike>,
-      account: PromiseOrValue<string>,
+      role: BytesLike,
+      account: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     initialize(
-      token_: PromiseOrValue<string>,
-      pool_: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      contractManagerAddress: string,
+      vestingPoolAddress: string,
+      overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
 
     proxiableUUID(overrides?: CallOverrides): Promise<BigNumber>;
 
     release(
-      vestingScheduleId: PromiseOrValue<BigNumberish>,
-      amount: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      vestingScheduleId: BigNumberish,
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
 
     renounceRole(
-      role: PromiseOrValue<BytesLike>,
-      account: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
 
     revoke(
-      vestingScheduleId: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      vestingScheduleId: BigNumberish,
+      overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
 
     revokeRole(
-      role: PromiseOrValue<BytesLike>,
-      account: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
 
     supportsInterface(
-      interfaceId: PromiseOrValue<BytesLike>,
+      interfaceId: BytesLike,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     updateVestingPool(
-      pool: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      pool: string,
+      overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
 
     upgradeTo(
-      newImplementation: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      newImplementation: string,
+      overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
 
     upgradeToAndCall(
-      newImplementation: PromiseOrValue<string>,
-      data: PromiseOrValue<BytesLike>,
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
+      newImplementation: string,
+      data: BytesLike,
+      overrides?: PayableOverrides & { from?: string }
     ): Promise<BigNumber>;
   };
 
@@ -1178,31 +1127,33 @@ export interface TokenVesting extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    UPGRADER_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     computeReleasableAmount(
-      vestingScheduleId: PromiseOrValue<BigNumberish>,
+      vestingScheduleId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     createVestingSchedule(
-      _beneficiary: PromiseOrValue<string>,
-      _start: PromiseOrValue<BigNumberish>,
-      _cliff: PromiseOrValue<BigNumberish>,
-      _duration: PromiseOrValue<BigNumberish>,
-      _slicePeriodSeconds: PromiseOrValue<BigNumberish>,
-      _revocable: PromiseOrValue<boolean>,
-      _amount: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      _beneficiary: string,
+      _start: BigNumberish,
+      _cliff: BigNumberish,
+      _duration: BigNumberish,
+      _slicePeriodSeconds: BigNumberish,
+      _revocable: boolean,
+      _amount: BigNumberish,
+      overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 
     createVestingSchedules(
-      _beneficiaries: PromiseOrValue<string>[],
-      _start: PromiseOrValue<BigNumberish>,
-      _cliff: PromiseOrValue<BigNumberish>,
-      _duration: PromiseOrValue<BigNumberish>,
-      _slicePeriodSeconds: PromiseOrValue<BigNumberish>,
-      _revocable: PromiseOrValue<boolean>,
-      _amount: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      _beneficiaries: string[],
+      _start: BigNumberish,
+      _cliff: BigNumberish,
+      _duration: BigNumberish,
+      _slicePeriodSeconds: BigNumberish,
+      _revocable: boolean,
+      _amount: BigNumberish,
+      overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 
     getReservesBalance(
@@ -1210,19 +1161,12 @@ export interface TokenVesting extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     getRoleAdmin(
-      role: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    getToken(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    getVestingSchedule(
-      vestingScheduleId: PromiseOrValue<BigNumberish>,
+      role: BytesLike,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     getVestingScheduleById(
-      id: PromiseOrValue<BigNumberish>,
+      id: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -1231,7 +1175,7 @@ export interface TokenVesting extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     getVestingSchedulesByBeneficiary(
-      beneficiary: PromiseOrValue<string>,
+      beneficiary: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -1240,12 +1184,12 @@ export interface TokenVesting extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     getVestingSchedulesCountByBeneficiary(
-      _beneficiary: PromiseOrValue<string>,
+      _beneficiary: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     getVestingSchedulesIdsByBeneficiary(
-      _beneficiary: PromiseOrValue<string>,
+      _beneficiary: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -1254,72 +1198,72 @@ export interface TokenVesting extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     getVestingSchedulesWithReleasableAmountByBeneficiary(
-      beneficiary: PromiseOrValue<string>,
+      beneficiary: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     grantRole(
-      role: PromiseOrValue<BytesLike>,
-      account: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 
     hasRole(
-      role: PromiseOrValue<BytesLike>,
-      account: PromiseOrValue<string>,
+      role: BytesLike,
+      account: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     initialize(
-      token_: PromiseOrValue<string>,
-      pool_: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      contractManagerAddress: string,
+      vestingPoolAddress: string,
+      overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 
     proxiableUUID(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     release(
-      vestingScheduleId: PromiseOrValue<BigNumberish>,
-      amount: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      vestingScheduleId: BigNumberish,
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 
     renounceRole(
-      role: PromiseOrValue<BytesLike>,
-      account: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 
     revoke(
-      vestingScheduleId: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      vestingScheduleId: BigNumberish,
+      overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 
     revokeRole(
-      role: PromiseOrValue<BytesLike>,
-      account: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 
     supportsInterface(
-      interfaceId: PromiseOrValue<BytesLike>,
+      interfaceId: BytesLike,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     updateVestingPool(
-      pool: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      pool: string,
+      overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 
     upgradeTo(
-      newImplementation: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      newImplementation: string,
+      overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 
     upgradeToAndCall(
-      newImplementation: PromiseOrValue<string>,
-      data: PromiseOrValue<BytesLike>,
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
+      newImplementation: string,
+      data: BytesLike,
+      overrides?: PayableOverrides & { from?: string }
     ): Promise<PopulatedTransaction>;
   };
 }

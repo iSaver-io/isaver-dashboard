@@ -6,7 +6,7 @@ import { getReadableDuration } from '../time';
 export const formatStakesToExport = (stakes: Stake[]) => {
   const headers = ['Token', 'Deposit', 'Period', 'Start', 'End', 'Reward', 'Total', 'Status'];
   const data = stakes.map((stake) => [
-    stake.isToken2 ? 'SAVR' : 'SAV',
+    stake.isSavrToken ? 'SAVR' : 'SAV',
     bigNumberToNumber(stake.amount),
     getReadableDuration(stake.period),
     new Date(stake.timeStart * 1000),

@@ -30,6 +30,10 @@ export const useStakingContract = () => {
     signerOrProvider: signer || provider,
   }) as unknown as Staking;
 
+  const getAvailableTokens = async () => {
+    return contract.getAvailableTokens();
+  };
+
   const getStakingPlans = async () => {
     return contract.getStakingPlans();
   };
@@ -65,17 +69,17 @@ export const useStakingContract = () => {
     planId,
     amount,
     referrer,
-    isToken2,
+    isSAVRToken,
   }: {
     planId: number;
     amount: BigNumberish;
-    isToken2: boolean;
+    isSAVRToken: boolean;
     referrer?: string;
   }) => {
     const tx = await contract.deposit(
       planId,
       amount,
-      isToken2,
+      isSAVRToken,
       referrer || ethers.constants.AddressZero
     );
     return waitForTransaction(tx);
@@ -125,6 +129,7 @@ export const useStakingContract = () => {
     deposit,
     withdraw,
     withdrawAll,
+    getAvailableTokens,
     getStakingPlans,
     getUserStakingInfo,
     getUserStakesWithRewards,

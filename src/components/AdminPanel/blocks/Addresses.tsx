@@ -15,23 +15,22 @@ export const Addresses = () => {
         <Text textStyle="textMedium" mb="8px" fontSize="18px">
           Contracts
         </Text>
-        <AddressInfo title="SAV (ERC20)" address={contracts.Token1} />
-        <AddressInfo title="SAVR (ERC20)" address={contracts.Token2} />
+        <AddressInfo title="SAV (ERC20)" address={contracts.ISaverSAVToken} />
+        <AddressInfo title="SAVR (ERC20)" address={contracts.ISaverSAVRToken} />
         <AddressInfo title="Staking" address={contracts.Staking} />
         <AddressInfo title="Referral Manager" address={contracts.ReferralManager} />
-        <AddressInfo title="Teams" address={contracts.Squads} />
-        <AddressInfo title="Raffles" address={contracts.Lottery} />
+        <AddressInfo title="Teams" address={contracts.Teams} />
+        <AddressInfo title="Raffles" address={contracts.Raffles} />
         <AddressInfo title="Raffle Ticket (ERC1155)" address={contracts.Ticket} />
         <AddressInfo title="Token exchange" address={contracts.VendorSell} />
         <AddressInfo title="Vesting" address={contracts.TokenVesting} />
+        <AddressInfo title="Avatars (ERC721)" address={contracts.ISaverAvatars} />
+        <AddressInfo title="Powers (ERC1155)" address={contracts.ISaverPowers} />
+        <AddressInfo title="Sell avatars & powers" address={contracts.AvatarsSell} />
 
         <Text textStyle="textMedium" mt="20px" mb="8px" fontSize="18px">
           Accounts (Pools)
         </Text>
-        <AddressInfo title="Staking Pool" address={accounts.stakingPool} />
-        <AddressInfo title="Referral Reward Pool" address={accounts.referralRewardPool} />
-        <AddressInfo title="Exchange (SAV) Pool" address={accounts.vendorPool} />
-        <AddressInfo title="Exchange (USDT) Pool" address={accounts.vendorChangePool} />
         <AddressInfo title="Vesting Pool" address={accounts.vestingPool} />
       </Flex>
     </AdminSection>
