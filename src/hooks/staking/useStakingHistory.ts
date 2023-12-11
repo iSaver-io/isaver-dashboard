@@ -202,31 +202,22 @@ export const useStakingTvlAndTotalClaimed = () => {
   // Fetch only for disconnected
   const { stakesDataRequest, claimsDataRequest } = useStakingHistory(!isConnected);
 
-  const savTvlData = useMemo(
-    () => stakesDataRequest.data?.filter((stake) => !stake.isToken2),
-    [stakesDataRequest.data]
-  );
-  const savClaimsData = useMemo(
-    () => claimsDataRequest.data?.filter((claim) => !claim.isToken2),
-    [claimsDataRequest.data]
-  );
-
   const stakingClaimsHistory = useMemo<TotalClaimedHistory[]>(
     () =>
-      aggregateHistoryByDay(savClaimsData || []).map(({ aggregatedAmount, ...data }) => ({
+      aggregateHistoryByDay(claimsDataRequest.data || []).map(({ aggregatedAmount, ...data }) => ({
         ...data,
         totalClaimed: aggregatedAmount,
       })),
-    [savClaimsData]
+    [claimsDataRequest.data]
   );
 
   const stakesHistory = useMemo<TvlHistory[]>(
     () =>
-      aggregateHistoryByDay(savTvlData || []).map(({ aggregatedAmount, ...data }) => ({
+      aggregateHistoryByDay(stakesDataRequest.data || []).map(({ aggregatedAmount, ...data }) => ({
         ...data,
         tvl: aggregatedAmount,
       })),
-    [savTvlData]
+    [stakesDataRequest.data]
   );
 
   const aggregatedTvlAndClaimedData = useMemo(
