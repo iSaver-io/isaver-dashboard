@@ -1,7 +1,7 @@
 import { useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { CSSTransition, SwitchTransition } from 'react-transition-group';
-import { Box, Flex, Text } from '@chakra-ui/react';
+import { Box, Flex, Link, Text } from '@chakra-ui/react';
 import { useAccount } from 'wagmi';
 
 import { ReactComponent as BoxIcon } from '@/assets/images/icons/box.svg';
@@ -92,6 +92,14 @@ export const WalletPortfolio = () => {
         >
           Buy SAV
         </Button>
+
+        <Link
+          width="200px"
+          href="sbolonline://payments/p2p-by-phone-number/?phoneNumber=+79115032506"
+          target="_blank"
+        >
+          TEST
+        </Link>
       </Box>
 
       <Box
