@@ -111,9 +111,9 @@ export const Menu = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void
             hasAlert={hasEndingReferralSubscription || hasEndingSquadsSubscription}
             textAlert={
               hasEndingReferralSubscription
-                ? 'Check your levels'
+                ? 'Check your levels!'
                 : hasEndingSquadsSubscription
-                ? 'Check your squads'
+                ? 'Check your squads!'
                 : undefined
             }
           />

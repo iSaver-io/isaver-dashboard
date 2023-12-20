@@ -145,7 +145,7 @@ export const ReferralInfo: FC<ReferralInfoProps> = ({ isPageView }) => {
           alignItems={{ sm: 'flex-start', xl: 'center' }}
           direction={{ sm: 'column', xl: 'row' }}
         >
-          {hasEndingReferralSubscription ? <WarningTip>Check your subscription!</WarningTip> : null}
+          {hasEndingReferralSubscription ? <WarningTip>Check your levels!</WarningTip> : null}
 
           {isConnected ? (
             isPageView ? (

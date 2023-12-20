@@ -88,7 +88,7 @@ export const ReferralSubscriptionModal: FC<ReferralSubscriptionModalProps> = ({
       <ModalOverlay />
       <ModalContent position="relative">
         <ModalHeader textStyle="textSansBold">
-          <Text textStyle="textSansBold" fontSize="26px">
+          <Text textStyle="textSansBold" fontSize={{ md: '26px' }}>
             Activation Build A Team
           </Text>
           <CloseButton onClick={onClose} size="lg" />
@@ -171,22 +171,22 @@ const SubscriptionLevel: FC<SubscriptionLevelProps> = ({
         ) : null}
       </Flex>
 
-      <Flex>
+      <Flex alignItems="center">
         <Flex
+          flexDirection="column"
           bgColor="bgGreen.800"
-          p="13px 20px"
+          p={{ sm: '13px 16px', md: '13px 20px' }}
           borderRadius="sm"
-          mr={isActive ? '0px' : '10px'}
+          mr={isActive && !isEnding ? '0px' : '10px'}
           flexGrow="1"
-          alignItems="center"
           justifyContent="space-between"
         >
-          <Text textStyle="textSansBold" textOverflow="ellipsis">
+          <Text textStyle={{ sm: 'textSansSmall', md: 'textSansBold' }} textOverflow="ellipsis">
             {getReadableAmount(price, { precision: 0 })} SAV / {getReadableDuration(duration)}
           </Text>
           {isActive ? (
             <>
-              <Divider orientation="vertical" ml="auto" mr="15px" />
+              <Divider orientation="horizontal" ml="auto" mr="15px" my="10px" borderColor="gray" />
               <Text textStyle="textSansSmall">
                 {isEnding ? '' : 'to '}
                 {getLocalDateString(subscriptionTill)}
@@ -204,6 +204,7 @@ const SubscriptionLevel: FC<SubscriptionLevelProps> = ({
             variant="outlinedWhite"
             onClick={onSubscribe}
             isLoading={isLoading}
+            size={{ sm: 'md', md: 'lg' }}
             isDisabled={disabled || isLoading}
           >
             Prolong
