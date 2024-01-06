@@ -10,6 +10,7 @@ import { RafflePage } from './components/Raffle/RafflePage';
 import { StakingPage } from './components/Staking/StakingPage';
 import { TeamsPage } from './components/Teams/TeamsPage';
 
+const AvatarSettings = React.lazy(() => import('@/components/AvatarSettings/AvatarSettings'));
 const Landing = React.lazy(() => import('@/components/Landing/Landing'));
 const AvatarLanding = React.lazy(() => import('@/components/AvatarLanding/AvatarLanding'));
 
@@ -44,6 +45,12 @@ const appRoutes = [
   { path: '/vesting', name: 'Vesting', element: <MyVesting />, nodeRef: createRef() },
   { path: '/raffles/:id', name: 'Raffle', element: <RafflePage />, nodeRef: createRef() },
   { path: '/admin-panel', name: 'Admin panel', element: <AdminPanel />, nodeRef: createRef() },
+  {
+    path: '/avatar-settings',
+    name: 'Avatar settings',
+    element: <AvatarSettings />,
+    nodeRef: createRef(),
+  },
 ];
 
 export const routes = isLanding

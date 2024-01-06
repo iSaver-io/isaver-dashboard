@@ -2,4 +2,5 @@
 /* tslint:disable */
 /* eslint-disable */
 export { ERC20BurnableMock__factory } from "./ERC20BurnableMock__factory";
+export { ERC721Mock__factory } from "./ERC721Mock__factory";
 export { VRFCoordinatorMock__factory } from "./VRFCoordinatorMock__factory";

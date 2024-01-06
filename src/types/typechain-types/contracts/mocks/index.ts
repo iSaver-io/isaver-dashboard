@@ -2,4 +2,5 @@
 /* tslint:disable */
 /* eslint-disable */
 export type { ERC20BurnableMock } from "./ERC20BurnableMock";
+export type { ERC721Mock } from "./ERC721Mock";
 export type { VRFCoordinatorMock } from "./VRFCoordinatorMock";

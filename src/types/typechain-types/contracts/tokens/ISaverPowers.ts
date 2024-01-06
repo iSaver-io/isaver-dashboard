@@ -42,6 +42,7 @@ export interface ISaverPowersInterface extends utils.Interface {
     "hasRole(bytes32,address)": FunctionFragment;
     "initialize()": FunctionFragment;
     "isApprovedForAll(address,address)": FunctionFragment;
+    "isValidToken(uint256)": FunctionFragment;
     "mint(address,uint256,uint256,bytes)": FunctionFragment;
     "mintBatch(address,uint256[],uint256[],bytes)": FunctionFragment;
     "proxiableUUID()": FunctionFragment;
@@ -80,6 +81,7 @@ export interface ISaverPowersInterface extends utils.Interface {
       | "hasRole"
       | "initialize"
       | "isApprovedForAll"
+      | "isValidToken"
       | "mint"
       | "mintBatch"
       | "proxiableUUID"
@@ -154,6 +156,10 @@ export interface ISaverPowersInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "isApprovedForAll",
     values: [string, string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "isValidToken",
+    values: [BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "mint",
@@ -266,6 +272,10 @@ export interface ISaverPowersInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "initialize", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "isApprovedForAll",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "isValidToken",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "mint", data: BytesLike): Result;
@@ -564,6 +574,11 @@ export interface ISaverPowers extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
+    isValidToken(
+      tokenId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
+
     mint(
       to: string,
       tokenId: BigNumberish,
@@ -754,6 +769,11 @@ export interface ISaverPowers extends BaseContract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
+  isValidToken(
+    tokenId: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
   mint(
     to: string,
     tokenId: BigNumberish,
@@ -936,6 +956,11 @@ export interface ISaverPowers extends BaseContract {
     isApprovedForAll(
       account: string,
       operator: string,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
+    isValidToken(
+      tokenId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
@@ -1230,6 +1255,11 @@ export interface ISaverPowers extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    isValidToken(
+      tokenId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     mint(
       to: string,
       tokenId: BigNumberish,
@@ -1415,6 +1445,11 @@ export interface ISaverPowers extends BaseContract {
     isApprovedForAll(
       account: string,
       operator: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    isValidToken(
+      tokenId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
