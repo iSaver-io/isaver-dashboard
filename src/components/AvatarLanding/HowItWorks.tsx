@@ -1,5 +1,4 @@
-import { Link } from 'react-router-dom';
-import { Button, Flex, Grid, Text } from '@chakra-ui/react';
+import { Flex, Grid, Text } from '@chakra-ui/react';
 
 export const HowItWorks = () => {
   return (

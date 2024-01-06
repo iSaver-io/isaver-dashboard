@@ -3,7 +3,7 @@ import { useMutation, useQueries, useQuery, useQueryClient } from '@tanstack/rea
 import { BigNumber, BigNumberish, ethers } from 'ethers';
 import { useAccount } from 'wagmi';
 
-import { bigNumberToNumber, bigNumberToString } from '@/utils/number';
+import { bigNumberToNumber } from '@/utils/number';
 
 import { useAvatarsSellContract } from './contracts/useAvatarsSellContract';
 import { useConnectWallet } from './useConnectWallet';
