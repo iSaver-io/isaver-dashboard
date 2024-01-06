@@ -81,25 +81,25 @@ export const AdminPanel = () => {
   const isAnyAdmin = useMemo(() => adminContracts.some(({ data }) => data), [adminContracts]);
   const { isAuthorized, signIn, signOut } = useDashboardConfigControl();
 
-  // useEffect(() => {
-  //   if (isConnected && isAuthLoaded && !isAnyAdmin) {
-  //     navigate('/');
-  //   }
-  // }, [isConnected, isAuthLoaded, isAnyAdmin, navigate]);
+  useEffect(() => {
+    if (isConnected && isAuthLoaded && !isAnyAdmin) {
+      navigate('/');
+    }
+  }, [isConnected, isAuthLoaded, isAnyAdmin, navigate]);
 
-  // if (!isAuthLoaded) {
-  //   return (
-  //     <Box height="95vh" position="relative">
-  //       {isConnected ? (
-  //         <CenteredSpinner />
-  //       ) : (
-  //         <Center height="100%">
-  //           <ConnectWalletButton />
-  //         </Center>
-  //       )}
-  //     </Box>
-  //   );
-  // }
+  if (!isAuthLoaded) {
+    return (
+      <Box height="95vh" position="relative">
+        {isConnected ? (
+          <CenteredSpinner />
+        ) : (
+          <Center height="100%">
+            <ConnectWalletButton />
+          </Center>
+        )}
+      </Box>
+    );
+  }
 
   return (
     <Container variant="dashboard" padding="40px 0 80px" minWidth="container.xl">
