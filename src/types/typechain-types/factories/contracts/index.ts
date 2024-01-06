@@ -5,6 +5,7 @@ export * as extensions from "./extensions";
 export * as interfaces from "./interfaces";
 export * as mocks from "./mocks";
 export * as tokens from "./tokens";
+export { AvatarSettings__factory } from "./AvatarSettings__factory";
 export { AvatarsSell__factory } from "./AvatarsSell__factory";
 export { ContractManager__factory } from "./ContractManager__factory";
 export { Helper__factory } from "./Helper__factory";

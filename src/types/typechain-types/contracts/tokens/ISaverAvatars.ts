@@ -491,6 +491,7 @@ export interface ISaverAvatarsInterface extends utils.Interface {
     "AdminChanged(address,address)": EventFragment;
     "Approval(address,address,uint256)": EventFragment;
     "ApprovalForAll(address,address,bool)": EventFragment;
+    "AttributeChanged(address,uint256,string,string)": EventFragment;
     "BatchMetadataUpdate(uint256,uint256)": EventFragment;
     "BeaconUpgraded(address)": EventFragment;
     "Initialized(uint8)": EventFragment;
@@ -505,6 +506,7 @@ export interface ISaverAvatarsInterface extends utils.Interface {
   getEvent(nameOrSignatureOrTopic: "AdminChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Approval"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ApprovalForAll"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "AttributeChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "BatchMetadataUpdate"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "BeaconUpgraded"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
@@ -550,6 +552,20 @@ export type ApprovalForAllEvent = TypedEvent<
 >;
 
 export type ApprovalForAllEventFilter = TypedEventFilter<ApprovalForAllEvent>;
+
+export interface AttributeChangedEventObject {
+  owner: string;
+  tokenId: BigNumber;
+  attribute: string;
+  value: string;
+}
+export type AttributeChangedEvent = TypedEvent<
+  [string, BigNumber, string, string],
+  AttributeChangedEventObject
+>;
+
+export type AttributeChangedEventFilter =
+  TypedEventFilter<AttributeChangedEvent>;
 
 export interface BatchMetadataUpdateEventObject {
   _fromTokenId: BigNumber;
@@ -1296,6 +1312,19 @@ export interface ISaverAvatars extends BaseContract {
       operator?: string | null,
       approved?: null
     ): ApprovalForAllEventFilter;
+
+    "AttributeChanged(address,uint256,string,string)"(
+      owner?: string | null,
+      tokenId?: BigNumberish | null,
+      attribute?: null,
+      value?: null
+    ): AttributeChangedEventFilter;
+    AttributeChanged(
+      owner?: string | null,
+      tokenId?: BigNumberish | null,
+      attribute?: null,
+      value?: null
+    ): AttributeChangedEventFilter;
 
     "BatchMetadataUpdate(uint256,uint256)"(
       _fromTokenId?: null,
