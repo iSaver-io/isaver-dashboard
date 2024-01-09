@@ -5194,12 +5194,31 @@
           ]
         },
         "Ticket": {
-          "address": "0x98BADc9fDdAF3978AcEfc0539A96F1003a002fe2",
+          "address": "0x0aAA44E21612dB836C65433F21e366d641711eD9",
           "abi": [
             {
               "inputs": [],
               "stateMutability": "nonpayable",
               "type": "constructor"
+            },
+            {
+              "anonymous": false,
+              "inputs": [
+                {
+                  "indexed": false,
+                  "internalType": "address",
+                  "name": "previousAdmin",
+                  "type": "address"
+                },
+                {
+                  "indexed": false,
+                  "internalType": "address",
+                  "name": "newAdmin",
+                  "type": "address"
+                }
+              ],
+              "name": "AdminChanged",
+              "type": "event"
             },
             {
               "anonymous": false,
@@ -5224,6 +5243,32 @@
                 }
               ],
               "name": "ApprovalForAll",
+              "type": "event"
+            },
+            {
+              "anonymous": false,
+              "inputs": [
+                {
+                  "indexed": true,
+                  "internalType": "address",
+                  "name": "beacon",
+                  "type": "address"
+                }
+              ],
+              "name": "BeaconUpgraded",
+              "type": "event"
+            },
+            {
+              "anonymous": false,
+              "inputs": [
+                {
+                  "indexed": false,
+                  "internalType": "uint8",
+                  "name": "version",
+                  "type": "uint8"
+                }
+              ],
+              "name": "Initialized",
               "type": "event"
             },
             {
@@ -5421,6 +5466,19 @@
               "type": "event"
             },
             {
+              "anonymous": false,
+              "inputs": [
+                {
+                  "indexed": true,
+                  "internalType": "address",
+                  "name": "implementation",
+                  "type": "address"
+                }
+              ],
+              "name": "Upgraded",
+              "type": "event"
+            },
+            {
               "inputs": [],
               "name": "DEFAULT_ADMIN_ROLE",
               "outputs": [
@@ -5461,7 +5519,7 @@
             },
             {
               "inputs": [],
-              "name": "URI_SETTER_ROLE",
+              "name": "UPGRADER_ROLE",
               "outputs": [
                 {
                   "internalType": "bytes32",
@@ -5470,19 +5528,6 @@
                 }
               ],
               "stateMutability": "view",
-              "type": "function"
-            },
-            {
-              "inputs": [
-                {
-                  "internalType": "address",
-                  "name": "newRecipient",
-                  "type": "address"
-                }
-              ],
-              "name": "_setRoyalties",
-              "outputs": [],
-              "stateMutability": "nonpayable",
               "type": "function"
             },
             {
@@ -5673,6 +5718,13 @@
               "type": "function"
             },
             {
+              "inputs": [],
+              "name": "initialize",
+              "outputs": [],
+              "stateMutability": "nonpayable",
+              "type": "function"
+            },
+            {
               "inputs": [
                 {
                   "internalType": "address",
@@ -5780,6 +5832,19 @@
                   "internalType": "bool",
                   "name": "",
                   "type": "bool"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
+              "inputs": [],
+              "name": "proxiableUUID",
+              "outputs": [
+                {
+                  "internalType": "bytes32",
+                  "name": "",
+                  "type": "bytes32"
                 }
               ],
               "stateMutability": "view",
@@ -5950,6 +6015,32 @@
             {
               "inputs": [
                 {
+                  "internalType": "string",
+                  "name": "_name",
+                  "type": "string"
+                }
+              ],
+              "name": "setName",
+              "outputs": [],
+              "stateMutability": "nonpayable",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "address",
+                  "name": "newRecipient",
+                  "type": "address"
+                }
+              ],
+              "name": "setRoyaltiesRecipient",
+              "outputs": [],
+              "stateMutability": "nonpayable",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
                   "internalType": "uint256",
                   "name": "percentBasePoints",
                   "type": "uint256"
@@ -5964,7 +6055,25 @@
               "inputs": [
                 {
                   "internalType": "string",
-                  "name": "newuri",
+                  "name": "_symbol",
+                  "type": "string"
+                }
+              ],
+              "name": "setSymbol",
+              "outputs": [],
+              "stateMutability": "nonpayable",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "tokenId_",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "string",
+                  "name": "uri_",
                   "type": "string"
                 }
               ],
@@ -6013,6 +6122,25 @@
                   "type": "uint256"
                 }
               ],
+              "name": "totalMinted",
+              "outputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "",
+                  "type": "uint256"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "id",
+                  "type": "uint256"
+                }
+              ],
               "name": "totalSupply",
               "outputs": [
                 {
@@ -6034,8 +6162,39 @@
             {
               "inputs": [
                 {
+                  "internalType": "address",
+                  "name": "newImplementation",
+                  "type": "address"
+                }
+              ],
+              "name": "upgradeTo",
+              "outputs": [],
+              "stateMutability": "nonpayable",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "address",
+                  "name": "newImplementation",
+                  "type": "address"
+                },
+                {
+                  "internalType": "bytes",
+                  "name": "data",
+                  "type": "bytes"
+                }
+              ],
+              "name": "upgradeToAndCall",
+              "outputs": [],
+              "stateMutability": "payable",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
                   "internalType": "uint256",
-                  "name": "",
+                  "name": "tokenId",
                   "type": "uint256"
                 }
               ],
