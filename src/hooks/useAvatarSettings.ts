@@ -38,11 +38,11 @@ export const useApprovedCollections = () => {
 
 export const GET_USER_POWERS = 'get-user-powers';
 export const useUserPowers = (powerId: number) => {
-  const { getUserPowers } = useAvatarSettingsContract();
+  const { getUserPower } = useAvatarSettingsContract();
   const { address } = useAccount();
 
   const { data: userPowers } = useQuery([GET_USER_POWERS, { powerId, address }], async () =>
-    address ? await getUserPowers(address, powerId) : null
+    address ? await getUserPower(address, powerId) : null
   );
 
   return userPowers || BigNumber.from(0);
@@ -63,11 +63,11 @@ export const usePowerActivationFee = () => {
 
 export const GET_ACTIVE_AVATAR = 'get-active-avatar';
 export const useActiveAvatar = () => {
-  const avatarSettingsContract = useAvatarSettingsContract();
+  const { getActiveAvatar } = useAvatarSettingsContract();
   const { address } = useAccount();
 
   const { data, isLoading } = useQuery([GET_ACTIVE_AVATAR, { address }], async () =>
-    address ? await avatarSettingsContract.getActiveAvatars(address) : null
+    address ? await getActiveAvatar(address) : null
   );
 
   return { activeAvatar: data, isLoading };
@@ -261,7 +261,6 @@ export const useDeactivateAvatar = () => {
     },
     {
       onSuccess: () => {
-        console.log('deactivate');
         queryClient.invalidateQueries({ queryKey: [GET_ACTIVE_AVATAR] });
         queryClient.invalidateQueries({ queryKey: [GET_NFT] });
         queryClient.invalidateQueries({ queryKey: [GET_ALL_EVENTS] });
