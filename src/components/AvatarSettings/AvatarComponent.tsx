@@ -39,7 +39,7 @@ export const AvatarComponent = ({ onOpen }: { onOpen: () => void }) => {
   const handleNameChange = (e: ChangeEvent<HTMLInputElement>) => {
     const newValue = e.target.value;
     setName(newValue);
-    if (newValue) {
+    if (newValue && newValue !== metadata.Name) {
       setIsNameModified(true);
     }
   };
@@ -54,7 +54,7 @@ export const AvatarComponent = ({ onOpen }: { onOpen: () => void }) => {
   const handleTelegramChange = (e: ChangeEvent<HTMLInputElement>) => {
     const newValue = e.target.value;
     setTelegram(newValue);
-    if (newValue) {
+    if (newValue && newValue !== metadata.Telegram) {
       setIsTelegramModified(true);
     }
   };

@@ -102,7 +102,7 @@ export const useAvatarSettingsContract = () => {
     return Array.from(activeCollections) as Address[];
   };
 
-  const getActiveAvatars = async (owner: Address) => {
+  const getActiveAvatar = async (owner: Address) => {
     return await avatarSettings.activeAvatars(owner);
   };
 
@@ -110,7 +110,7 @@ export const useAvatarSettingsContract = () => {
     return await avatarSettings.powerActivationFee();
   };
 
-  const getUserPowers = async (address: Address, powerId: number) => {
+  const getUserPower = async (address: Address, powerId: number) => {
     return await avatarSettings.userPowers(address, powerId);
   };
 
@@ -148,9 +148,9 @@ export const useAvatarSettingsContract = () => {
     avatarSettings,
     address: avatarSettingsAddress,
     getApprovedCollections,
-    getActiveAvatars,
+    getActiveAvatar,
     getPowerActivationFee,
-    getUserPowers,
+    getUserPower,
     activatePowerAccess,
     activateAvatar,
     activatePower,
