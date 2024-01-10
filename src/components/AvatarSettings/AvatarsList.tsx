@@ -1,13 +1,12 @@
-import { useEffect } from 'react';
 import { Box, Button, Flex, Text } from '@chakra-ui/react';
 import { OwnedNft } from 'alchemy-sdk';
 import { Address } from 'wagmi';
 
 import { useActivateAvatar } from '@/hooks/useAvatarSettings';
-import { useNFTsForOwner } from '@/hooks/useNFTHolders';
+import { useAllowedNFTsForOwner } from '@/hooks/useNFTHolders';
 
 export const AvatarsList = ({ onClose }: { onClose: () => void }) => {
-  const { nftsForOwner } = useNFTsForOwner();
+  const { nftsForOwner } = useAllowedNFTsForOwner();
 
   return (
     <Box className="selectionModal_list">

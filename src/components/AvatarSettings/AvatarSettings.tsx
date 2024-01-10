@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Container } from '@chakra-ui/react';
 
 import { useDocumentTitle } from '@/hooks/useMeta';
-import { useNFT } from '@/hooks/useNFTHolders';
+import { useActiveAvatarNFT } from '@/hooks/useNFTHolders';
 
 import { AllTraits } from './AllTraits';
 import { AvatarComponent } from './AvatarComponent';
@@ -13,15 +13,15 @@ import { PowersInfo } from './PowersInfo';
 
 import './AvatarSettings.scss';
 
-const AvatarSettings = () => {
-  const { isNFTCorrect } = useNFT();
+export const AvatarSettings = () => {
+  const { hasAvatar } = useActiveAvatarNFT();
   const [isOpen, setOpen] = useState(false);
   useDocumentTitle('iSaver | Avatar settings');
 
   return (
     <>
       <Container className="avatarSettings" variant="dashboard">
-        <div className={`overlay ${isNFTCorrect ? 'hidden' : ''}`} />
+        {!hasAvatar ? <div className="overlay" /> : null}
         <NavigationPanel />
         <AvatarComponent onOpen={() => setOpen(true)} />
         <AllTraits />
@@ -32,5 +32,3 @@ const AvatarSettings = () => {
     </>
   );
 };
-
-export default AvatarSettings;
