@@ -3,11 +3,11 @@ import { ArrowBackIcon } from '@chakra-ui/icons';
 import { Box, Link, Text } from '@chakra-ui/react';
 
 import { useActiveAvatar } from '@/hooks/useAvatarSettings';
-import { useNFT } from '@/hooks/useNFTHolders';
+import { useActiveAvatarNFT } from '@/hooks/useNFTHolders';
 
 export const NavigationPanel = () => {
   const { activeAvatar } = useActiveAvatar();
-  const { nft } = useNFT();
+  const { avatarNFT } = useActiveAvatarNFT();
 
   return (
     <Box className="navigationPanel">
@@ -27,10 +27,10 @@ export const NavigationPanel = () => {
           <>
             {activeAvatar.isAvatarCollection ? (
               <Text className="navigationPanel_name" textStyle="text2">
-                {nft?.name}
+                {avatarNFT?.name}
               </Text>
             ) : (
-              <Text textStyle="text2">{nft?.name}</Text>
+              <Text textStyle="text2">{avatarNFT?.name}</Text>
             )}
           </>
         ) : null}

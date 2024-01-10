@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { BigNumber, BigNumberish } from 'ethers';
+import { BigNumber, BigNumberish, ethers } from 'ethers';
 import {
   Address,
   erc721ABI,
@@ -70,32 +70,40 @@ export const useActiveAvatar = () => {
     address ? await getActiveAvatar(address) : null
   );
 
-  return { activeAvatar: data, isLoading };
+  return {
+    activeAvatar: data,
+    isLoading,
+    hasAvatar: data?.['0'] !== ethers.constants.AddressZero,
+  };
 };
 
 export const GET_AVATAR_METADATA = 'get-avatar-metadata';
 export const useAvatarMetadata = () => {
   const { data: signer } = useSigner();
   const provider = useProvider();
-  const { activeAvatar } = useActiveAvatar();
+  const { activeAvatar, hasAvatar } = useActiveAvatar();
   const { address } = useAccount();
 
-  const { data, isLoading } = useQuery([GET_AVATAR_METADATA, { address }], async () => {
-    if (!activeAvatar) {
-      return;
-    }
+  const { data, isLoading } = useQuery(
+    [GET_AVATAR_METADATA, activeAvatar, { address }],
+    async () => {
+      if (!activeAvatar) {
+        return;
+      }
 
-    const collectionContract = await getContract({
-      address: activeAvatar.collection,
-      abi: erc721ABI,
-      signerOrProvider: signer || provider,
-    });
+      const collectionContract = await getContract({
+        address: activeAvatar.collection,
+        abi: erc721ABI,
+        signerOrProvider: signer || provider,
+      });
 
-    const encodedString = await collectionContract.tokenURI(activeAvatar.tokenId);
-    const base64String = encodedString.split('base64,')[1];
+      const encodedString = await collectionContract.tokenURI(activeAvatar.tokenId);
+      const base64String = encodedString.split('base64,')[1];
 
-    return JSON.parse(atob(base64String));
-  });
+      return JSON.parse(atob(base64String));
+    },
+    { enabled: hasAvatar }
+  );
 
   const metadata = useMemo(() => {
     const result: Record<string, string> = {};

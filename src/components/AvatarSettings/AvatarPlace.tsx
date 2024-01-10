@@ -4,7 +4,7 @@ import { Box, Link, Text } from '@chakra-ui/react';
 
 import { Button } from '@/components/ui/Button/Button';
 import { useDeactivateAvatar } from '@/hooks/useAvatarSettings';
-import { useNFT } from '@/hooks/useNFTHolders';
+import { useActiveAvatarNFT } from '@/hooks/useNFTHolders';
 
 import { CenteredSpinner } from '../ui/CenteredSpinner/CenteredSpinner';
 
@@ -15,10 +15,15 @@ type AvatarPlaceProps = {
 };
 
 export const AvatarPlace = ({ onOpen }: AvatarPlaceProps) => {
-  const { nft, isNFTCorrect, isLoading: isNFTMetadataLoading } = useNFT();
+  const {
+    avatarNFT,
+    hasAvatar,
+    isLoading: isNFTMetadataLoading,
+    isFetching: isNFTMetadataFetching,
+  } = useActiveAvatarNFT();
   const { mutateAsync, isLoading: isDeactivateLoading, isSuccess } = useDeactivateAvatar();
 
-  if (!isSuccess && isNFTMetadataLoading) {
+  if (!isSuccess && isNFTMetadataLoading && isNFTMetadataFetching) {
     return (
       <Box className="avatarPlace">
         <CenteredSpinner />
@@ -28,7 +33,7 @@ export const AvatarPlace = ({ onOpen }: AvatarPlaceProps) => {
 
   return (
     <Box className="avatarPlace">
-      {!isNFTCorrect ? (
+      {!hasAvatar ? (
         <>
           <Text textStyle="h3" textTransform="uppercase">
             Place your Avatar
@@ -46,7 +51,11 @@ export const AvatarPlace = ({ onOpen }: AvatarPlaceProps) => {
       ) : (
         <>
           <Box>
-            <img className="avatarPlace_image" src={nft?.image.originalUrl} alt={nft?.name} />
+            <img
+              className="avatarPlace_image"
+              src={avatarNFT?.image.originalUrl}
+              alt={avatarNFT?.name}
+            />
             <button className="avatarPlace_trash" onClick={() => mutateAsync()}>
               <img src={TrashIcon} alt="trash" />
             </button>

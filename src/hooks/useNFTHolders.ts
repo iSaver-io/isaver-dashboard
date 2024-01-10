@@ -10,13 +10,13 @@ import { ContractsEnum, useContractAbi } from './contracts/useContractAbi';
 import { useActiveAvatar, useApprovedCollections } from './useAvatarSettings';
 
 const NFT_HOLDERS_REQUEST = 'get-token-holders';
-
 export const useNFTHolder = (tokenAddress: string) => {
-  alchemy.nft.getOwnersForContract(tokenAddress);
-
   const nftHoldersRequest = useQuery(
     [NFT_HOLDERS_REQUEST, tokenAddress],
-    async () => await alchemy.nft.getOwnersForContract(tokenAddress)
+    async () => await alchemy.nft.getOwnersForContract(tokenAddress),
+    {
+      enabled: Boolean(tokenAddress) && tokenAddress !== ethers.constants.AddressZero,
+    }
   );
 
   const nftHolders = useMemo(() => {
@@ -37,7 +37,7 @@ export const useAddressHasNFT = (tokenAddress: string, address?: string) => {
 };
 
 const GET_NFTS_FOR_OWNERS = 'get-nfts-for-owners';
-export const useNFTsForOwner = () => {
+export const useAllowedNFTsForOwner = () => {
   const { address, isConnected } = useAccount();
   const approvedCollections = useApprovedCollections();
 
@@ -67,11 +67,11 @@ export const useNFTsForOwner = () => {
 };
 
 export const GET_NFT = 'get-nft';
-export const useNFT = () => {
+export const useActiveAvatarNFT = () => {
   const { address } = useAccount();
-  const { activeAvatar } = useActiveAvatar();
+  const { activeAvatar, hasAvatar } = useActiveAvatar();
 
-  const { data, isLoading } = useQuery(
+  const { data, isLoading, isFetching } = useQuery(
     [GET_NFT, address, activeAvatar?.tokenId],
     async () =>
       activeAvatar
@@ -83,15 +83,15 @@ export const useNFT = () => {
     {
       cacheTime: 0,
       staleTime: 0,
+      enabled: hasAvatar,
     }
   );
 
-  const isNFTCorrect = !!data && data.contract.address !== ethers.constants.AddressZero;
-
   return {
-    nft: data,
+    avatarNFT: data,
     isLoading,
-    isNFTCorrect,
+    isFetching,
+    hasAvatar,
     activeAvatar,
   };
 };

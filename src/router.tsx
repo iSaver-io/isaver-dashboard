@@ -2,6 +2,7 @@ import React, { createRef } from 'react';
 import { createBrowserRouter, Navigate, useRouteError } from 'react-router-dom';
 
 import { AdminPanel } from './components/AdminPanel/AdminPanel';
+import { AvatarSettings } from './components/AvatarSettings/AvatarSettings';
 import { Dashboard } from './components/Dashboard/Dashboard';
 import { ExchangePage } from './components/Exchange/ExchangePage';
 import { Layout } from './components/Layout/Layout';
@@ -10,7 +11,6 @@ import { RafflePage } from './components/Raffle/RafflePage';
 import { StakingPage } from './components/Staking/StakingPage';
 import { TeamsPage } from './components/Teams/TeamsPage';
 
-const AvatarSettings = React.lazy(() => import('@/components/AvatarSettings/AvatarSettings'));
 const Landing = React.lazy(() => import('@/components/Landing/Landing'));
 const AvatarLanding = React.lazy(() => import('@/components/AvatarLanding/AvatarLanding'));
 

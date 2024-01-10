@@ -9,7 +9,7 @@ import {
   Text,
 } from '@chakra-ui/react';
 
-import { useNFTsForOwner } from '@/hooks/useNFTHolders';
+import { useAllowedNFTsForOwner } from '@/hooks/useNFTHolders';
 
 import { CenteredSpinner } from '../ui/CenteredSpinner/CenteredSpinner';
 
@@ -21,7 +21,7 @@ type AvatarSelectionModalProps = {
 };
 
 export const AvatarSelectionModal = ({ onClose, isOpen }: AvatarSelectionModalProps) => {
-  const { isLoading } = useNFTsForOwner();
+  const { isLoading } = useAllowedNFTsForOwner();
 
   return (
     <Modal isCentered isOpen={isOpen} onClose={onClose}>

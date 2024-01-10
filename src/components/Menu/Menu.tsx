@@ -29,11 +29,11 @@ import { useStakingPlansUserInfo } from '@/hooks/staking/useStaking';
 import { useTeams } from '@/hooks/teams/useTeams';
 import { useLogger } from '@/hooks/useLogger';
 import { useNavigateByHash } from '@/hooks/useNavigateByHash';
-import { useNFT } from '@/hooks/useNFTHolders';
+import { useActiveAvatarNFT } from '@/hooks/useNFTHolders';
 import { APP_URL, isDashboard, WHITEPAPER_URL } from '@/router';
 
 export const Menu = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) => {
-  const { nft, isNFTCorrect } = useNFT();
+  const { avatarNFT, hasAvatar } = useActiveAvatarNFT();
   const { hasEndingSubscription } = useStakingPlansUserInfo();
   const { hasEndingReferralSubscription } = useUserReferralInfo();
   const { hasEndingTeamsSubscription } = useTeams();
@@ -92,13 +92,13 @@ export const Menu = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void
             onClick={() => handleNavigateWithLogger('/avatar-settings')}
             _hover={{ color: 'green.400' }}
           >
-            {isNFTCorrect ? (
+            {hasAvatar ? (
               <>
                 <Image
                   borderRadius="6"
                   w="58"
                   h="58"
-                  src={nft?.image?.thumbnailUrl || nft?.image?.originalUrl}
+                  src={avatarNFT?.image?.thumbnailUrl || avatarNFT?.image?.originalUrl}
                 />
                 <Text as="span" position="relative" textStyle="menuDefault">
                   Avatar settings

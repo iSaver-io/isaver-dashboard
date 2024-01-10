@@ -6,7 +6,7 @@ import { SortableTh } from '@/components/ui/Table/SortableTh';
 import { Table } from '@/components/ui/Table/Table';
 import { useAllEvents } from '@/hooks/useAvatarSettings';
 import { SortType, useDataSorting } from '@/hooks/useDataSorting';
-import { useNFT } from '@/hooks/useNFTHolders';
+import { useActiveAvatarNFT } from '@/hooks/useNFTHolders';
 import { getLocalDateTimeString } from '@/utils/time';
 
 import { CenteredSpinner } from '../ui/CenteredSpinner/CenteredSpinner';
@@ -15,7 +15,7 @@ import { ExportButton } from '../ui/ExportButton/ExportButton';
 const COLLAPSED_LIMIT = 6;
 
 export const HistoryTable = () => {
-  const { isNFTCorrect } = useNFT();
+  const { hasAvatar } = useActiveAvatarNFT();
   const { events, isLoading } = useAllEvents();
   const { isOpen, onToggle } = useDisclosure();
 
@@ -43,7 +43,7 @@ export const HistoryTable = () => {
     onToggle();
   }, [onToggle]);
 
-  return isNFTCorrect ? (
+  return hasAvatar ? (
     <Box className="history">
       <Box textAlign="center">
         <Text textStyle="h2" as="h2" textTransform="uppercase">

@@ -2,13 +2,8 @@ import { ChangeEvent, useEffect, useState } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import { Box, Flex, Input, Link, Text } from '@chakra-ui/react';
 
-import {
-  useActiveAvatar,
-  useAvatarMetadata,
-  useTokenName,
-  useTokenTelegram,
-} from '@/hooks/useAvatarSettings';
-import { useNFT } from '@/hooks/useNFTHolders';
+import { useAvatarMetadata, useTokenName, useTokenTelegram } from '@/hooks/useAvatarSettings';
+import { useActiveAvatarNFT } from '@/hooks/useNFTHolders';
 
 import CheckIcon from './images/check.svg';
 import GiftIcon from './images/gift.svg';
@@ -16,8 +11,7 @@ import PenIcon from './images/pen.svg';
 import { AvatarPlace } from './AvatarPlace';
 
 export const AvatarComponent = ({ onOpen }: { onOpen: () => void }) => {
-  const { nft } = useNFT();
-  const { activeAvatar } = useActiveAvatar();
+  const { avatarNFT, hasAvatar, activeAvatar } = useActiveAvatarNFT();
   const { metadata } = useAvatarMetadata();
   const [name, setName] = useState('');
   const [telegram, setTelegram] = useState('');
@@ -45,8 +39,8 @@ export const AvatarComponent = ({ onOpen }: { onOpen: () => void }) => {
   };
 
   const handleNameSave = async () => {
-    if (nft && isNameModified) {
-      await setTokenName({ tokenId: nft.tokenId, name });
+    if (avatarNFT && isNameModified) {
+      await setTokenName({ tokenId: avatarNFT.tokenId, name });
       setIsNameModified(false);
     }
   };
@@ -60,8 +54,8 @@ export const AvatarComponent = ({ onOpen }: { onOpen: () => void }) => {
   };
 
   const handleTelegramSave = async () => {
-    if (nft && isTelegramModified) {
-      await setTokenTelegram({ tokenId: nft.tokenId, telegram });
+    if (avatarNFT && isTelegramModified) {
+      await setTokenTelegram({ tokenId: avatarNFT.tokenId, telegram });
       setIsTelegramModified(false);
     }
   };
@@ -70,7 +64,7 @@ export const AvatarComponent = ({ onOpen }: { onOpen: () => void }) => {
     <Flex className="avatarComponent">
       <AvatarPlace onOpen={onOpen} />
       <Box className="traitsMain">
-        {activeAvatar?.isAvatarCollection ? (
+        {activeAvatar?.isAvatarCollection || !hasAvatar ? (
           <>
             <TraitItem
               label="Birthday"
