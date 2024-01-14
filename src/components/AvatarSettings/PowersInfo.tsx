@@ -38,11 +38,11 @@ const POWERS = [
 ];
 
 export const PowersInfo = () => {
-  const { activeAvatar } = useActiveAvatar();
+  const { activeAvatar, hasAvatar } = useActiveAvatar();
   const powerActivationFee = usePowerActivationFee();
   const { mutateAsync, isLoading } = useActivatePowerAccess();
 
-  const isPowersAllowed = activeAvatar?.isAvatarCollection || activeAvatar?.isPowersAllowed;
+  const isPowersAllowed = hasAvatar && activeAvatar?.isPowersAllowed;
 
   return (
     <Box className="powersInfo">
@@ -50,7 +50,7 @@ export const PowersInfo = () => {
         <Text textStyle="h2" as="h2" textTransform="uppercase">
           Powers info
         </Text>
-        {isPowersAllowed ? (
+        {isPowersAllowed || !hasAvatar ? (
           <Text textStyle="text2" mt="15px">
             All about Powers is{' '}
             <Link as={RouterLink} to="/" color="savr">

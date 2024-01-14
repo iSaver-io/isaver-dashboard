@@ -209,7 +209,7 @@
 .powersInfo {
   width: 100%;
   margin: 0 auto;
-  padding: 50px 0;
+  padding: 50px 0 100px;
 
   &_powers {
     margin-top: 50px;
@@ -264,13 +264,15 @@
 }
 
 .history {
-  padding: 50px 0 100px;
+  padding: 0 0 100px;
 }
 
 .selectionModal {
   &_body {
-    min-height: 200px;
+    height: 400px;
     position: relative;
+    display: flex;
+    flex-direction: column;
   }
 
   &_list {
@@ -443,7 +445,7 @@
   }
 
   .powersInfo {
-    padding: 36px 0;
+    padding: 36px 0 72px;
 
     &_powers {
       margin-top: 24px;
@@ -458,7 +460,7 @@
   }
 
   .history {
-    padding: 36px 0 72px;
+    padding: 0 0 72px;
   }
 }
 
@@ -484,7 +486,7 @@
   }
 }
 
-@media screen and (min-width: $sm) and (max-width: $md) {
+@media screen and (max-width: $md) {
   .navigationPanel {
     .title {
       margin-left: calc(50% - 140px);
@@ -499,6 +501,10 @@
   .traitsMain,
   .allTraits {
     width: 280px;
+  }
+
+  .powersInfo {
+    padding: 30px 0 60px;
   }
 
   .history {

@@ -1,12 +1,14 @@
 import { Link as RouterLink } from 'react-router-dom';
 import { AddIcon } from '@chakra-ui/icons';
 import { Box, Link, Text } from '@chakra-ui/react';
+import { useAccount } from 'wagmi';
 
 import { Button } from '@/components/ui/Button/Button';
 import { useDeactivateAvatar } from '@/hooks/useAvatarSettings';
 import { useActiveAvatarNFT } from '@/hooks/useNFTHolders';
 
 import { CenteredSpinner } from '../ui/CenteredSpinner/CenteredSpinner';
+import { ConnectWalletButton } from '../ui/ConnectWalletButton/ConnectWalletButton';
 
 import TrashIcon from './images/trash.svg';
 
@@ -22,6 +24,7 @@ export const AvatarPlace = ({ onOpen }: AvatarPlaceProps) => {
     isFetching: isNFTMetadataFetching,
   } = useActiveAvatarNFT();
   const { mutateAsync, isLoading: isDeactivateLoading, isSuccess } = useDeactivateAvatar();
+  const { isConnected } = useAccount();
 
   if (!isSuccess && isNFTMetadataLoading && isNFTMetadataFetching) {
     return (
@@ -35,12 +38,16 @@ export const AvatarPlace = ({ onOpen }: AvatarPlaceProps) => {
     <Box className="avatarPlace">
       {!hasAvatar ? (
         <>
-          <Text textStyle="h3" textTransform="uppercase">
+          <Text mb="20px" textStyle="h3" textTransform="uppercase">
             Place your Avatar
           </Text>
-          <Button mt="20px" rightIcon={<AddIcon />} onClick={onOpen}>
-            add avatar
-          </Button>
+          {isConnected ? (
+            <Button rightIcon={<AddIcon />} onClick={onOpen}>
+              add avatar
+            </Button>
+          ) : (
+            <ConnectWalletButton />
+          )}
           <Text textStyle="text2" mt={{ base: '20px', md: '30px' }}>
             A more detailed is{' '}
             <Link as={RouterLink} to="/" color="savr">
