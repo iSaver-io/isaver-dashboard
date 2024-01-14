@@ -79,7 +79,7 @@ export const PowerCard = ({ id, name, label, description, isPowersAllowed }: Pow
                 onClick={() => activatePower()}
                 isLoading={isLoading}
               >
-                active
+                Activate
               </Button>
             ) : null}
             {isEnding ? (
@@ -90,21 +90,19 @@ export const PowerCard = ({ id, name, label, description, isPowersAllowed }: Pow
                   onClick={() => activatePower()}
                   isLoading={isLoading}
                 >
-                  prolong
+                  Prolong
                 </Button>
                 <Text textStyle="note" mt={{ sm: '10px' }}>
                   Until {getLocalDateString(userPower.toNumber())}
                 </Text>
               </Box>
             ) : null}
-            {balance.toNumber() ? (
-              <Box textAlign="center">
-                <Text textStyle="text2">You have:</Text>
-                <Text textStyle="note" mt={{ sm: '5px' }}>
-                  {balance.toString()} items
-                </Text>
-              </Box>
-            ) : null}
+            <Box textAlign="center">
+              <Text textStyle="text2">You have:</Text>
+              <Text textStyle="note" mt={{ sm: '5px' }}>
+                {balance.toString()} items
+              </Text>
+            </Box>
           </>
         ) : null}
       </Box>

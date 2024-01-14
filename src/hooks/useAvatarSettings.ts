@@ -18,7 +18,7 @@ import { waitForTransaction } from '@/utils/waitForTransaction';
 import { useAvatarSettingsContract } from './contracts/useAvatarSettingsContract';
 import { usePowersContract } from './contracts/usePowersContract';
 import { useConnectWallet } from './useConnectWallet';
-import { GET_NFT } from './useNFTHolders';
+import { GET_NFT, GET_NFTS_FOR_OWNERS } from './useNFTHolders';
 import { useNotification } from './useNotification';
 import { GET_POWER_BALANCE } from './usePowers';
 import { useTokens } from './useTokens';
@@ -91,8 +91,10 @@ export const useAvatarMetadata = () => {
         return;
       }
 
+      const collectionAddress = activeAvatar.collection || activeAvatar[0];
+
       const collectionContract = await getContract({
-        address: activeAvatar.collection,
+        address: collectionAddress,
         abi: erc721ABI,
         signerOrProvider: signer || provider,
       });
@@ -272,6 +274,7 @@ export const useDeactivateAvatar = () => {
         queryClient.invalidateQueries({ queryKey: [GET_ACTIVE_AVATAR] });
         queryClient.invalidateQueries({ queryKey: [GET_NFT] });
         queryClient.invalidateQueries({ queryKey: [GET_ALL_EVENTS] });
+        queryClient.invalidateQueries({ queryKey: [GET_NFTS_FOR_OWNERS] });
       },
       onError: (err) => {
         handleError(err);

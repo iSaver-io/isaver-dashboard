@@ -36,7 +36,7 @@ export const useAddressHasNFT = (tokenAddress: string, address?: string) => {
   return { nftHoldersRequest, nftHolders, hasNFT };
 };
 
-const GET_NFTS_FOR_OWNERS = 'get-nfts-for-owners';
+export const GET_NFTS_FOR_OWNERS = 'get-nfts-for-owners';
 export const useAllowedNFTsForOwner = () => {
   const { address, isConnected } = useAccount();
   const approvedCollections = useApprovedCollections();
@@ -79,7 +79,7 @@ export const useActiveAvatarNFT = () => {
   const { data, isLoading, isFetching } = useQuery(
     [GET_NFT, address, activeAvatar?.tokenId],
     async () =>
-      activeAvatar
+      hasAvatar && activeAvatar
         ? await alchemy.nft.getNftMetadata(activeAvatar.collection, activeAvatar.tokenId, {
             tokenType: NftTokenType.ERC721,
             refreshCache: true,
