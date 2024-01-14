@@ -73,7 +73,7 @@ export const useActiveAvatar = () => {
   return {
     activeAvatar: data,
     isLoading,
-    hasAvatar: data?.['0'] !== ethers.constants.AddressZero,
+    hasAvatar: Boolean(data) && data?.['0'] !== ethers.constants.AddressZero,
   };
 };
 

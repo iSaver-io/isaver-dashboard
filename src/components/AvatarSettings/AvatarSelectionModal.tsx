@@ -1,5 +1,6 @@
 import {
   Box,
+  Flex,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -11,6 +12,7 @@ import {
 
 import { useAllowedNFTsForOwner } from '@/hooks/useNFTHolders';
 
+import { Button } from '../ui/Button/Button';
 import { CenteredSpinner } from '../ui/CenteredSpinner/CenteredSpinner';
 
 import { AvatarsList } from './AvatarsList';
@@ -21,7 +23,7 @@ type AvatarSelectionModalProps = {
 };
 
 export const AvatarSelectionModal = ({ onClose, isOpen }: AvatarSelectionModalProps) => {
-  const { isLoading } = useAllowedNFTsForOwner();
+  const { nftsForOwner, refetch, isLoading } = useAllowedNFTsForOwner();
 
   return (
     <Modal isCentered isOpen={isOpen} onClose={onClose}>
@@ -35,8 +37,17 @@ export const AvatarSelectionModal = ({ onClose, isOpen }: AvatarSelectionModalPr
           <Box className="selectionModal_body">
             {isLoading ? (
               <CenteredSpinner background="transparent" />
+            ) : nftsForOwner.length > 0 ? (
+              <AvatarsList onClose={onClose} items={nftsForOwner} />
             ) : (
-              <AvatarsList onClose={onClose} />
+              <Flex grow="1" direction="column" alignItems="center" justifyContent="center">
+                <Text mb="30px" color="gray.400" textStyle="text2">
+                  No available Avatars found.
+                  <br />
+                  Retry again or return later
+                </Text>
+                <Button onClick={() => refetch()}>Reiterate</Button>
+              </Flex>
             )}
           </Box>
         </ModalBody>

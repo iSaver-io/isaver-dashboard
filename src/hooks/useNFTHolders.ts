@@ -45,7 +45,12 @@ export const useAllowedNFTsForOwner = () => {
     contract: ContractsEnum.ISaverAvatars,
   });
 
-  const { data: nftsForOwner, isLoading } = useQuery(
+  const {
+    data: nftsForOwner,
+    isLoading,
+    refetch,
+    isFetching,
+  } = useQuery(
     [GET_NFTS_FOR_OWNERS, address, approvedCollections],
     async () =>
       await alchemy.nft.getNftsForOwner(address!, {
@@ -63,7 +68,7 @@ export const useAllowedNFTsForOwner = () => {
       Number(b.contract.address === avatarAddress) - Number(a.contract.address === avatarAddress)
   );
 
-  return { nftsForOwner: sortedNfts || [], isLoading };
+  return { nftsForOwner: sortedNfts || [], isLoading: isFetching || isLoading, refetch };
 };
 
 export const GET_NFT = 'get-nft';
