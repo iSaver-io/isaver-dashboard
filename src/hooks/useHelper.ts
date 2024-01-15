@@ -63,6 +63,7 @@ export const useHelperUserSquadsFullInfo = (account?: string) => {
           stakingPlan: stakingPlansRequest.data?.[plan.stakingPlanId.toNumber()],
           isSubscriptionEnding:
             squadStatus.subscription.toNumber() > 0 &&
+            squadStatus.subscription.toNumber() - currentTime > 0 &&
             squadStatus.subscription.toNumber() - currentTime <
               SQUADS_SUBSCRIPTION_ENDING_NOTIFICATION,
         })) || []
