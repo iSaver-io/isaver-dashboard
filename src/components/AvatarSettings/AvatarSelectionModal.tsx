@@ -92,7 +92,7 @@ const AvatarItem = ({
   }, [onClick]);
 
   return (
-    <Flex key={name} className="selectionModal_card">
+    <Flex className="selectionModal_card">
       <Flex
         direction={{ sm: 'column-reverse', lg: 'row' }}
         alignItems={{ lg: 'center' }}
@@ -100,7 +100,7 @@ const AvatarItem = ({
       >
         <img src={image.thumbnailUrl || image.originalUrl} alt={name} />
         <Text overflow="hidden" textOverflow="ellipsis" fontSize="14px">
-          {isIsaverCollection ? `iSaver ${name}` : name}
+          {isIsaverCollection ? `iSaver ${name}` : name || 'ERC721'}
         </Text>
       </Flex>
       <Button

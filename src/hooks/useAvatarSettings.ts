@@ -17,6 +17,7 @@ import { bigNumberToString, makeBigNumber } from '@/utils/number';
 import { waitForTransaction } from '@/utils/waitForTransaction';
 
 import { useAvatarSettingsContract } from './contracts/useAvatarSettingsContract';
+import { ContractsEnum, useContractAbi } from './contracts/useContractAbi';
 import { usePowersContract } from './contracts/usePowersContract';
 import { useConnectWallet } from './useConnectWallet';
 import { GET_NFT, useAllowedNFTsForOwner } from './useNFTHolders';
@@ -186,9 +187,10 @@ export const useActivatePower = (powerId: number) => {
       }
 
       const txHash = await activatePower(powerId);
+      const letter = ['A', 'B', 'C', 'D'][powerId];
       success({
         title: 'Success',
-        description: 'You have activated the Power',
+        description: `Power ${letter} has been activated for one year`,
         txHash,
       });
     },
@@ -218,6 +220,10 @@ export const useActivateAvatar = () => {
   const { connect } = useConnectWallet();
   const { success, handleError } = useNotification();
   const queryClient = useQueryClient();
+
+  const { address: avatarAddress } = useContractAbi({
+    contract: ContractsEnum.ISaverAvatars,
+  });
 
   const { mutateAsync, isLoading } = useMutation(
     [ACTIVATE_AVATAR],
@@ -250,9 +256,13 @@ export const useActivateAvatar = () => {
       }
 
       const txHash = await avatarSettingsContract.activateAvatar(collectionAddress, tokenId);
+      const isAvatarCollection = collectionAddress === avatarAddress;
+      const tokenIdString = BigNumber.from(tokenId).add(1).toString().padStart(5, '0');
       success({
         title: 'Success',
-        description: 'You have activated the avatar',
+        description: isAvatarCollection
+          ? `You have activated iSaver Avatar #${tokenIdString}`
+          : 'You have activated Avatar',
         txHash,
       });
     },
@@ -295,7 +305,7 @@ export const useDeactivateAvatar = () => {
       const txHash = await avatarSettingsContract.deactivateAvatar();
       success({
         title: 'Success',
-        description: 'You have successfully deactivated the avatar',
+        description: 'You have deactivated Avatar',
         txHash,
       });
     },
@@ -337,7 +347,7 @@ export const useTokenName = () => {
       const txHash = await avatarSettingsContract.setTokenName(tokenId, name);
       success({
         title: 'Success',
-        description: 'Name successfully set',
+        description: 'Avatar name changed',
         txHash,
       });
     },
@@ -375,7 +385,7 @@ export const useTokenTelegram = () => {
       const txHash = await avatarSettingsContract.setTokenTelegram(tokenId, telegram);
       success({
         title: 'Success',
-        description: 'Telegram successfully set',
+        description: 'Telegram username changed',
         txHash,
       });
     },
@@ -427,7 +437,7 @@ export const useActivatePowerAccess = () => {
       const txHash = await activatePowerAccess();
       success({
         title: 'Success',
-        description: 'Power access has been successfully activated',
+        description: 'You have activated Powers Block',
         txHash,
       });
     },

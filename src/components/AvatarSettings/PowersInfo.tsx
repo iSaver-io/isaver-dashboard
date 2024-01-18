@@ -43,7 +43,7 @@ const POWERS = [
     id: 3,
     name: 'D',
     label: 'Win',
-    description: 'x2 iSaver Raffle Tickets minted in PUZZLES',
+    description: 'x2 iSaver Raffle Tickets minted in&nbsp;PUZZLES',
   },
 ];
 
