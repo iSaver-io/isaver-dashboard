@@ -149,7 +149,7 @@ export const useActiveStakingPlansWithUserInfo = () => {
               (s) => s.data?.[0]?.stakingPlanId === plan.stakingPlanId
             )?.data;
 
-            const { totalReward, totalDeposit } = stakes
+            const { totalReward, totalDeposit, totalAvailableReward } = stakes
               ? stakes.reduce(
                   (acc, stake) => {
                     if (stake.isClaimed) {
@@ -160,14 +160,23 @@ export const useActiveStakingPlansWithUserInfo = () => {
                     }
                     acc.totalReward = acc.totalReward.add(stake.profit);
 
+                    if (stake.timeEnd.toNumber() < Date.now() / 1000) {
+                      acc.totalAvailableReward = stake.profit;
+                    }
+
                     return acc;
                   },
                   {
                     totalReward: BigNumber.from(0),
+                    totalAvailableReward: BigNumber.from(0),
                     totalDeposit: BigNumber.from(0),
                   }
                 )
-              : { totalReward: undefined, totalDeposit: undefined };
+              : {
+                  totalReward: undefined,
+                  totalDeposit: undefined,
+                  totalAvailableReward: undefined,
+                };
 
             const hasReadyStakes = stakes?.some(
               (stake) => stake.timeEnd.toNumber() <= currentTime && !stake.isClaimed
@@ -178,6 +187,7 @@ export const useActiveStakingPlansWithUserInfo = () => {
               ...userPlansInfoRequest.data?.[index],
               isSubscriptionEnding,
               totalReward,
+              totalAvailableReward,
               totalDeposit,
               stakes,
               hasReadyStakes,
@@ -353,7 +363,10 @@ export const useStakingActions = () => {
       );
       success({
         title: 'Success',
-        description: getWithdrawMessage(stakingPlan?.totalDeposit, stakingPlan?.totalReward),
+        description: getWithdrawMessage(
+          stakingPlan?.totalDeposit,
+          stakingPlan?.totalAvailableReward
+        ),
         txHash,
       });
     },
