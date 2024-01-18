@@ -33,7 +33,7 @@ import { useActiveAvatarNFT } from '@/hooks/useNFTHolders';
 import { APP_URL, isDashboard, WHITEPAPER_URL } from '@/router';
 
 export const Menu = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) => {
-  const { avatarNFT, hasAvatar } = useActiveAvatarNFT();
+  const { avatarNFT } = useActiveAvatarNFT();
   const { hasEndingSubscription } = useStakingPlansUserInfo();
   const { hasEndingReferralSubscription } = useUserReferralInfo();
   const { hasEndingTeamsSubscription } = useTeams();
@@ -92,26 +92,19 @@ export const Menu = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void
             onClick={() => handleNavigateWithLogger('/avatar-settings')}
             _hover={{ color: 'green.400' }}
           >
-            {hasAvatar ? (
-              <>
-                <Image
-                  borderRadius="6"
-                  w="58"
-                  h="58"
-                  src={avatarNFT?.image?.thumbnailUrl || avatarNFT?.image?.originalUrl}
-                />
-                <Text as="span" position="relative" textStyle="menuDefault">
-                  Avatar settings
-                </Text>
-              </>
+            {avatarNFT?.image ? (
+              <Image
+                borderRadius="6"
+                w="58"
+                h="58"
+                src={avatarNFT?.image?.thumbnailUrl || avatarNFT?.image?.originalUrl}
+              />
             ) : (
-              <>
-                <ActivateAvatarIcon />
-                <Text as="span" position="relative" textStyle="menuDefault">
-                  Activate Avatar
-                </Text>
-              </>
+              <ActivateAvatarIcon />
             )}
+            <Text as="span" position="relative" textStyle="menuDefault">
+              Avatar settings
+            </Text>
           </Link>
           <IconButton
             variant="secondary"

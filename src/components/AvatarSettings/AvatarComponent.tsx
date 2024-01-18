@@ -1,156 +1,215 @@
-import { ChangeEvent, useEffect, useState } from 'react';
+import { ChangeEvent, FunctionComponent, useCallback, useEffect, useRef, useState } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
-import { Box, Flex, Input, Link, Text } from '@chakra-ui/react';
+import {
+  Box,
+  Flex,
+  IconButton,
+  Input,
+  InputGroup,
+  InputRightElement,
+  Link,
+  Text,
+} from '@chakra-ui/react';
 
 import { useAvatarMetadata, useTokenName, useTokenTelegram } from '@/hooks/useAvatarSettings';
 import { useActiveAvatarNFT } from '@/hooks/useNFTHolders';
 
-import CheckIcon from './images/check.svg';
-import GiftIcon from './images/gift.svg';
-import PenIcon from './images/pen.svg';
+import { Button } from '../ui/Button/Button';
+
+import { ReactComponent as CheckIcon } from './images/check.svg';
+import { ReactComponent as GiftIcon } from './images/gift.svg';
+import { ReactComponent as PenIcon } from './images/pen.svg';
 import { AvatarPlace } from './AvatarPlace';
 
-export const AvatarComponent = ({ onOpen }: { onOpen: () => void }) => {
+export const AvatarComponent = () => {
   const { avatarNFT, hasAvatar, activeAvatar } = useActiveAvatarNFT();
   const { metadata } = useAvatarMetadata();
-  const [name, setName] = useState('');
-  const [telegram, setTelegram] = useState('');
-  const [isNameModified, setIsNameModified] = useState(false);
-  const [isTelegramModified, setIsTelegramModified] = useState(false);
-  const { mutateAsync: setTokenName, isLoading: isNameLoading } = useTokenName();
-  const { mutateAsync: setTokenTelegram, isLoading: isTelegramLoading } = useTokenTelegram();
+  const { mutateAsync: setTokenName } = useTokenName();
+  const { mutateAsync: setTokenTelegram } = useTokenTelegram();
 
-  useEffect(() => {
-    if (metadata.Name) {
-      setName(metadata.Name);
-    }
+  const hasBirthdayGift = false;
 
-    if (metadata.Telegram) {
-      setTelegram(metadata.Telegram);
-    }
-  }, [metadata]);
+  const handleNameSave = useCallback(
+    (name: string) => {
+      if (avatarNFT) {
+        return setTokenName({ tokenId: avatarNFT.tokenId, name });
+      } else return Promise.resolve();
+    },
+    [setTokenName, avatarNFT]
+  );
 
-  const handleNameChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const newValue = e.target.value;
-    setName(newValue);
-    if (newValue && newValue !== metadata.Name) {
-      setIsNameModified(true);
-    }
-  };
+  const handleTelegramSave = useCallback(
+    (telegram: string) => {
+      if (avatarNFT) {
+        return setTokenTelegram({ tokenId: avatarNFT.tokenId, telegram });
+      } else return Promise.resolve();
+    },
+    [setTokenTelegram, avatarNFT]
+  );
 
-  const handleNameSave = async () => {
-    if (avatarNFT && isNameModified) {
-      await setTokenName({ tokenId: avatarNFT.tokenId, name });
-      setIsNameModified(false);
-    }
-  };
-
-  const handleTelegramChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const newValue = e.target.value;
-    setTelegram(newValue);
-    if (newValue && newValue !== metadata.Telegram) {
-      setIsTelegramModified(true);
-    }
-  };
-
-  const handleTelegramSave = async () => {
-    if (avatarNFT && isTelegramModified) {
-      await setTokenTelegram({ tokenId: avatarNFT.tokenId, telegram });
-      setIsTelegramModified(false);
-    }
-  };
+  const validateName = useCallback((value: string) => {
+    const regex = /^[A-Za-z]+$/;
+    return regex.test(value);
+  }, []);
+  const validateTelegram = useCallback((value: string) => {
+    const regex = /^@[A-Za-z0-9_]{5,}$/;
+    return regex.test(value);
+  }, []);
 
   return (
-    <Flex className="avatarComponent">
-      <AvatarPlace onOpen={onOpen} />
-      <Box className="traitsMain">
-        {activeAvatar?.isAvatarCollection || !hasAvatar ? (
-          <>
-            <TraitItem
-              label="Birthday"
-              value={metadata.Birthday}
-              Icon={GiftIcon}
-              isDisabled={true}
-            />
-            <TraitItem
-              label="Name"
-              value={name}
-              onChange={handleNameChange}
-              onSave={handleNameSave}
-              isModified={isNameModified}
-              isDisabled={isNameLoading}
-              Icon={PenIcon}
-            />
-            <TraitItem
-              label="Telegram"
-              value={telegram}
-              onChange={handleTelegramChange}
-              onSave={handleTelegramSave}
-              isModified={isTelegramModified}
-              isDisabled={isTelegramLoading}
-              Icon={PenIcon}
-            />
-          </>
-        ) : (
-          <>
-            <Text textStyle="text2">
-              You have activated the Avatar of someone else's collection. To have all the features,
-              activate iSaver Avatar.
-            </Text>
-            <Text textStyle="text2">
-              A more detailed is{' '}
-              <Link as={RouterLink} to="/" color="savr">
-                here
-              </Link>
-            </Text>
-          </>
-        )}
-      </Box>
-    </Flex>
+    <>
+      <Flex className="avatarComponent">
+        <AvatarPlace />
+        <Box className="traitsMain">
+          {activeAvatar?.isAvatarCollection || !hasAvatar ? (
+            <>
+              <Box className="traitsMain_item">
+                <Text textStyle="textBold" textTransform="uppercase" color="green.400">
+                  Birthday:
+                </Text>
+                <Flex className="traitsMain_item_inputGroup">
+                  <Text textStyle="textBold">{metadata.Birthday}</Text>
+
+                  {hasBirthdayGift ? (
+                    <Flex alignItems="center">
+                      <Button
+                        height="25px"
+                        width="80px"
+                        fontSize="12px"
+                        size="sm"
+                        variant="outlinedWhite"
+                      >
+                        Claim
+                      </Button>
+                      <Box color="green.400" ml="12px">
+                        <GiftIcon />
+                      </Box>
+                    </Flex>
+                  ) : null}
+                </Flex>
+              </Box>
+
+              <TraitItem
+                label="Name"
+                placeholder="Name"
+                defaultValue={metadata.Name}
+                onSave={handleNameSave}
+                validate={validateName}
+                Icon={PenIcon}
+              />
+              <TraitItem
+                label="Telegram"
+                placeholder="@username"
+                defaultValue={metadata.Telegram}
+                onSave={handleTelegramSave}
+                validate={validateTelegram}
+                Icon={PenIcon}
+              />
+            </>
+          ) : (
+            <>
+              <Text textStyle="text2">
+                You have activated the Avatar of someone else's collection. To have all the
+                features, activate iSaver Avatar.
+              </Text>
+              <Text textStyle="text2">
+                A more detailed is{' '}
+                <Link as={RouterLink} to="/" color="savr">
+                  here
+                </Link>
+              </Text>
+            </>
+          )}
+        </Box>
+      </Flex>
+    </>
   );
 };
 
 type TraitItemProps = {
   label: string;
-  value: string;
-  onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
-  onSave?: () => Promise<void>;
-  isModified?: boolean;
-  isDisabled?: boolean;
-  Icon: string;
+  defaultValue: string;
+  placeholder?: string;
+  onSave: (val: string) => Promise<void>;
+  validate: (val: string) => boolean;
+  Icon: FunctionComponent;
 };
 
 const TraitItem = ({
   label,
-  value,
-  onChange,
+  defaultValue,
+  placeholder,
   onSave,
-  isModified,
-  isDisabled,
+  validate,
   Icon,
-}: TraitItemProps) => (
-  <Box className="traitsMain_item">
-    <Text textStyle="textBold" textTransform="uppercase" color="green.400">
-      {label}:
-    </Text>
-    <div className="traitsMain_item_inputGroup">
-      <Input
-        onChange={onChange}
-        variant="transparent"
-        value={value}
-        placeholder={label}
-        disabled={isDisabled}
-        onKeyPress={(e) => {
-          if (e.key === 'Enter' && onSave) {
-            onSave();
-          }
-        }}
-      />
-      {isModified && onSave ? (
-        <img src={CheckIcon} alt="check" onClick={onSave} />
-      ) : (
-        <img src={Icon} alt={label.toLowerCase()} />
-      )}
-    </div>
-  </Box>
-);
+}: TraitItemProps) => {
+  const [value, setValue] = useState(defaultValue);
+  const [isModified, setIsModified] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const handleChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
+    setValue(e.target.value);
+  }, []);
+
+  useEffect(() => {
+    setIsModified(value !== defaultValue && validate(value));
+  }, [defaultValue, value, validate]);
+
+  useEffect(() => {
+    setValue(defaultValue);
+  }, [defaultValue]);
+
+  const handleSave = useCallback(
+    (val: string) => {
+      if (validate(val)) {
+        setIsLoading(true);
+        onSave(val).finally(() => setIsLoading(false));
+      }
+    },
+    [onSave, validate]
+  );
+
+  const handleClick = useCallback(() => {
+    if (isModified) {
+      handleSave(value);
+    } else {
+      inputRef.current?.focus();
+    }
+  }, [isModified, handleSave, value]);
+
+  return (
+    <Box className="traitsMain_item">
+      <Text textStyle="textBold" textTransform="uppercase" color="green.400">
+        {label}:
+      </Text>
+      <Box className="traitsMain_item_inputGroup">
+        <InputGroup>
+          <Input
+            ref={inputRef}
+            onChange={handleChange}
+            variant="transparent"
+            defaultValue={value}
+            placeholder={placeholder}
+            disabled={isLoading}
+            onKeyPress={(e) => {
+              if (e.key === 'Enter') {
+                handleSave(value);
+              }
+            }}
+          />
+          <InputRightElement m="0" p="0" height="24px" width="24px">
+            <IconButton
+              size="sm"
+              variant="iconButton"
+              aria-label="Save changes"
+              icon={isModified ? <CheckIcon /> : <Icon />}
+              isLoading={isLoading}
+              onClick={handleClick}
+            />
+          </InputRightElement>
+        </InputGroup>
+      </Box>
+    </Box>
+  );
+};

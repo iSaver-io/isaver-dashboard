@@ -1,7 +1,9 @@
 import { useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import { Box } from '@chakra-ui/react';
 
 import { useDocumentTitle } from '@/hooks/useMeta';
+import { useScrollToHash } from '@/hooks/useScrollToHash';
 
 import { AvatarsSlider } from './AvatarsSlider';
 import { Banner } from './Banner';
@@ -16,6 +18,8 @@ import './AvatarLanding.scss';
 
 const AvatarLanding = () => {
   useDocumentTitle('iSaver | Avatars');
+  const scroll = useScrollToHash();
+  const { hash } = useLocation();
 
   useEffect(() => {
     const backgroundElement = document.querySelector('.background');
@@ -29,6 +33,12 @@ const AvatarLanding = () => {
       }
     };
   }, []);
+
+  useEffect(() => {
+    if (hash) {
+      scroll(hash.slice(1), 150, 300);
+    }
+  }, [hash, scroll]);
 
   return (
     <Box overflowX="hidden">
