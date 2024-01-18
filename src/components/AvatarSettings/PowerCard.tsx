@@ -52,9 +52,8 @@ export const PowerCard = ({ id, name, label, description, isPowersAllowed }: Pow
           textStyle="note"
           mt={{ sm: '10px', '2xl': '2px' }}
           fontSize={{ sm: '12px', '2xl': '14px' }}
-        >
-          {description}
-        </Text>
+          dangerouslySetInnerHTML={{ __html: description }}
+        ></Text>
       </Box>
       <Box minW={{ sm: '115px', '2xl': '140px' }}>
         {isPowersAllowed ? (

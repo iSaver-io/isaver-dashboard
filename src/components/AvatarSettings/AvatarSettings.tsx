@@ -1,7 +1,7 @@
 import { Container } from '@chakra-ui/react';
 
 import { useAvatarMetadata } from '@/hooks/useAvatarSettings';
-import { useDocumentTitle } from '@/hooks/useMeta';
+import { useDocumentTitle, useMetaDescription } from '@/hooks/useMeta';
 import { useActiveAvatarNFT } from '@/hooks/useNFTHolders';
 
 import { AllTraits } from './AllTraits';
@@ -13,9 +13,13 @@ import { PowersInfo } from './PowersInfo';
 import './AvatarSettings.scss';
 
 export const AvatarSettings = () => {
+  useDocumentTitle('iSaver | Avatar Settings');
+  useMetaDescription(
+    'A page where you can activate your Avatar and manage its Powers to maximize your success on the iSaver platform. Here you can see all the attributes of your Avatar, give it a name and set a username for its Telegram contact.'
+  );
+
   const { hasAvatar, avatarNFT } = useActiveAvatarNFT();
   const { isLoading } = useAvatarMetadata();
-  useDocumentTitle('iSaver | Avatar settings');
 
   const isDataLoading = !hasAvatar || !avatarNFT || isLoading;
 
