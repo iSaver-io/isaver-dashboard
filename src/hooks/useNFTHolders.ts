@@ -36,9 +36,9 @@ export const useAddressHasNFT = (tokenAddress: string, address?: string) => {
   return { nftHoldersRequest, nftHolders, hasNFT };
 };
 
-export const GET_NFTS_FOR_OWNERS = 'get-nfts-for-owners';
+export const GET_ALLOWED_NFTS_FOR_OWNER = 'get-allowed-nfts-for-owner';
 export const useAllowedNFTsForOwner = () => {
-  const { address, isConnected } = useAccount();
+  const { address } = useAccount();
   const approvedCollections = useApprovedCollections();
 
   const { address: avatarAddress } = useContractAbi({
@@ -50,25 +50,27 @@ export const useAllowedNFTsForOwner = () => {
     isLoading,
     refetch,
     isFetching,
-  } = useQuery(
-    [GET_NFTS_FOR_OWNERS, address, approvedCollections],
-    async () =>
-      await alchemy.nft.getNftsForOwner(address!, {
-        contractAddresses:
-          approvedCollections?.length > 0
-            ? [avatarAddress, ...approvedCollections]
-            : [avatarAddress],
-        omitMetadata: false,
-      }),
-    { enabled: isConnected }
-  );
+  } = useQuery([GET_ALLOWED_NFTS_FOR_OWNER, { address }, approvedCollections], async () => {
+    if (!address) return { ownedNfts: [] };
+
+    return await alchemy.nft.getNftsForOwner(address, {
+      contractAddresses:
+        approvedCollections?.length > 0 ? [avatarAddress, ...approvedCollections] : [avatarAddress],
+      omitMetadata: false,
+    });
+  });
 
   const sortedNfts = nftsForOwner?.ownedNfts.sort(
     (a, b) =>
       Number(b.contract.address === avatarAddress) - Number(a.contract.address === avatarAddress)
   );
 
-  return { nftsForOwner: sortedNfts || [], isLoading: isFetching || isLoading, refetch };
+  return {
+    nftsForOwner: sortedNfts || [],
+    isLoading: isFetching || isLoading,
+    refetch,
+    avatarAddress,
+  };
 };
 
 export const GET_NFT = 'get-nft';
@@ -76,15 +78,18 @@ export const useActiveAvatarNFT = () => {
   const { address } = useAccount();
   const { activeAvatar, hasAvatar } = useActiveAvatar();
 
+  const tokenId = activeAvatar?.tokenId;
+
   const { data, isLoading, isFetching } = useQuery(
-    [GET_NFT, address, activeAvatar?.tokenId],
-    async () =>
-      hasAvatar && activeAvatar
-        ? await alchemy.nft.getNftMetadata(activeAvatar.collection, activeAvatar.tokenId, {
-            tokenType: NftTokenType.ERC721,
-            refreshCache: true,
-          })
-        : null,
+    [GET_NFT, address, tokenId],
+    async () => {
+      if (!activeAvatar || tokenId === undefined) return null;
+
+      return await alchemy.nft.getNftMetadata(activeAvatar.collection, tokenId, {
+        tokenType: NftTokenType.ERC721,
+        refreshCache: true,
+      });
+    },
     {
       cacheTime: 0,
       staleTime: 0,

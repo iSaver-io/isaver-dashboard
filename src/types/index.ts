@@ -78,3 +78,9 @@ export type TeamPlan = {
   TeamSize: number;
   stakingPlanId: number;
 };
+
+export type HistoryEvent = {
+  transactionHash: string;
+  label: string;
+  timestamp: number;
+};

@@ -14,6 +14,7 @@ const eventLabels: Record<string, string> = {
   AvatarActivated: 'iSaver Avatar activation',
   PowersAccessActivated: 'Power access activation',
   AvatarDeactivated: 'Avatar deactivation',
+  ISaverAvatarDeactivated: 'iSaver Avatar deactivation',
   NameChanged: 'Name change',
   TelegramChanged: 'Telegram change',
 };
@@ -72,6 +73,9 @@ export const useAvatarSettingsContract = () => {
           label = powerActivationLabels[powerId];
         } else if (event) {
           label = eventLabels[event];
+          if (event === 'AvatarDeactivated' && args?.isAvatarCollection) {
+            label = eventLabels['ISaverAvatarDeactivated'];
+          }
         }
 
         return {

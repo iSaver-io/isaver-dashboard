@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import { ArrowBackIcon } from '@chakra-ui/icons';
 import { Box, Link, Text } from '@chakra-ui/react';
@@ -6,8 +7,19 @@ import { useActiveAvatar } from '@/hooks/useAvatarSettings';
 import { useActiveAvatarNFT } from '@/hooks/useNFTHolders';
 
 export const NavigationPanel = () => {
-  const { activeAvatar } = useActiveAvatar();
+  const { activeAvatar, hasAvatar } = useActiveAvatar();
   const { avatarNFT } = useActiveAvatarNFT();
+
+  const name = useMemo(() => {
+    if (hasAvatar) {
+      if (activeAvatar?.isAvatarCollection) {
+        return avatarNFT?.name?.split(' ')[1];
+      } else {
+        return avatarNFT?.name;
+      }
+    }
+    return 'ERC721';
+  }, [avatarNFT, activeAvatar, hasAvatar]);
 
   return (
     <Box className="navigationPanel">
@@ -23,18 +35,18 @@ export const NavigationPanel = () => {
         Back
       </Link>
       <div className="title">
-        {activeAvatar ? (
+        {hasAvatar && name ? (
           <>
-            {activeAvatar.isAvatarCollection ? (
+            {activeAvatar?.isAvatarCollection ? (
               <Text className="navigationPanel_name" textStyle="text2">
-                {avatarNFT?.name}
+                {name}
               </Text>
             ) : (
-              <Text textStyle="text2">{avatarNFT?.name}</Text>
+              <Text textStyle="text2">{name}</Text>
             )}
           </>
         ) : null}
-        <Text textStyle="h2" as="h2" textTransform="uppercase" mt={{ base: '10px', '2xl': '20px' }}>
+        <Text textStyle="h2" as="h2" textTransform="uppercase" mt="20px">
           Avatar settings
         </Text>
       </div>

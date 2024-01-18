@@ -12,13 +12,14 @@ import {
 } from 'wagmi';
 import { getContract } from 'wagmi/actions';
 
-import { makeBigNumber } from '@/utils/number';
+import { POWER_SUBSCRIPTION_ENDING_NOTIFICATION } from '@/components/AvatarSettings/PowerCard';
+import { bigNumberToString, makeBigNumber } from '@/utils/number';
 import { waitForTransaction } from '@/utils/waitForTransaction';
 
 import { useAvatarSettingsContract } from './contracts/useAvatarSettingsContract';
 import { usePowersContract } from './contracts/usePowersContract';
 import { useConnectWallet } from './useConnectWallet';
-import { GET_NFT, GET_NFTS_FOR_OWNERS } from './useNFTHolders';
+import { GET_NFT, useAllowedNFTsForOwner } from './useNFTHolders';
 import { useNotification } from './useNotification';
 import { GET_POWER_BALANCE } from './usePowers';
 import { useTokens } from './useTokens';
@@ -45,7 +46,12 @@ export const useUserPowers = (powerId: number) => {
     address ? await getUserPower(address, powerId) : null
   );
 
-  return userPowers || BigNumber.from(0);
+  const power = (userPowers || BigNumber.from(0)).toNumber();
+  const currentTime = Date.now() / 1000;
+  const isActive = power > currentTime;
+  const isEnding = isActive && power - currentTime < POWER_SUBSCRIPTION_ENDING_NOTIFICATION;
+
+  return { power, isActive, isEnding };
 };
 
 export const GET_POWER_ACTIVATION_FEE = 'get-power-activation-fee';
@@ -58,7 +64,7 @@ export const usePowerActivationFee = () => {
     async () => await getPowerActivationFee()
   );
 
-  return powerActivationFee;
+  return bigNumberToString(powerActivationFee || BigNumber.from(0));
 };
 
 export const GET_ACTIVE_AVATAR = 'get-active-avatar';
@@ -66,12 +72,24 @@ export const useActiveAvatar = () => {
   const { getActiveAvatar } = useAvatarSettingsContract();
   const { address } = useAccount();
 
-  const { data, isLoading } = useQuery([GET_ACTIVE_AVATAR, { address }], async () =>
-    address ? await getActiveAvatar(address) : null
+  const { data, isLoading } = useQuery(
+    [GET_ACTIVE_AVATAR, { address }],
+    async () => (address ? await getActiveAvatar(address) : null),
+    {
+      cacheTime: 0,
+      staleTime: 0,
+      enabled: Boolean(address),
+    }
   );
 
   return {
-    activeAvatar: data,
+    activeAvatar: {
+      ...data,
+      collection: data?.collection || data?.[0] || ethers.constants.AddressZero,
+      tokenId: data?.tokenId || data?.[1],
+      isAvatarCollection: data?.isAvatarCollection || Boolean(data?.[2]),
+      isPowersAllowed: data?.isPowersAllowed || Boolean(data?.[3]),
+    },
     isLoading,
     hasAvatar: Boolean(data) && data?.['0'] !== ethers.constants.AddressZero,
   };
@@ -87,14 +105,12 @@ export const useAvatarMetadata = () => {
   const { data, isLoading } = useQuery(
     [GET_AVATAR_METADATA, activeAvatar, { address }],
     async () => {
-      if (!activeAvatar) {
+      if (!activeAvatar || !activeAvatar.tokenId) {
         return;
       }
 
-      const collectionAddress = activeAvatar.collection || activeAvatar[0];
-
       const collectionContract = await getContract({
-        address: collectionAddress,
+        address: activeAvatar.collection,
         abi: erc721ABI,
         signerOrProvider: signer || provider,
       });
@@ -104,7 +120,7 @@ export const useAvatarMetadata = () => {
 
       return JSON.parse(atob(base64String));
     },
-    { enabled: hasAvatar }
+    { enabled: hasAvatar, staleTime: 0, cacheTime: 0 }
   );
 
   const metadata = useMemo(() => {
@@ -122,7 +138,7 @@ export const useAvatarMetadata = () => {
     return result;
   }, [data]);
 
-  return { metadata: metadata, isLoading };
+  return { metadata, isLoading };
 };
 
 export const GET_ALL_EVENTS = 'get-all-events';
@@ -130,8 +146,15 @@ export const useAllEvents = () => {
   const { address } = useAccount();
   const { getAllEvents } = useAvatarSettingsContract();
 
-  const { data, isLoading } = useQuery([GET_ALL_EVENTS, { address }], async () =>
-    address ? await getAllEvents(address) : null
+  const { data, isLoading } = useQuery(
+    [GET_ALL_EVENTS, { address }],
+    async () => {
+      console.log('fetch all events');
+      const res = address ? await getAllEvents(address) : null;
+      console.log(res);
+      return res;
+    },
+    { staleTime: 0, cacheTime: 0, refetchInterval: 10_000 }
   );
 
   return { events: data || [], isLoading };
@@ -173,7 +196,9 @@ export const useActivatePower = (powerId: number) => {
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: [GET_USER_POWERS] });
         queryClient.invalidateQueries({ queryKey: [GET_POWER_BALANCE] });
-        queryClient.invalidateQueries({ queryKey: [GET_ALL_EVENTS] });
+        setTimeout(() => {
+          queryClient.invalidateQueries({ queryKey: [GET_ALL_EVENTS] });
+        }, 60_000);
       },
       onError: (err) => {
         handleError(err);
@@ -235,7 +260,11 @@ export const useActivateAvatar = () => {
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: [GET_ACTIVE_AVATAR] });
         queryClient.invalidateQueries({ queryKey: [GET_NFT] });
-        queryClient.invalidateQueries({ queryKey: [GET_ALL_EVENTS] });
+        queryClient.invalidateQueries({ queryKey: [GET_USER_POWERS] });
+
+        setTimeout(() => {
+          queryClient.invalidateQueries({ queryKey: [GET_ALL_EVENTS] });
+        }, 60_000);
       },
       onError: (err) => {
         handleError(err);
@@ -253,6 +282,7 @@ export const useDeactivateAvatar = () => {
   const { connect } = useConnectWallet();
   const { success, handleError } = useNotification();
   const queryClient = useQueryClient();
+  const { refetch: refetchAllowedNfts } = useAllowedNFTsForOwner();
 
   return useMutation(
     [DEACTIVATE_AVATAR],
@@ -273,8 +303,13 @@ export const useDeactivateAvatar = () => {
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: [GET_ACTIVE_AVATAR] });
         queryClient.invalidateQueries({ queryKey: [GET_NFT] });
-        queryClient.invalidateQueries({ queryKey: [GET_ALL_EVENTS] });
-        queryClient.invalidateQueries({ queryKey: [GET_NFTS_FOR_OWNERS] });
+        queryClient.invalidateQueries({ queryKey: [GET_USER_POWERS] });
+
+        refetchAllowedNfts();
+
+        setTimeout(() => {
+          queryClient.invalidateQueries({ queryKey: [GET_ALL_EVENTS] });
+        }, 60_000);
       },
       onError: (err) => {
         handleError(err);
@@ -310,7 +345,9 @@ export const useTokenName = () => {
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: [GET_ACTIVE_AVATAR] });
         queryClient.invalidateQueries({ queryKey: [GET_AVATAR_METADATA] });
-        queryClient.invalidateQueries({ queryKey: [GET_ALL_EVENTS] });
+        setTimeout(() => {
+          queryClient.invalidateQueries({ queryKey: [GET_ALL_EVENTS] });
+        }, 60_000);
       },
       onError: (err) => {
         handleError(err);
@@ -346,7 +383,9 @@ export const useTokenTelegram = () => {
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: [GET_ACTIVE_AVATAR] });
         queryClient.invalidateQueries({ queryKey: [GET_AVATAR_METADATA] });
-        queryClient.invalidateQueries({ queryKey: [GET_ALL_EVENTS] });
+        setTimeout(() => {
+          queryClient.invalidateQueries({ queryKey: [GET_ALL_EVENTS] });
+        }, 60_000);
       },
       onError: (err) => {
         handleError(err);
@@ -395,7 +434,9 @@ export const useActivatePowerAccess = () => {
     {
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: [GET_ACTIVE_AVATAR] });
-        queryClient.invalidateQueries({ queryKey: [GET_ALL_EVENTS] });
+        setTimeout(() => {
+          queryClient.invalidateQueries({ queryKey: [GET_ALL_EVENTS] });
+        }, 60_000);
       },
       onError: (err) => {
         handleError(err);

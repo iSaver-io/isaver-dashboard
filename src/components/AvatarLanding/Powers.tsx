@@ -117,6 +117,7 @@ export const Powers = () => {
       >
         <Box className="powers__description" mb={{ sm: '30px', md: 'unset' }}>
           <Text
+            id="powers"
             mb={{ sm: '15px', md: '20px', lg: '30px' }}
             textStyle="h2"
             as="h2"

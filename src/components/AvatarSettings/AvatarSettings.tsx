@@ -1,12 +1,11 @@
-import { useState } from 'react';
 import { Container } from '@chakra-ui/react';
 
+import { useAvatarMetadata } from '@/hooks/useAvatarSettings';
 import { useDocumentTitle } from '@/hooks/useMeta';
 import { useActiveAvatarNFT } from '@/hooks/useNFTHolders';
 
 import { AllTraits } from './AllTraits';
 import { AvatarComponent } from './AvatarComponent';
-import { AvatarSelectionModal } from './AvatarSelectionModal';
 import { HistoryTable } from './HistoryTable';
 import { NavigationPanel } from './NavigationPanel';
 import { PowersInfo } from './PowersInfo';
@@ -14,21 +13,22 @@ import { PowersInfo } from './PowersInfo';
 import './AvatarSettings.scss';
 
 export const AvatarSettings = () => {
-  const { hasAvatar } = useActiveAvatarNFT();
-  const [isOpen, setOpen] = useState(false);
+  const { hasAvatar, avatarNFT } = useActiveAvatarNFT();
+  const { isLoading } = useAvatarMetadata();
   useDocumentTitle('iSaver | Avatar settings');
+
+  const isDataLoading = !hasAvatar || !avatarNFT || isLoading;
 
   return (
     <>
       <Container className="avatarSettings" variant="dashboard">
-        {!hasAvatar ? <div className="overlay" /> : null}
+        {isDataLoading ? <div className="overlay" /> : null}
         <NavigationPanel />
-        <AvatarComponent onOpen={() => setOpen(true)} />
+        <AvatarComponent />
         <AllTraits />
         <PowersInfo />
         <HistoryTable />
       </Container>
-      <AvatarSelectionModal isOpen={isOpen} onClose={() => setOpen(false)} />
     </>
   );
 };

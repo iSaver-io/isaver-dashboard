@@ -16,13 +16,8 @@ export const POWER_SUBSCRIPTION_ENDING_NOTIFICATION = 14 * 24 * 60 * 60; // 14 d
 
 export const PowerCard = ({ id, name, label, description, isPowersAllowed }: PowerCardProps) => {
   const { activatePower, isLoading } = useActivatePower(id);
-  const userPower = useUserPowers(id);
+  const { power, isActive, isEnding } = useUserPowers(id);
   const balance = usePowerBalance(id);
-
-  const currentTime = Date.now() / 1000;
-  const isActive = userPower.toNumber() > currentTime;
-  const isEnding =
-    isActive && userPower.toNumber() - currentTime < POWER_SUBSCRIPTION_ENDING_NOTIFICATION;
 
   const getColor = () => {
     switch (id) {
@@ -68,14 +63,14 @@ export const PowerCard = ({ id, name, label, description, isPowersAllowed }: Pow
               <Box textAlign="center">
                 <Text textStyle="text2">Active</Text>
                 <Text textStyle="note" mt={{ sm: '5px' }}>
-                  Until {getLocalDateString(userPower.toNumber())}
+                  Until {getLocalDateString(power)}
                 </Text>
               </Box>
             ) : null}
             {!isActive ? (
               <Button
                 isDisabled={!balance.toNumber()}
-                size="sm"
+                size="md"
                 onClick={() => activatePower()}
                 isLoading={isLoading}
               >
@@ -93,7 +88,7 @@ export const PowerCard = ({ id, name, label, description, isPowersAllowed }: Pow
                   Prolong
                 </Button>
                 <Text textStyle="note" mt={{ sm: '10px' }}>
-                  Until {getLocalDateString(userPower.toNumber())}
+                  Until {getLocalDateString(power)}
                 </Text>
               </Box>
             ) : null}

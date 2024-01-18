@@ -27,7 +27,7 @@ type AvatarSelectionModalProps = {
 export const AvatarSelectionModal = ({ onClose, isOpen }: AvatarSelectionModalProps) => {
   const { activateAvatar } = useActivateAvatar();
 
-  const { nftsForOwner, refetch, isLoading } = useAllowedNFTsForOwner();
+  const { nftsForOwner, refetch, isLoading, avatarAddress } = useAllowedNFTsForOwner();
 
   const handleActivateAvatar = useCallback(
     (address: string, tokenId: BigNumberish) =>
@@ -43,7 +43,7 @@ export const AvatarSelectionModal = ({ onClose, isOpen }: AvatarSelectionModalPr
       <ModalOverlay />
       <ModalContent w={500}>
         <ModalHeader justifyContent="flex-start">
-          <Text textStyle="h3">My avatars</Text>
+          <Text textStyle="h3">My Avatars</Text>
           <ModalCloseButton onClick={onClose} size="lg" right="20px" top="20px" />
         </ModalHeader>
         <ModalBody>
@@ -54,8 +54,9 @@ export const AvatarSelectionModal = ({ onClose, isOpen }: AvatarSelectionModalPr
               <Box className="selectionModal_list">
                 {nftsForOwner.map((nft) => (
                   <AvatarItem
-                    key={nft.name}
+                    key={`${nft.contract.address}-${nft.tokenId}`}
                     {...nft}
+                    isIsaverCollection={nft.contract.address === avatarAddress}
                     onClick={() => handleActivateAvatar(nft.contract.address, nft.tokenId)}
                   />
                 ))}
@@ -77,7 +78,12 @@ export const AvatarSelectionModal = ({ onClose, isOpen }: AvatarSelectionModalPr
   );
 };
 
-const AvatarItem = ({ name, image, onClick }: OwnedNft & { onClick: () => Promise<void> }) => {
+const AvatarItem = ({
+  name,
+  image,
+  onClick,
+  isIsaverCollection,
+}: OwnedNft & { isIsaverCollection: boolean; onClick: () => Promise<void> }) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const handleClick = useCallback(() => {
@@ -87,9 +93,22 @@ const AvatarItem = ({ name, image, onClick }: OwnedNft & { onClick: () => Promis
 
   return (
     <Flex key={name} className="selectionModal_card">
-      <img src={image.thumbnailUrl || image.originalUrl} alt={name} />
-      <Text textStyle="note">{name}</Text>
-      <Button isLoading={isLoading} onClick={handleClick} size="md">
+      <Flex
+        direction={{ sm: 'column-reverse', lg: 'row' }}
+        alignItems={{ lg: 'center' }}
+        gap="10px"
+      >
+        <img src={image.thumbnailUrl || image.originalUrl} alt={name} />
+        <Text overflow="hidden" textOverflow="ellipsis" fontSize="14px">
+          {isIsaverCollection ? `iSaver ${name}` : name}
+        </Text>
+      </Flex>
+      <Button
+        isLoading={isLoading}
+        onClick={handleClick}
+        size="md"
+        alignSelf={{ sm: 'flex-end', lg: 'unset' }}
+      >
         Activate
       </Button>
     </Flex>
