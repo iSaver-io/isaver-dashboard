@@ -98,7 +98,7 @@ export const useUserReferralInfo = () => {
     return (userReferralInfoRequest.data?.activeLevels || []).some(
       (till: any) =>
         till &&
-        till.toNumber() > 0 &&
+        till.toNumber() - currentTime > 0 &&
         till.toNumber() - currentTime < REFERRAL_SUBSCRIPTION_ENDING_NOTIFICATION
     );
   }, [userReferralInfoRequest.data]);

@@ -102,10 +102,9 @@ export const useStakingUserStakes = () => {
 
 const isSubscriptionFinishing = (subscribedTill: BigNumber) => {
   const currentTime = Date.now() / 1000;
-  const startTime = subscribedTill?.toNumber() || 0;
+  const endTime = subscribedTill?.toNumber() || 0;
   return (
-    startTime - currentTime < STAKING_SUBSCRIPTION_ENDING_NOTIFICATION &&
-    startTime - currentTime > 0
+    endTime - currentTime < STAKING_SUBSCRIPTION_ENDING_NOTIFICATION && endTime - currentTime > 0
   );
 };
 
