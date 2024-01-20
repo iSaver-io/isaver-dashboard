@@ -64,11 +64,18 @@ export const AvatarComponent = () => {
           {activeAvatar?.isAvatarCollection || !hasAvatar ? (
             <>
               <Box className="traitsMain_item">
-                <Text textStyle="textBold" textTransform="uppercase" color="green.400">
+                <Text
+                  textStyle="textBold"
+                  textTransform="uppercase"
+                  color="green.400"
+                  fontSize="18px"
+                >
                   Birthday:
                 </Text>
                 <Flex className="traitsMain_item_inputGroup">
-                  <Text textStyle="textBold">{metadata.Birthday}</Text>
+                  <Text textStyle="textBold" fontSize="18px" fontWeight="500">
+                    {metadata.Birthday}
+                  </Text>
 
                   {hasBirthdayGift ? (
                     <Flex alignItems="center">
@@ -101,6 +108,7 @@ export const AvatarComponent = () => {
                 label="Telegram"
                 placeholder="@username"
                 defaultValue={metadata.Telegram}
+                isTelegram
                 onSave={handleTelegramSave}
                 validate={validateTelegram}
                 Icon={PenIcon}
@@ -130,6 +138,7 @@ type TraitItemProps = {
   label: string;
   defaultValue: string;
   placeholder?: string;
+  isTelegram?: boolean;
   onSave: (val: string) => Promise<void>;
   validate: (val: string) => boolean;
   Icon: FunctionComponent;
@@ -139,21 +148,32 @@ const TraitItem = ({
   label,
   defaultValue,
   placeholder,
+  isTelegram,
   onSave,
   validate,
   Icon,
 }: TraitItemProps) => {
   const [value, setValue] = useState(defaultValue);
   const [isModified, setIsModified] = useState(false);
+  const [isValid, setIsValid] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const handleChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
-    setValue(e.target.value);
-  }, []);
+  const handleChange = useCallback(
+    (e: ChangeEvent<HTMLInputElement>) => {
+      let val = e.target.value;
+      if (isTelegram && !val.startsWith('@')) {
+        val = '@' + val;
+      }
+      setValue(val);
+    },
+    [isTelegram]
+  );
 
   useEffect(() => {
-    setIsModified(value !== defaultValue && validate(value));
+    const _isValid = validate(value);
+    setIsModified(value !== defaultValue && _isValid);
+    setIsValid(_isValid);
   }, [defaultValue, value, validate]);
 
   useEffect(() => {
@@ -180,16 +200,18 @@ const TraitItem = ({
 
   return (
     <Box className="traitsMain_item">
-      <Text textStyle="textBold" textTransform="uppercase" color="green.400">
+      <Text textStyle="textBold" textTransform="uppercase" color="green.400" fontSize="18px">
         {label}:
       </Text>
-      <Box className="traitsMain_item_inputGroup">
+      <Box className={['traitsMain_item_inputGroup', !isValid && 'invalid'].join(' ')}>
         <InputGroup>
           <Input
             ref={inputRef}
             onChange={handleChange}
             variant="transparent"
-            defaultValue={value}
+            fontSize="18px"
+            fontWeight="500"
+            value={value || ''}
             placeholder={placeholder}
             disabled={isLoading}
             onKeyPress={(e) => {
@@ -197,6 +219,12 @@ const TraitItem = ({
                 handleSave(value);
               }
             }}
+            onFocus={(e) =>
+              e.currentTarget.setSelectionRange(
+                e.currentTarget.value.length,
+                e.currentTarget.value.length
+              )
+            }
           />
           <InputRightElement m="0" p="0" height="24px" width="24px">
             <IconButton

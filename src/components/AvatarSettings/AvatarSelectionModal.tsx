@@ -9,6 +9,7 @@ import {
   ModalHeader,
   ModalOverlay,
   Text,
+  useBreakpoint,
 } from '@chakra-ui/react';
 import { BigNumberish, OwnedNft } from 'alchemy-sdk';
 import { Address } from 'wagmi';
@@ -41,16 +42,16 @@ export const AvatarSelectionModal = ({ onClose, isOpen }: AvatarSelectionModalPr
   return (
     <Modal isCentered isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
-      <ModalContent w={500}>
+      <ModalContent w={{ sm: '300px', md: '400px', lg: '450px' }} mx="10px">
         <ModalHeader justifyContent="flex-start">
           <Text textStyle="h3">My Avatars</Text>
           <ModalCloseButton onClick={onClose} size="lg" right="20px" top="20px" />
         </ModalHeader>
         <ModalBody>
           <Box className="selectionModal_body">
-            {isLoading ? (
-              <CenteredSpinner background="transparent" />
-            ) : nftsForOwner.length > 0 ? (
+            {isLoading ? <CenteredSpinner background="transparent" /> : null}
+
+            {nftsForOwner.length > 0 ? (
               <Box className="selectionModal_list">
                 {nftsForOwner.map((nft) => (
                   <AvatarItem
@@ -85,32 +86,52 @@ const AvatarItem = ({
   isIsaverCollection,
 }: OwnedNft & { isIsaverCollection: boolean; onClick: () => Promise<void> }) => {
   const [isLoading, setIsLoading] = useState(false);
+  const bp = useBreakpoint({ ssr: false });
+  const isSm = ['sm', 'md'].includes(bp);
 
   const handleClick = useCallback(() => {
     setIsLoading(true);
-    return onClick().finally(() => setIsLoading(false));
+    onClick().finally(() => setIsLoading(false));
   }, [onClick]);
 
   return (
     <Flex className="selectionModal_card">
-      <Flex
-        direction={{ sm: 'column-reverse', lg: 'row' }}
-        alignItems={{ lg: 'center' }}
-        gap="10px"
-      >
-        <img src={image.thumbnailUrl || image.originalUrl} alt={name} />
-        <Text overflow="hidden" textOverflow="ellipsis" fontSize="14px">
-          {isIsaverCollection ? `iSaver ${name}` : name || 'ERC721'}
-        </Text>
-      </Flex>
-      <Button
-        isLoading={isLoading}
-        onClick={handleClick}
-        size="md"
-        alignSelf={{ sm: 'flex-end', lg: 'unset' }}
-      >
-        Activate
-      </Button>
+      {isSm ? (
+        <>
+          <Text overflow="hidden" textOverflow="ellipsis" fontSize="14px">
+            {isIsaverCollection ? `iSaver ${name}` : name || 'ERC721'}
+          </Text>
+          <Flex direction="row" alignItems={{ lg: 'center' }} gap="10px" width="100%">
+            <img src={image.thumbnailUrl || image.originalUrl} alt={name} />
+            <Button
+              ml="auto"
+              isLoading={isLoading}
+              onClick={handleClick}
+              size="md"
+              alignSelf={{ sm: 'flex-end', lg: 'unset' }}
+            >
+              Activate
+            </Button>
+          </Flex>
+        </>
+      ) : (
+        <>
+          <Flex direction="row" alignItems={{ lg: 'center' }} gap="10px">
+            <img src={image.thumbnailUrl || image.originalUrl} alt={name} />
+            <Text overflow="hidden" textOverflow="ellipsis" fontSize="14px">
+              {isIsaverCollection ? `iSaver ${name}` : name || 'ERC721'}
+            </Text>
+          </Flex>
+          <Button
+            isLoading={isLoading}
+            onClick={handleClick}
+            size="md"
+            alignSelf={{ sm: 'flex-end', lg: 'unset' }}
+          >
+            Activate
+          </Button>
+        </>
+      )}
     </Flex>
   );
 };

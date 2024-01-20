@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Box, Text } from '@chakra-ui/react';
+import { Box, Text, useBreakpoint } from '@chakra-ui/react';
 import { AnimatePresence, motion } from 'framer-motion';
 
 import { ReactComponent as ChevronDownIcon } from '@/assets/images/icons/chevron-down.svg';
@@ -8,7 +8,9 @@ import { useActiveAvatar, useAvatarMetadata } from '@/hooks/useAvatarSettings';
 export const AllTraits = () => {
   const { activeAvatar } = useActiveAvatar();
   const { metadata, isLoading } = useAvatarMetadata();
-  const [isOpen, setOpen] = useState(true);
+  const bp = useBreakpoint({ ssr: false });
+  const isSm = ['sm', 'md', 'lg'].includes(bp);
+  const [isOpen, setOpen] = useState(!isSm);
 
   return activeAvatar?.isAvatarCollection && !isLoading ? (
     <Box className="allTraits">

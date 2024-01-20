@@ -147,7 +147,7 @@ export const HistoryTable = () => {
       </Box>
 
       {events.length > COLLAPSED_LIMIT ? (
-        <Center mt="10px">
+        <Center mt="24px">
           <Button variant="link" onClick={handleToggleTable}>
             {isOpen ? 'Less' : 'More'}
           </Button>
