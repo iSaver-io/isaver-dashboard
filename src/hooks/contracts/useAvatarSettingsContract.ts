@@ -12,7 +12,7 @@ import { ContractsEnum, useContractAbi } from './useContractAbi';
 const eventLabels: Record<string, string> = {
   ExternalAvatarActivated: 'Avatar activation',
   AvatarActivated: 'iSaver Avatar activation',
-  PowersAccessActivated: 'Power access activation',
+  PowersAccessActivated: 'Powers Block activation',
   AvatarDeactivated: 'Avatar deactivation',
   ISaverAvatarDeactivated: 'iSaver Avatar deactivation',
   NameChanged: 'Name change',

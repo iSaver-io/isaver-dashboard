@@ -21,7 +21,7 @@ export const AvatarDeletionModal = ({ onClose, isOpen, onConfirm }: AvatarDeleti
   return (
     <Modal isCentered isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
-      <ModalContent w={500}>
+      <ModalContent w={450} mx="10px">
         <ModalHeader justifyContent="flex-start">
           <ModalCloseButton onClick={onClose} size="lg" right="20px" top="20px" />
         </ModalHeader>
@@ -39,7 +39,12 @@ export const AvatarDeletionModal = ({ onClose, isOpen, onConfirm }: AvatarDeleti
             deactivated
           </Text>
 
-          <Flex gap="14px" mt="30px" direction={{ sm: 'column', lg: 'row' }} alignItems="center">
+          <Flex
+            gap="14px"
+            mt="30px"
+            direction={{ sm: 'column-reverse', lg: 'row' }}
+            alignItems="center"
+          >
             <Button onClick={onClose} variant="filledWhite" width={{ sm: '160px', lg: '50%' }}>
               Cancel
             </Button>

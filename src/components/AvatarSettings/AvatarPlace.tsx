@@ -5,7 +5,7 @@ import { Box, IconButton, Link, Text } from '@chakra-ui/react';
 import { useAccount } from 'wagmi';
 
 import { Button } from '@/components/ui/Button/Button';
-import { useActiveAvatar, useDeactivateAvatar } from '@/hooks/useAvatarSettings';
+import { useActiveAvatar, useAvatarMetadata, useDeactivateAvatar } from '@/hooks/useAvatarSettings';
 import { useActiveAvatarNFT } from '@/hooks/useNFTHolders';
 import { AVATARS_URL } from '@/router';
 
@@ -26,6 +26,7 @@ export const AvatarPlace = () => {
   const { activeAvatar } = useActiveAvatar();
   const { mutateAsync, isLoading: isDeactivateLoading, isSuccess } = useDeactivateAvatar();
   const { isConnected } = useAccount();
+  const { isLoading: isMetadataLoading } = useAvatarMetadata();
 
   const [isOpen, setOpen] = useState(false);
   const [isDeleteOpen, setDeleteOpen] = useState(false);
@@ -88,7 +89,7 @@ export const AvatarPlace = () => {
                 />
               </Box>
             </Box>
-            {isDeactivateLoading ? <CenteredSpinner /> : null}
+            {isDeactivateLoading || isMetadataLoading ? <CenteredSpinner /> : null}
           </>
         )}
       </Box>
