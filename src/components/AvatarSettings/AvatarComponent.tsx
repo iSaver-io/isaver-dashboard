@@ -48,17 +48,22 @@ export const AvatarComponent = () => {
   );
 
   const validateName = useCallback((value: string) => {
-    const regex = /^[A-Za-z]+$/;
+    const regex = /^[A-Za-z ]{1,30}$/;
     return regex.test(value);
   }, []);
   const validateTelegram = useCallback((value: string) => {
-    const regex = /^@[A-Za-z0-9_]{5,}$/;
+    const regex = /^@[A-Za-z0-9_]{5,32}$/;
     return regex.test(value);
   }, []);
 
   return (
     <>
-      <Flex className="avatarComponent">
+      <Flex
+        className={[
+          'avatarComponent',
+          hasAvatar && !activeAvatar?.isAvatarCollection && 'avatarComponent--external',
+        ].join(' ')}
+      >
         <AvatarPlace />
         <Box className="traitsMain">
           {activeAvatar?.isAvatarCollection || !hasAvatar ? (
@@ -116,7 +121,7 @@ export const AvatarComponent = () => {
             </>
           ) : (
             <>
-              <Text textStyle="text2">
+              <Text textStyle="text2" fontSize={{ xl: '18px' }}>
                 You have activated the Avatar of someone else's collection. To have all the
                 features, activate iSaver Avatar.
               </Text>
@@ -161,7 +166,7 @@ const TraitItem = ({
 
   const handleChange = useCallback(
     (e: ChangeEvent<HTMLInputElement>) => {
-      let val = e.target.value;
+      let val = e.target.value.trimStart();
       if (isTelegram && !val.startsWith('@')) {
         val = '@' + val;
       }

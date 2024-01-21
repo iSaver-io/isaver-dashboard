@@ -1,4 +1,4 @@
-import { Box, Button, Flex, Text } from '@chakra-ui/react';
+import { Box, Button, Flex, Text, useBreakpoint } from '@chakra-ui/react';
 
 import { useActivatePower, useUserPowers } from '@/hooks/useAvatarSettings';
 import { usePowerBalance } from '@/hooks/usePowers';
@@ -18,6 +18,8 @@ export const PowerCard = ({ id, name, label, description, isPowersAllowed }: Pow
   const { activatePower, isLoading } = useActivatePower(id);
   const { power, isActive, isEnding } = useUserPowers(id);
   const balance = usePowerBalance(id);
+  const bp = useBreakpoint({ ssr: false });
+  const isSm = ['sm', 'xl'].includes(bp);
 
   const getColor = () => {
     switch (id) {
@@ -37,31 +39,33 @@ export const PowerCard = ({ id, name, label, description, isPowersAllowed }: Pow
   return (
     <Flex className="powerCard">
       <Box>
-        <Text textStyle="h2" color={getColor()} fontSize={{ sm: '26px', '2xl': '38px' }}>
+        <Text textStyle="h2" color={getColor()} fontSize={isSm ? '26px' : '38px'}>
           {name}
         </Text>
         <Text
           textStyle="h3"
           textTransform="uppercase"
-          mt={{ sm: '15px', '2xl': '2px' }}
-          fontSize={{ sm: '18px', '2xl': '26px' }}
+          mt={isSm ? '15px' : '2px'}
+          fontSize={isSm ? '18px' : '26px'}
         >
           {label}
         </Text>
         <Text
           textStyle="note"
-          mt={{ sm: '10px', '2xl': '2px' }}
-          fontSize={{ sm: '12px', '2xl': '14px' }}
+          mt={isSm ? '10px' : '2px'}
+          fontSize="12px"
           dangerouslySetInnerHTML={{ __html: description }}
         ></Text>
       </Box>
-      <Box minW={{ sm: '115px', '2xl': '140px' }}>
+      <Box minW={isSm ? '115px' : '140px'}>
         {isPowersAllowed ? (
           <>
             {!isEnding && isActive ? (
               <Box textAlign="center">
-                <Text textStyle="text2">Active</Text>
-                <Text textStyle="note" mt={{ sm: '5px' }}>
+                <Text textStyle="text2" fontSize="12px">
+                  Active
+                </Text>
+                <Text textStyle="note" fontSize="12px" mt="8px">
                   Until {getLocalDateString(power)}
                 </Text>
               </Box>
@@ -80,20 +84,22 @@ export const PowerCard = ({ id, name, label, description, isPowersAllowed }: Pow
               <Box textAlign="center">
                 <Button
                   isDisabled={!balance.toNumber()}
-                  size="sm"
+                  size="md"
                   onClick={() => activatePower()}
                   isLoading={isLoading}
                 >
                   Prolong
                 </Button>
-                <Text textStyle="note" mt={{ sm: '10px' }}>
+                <Text textStyle="note" fontSize="12px" mt={isSm ? '10px' : '15px'}>
                   Until {getLocalDateString(power)}
                 </Text>
               </Box>
             ) : null}
             <Box textAlign="center">
-              <Text textStyle="text2">You have:</Text>
-              <Text textStyle="note" mt={{ sm: '5px' }}>
+              <Text textStyle="text2" fontSize="16px" fontWeight="600">
+                You have:
+              </Text>
+              <Text textStyle="note" fontSize="12px" mt="5px">
                 {balance.toString()} items
               </Text>
             </Box>
