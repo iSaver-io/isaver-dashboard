@@ -95,7 +95,10 @@ export const Footer = () => {
     <Box className="footer">
       <Flex className="footer-top">
         <Flex className="footer-top__left">
-          <Box height={{ sm: '44px', md: '86px' }} width={{ sm: '153px', md: '294px' }}>
+          <Box
+            height={{ sm: '37px', md: '66px', xl: '86px' }}
+            width={{ sm: '114px', md: '226px', xl: '294px' }}
+          >
             <Logo />
           </Box>
         </Flex>

@@ -42,11 +42,18 @@ export const NavigationPanel = () => {
                 {name}
               </Text>
             ) : (
-              <Text textStyle="text2">{name}</Text>
+              <Text textStyle="text2" fontSize="16px">
+                {name}
+              </Text>
             )}
           </>
         ) : null}
-        <Text textStyle="h2" as="h2" textTransform="uppercase" mt="20px">
+        <Text
+          textStyle="h2"
+          as="h2"
+          textTransform="uppercase"
+          mt={activeAvatar?.isAvatarCollection ? '20px' : { sm: '10px', xl: '15px', '2xl': '25px' }}
+        >
           Avatar settings
         </Text>
       </div>
