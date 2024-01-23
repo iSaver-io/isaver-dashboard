@@ -113,7 +113,7 @@ export const Menu = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void
               hasEndingReferralSubscription
                 ? 'Check your levels!'
                 : hasEndingSquadsSubscription
-                ? 'Check your squads!'
+                ? 'Check your teams!'
                 : undefined
             }
           />
