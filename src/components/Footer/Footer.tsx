@@ -96,8 +96,8 @@ export const Footer = () => {
       <Flex className="footer-top">
         <Flex className="footer-top__left">
           <Box
-            height={{ sm: '37px', md: '66px', xl: '86px' }}
-            width={{ sm: '114px', md: '226px', xl: '294px' }}
+            height={{ sm: '39px', md: '66px', xl: '86px' }}
+            width={{ sm: '122px', md: '226px', xl: '294px' }}
           >
             <Logo />
           </Box>
@@ -139,11 +139,11 @@ export const Footer = () => {
             <Box>
               <Flex className="sav-container__item" alignItems="center">
                 <SavIcon />
-                <Text ml="12px">1 SAV = 1 USDT</Text>
+                <Text ml="5px">1 SAV = 1 USDT</Text>
               </Flex>
               <Flex className="sav-container__item" alignItems="center">
                 <SavrIcon />
-                <Text ml="12px">1 SAVR = 1 USDT</Text>
+                <Text ml="5px">1 SAVR = 1 USDT</Text>
               </Flex>
             </Box>
           </Flex>
