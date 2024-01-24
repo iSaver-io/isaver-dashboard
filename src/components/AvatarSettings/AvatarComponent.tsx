@@ -11,7 +11,13 @@ import {
   Text,
 } from '@chakra-ui/react';
 
-import { useAvatarMetadata, useTokenName, useTokenTelegram } from '@/hooks/useAvatarSettings';
+import {
+  useAvatarMetadata,
+  useClaimPrize,
+  useIsBirthdayPrizeAvailable,
+  useTokenName,
+  useTokenTelegram,
+} from '@/hooks/useAvatarSettings';
 import { useActiveAvatarNFT } from '@/hooks/useNFTHolders';
 
 import { Button } from '../ui/Button/Button';
@@ -26,8 +32,8 @@ export const AvatarComponent = () => {
   const { metadata } = useAvatarMetadata();
   const { mutateAsync: setTokenName } = useTokenName();
   const { mutateAsync: setTokenTelegram } = useTokenTelegram();
-
-  const hasBirthdayGift = false;
+  const { mutateAsync: claimPrize } = useClaimPrize();
+  const { data: hasBirthdayGift = null } = useIsBirthdayPrizeAvailable(activeAvatar?.tokenId);
 
   const handleNameSave = useCallback(
     (name: string) => {
@@ -90,6 +96,7 @@ export const AvatarComponent = () => {
                         fontSize="12px"
                         size="sm"
                         variant="outlinedWhite"
+                        onClick={() => claimPrize()}
                       >
                         Claim
                       </Button>

@@ -38,17 +38,23 @@ export interface AvatarSettingsInterface extends utils.Interface {
     "activeAvatars(address)": FunctionFragment;
     "approveCollection(address,bool)": FunctionFragment;
     "approvedCollections(address)": FunctionFragment;
+    "birthdayPrizeClaimPeriod()": FunctionFragment;
     "deactivateAvatar()": FunctionFragment;
     "getRoleAdmin(bytes32)": FunctionFragment;
     "grantRole(bytes32,address)": FunctionFragment;
     "hasRole(bytes32,address)": FunctionFragment;
     "initialize(address)": FunctionFragment;
+    "isBirthdayInRange(uint256)": FunctionFragment;
+    "isBirthdayPrizeAvailable(uint256)": FunctionFragment;
+    "isPowerAccessActive()": FunctionFragment;
     "pause()": FunctionFragment;
     "paused()": FunctionFragment;
     "powerActivationFee()": FunctionFragment;
     "proxiableUUID()": FunctionFragment;
     "renounceRole(bytes32,address)": FunctionFragment;
+    "requestBirthdayPrize()": FunctionFragment;
     "revokeRole(bytes32,address)": FunctionFragment;
+    "setBirthdayPrizeClaimPeriod(uint256)": FunctionFragment;
     "setTokenName(uint256,string)": FunctionFragment;
     "setTokenTelegram(uint256,string)": FunctionFragment;
     "supportsInterface(bytes4)": FunctionFragment;
@@ -70,17 +76,23 @@ export interface AvatarSettingsInterface extends utils.Interface {
       | "activeAvatars"
       | "approveCollection"
       | "approvedCollections"
+      | "birthdayPrizeClaimPeriod"
       | "deactivateAvatar"
       | "getRoleAdmin"
       | "grantRole"
       | "hasRole"
       | "initialize"
+      | "isBirthdayInRange"
+      | "isBirthdayPrizeAvailable"
+      | "isPowerAccessActive"
       | "pause"
       | "paused"
       | "powerActivationFee"
       | "proxiableUUID"
       | "renounceRole"
+      | "requestBirthdayPrize"
       | "revokeRole"
+      | "setBirthdayPrizeClaimPeriod"
       | "setTokenName"
       | "setTokenTelegram"
       | "supportsInterface"
@@ -128,6 +140,10 @@ export interface AvatarSettingsInterface extends utils.Interface {
     values: [string]
   ): string;
   encodeFunctionData(
+    functionFragment: "birthdayPrizeClaimPeriod",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "deactivateAvatar",
     values?: undefined
   ): string;
@@ -144,6 +160,18 @@ export interface AvatarSettingsInterface extends utils.Interface {
     values: [BytesLike, string]
   ): string;
   encodeFunctionData(functionFragment: "initialize", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "isBirthdayInRange",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "isBirthdayPrizeAvailable",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "isPowerAccessActive",
+    values?: undefined
+  ): string;
   encodeFunctionData(functionFragment: "pause", values?: undefined): string;
   encodeFunctionData(functionFragment: "paused", values?: undefined): string;
   encodeFunctionData(
@@ -159,8 +187,16 @@ export interface AvatarSettingsInterface extends utils.Interface {
     values: [BytesLike, string]
   ): string;
   encodeFunctionData(
+    functionFragment: "requestBirthdayPrize",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "revokeRole",
     values: [BytesLike, string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setBirthdayPrizeClaimPeriod",
+    values: [BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "setTokenName",
@@ -226,6 +262,10 @@ export interface AvatarSettingsInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "birthdayPrizeClaimPeriod",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "deactivateAvatar",
     data: BytesLike
   ): Result;
@@ -236,6 +276,18 @@ export interface AvatarSettingsInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "grantRole", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "hasRole", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "initialize", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "isBirthdayInRange",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "isBirthdayPrizeAvailable",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "isPowerAccessActive",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "pause", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "paused", data: BytesLike): Result;
   decodeFunctionResult(
@@ -250,7 +302,15 @@ export interface AvatarSettingsInterface extends utils.Interface {
     functionFragment: "renounceRole",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "requestBirthdayPrize",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "revokeRole", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "setBirthdayPrizeClaimPeriod",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "setTokenName",
     data: BytesLike
@@ -278,7 +338,7 @@ export interface AvatarSettingsInterface extends utils.Interface {
   events: {
     "AdminChanged(address,address)": EventFragment;
     "AvatarActivated(address,uint256)": EventFragment;
-    "AvatarDeactivated(address,uint256,address)": EventFragment;
+    "AvatarDeactivated(address,uint256,address,bool)": EventFragment;
     "BeaconUpgraded(address)": EventFragment;
     "CollectionApprovalUpdated(address,bool)": EventFragment;
     "ExternalAvatarActivated(address,uint256,address)": EventFragment;
@@ -342,9 +402,10 @@ export interface AvatarDeactivatedEventObject {
   sender: string;
   tokenId: BigNumber;
   collectionAddress: string;
+  isAvatarCollection: boolean;
 }
 export type AvatarDeactivatedEvent = TypedEvent<
-  [string, BigNumber, string],
+  [string, BigNumber, string, boolean],
   AvatarDeactivatedEventObject
 >;
 
@@ -580,6 +641,8 @@ export interface AvatarSettings extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
+    birthdayPrizeClaimPeriod(overrides?: CallOverrides): Promise<[BigNumber]>;
+
     deactivateAvatar(
       overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
@@ -603,6 +666,18 @@ export interface AvatarSettings extends BaseContract {
       overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
 
+    isBirthdayInRange(
+      birthdayTimestamp: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
+
+    isBirthdayPrizeAvailable(
+      tokenId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
+
+    isPowerAccessActive(overrides?: CallOverrides): Promise<[boolean]>;
+
     pause(
       overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
@@ -619,9 +694,18 @@ export interface AvatarSettings extends BaseContract {
       overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
 
+    requestBirthdayPrize(
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
+
     revokeRole(
       role: BytesLike,
       account: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
+
+    setBirthdayPrizeClaimPeriod(
+      _days: BigNumberish,
       overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
 
@@ -713,6 +797,8 @@ export interface AvatarSettings extends BaseContract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
+  birthdayPrizeClaimPeriod(overrides?: CallOverrides): Promise<BigNumber>;
+
   deactivateAvatar(
     overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
@@ -736,6 +822,18 @@ export interface AvatarSettings extends BaseContract {
     overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
 
+  isBirthdayInRange(
+    birthdayTimestamp: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
+  isBirthdayPrizeAvailable(
+    tokenId: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
+  isPowerAccessActive(overrides?: CallOverrides): Promise<boolean>;
+
   pause(
     overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
@@ -752,9 +850,18 @@ export interface AvatarSettings extends BaseContract {
     overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
 
+  requestBirthdayPrize(
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
   revokeRole(
     role: BytesLike,
     account: string,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  setBirthdayPrizeClaimPeriod(
+    _days: BigNumberish,
     overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
 
@@ -844,6 +951,8 @@ export interface AvatarSettings extends BaseContract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
+    birthdayPrizeClaimPeriod(overrides?: CallOverrides): Promise<BigNumber>;
+
     deactivateAvatar(overrides?: CallOverrides): Promise<void>;
 
     getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<string>;
@@ -865,6 +974,18 @@ export interface AvatarSettings extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    isBirthdayInRange(
+      birthdayTimestamp: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
+    isBirthdayPrizeAvailable(
+      tokenId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
+    isPowerAccessActive(overrides?: CallOverrides): Promise<boolean>;
+
     pause(overrides?: CallOverrides): Promise<void>;
 
     paused(overrides?: CallOverrides): Promise<boolean>;
@@ -879,9 +1000,16 @@ export interface AvatarSettings extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    requestBirthdayPrize(overrides?: CallOverrides): Promise<void>;
+
     revokeRole(
       role: BytesLike,
       account: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setBirthdayPrizeClaimPeriod(
+      _days: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -946,15 +1074,17 @@ export interface AvatarSettings extends BaseContract {
       tokenId?: null
     ): AvatarActivatedEventFilter;
 
-    "AvatarDeactivated(address,uint256,address)"(
+    "AvatarDeactivated(address,uint256,address,bool)"(
       sender?: string | null,
       tokenId?: BigNumberish | null,
-      collectionAddress?: string | null
+      collectionAddress?: string | null,
+      isAvatarCollection?: null
     ): AvatarDeactivatedEventFilter;
     AvatarDeactivated(
       sender?: string | null,
       tokenId?: BigNumberish | null,
-      collectionAddress?: string | null
+      collectionAddress?: string | null,
+      isAvatarCollection?: null
     ): AvatarDeactivatedEventFilter;
 
     "BeaconUpgraded(address)"(
@@ -1110,6 +1240,8 @@ export interface AvatarSettings extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    birthdayPrizeClaimPeriod(overrides?: CallOverrides): Promise<BigNumber>;
+
     deactivateAvatar(
       overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
@@ -1136,6 +1268,18 @@ export interface AvatarSettings extends BaseContract {
       overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
 
+    isBirthdayInRange(
+      birthdayTimestamp: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    isBirthdayPrizeAvailable(
+      tokenId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    isPowerAccessActive(overrides?: CallOverrides): Promise<BigNumber>;
+
     pause(overrides?: Overrides & { from?: string }): Promise<BigNumber>;
 
     paused(overrides?: CallOverrides): Promise<BigNumber>;
@@ -1150,9 +1294,18 @@ export interface AvatarSettings extends BaseContract {
       overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
 
+    requestBirthdayPrize(
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+
     revokeRole(
       role: BytesLike,
       account: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+
+    setBirthdayPrizeClaimPeriod(
+      _days: BigNumberish,
       overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
 
@@ -1238,6 +1391,10 @@ export interface AvatarSettings extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    birthdayPrizeClaimPeriod(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     deactivateAvatar(
       overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
@@ -1264,6 +1421,20 @@ export interface AvatarSettings extends BaseContract {
       overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 
+    isBirthdayInRange(
+      birthdayTimestamp: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    isBirthdayPrizeAvailable(
+      tokenId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    isPowerAccessActive(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     pause(
       overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
@@ -1282,9 +1453,18 @@ export interface AvatarSettings extends BaseContract {
       overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 
+    requestBirthdayPrize(
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
     revokeRole(
       role: BytesLike,
       account: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    setBirthdayPrizeClaimPeriod(
+      _days: BigNumberish,
       overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 

@@ -89,6 +89,14 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IERC1155Upgradeable__factory>;
     getContractFactory(
+      name: "ERC1155HolderUpgradeable",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ERC1155HolderUpgradeable__factory>;
+    getContractFactory(
+      name: "ERC1155ReceiverUpgradeable",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ERC1155ReceiverUpgradeable__factory>;
+    getContractFactory(
       name: "ERC721Upgradeable",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.ERC721Upgradeable__factory>;
@@ -116,6 +124,10 @@ declare module "hardhat/types/runtime" {
       name: "IERC721Upgradeable",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IERC721Upgradeable__factory>;
+    getContractFactory(
+      name: "ERC721HolderUpgradeable",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ERC721HolderUpgradeable__factory>;
     getContractFactory(
       name: "ContextUpgradeable",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -317,6 +329,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.Ticket__factory>;
     getContractFactory(
+      name: "TokensPool",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.TokensPool__factory>;
+    getContractFactory(
       name: "TokenVesting",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.TokenVesting__factory>;
@@ -421,6 +437,16 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.IERC1155Upgradeable>;
     getContractAt(
+      name: "ERC1155HolderUpgradeable",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ERC1155HolderUpgradeable>;
+    getContractAt(
+      name: "ERC1155ReceiverUpgradeable",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ERC1155ReceiverUpgradeable>;
+    getContractAt(
       name: "ERC721Upgradeable",
       address: string,
       signer?: ethers.Signer
@@ -455,6 +481,11 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.IERC721Upgradeable>;
+    getContractAt(
+      name: "ERC721HolderUpgradeable",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ERC721HolderUpgradeable>;
     getContractAt(
       name: "ContextUpgradeable",
       address: string,
@@ -705,6 +736,11 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.Ticket>;
+    getContractAt(
+      name: "TokensPool",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.TokensPool>;
     getContractAt(
       name: "TokenVesting",
       address: string,

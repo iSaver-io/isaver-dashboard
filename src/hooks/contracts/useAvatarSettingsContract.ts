@@ -118,6 +118,10 @@ export const useAvatarSettingsContract = () => {
     return await avatarSettings.userPowers(address, powerId);
   };
 
+  const isBirthdayPrizeAvailable = async (tokenId: BigNumberish) => {
+    return await avatarSettings.isBirthdayPrizeAvailable(tokenId);
+  };
+
   const activateAvatar = async (collectionAddress: Address, tokenId: BigNumberish) => {
     const tx = await avatarSettings.activateAvatar(collectionAddress, tokenId);
     return waitForTransaction(tx);
@@ -148,6 +152,11 @@ export const useAvatarSettingsContract = () => {
     return waitForTransaction(tx);
   };
 
+  const claimPrize = async () => {
+    const tx = await avatarSettings.requestBirthdayPrize();
+    return waitForTransaction(tx);
+  };
+
   return {
     avatarSettings,
     address: avatarSettingsAddress,
@@ -162,5 +171,7 @@ export const useAvatarSettingsContract = () => {
     setTokenName,
     setTokenTelegram,
     getAllEvents,
+    isBirthdayPrizeAvailable,
+    claimPrize,
   };
 };
