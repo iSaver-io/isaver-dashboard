@@ -165,9 +165,8 @@ export const useIsBirthdayPrizeAvailable = (tokenId?: BigNumberish) => {
 
   const queryResult = useQuery<Boolean>(
     [GET_APPROVED_COLLECTIONS, { tokenId }],
-    async () => await isBirthdayPrizeAvailable(tokenId!),
+    async () => (tokenId !== undefined ? await isBirthdayPrizeAvailable(tokenId!) : false),
     {
-      enabled: Boolean(tokenId),
       cacheTime: 0,
       staleTime: 0,
     }
@@ -495,13 +494,16 @@ export const useClaimPrize = () => {
       const txHash = await claimPrize();
       success({
         title: 'Success',
-        description: 'You successfully claimed your birthday prize',
+        description: 'You have claimed Avatar`s birthday present',
         txHash,
       });
     },
     {
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: [IS_BIRTHDAY_PRIZE_AVAILABLE] });
+        setTimeout(() => {
+          queryClient.invalidateQueries({ queryKey: [GET_ALL_EVENTS] });
+        }, 60_000);
       },
       onError: (err) => {
         handleError(err);

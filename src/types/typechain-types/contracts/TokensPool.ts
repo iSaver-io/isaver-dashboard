@@ -3,33 +3,29 @@
 /* eslint-disable */
 import type {
   BaseContract,
-  BigNumber,
   BigNumberish,
   BytesLike,
-  CallOverrides,
-  ContractTransaction,
-  Overrides,
-  PayableOverrides,
-  PopulatedTransaction,
-  Signer,
-  utils,
-} from "ethers";
-import type {
   FunctionFragment,
   Result,
+  Interface,
   EventFragment,
-} from "@ethersproject/abi";
-import type { Listener, Provider } from "@ethersproject/providers";
+  AddressLike,
+  ContractRunner,
+  ContractMethod,
+  Listener,
+} from "ethers";
 import type {
-  TypedEventFilter,
-  TypedEvent,
+  TypedContractEvent,
+  TypedDeferredTopicFilter,
+  TypedEventLog,
+  TypedLogDescription,
   TypedListener,
-  OnEvent,
+  TypedContractMethod,
 } from "../common";
 
 export declare namespace TokensPool {
   export type PrizeStruct = {
-    tokenAddress: string;
+    tokenAddress: AddressLike;
     isERC20: boolean;
     isERC721: boolean;
     isERC1155: boolean;
@@ -39,75 +35,27 @@ export declare namespace TokensPool {
   };
 
   export type PrizeStructOutput = [
-    string,
-    boolean,
-    boolean,
-    boolean,
-    BigNumber,
-    BigNumber[],
-    BigNumber
+    tokenAddress: string,
+    isERC20: boolean,
+    isERC721: boolean,
+    isERC1155: boolean,
+    amount: bigint,
+    tokenIds: bigint[],
+    remaining: bigint
   ] & {
     tokenAddress: string;
     isERC20: boolean;
     isERC721: boolean;
     isERC1155: boolean;
-    amount: BigNumber;
-    tokenIds: BigNumber[];
-    remaining: BigNumber;
+    amount: bigint;
+    tokenIds: bigint[];
+    remaining: bigint;
   };
 }
 
-export interface TokensPoolInterface extends utils.Interface {
-  functions: {
-    "DEFAULT_ADMIN_ROLE()": FunctionFragment;
-    "OPERATOR_ROLE()": FunctionFragment;
-    "UPGRADER_ROLE()": FunctionFragment;
-    "addPrizeToCategory(uint256,address,address,bool,bool,bool,uint256,uint256[],uint256)": FunctionFragment;
-    "categoriesLength()": FunctionFragment;
-    "createCategory(uint256)": FunctionFragment;
-    "enablePrizeCalculationInOracleResponse()": FunctionFragment;
-    "enableRequestRandomInOracle()": FunctionFragment;
-    "getCategory(uint256)": FunctionFragment;
-    "getCategoryPrize(uint256,uint256)": FunctionFragment;
-    "getCategoryPrizes(uint256)": FunctionFragment;
-    "getCategoryRemainingPrizes(uint256)": FunctionFragment;
-    "getNonEmptyCategories()": FunctionFragment;
-    "getPrizeFromOracleRandom()": FunctionFragment;
-    "getRoleAdmin(bytes32)": FunctionFragment;
-    "getTotalChance()": FunctionFragment;
-    "grantRole(bytes32,address)": FunctionFragment;
-    "hasActiveRequest(address)": FunctionFragment;
-    "hasRole(bytes32,address)": FunctionFragment;
-    "initialize(address,uint64,bytes32)": FunctionFragment;
-    "onERC1155BatchReceived(address,address,uint256[],uint256[],bytes)": FunctionFragment;
-    "onERC1155Received(address,address,uint256,uint256,bytes)": FunctionFragment;
-    "onERC721Received(address,address,uint256,bytes)": FunctionFragment;
-    "pause()": FunctionFragment;
-    "paused()": FunctionFragment;
-    "prizeCategories(uint256)": FunctionFragment;
-    "proxiableUUID()": FunctionFragment;
-    "rawFulfillRandomWords(uint256,uint256[])": FunctionFragment;
-    "removePrizeInCategory(uint256,uint256,address)": FunctionFragment;
-    "renounceRole(bytes32,address)": FunctionFragment;
-    "requestPrize(address)": FunctionFragment;
-    "revokeRole(bytes32,address)": FunctionFragment;
-    "senderRequests(address,uint256)": FunctionFragment;
-    "senderRequestsCount(address)": FunctionFragment;
-    "supportsInterface(bytes4)": FunctionFragment;
-    "unpause()": FunctionFragment;
-    "updateCallbackGasLimit(uint32)": FunctionFragment;
-    "updateCategoryChance(uint256,uint256)": FunctionFragment;
-    "updateKeyHash(bytes32)": FunctionFragment;
-    "updatePrizeCalculationInResponse(bool)": FunctionFragment;
-    "updateRequestConfirmations(uint16)": FunctionFragment;
-    "updateRequestRandomInOracle(bool)": FunctionFragment;
-    "updateSubscriptionId(uint64)": FunctionFragment;
-    "upgradeTo(address)": FunctionFragment;
-    "upgradeToAndCall(address,bytes)": FunctionFragment;
-  };
-
+export interface TokensPoolInterface extends Interface {
   getFunction(
-    nameOrSignatureOrTopic:
+    nameOrSignature:
       | "DEFAULT_ADMIN_ROLE"
       | "OPERATOR_ROLE"
       | "UPGRADER_ROLE"
@@ -155,6 +103,27 @@ export interface TokensPoolInterface extends utils.Interface {
       | "upgradeToAndCall"
   ): FunctionFragment;
 
+  getEvent(
+    nameOrSignatureOrTopic:
+      | "AdminChanged"
+      | "BeaconUpgraded"
+      | "Initialized"
+      | "OracleRequestFulfilled"
+      | "OracleRequestSent"
+      | "Paused"
+      | "PrizeCategoryCreated"
+      | "PrizeCategoryUpdated"
+      | "PrizeInCategoryAdded"
+      | "PrizeInCategoryFinished"
+      | "PrizeInCategoryWithdrawn"
+      | "PrizeSent"
+      | "RoleAdminChanged"
+      | "RoleGranted"
+      | "RoleRevoked"
+      | "Unpaused"
+      | "Upgraded"
+  ): EventFragment;
+
   encodeFunctionData(
     functionFragment: "DEFAULT_ADMIN_ROLE",
     values?: undefined
@@ -171,8 +140,8 @@ export interface TokensPoolInterface extends utils.Interface {
     functionFragment: "addPrizeToCategory",
     values: [
       BigNumberish,
-      string,
-      string,
+      AddressLike,
+      AddressLike,
       boolean,
       boolean,
       boolean,
@@ -231,31 +200,37 @@ export interface TokensPoolInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "grantRole",
-    values: [BytesLike, string]
+    values: [BytesLike, AddressLike]
   ): string;
   encodeFunctionData(
     functionFragment: "hasActiveRequest",
-    values: [string]
+    values: [AddressLike]
   ): string;
   encodeFunctionData(
     functionFragment: "hasRole",
-    values: [BytesLike, string]
+    values: [BytesLike, AddressLike]
   ): string;
   encodeFunctionData(
     functionFragment: "initialize",
-    values: [string, BigNumberish, BytesLike]
+    values: [AddressLike, BigNumberish, BytesLike]
   ): string;
   encodeFunctionData(
     functionFragment: "onERC1155BatchReceived",
-    values: [string, string, BigNumberish[], BigNumberish[], BytesLike]
+    values: [
+      AddressLike,
+      AddressLike,
+      BigNumberish[],
+      BigNumberish[],
+      BytesLike
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "onERC1155Received",
-    values: [string, string, BigNumberish, BigNumberish, BytesLike]
+    values: [AddressLike, AddressLike, BigNumberish, BigNumberish, BytesLike]
   ): string;
   encodeFunctionData(
     functionFragment: "onERC721Received",
-    values: [string, string, BigNumberish, BytesLike]
+    values: [AddressLike, AddressLike, BigNumberish, BytesLike]
   ): string;
   encodeFunctionData(functionFragment: "pause", values?: undefined): string;
   encodeFunctionData(functionFragment: "paused", values?: undefined): string;
@@ -273,27 +248,27 @@ export interface TokensPoolInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "removePrizeInCategory",
-    values: [BigNumberish, BigNumberish, string]
+    values: [BigNumberish, BigNumberish, AddressLike]
   ): string;
   encodeFunctionData(
     functionFragment: "renounceRole",
-    values: [BytesLike, string]
+    values: [BytesLike, AddressLike]
   ): string;
   encodeFunctionData(
     functionFragment: "requestPrize",
-    values: [string]
+    values: [AddressLike]
   ): string;
   encodeFunctionData(
     functionFragment: "revokeRole",
-    values: [BytesLike, string]
+    values: [BytesLike, AddressLike]
   ): string;
   encodeFunctionData(
     functionFragment: "senderRequests",
-    values: [string, BigNumberish]
+    values: [AddressLike, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "senderRequestsCount",
-    values: [string]
+    values: [AddressLike]
   ): string;
   encodeFunctionData(
     functionFragment: "supportsInterface",
@@ -328,10 +303,13 @@ export interface TokensPoolInterface extends utils.Interface {
     functionFragment: "updateSubscriptionId",
     values: [BigNumberish]
   ): string;
-  encodeFunctionData(functionFragment: "upgradeTo", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "upgradeTo",
+    values: [AddressLike]
+  ): string;
   encodeFunctionData(
     functionFragment: "upgradeToAndCall",
-    values: [string, BytesLike]
+    values: [AddressLike, BytesLike]
   ): string;
 
   decodeFunctionResult(
@@ -490,1520 +468,1123 @@ export interface TokensPoolInterface extends utils.Interface {
     functionFragment: "upgradeToAndCall",
     data: BytesLike
   ): Result;
-
-  events: {
-    "AdminChanged(address,address)": EventFragment;
-    "BeaconUpgraded(address)": EventFragment;
-    "Initialized(uint8)": EventFragment;
-    "OracleRequestFulfilled(address,uint256,uint256)": EventFragment;
-    "OracleRequestSent(address,uint256)": EventFragment;
-    "Paused(address)": EventFragment;
-    "PrizeCategoryCreated(uint256,uint256)": EventFragment;
-    "PrizeCategoryUpdated(uint256,uint256)": EventFragment;
-    "PrizeInCategoryAdded(uint256,uint256)": EventFragment;
-    "PrizeInCategoryFinished(uint256)": EventFragment;
-    "PrizeInCategoryWithdrawn(uint256,uint256,address,uint256)": EventFragment;
-    "PrizeSent(address,address,bool,bool,bool,uint256,uint256)": EventFragment;
-    "RoleAdminChanged(bytes32,bytes32,bytes32)": EventFragment;
-    "RoleGranted(bytes32,address,address)": EventFragment;
-    "RoleRevoked(bytes32,address,address)": EventFragment;
-    "Unpaused(address)": EventFragment;
-    "Upgraded(address)": EventFragment;
-  };
-
-  getEvent(nameOrSignatureOrTopic: "AdminChanged"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "BeaconUpgraded"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "OracleRequestFulfilled"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "OracleRequestSent"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Paused"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "PrizeCategoryCreated"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "PrizeCategoryUpdated"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "PrizeInCategoryAdded"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "PrizeInCategoryFinished"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "PrizeInCategoryWithdrawn"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "PrizeSent"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "RoleAdminChanged"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "RoleGranted"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "RoleRevoked"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Unpaused"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Upgraded"): EventFragment;
 }
 
-export interface AdminChangedEventObject {
-  previousAdmin: string;
-  newAdmin: string;
+export namespace AdminChangedEvent {
+  export type InputTuple = [previousAdmin: AddressLike, newAdmin: AddressLike];
+  export type OutputTuple = [previousAdmin: string, newAdmin: string];
+  export interface OutputObject {
+    previousAdmin: string;
+    newAdmin: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type AdminChangedEvent = TypedEvent<
-  [string, string],
-  AdminChangedEventObject
->;
 
-export type AdminChangedEventFilter = TypedEventFilter<AdminChangedEvent>;
-
-export interface BeaconUpgradedEventObject {
-  beacon: string;
+export namespace BeaconUpgradedEvent {
+  export type InputTuple = [beacon: AddressLike];
+  export type OutputTuple = [beacon: string];
+  export interface OutputObject {
+    beacon: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type BeaconUpgradedEvent = TypedEvent<
-  [string],
-  BeaconUpgradedEventObject
->;
 
-export type BeaconUpgradedEventFilter = TypedEventFilter<BeaconUpgradedEvent>;
-
-export interface InitializedEventObject {
-  version: number;
+export namespace InitializedEvent {
+  export type InputTuple = [version: BigNumberish];
+  export type OutputTuple = [version: bigint];
+  export interface OutputObject {
+    version: bigint;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type InitializedEvent = TypedEvent<[number], InitializedEventObject>;
 
-export type InitializedEventFilter = TypedEventFilter<InitializedEvent>;
-
-export interface OracleRequestFulfilledEventObject {
-  sender: string;
-  requestId: BigNumber;
-  randomWord: BigNumber;
+export namespace OracleRequestFulfilledEvent {
+  export type InputTuple = [
+    sender: AddressLike,
+    requestId: BigNumberish,
+    randomWord: BigNumberish
+  ];
+  export type OutputTuple = [
+    sender: string,
+    requestId: bigint,
+    randomWord: bigint
+  ];
+  export interface OutputObject {
+    sender: string;
+    requestId: bigint;
+    randomWord: bigint;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type OracleRequestFulfilledEvent = TypedEvent<
-  [string, BigNumber, BigNumber],
-  OracleRequestFulfilledEventObject
->;
 
-export type OracleRequestFulfilledEventFilter =
-  TypedEventFilter<OracleRequestFulfilledEvent>;
-
-export interface OracleRequestSentEventObject {
-  sender: string;
-  requestId: BigNumber;
+export namespace OracleRequestSentEvent {
+  export type InputTuple = [sender: AddressLike, requestId: BigNumberish];
+  export type OutputTuple = [sender: string, requestId: bigint];
+  export interface OutputObject {
+    sender: string;
+    requestId: bigint;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type OracleRequestSentEvent = TypedEvent<
-  [string, BigNumber],
-  OracleRequestSentEventObject
->;
 
-export type OracleRequestSentEventFilter =
-  TypedEventFilter<OracleRequestSentEvent>;
-
-export interface PausedEventObject {
-  account: string;
+export namespace PausedEvent {
+  export type InputTuple = [account: AddressLike];
+  export type OutputTuple = [account: string];
+  export interface OutputObject {
+    account: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type PausedEvent = TypedEvent<[string], PausedEventObject>;
 
-export type PausedEventFilter = TypedEventFilter<PausedEvent>;
-
-export interface PrizeCategoryCreatedEventObject {
-  categoryId: BigNumber;
-  chance: BigNumber;
+export namespace PrizeCategoryCreatedEvent {
+  export type InputTuple = [categoryId: BigNumberish, chance: BigNumberish];
+  export type OutputTuple = [categoryId: bigint, chance: bigint];
+  export interface OutputObject {
+    categoryId: bigint;
+    chance: bigint;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type PrizeCategoryCreatedEvent = TypedEvent<
-  [BigNumber, BigNumber],
-  PrizeCategoryCreatedEventObject
->;
 
-export type PrizeCategoryCreatedEventFilter =
-  TypedEventFilter<PrizeCategoryCreatedEvent>;
-
-export interface PrizeCategoryUpdatedEventObject {
-  categoryId: BigNumber;
-  chance: BigNumber;
+export namespace PrizeCategoryUpdatedEvent {
+  export type InputTuple = [categoryId: BigNumberish, chance: BigNumberish];
+  export type OutputTuple = [categoryId: bigint, chance: bigint];
+  export interface OutputObject {
+    categoryId: bigint;
+    chance: bigint;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type PrizeCategoryUpdatedEvent = TypedEvent<
-  [BigNumber, BigNumber],
-  PrizeCategoryUpdatedEventObject
->;
 
-export type PrizeCategoryUpdatedEventFilter =
-  TypedEventFilter<PrizeCategoryUpdatedEvent>;
-
-export interface PrizeInCategoryAddedEventObject {
-  categoryId: BigNumber;
-  prizeId: BigNumber;
+export namespace PrizeInCategoryAddedEvent {
+  export type InputTuple = [categoryId: BigNumberish, prizeId: BigNumberish];
+  export type OutputTuple = [categoryId: bigint, prizeId: bigint];
+  export interface OutputObject {
+    categoryId: bigint;
+    prizeId: bigint;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type PrizeInCategoryAddedEvent = TypedEvent<
-  [BigNumber, BigNumber],
-  PrizeInCategoryAddedEventObject
->;
 
-export type PrizeInCategoryAddedEventFilter =
-  TypedEventFilter<PrizeInCategoryAddedEvent>;
-
-export interface PrizeInCategoryFinishedEventObject {
-  categoryId: BigNumber;
+export namespace PrizeInCategoryFinishedEvent {
+  export type InputTuple = [categoryId: BigNumberish];
+  export type OutputTuple = [categoryId: bigint];
+  export interface OutputObject {
+    categoryId: bigint;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type PrizeInCategoryFinishedEvent = TypedEvent<
-  [BigNumber],
-  PrizeInCategoryFinishedEventObject
->;
 
-export type PrizeInCategoryFinishedEventFilter =
-  TypedEventFilter<PrizeInCategoryFinishedEvent>;
-
-export interface PrizeInCategoryWithdrawnEventObject {
-  categoryId: BigNumber;
-  prizeId: BigNumber;
-  to: string;
-  remaining: BigNumber;
-}
-export type PrizeInCategoryWithdrawnEvent = TypedEvent<
-  [BigNumber, BigNumber, string, BigNumber],
-  PrizeInCategoryWithdrawnEventObject
->;
-
-export type PrizeInCategoryWithdrawnEventFilter =
-  TypedEventFilter<PrizeInCategoryWithdrawnEvent>;
-
-export interface PrizeSentEventObject {
-  sender: string;
-  tokenAddress: string;
-  isERC20: boolean;
-  isERC721: boolean;
-  isERC1155: boolean;
-  tokenId: BigNumber;
-  amount: BigNumber;
-}
-export type PrizeSentEvent = TypedEvent<
-  [string, string, boolean, boolean, boolean, BigNumber, BigNumber],
-  PrizeSentEventObject
->;
-
-export type PrizeSentEventFilter = TypedEventFilter<PrizeSentEvent>;
-
-export interface RoleAdminChangedEventObject {
-  role: string;
-  previousAdminRole: string;
-  newAdminRole: string;
-}
-export type RoleAdminChangedEvent = TypedEvent<
-  [string, string, string],
-  RoleAdminChangedEventObject
->;
-
-export type RoleAdminChangedEventFilter =
-  TypedEventFilter<RoleAdminChangedEvent>;
-
-export interface RoleGrantedEventObject {
-  role: string;
-  account: string;
-  sender: string;
-}
-export type RoleGrantedEvent = TypedEvent<
-  [string, string, string],
-  RoleGrantedEventObject
->;
-
-export type RoleGrantedEventFilter = TypedEventFilter<RoleGrantedEvent>;
-
-export interface RoleRevokedEventObject {
-  role: string;
-  account: string;
-  sender: string;
-}
-export type RoleRevokedEvent = TypedEvent<
-  [string, string, string],
-  RoleRevokedEventObject
->;
-
-export type RoleRevokedEventFilter = TypedEventFilter<RoleRevokedEvent>;
-
-export interface UnpausedEventObject {
-  account: string;
-}
-export type UnpausedEvent = TypedEvent<[string], UnpausedEventObject>;
-
-export type UnpausedEventFilter = TypedEventFilter<UnpausedEvent>;
-
-export interface UpgradedEventObject {
-  implementation: string;
-}
-export type UpgradedEvent = TypedEvent<[string], UpgradedEventObject>;
-
-export type UpgradedEventFilter = TypedEventFilter<UpgradedEvent>;
-
-export interface TokensPool extends BaseContract {
-  connect(signerOrProvider: Signer | Provider | string): this;
-  attach(addressOrName: string): this;
-  deployed(): Promise<this>;
-
-  interface: TokensPoolInterface;
-
-  queryFilter<TEvent extends TypedEvent>(
-    event: TypedEventFilter<TEvent>,
-    fromBlockOrBlockhash?: string | number | undefined,
-    toBlock?: string | number | undefined
-  ): Promise<Array<TEvent>>;
-
-  listeners<TEvent extends TypedEvent>(
-    eventFilter?: TypedEventFilter<TEvent>
-  ): Array<TypedListener<TEvent>>;
-  listeners(eventName?: string): Array<Listener>;
-  removeAllListeners<TEvent extends TypedEvent>(
-    eventFilter: TypedEventFilter<TEvent>
-  ): this;
-  removeAllListeners(eventName?: string): this;
-  off: OnEvent<this>;
-  on: OnEvent<this>;
-  once: OnEvent<this>;
-  removeListener: OnEvent<this>;
-
-  functions: {
-    DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<[string]>;
-
-    OPERATOR_ROLE(overrides?: CallOverrides): Promise<[string]>;
-
-    UPGRADER_ROLE(overrides?: CallOverrides): Promise<[string]>;
-
-    addPrizeToCategory(
-      categoryId: BigNumberish,
-      from: string,
-      tokenAddress: string,
-      isERC20: boolean,
-      isERC721: boolean,
-      isERC1155: boolean,
-      amount: BigNumberish,
-      tokenIds: BigNumberish[],
-      remaining: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    categoriesLength(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    createCategory(
-      chance: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    enablePrizeCalculationInOracleResponse(
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
-
-    enableRequestRandomInOracle(overrides?: CallOverrides): Promise<[boolean]>;
-
-    getCategory(
-      categoryId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber, BigNumber[], boolean]>;
-
-    getCategoryPrize(
-      categoryId: BigNumberish,
-      prizeId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[TokensPool.PrizeStructOutput]>;
-
-    getCategoryPrizes(
-      categoryId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[TokensPool.PrizeStructOutput[]]>;
-
-    getCategoryRemainingPrizes(
-      categoryId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[TokensPool.PrizeStructOutput[]]>;
-
-    getNonEmptyCategories(overrides?: CallOverrides): Promise<[BigNumber[]]>;
-
-    getPrizeFromOracleRandom(
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<[string]>;
-
-    getTotalChance(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    grantRole(
-      role: BytesLike,
-      account: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    hasActiveRequest(
-      sender: string,
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
-
-    hasRole(
-      role: BytesLike,
-      account: string,
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
-
-    initialize(
-      coordinator: string,
-      subscriptionId: BigNumberish,
-      keyHash: BytesLike,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    onERC1155BatchReceived(
-      arg0: string,
-      arg1: string,
-      arg2: BigNumberish[],
-      arg3: BigNumberish[],
-      arg4: BytesLike,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    onERC1155Received(
-      arg0: string,
-      arg1: string,
-      arg2: BigNumberish,
-      arg3: BigNumberish,
-      arg4: BytesLike,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    onERC721Received(
-      arg0: string,
-      arg1: string,
-      arg2: BigNumberish,
-      arg3: BytesLike,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    pause(
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    paused(overrides?: CallOverrides): Promise<[boolean]>;
-
-    prizeCategories(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber, boolean] & { chance: BigNumber; isEmpty: boolean }>;
-
-    proxiableUUID(overrides?: CallOverrides): Promise<[string]>;
-
-    rawFulfillRandomWords(
-      requestId: BigNumberish,
-      randomWords: BigNumberish[],
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    removePrizeInCategory(
-      categoryId: BigNumberish,
-      prizeId: BigNumberish,
-      receiver: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    renounceRole(
-      role: BytesLike,
-      account: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    requestPrize(
-      sender: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    revokeRole(
-      role: BytesLike,
-      account: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    senderRequests(
-      arg0: string,
-      arg1: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    senderRequestsCount(
-      arg0: string,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    supportsInterface(
-      interfaceId: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
-
-    unpause(
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    updateCallbackGasLimit(
-      gasLimit: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    updateCategoryChance(
-      categoryId: BigNumberish,
-      chance: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    updateKeyHash(
-      kayHash: BytesLike,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    updatePrizeCalculationInResponse(
-      isEnabled: boolean,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    updateRequestConfirmations(
-      confirmations: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    updateRequestRandomInOracle(
-      isEnabled: boolean,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    updateSubscriptionId(
-      id: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    upgradeTo(
-      newImplementation: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    upgradeToAndCall(
-      newImplementation: string,
-      data: BytesLike,
-      overrides?: PayableOverrides & { from?: string }
-    ): Promise<ContractTransaction>;
-  };
-
-  DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
-
-  OPERATOR_ROLE(overrides?: CallOverrides): Promise<string>;
-
-  UPGRADER_ROLE(overrides?: CallOverrides): Promise<string>;
-
-  addPrizeToCategory(
+export namespace PrizeInCategoryWithdrawnEvent {
+  export type InputTuple = [
     categoryId: BigNumberish,
-    from: string,
+    prizeId: BigNumberish,
+    to: AddressLike,
+    remaining: BigNumberish
+  ];
+  export type OutputTuple = [
+    categoryId: bigint,
+    prizeId: bigint,
+    to: string,
+    remaining: bigint
+  ];
+  export interface OutputObject {
+    categoryId: bigint;
+    prizeId: bigint;
+    to: string;
+    remaining: bigint;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
+}
+
+export namespace PrizeSentEvent {
+  export type InputTuple = [
+    sender: AddressLike,
+    tokenAddress: AddressLike,
+    isERC20: boolean,
+    isERC721: boolean,
+    isERC1155: boolean,
+    tokenId: BigNumberish,
+    amount: BigNumberish
+  ];
+  export type OutputTuple = [
+    sender: string,
     tokenAddress: string,
     isERC20: boolean,
     isERC721: boolean,
     isERC1155: boolean,
-    amount: BigNumberish,
-    tokenIds: BigNumberish[],
-    remaining: BigNumberish,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
+    tokenId: bigint,
+    amount: bigint
+  ];
+  export interface OutputObject {
+    sender: string;
+    tokenAddress: string;
+    isERC20: boolean;
+    isERC721: boolean;
+    isERC1155: boolean;
+    tokenId: bigint;
+    amount: bigint;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
+}
 
-  categoriesLength(overrides?: CallOverrides): Promise<BigNumber>;
-
-  createCategory(
-    chance: BigNumberish,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  enablePrizeCalculationInOracleResponse(
-    overrides?: CallOverrides
-  ): Promise<boolean>;
-
-  enableRequestRandomInOracle(overrides?: CallOverrides): Promise<boolean>;
-
-  getCategory(
-    categoryId: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<[BigNumber, BigNumber[], boolean]>;
-
-  getCategoryPrize(
-    categoryId: BigNumberish,
-    prizeId: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<TokensPool.PrizeStructOutput>;
-
-  getCategoryPrizes(
-    categoryId: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<TokensPool.PrizeStructOutput[]>;
-
-  getCategoryRemainingPrizes(
-    categoryId: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<TokensPool.PrizeStructOutput[]>;
-
-  getNonEmptyCategories(overrides?: CallOverrides): Promise<BigNumber[]>;
-
-  getPrizeFromOracleRandom(
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<string>;
-
-  getTotalChance(overrides?: CallOverrides): Promise<BigNumber>;
-
-  grantRole(
+export namespace RoleAdminChangedEvent {
+  export type InputTuple = [
     role: BytesLike,
-    account: string,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
+    previousAdminRole: BytesLike,
+    newAdminRole: BytesLike
+  ];
+  export type OutputTuple = [
+    role: string,
+    previousAdminRole: string,
+    newAdminRole: string
+  ];
+  export interface OutputObject {
+    role: string;
+    previousAdminRole: string;
+    newAdminRole: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
+}
 
-  hasActiveRequest(sender: string, overrides?: CallOverrides): Promise<boolean>;
-
-  hasRole(
+export namespace RoleGrantedEvent {
+  export type InputTuple = [
     role: BytesLike,
-    account: string,
-    overrides?: CallOverrides
-  ): Promise<boolean>;
+    account: AddressLike,
+    sender: AddressLike
+  ];
+  export type OutputTuple = [role: string, account: string, sender: string];
+  export interface OutputObject {
+    role: string;
+    account: string;
+    sender: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
+}
 
-  initialize(
-    coordinator: string,
-    subscriptionId: BigNumberish,
-    keyHash: BytesLike,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  onERC1155BatchReceived(
-    arg0: string,
-    arg1: string,
-    arg2: BigNumberish[],
-    arg3: BigNumberish[],
-    arg4: BytesLike,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  onERC1155Received(
-    arg0: string,
-    arg1: string,
-    arg2: BigNumberish,
-    arg3: BigNumberish,
-    arg4: BytesLike,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  onERC721Received(
-    arg0: string,
-    arg1: string,
-    arg2: BigNumberish,
-    arg3: BytesLike,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  pause(
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  paused(overrides?: CallOverrides): Promise<boolean>;
-
-  prizeCategories(
-    arg0: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<[BigNumber, boolean] & { chance: BigNumber; isEmpty: boolean }>;
-
-  proxiableUUID(overrides?: CallOverrides): Promise<string>;
-
-  rawFulfillRandomWords(
-    requestId: BigNumberish,
-    randomWords: BigNumberish[],
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  removePrizeInCategory(
-    categoryId: BigNumberish,
-    prizeId: BigNumberish,
-    receiver: string,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  renounceRole(
+export namespace RoleRevokedEvent {
+  export type InputTuple = [
     role: BytesLike,
-    account: string,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
+    account: AddressLike,
+    sender: AddressLike
+  ];
+  export type OutputTuple = [role: string, account: string, sender: string];
+  export interface OutputObject {
+    role: string;
+    account: string;
+    sender: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
+}
 
-  requestPrize(
-    sender: string,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
+export namespace UnpausedEvent {
+  export type InputTuple = [account: AddressLike];
+  export type OutputTuple = [account: string];
+  export interface OutputObject {
+    account: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
+}
 
-  revokeRole(
-    role: BytesLike,
-    account: string,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
+export namespace UpgradedEvent {
+  export type InputTuple = [implementation: AddressLike];
+  export type OutputTuple = [implementation: string];
+  export interface OutputObject {
+    implementation: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
+}
 
-  senderRequests(
-    arg0: string,
-    arg1: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
+export interface TokensPool extends BaseContract {
+  connect(runner?: ContractRunner | null): TokensPool;
+  waitForDeployment(): Promise<this>;
 
-  senderRequestsCount(
-    arg0: string,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
+  interface: TokensPoolInterface;
 
-  supportsInterface(
-    interfaceId: BytesLike,
-    overrides?: CallOverrides
-  ): Promise<boolean>;
+  queryFilter<TCEvent extends TypedContractEvent>(
+    event: TCEvent,
+    fromBlockOrBlockhash?: string | number | undefined,
+    toBlock?: string | number | undefined
+  ): Promise<Array<TypedEventLog<TCEvent>>>;
+  queryFilter<TCEvent extends TypedContractEvent>(
+    filter: TypedDeferredTopicFilter<TCEvent>,
+    fromBlockOrBlockhash?: string | number | undefined,
+    toBlock?: string | number | undefined
+  ): Promise<Array<TypedEventLog<TCEvent>>>;
 
-  unpause(
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
+  on<TCEvent extends TypedContractEvent>(
+    event: TCEvent,
+    listener: TypedListener<TCEvent>
+  ): Promise<this>;
+  on<TCEvent extends TypedContractEvent>(
+    filter: TypedDeferredTopicFilter<TCEvent>,
+    listener: TypedListener<TCEvent>
+  ): Promise<this>;
 
-  updateCallbackGasLimit(
-    gasLimit: BigNumberish,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
+  once<TCEvent extends TypedContractEvent>(
+    event: TCEvent,
+    listener: TypedListener<TCEvent>
+  ): Promise<this>;
+  once<TCEvent extends TypedContractEvent>(
+    filter: TypedDeferredTopicFilter<TCEvent>,
+    listener: TypedListener<TCEvent>
+  ): Promise<this>;
 
-  updateCategoryChance(
-    categoryId: BigNumberish,
-    chance: BigNumberish,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
+  listeners<TCEvent extends TypedContractEvent>(
+    event: TCEvent
+  ): Promise<Array<TypedListener<TCEvent>>>;
+  listeners(eventName?: string): Promise<Array<Listener>>;
+  removeAllListeners<TCEvent extends TypedContractEvent>(
+    event?: TCEvent
+  ): Promise<this>;
 
-  updateKeyHash(
-    kayHash: BytesLike,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
+  DEFAULT_ADMIN_ROLE: TypedContractMethod<[], [string], "view">;
 
-  updatePrizeCalculationInResponse(
-    isEnabled: boolean,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
+  OPERATOR_ROLE: TypedContractMethod<[], [string], "view">;
 
-  updateRequestConfirmations(
-    confirmations: BigNumberish,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
+  UPGRADER_ROLE: TypedContractMethod<[], [string], "view">;
 
-  updateRequestRandomInOracle(
-    isEnabled: boolean,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  updateSubscriptionId(
-    id: BigNumberish,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  upgradeTo(
-    newImplementation: string,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  upgradeToAndCall(
-    newImplementation: string,
-    data: BytesLike,
-    overrides?: PayableOverrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  callStatic: {
-    DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
-
-    OPERATOR_ROLE(overrides?: CallOverrides): Promise<string>;
-
-    UPGRADER_ROLE(overrides?: CallOverrides): Promise<string>;
-
-    addPrizeToCategory(
+  addPrizeToCategory: TypedContractMethod<
+    [
       categoryId: BigNumberish,
-      from: string,
-      tokenAddress: string,
+      from: AddressLike,
+      tokenAddress: AddressLike,
       isERC20: boolean,
       isERC721: boolean,
       isERC1155: boolean,
       amount: BigNumberish,
       tokenIds: BigNumberish[],
-      remaining: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
+      remaining: BigNumberish
+    ],
+    [void],
+    "nonpayable"
+  >;
 
-    categoriesLength(overrides?: CallOverrides): Promise<BigNumber>;
+  categoriesLength: TypedContractMethod<[], [bigint], "view">;
 
-    createCategory(
-      chance: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+  createCategory: TypedContractMethod<
+    [chance: BigNumberish],
+    [bigint],
+    "nonpayable"
+  >;
 
-    enablePrizeCalculationInOracleResponse(
-      overrides?: CallOverrides
-    ): Promise<boolean>;
+  enablePrizeCalculationInOracleResponse: TypedContractMethod<
+    [],
+    [boolean],
+    "view"
+  >;
 
-    enableRequestRandomInOracle(overrides?: CallOverrides): Promise<boolean>;
+  enableRequestRandomInOracle: TypedContractMethod<[], [boolean], "view">;
 
-    getCategory(
-      categoryId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber, BigNumber[], boolean]>;
+  getCategory: TypedContractMethod<
+    [categoryId: BigNumberish],
+    [[bigint, bigint[], boolean]],
+    "view"
+  >;
 
-    getCategoryPrize(
-      categoryId: BigNumberish,
-      prizeId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<TokensPool.PrizeStructOutput>;
+  getCategoryPrize: TypedContractMethod<
+    [categoryId: BigNumberish, prizeId: BigNumberish],
+    [TokensPool.PrizeStructOutput],
+    "view"
+  >;
 
-    getCategoryPrizes(
-      categoryId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<TokensPool.PrizeStructOutput[]>;
+  getCategoryPrizes: TypedContractMethod<
+    [categoryId: BigNumberish],
+    [TokensPool.PrizeStructOutput[]],
+    "view"
+  >;
 
-    getCategoryRemainingPrizes(
-      categoryId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<TokensPool.PrizeStructOutput[]>;
+  getCategoryRemainingPrizes: TypedContractMethod<
+    [categoryId: BigNumberish],
+    [TokensPool.PrizeStructOutput[]],
+    "view"
+  >;
 
-    getNonEmptyCategories(overrides?: CallOverrides): Promise<BigNumber[]>;
+  getNonEmptyCategories: TypedContractMethod<[], [bigint[]], "view">;
 
-    getPrizeFromOracleRandom(overrides?: CallOverrides): Promise<void>;
+  getPrizeFromOracleRandom: TypedContractMethod<[], [void], "nonpayable">;
 
-    getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<string>;
+  getRoleAdmin: TypedContractMethod<[role: BytesLike], [string], "view">;
 
-    getTotalChance(overrides?: CallOverrides): Promise<BigNumber>;
+  getTotalChance: TypedContractMethod<[], [bigint], "view">;
 
-    grantRole(
-      role: BytesLike,
-      account: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
+  grantRole: TypedContractMethod<
+    [role: BytesLike, account: AddressLike],
+    [void],
+    "nonpayable"
+  >;
 
-    hasActiveRequest(
-      sender: string,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
+  hasActiveRequest: TypedContractMethod<
+    [sender: AddressLike],
+    [boolean],
+    "view"
+  >;
 
-    hasRole(
-      role: BytesLike,
-      account: string,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
+  hasRole: TypedContractMethod<
+    [role: BytesLike, account: AddressLike],
+    [boolean],
+    "view"
+  >;
 
-    initialize(
-      coordinator: string,
+  initialize: TypedContractMethod<
+    [
+      coordinator: AddressLike,
       subscriptionId: BigNumberish,
-      keyHash: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<void>;
+      keyHash: BytesLike
+    ],
+    [void],
+    "nonpayable"
+  >;
 
-    onERC1155BatchReceived(
-      arg0: string,
-      arg1: string,
+  onERC1155BatchReceived: TypedContractMethod<
+    [
+      arg0: AddressLike,
+      arg1: AddressLike,
       arg2: BigNumberish[],
       arg3: BigNumberish[],
-      arg4: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<string>;
+      arg4: BytesLike
+    ],
+    [string],
+    "nonpayable"
+  >;
 
-    onERC1155Received(
-      arg0: string,
-      arg1: string,
+  onERC1155Received: TypedContractMethod<
+    [
+      arg0: AddressLike,
+      arg1: AddressLike,
       arg2: BigNumberish,
       arg3: BigNumberish,
-      arg4: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<string>;
+      arg4: BytesLike
+    ],
+    [string],
+    "nonpayable"
+  >;
 
-    onERC721Received(
-      arg0: string,
-      arg1: string,
+  onERC721Received: TypedContractMethod<
+    [arg0: AddressLike, arg1: AddressLike, arg2: BigNumberish, arg3: BytesLike],
+    [string],
+    "nonpayable"
+  >;
+
+  pause: TypedContractMethod<[], [void], "nonpayable">;
+
+  paused: TypedContractMethod<[], [boolean], "view">;
+
+  prizeCategories: TypedContractMethod<
+    [arg0: BigNumberish],
+    [[bigint, boolean] & { chance: bigint; isEmpty: boolean }],
+    "view"
+  >;
+
+  proxiableUUID: TypedContractMethod<[], [string], "view">;
+
+  rawFulfillRandomWords: TypedContractMethod<
+    [requestId: BigNumberish, randomWords: BigNumberish[]],
+    [void],
+    "nonpayable"
+  >;
+
+  removePrizeInCategory: TypedContractMethod<
+    [categoryId: BigNumberish, prizeId: BigNumberish, receiver: AddressLike],
+    [void],
+    "nonpayable"
+  >;
+
+  renounceRole: TypedContractMethod<
+    [role: BytesLike, account: AddressLike],
+    [void],
+    "nonpayable"
+  >;
+
+  requestPrize: TypedContractMethod<
+    [sender: AddressLike],
+    [void],
+    "nonpayable"
+  >;
+
+  revokeRole: TypedContractMethod<
+    [role: BytesLike, account: AddressLike],
+    [void],
+    "nonpayable"
+  >;
+
+  senderRequests: TypedContractMethod<
+    [arg0: AddressLike, arg1: BigNumberish],
+    [bigint],
+    "view"
+  >;
+
+  senderRequestsCount: TypedContractMethod<
+    [arg0: AddressLike],
+    [bigint],
+    "view"
+  >;
+
+  supportsInterface: TypedContractMethod<
+    [interfaceId: BytesLike],
+    [boolean],
+    "view"
+  >;
+
+  unpause: TypedContractMethod<[], [void], "nonpayable">;
+
+  updateCallbackGasLimit: TypedContractMethod<
+    [gasLimit: BigNumberish],
+    [void],
+    "nonpayable"
+  >;
+
+  updateCategoryChance: TypedContractMethod<
+    [categoryId: BigNumberish, chance: BigNumberish],
+    [void],
+    "nonpayable"
+  >;
+
+  updateKeyHash: TypedContractMethod<
+    [kayHash: BytesLike],
+    [void],
+    "nonpayable"
+  >;
+
+  updatePrizeCalculationInResponse: TypedContractMethod<
+    [isEnabled: boolean],
+    [void],
+    "nonpayable"
+  >;
+
+  updateRequestConfirmations: TypedContractMethod<
+    [confirmations: BigNumberish],
+    [void],
+    "nonpayable"
+  >;
+
+  updateRequestRandomInOracle: TypedContractMethod<
+    [isEnabled: boolean],
+    [void],
+    "nonpayable"
+  >;
+
+  updateSubscriptionId: TypedContractMethod<
+    [id: BigNumberish],
+    [void],
+    "nonpayable"
+  >;
+
+  upgradeTo: TypedContractMethod<
+    [newImplementation: AddressLike],
+    [void],
+    "nonpayable"
+  >;
+
+  upgradeToAndCall: TypedContractMethod<
+    [newImplementation: AddressLike, data: BytesLike],
+    [void],
+    "payable"
+  >;
+
+  getFunction<T extends ContractMethod = ContractMethod>(
+    key: string | FunctionFragment
+  ): T;
+
+  getFunction(
+    nameOrSignature: "DEFAULT_ADMIN_ROLE"
+  ): TypedContractMethod<[], [string], "view">;
+  getFunction(
+    nameOrSignature: "OPERATOR_ROLE"
+  ): TypedContractMethod<[], [string], "view">;
+  getFunction(
+    nameOrSignature: "UPGRADER_ROLE"
+  ): TypedContractMethod<[], [string], "view">;
+  getFunction(
+    nameOrSignature: "addPrizeToCategory"
+  ): TypedContractMethod<
+    [
+      categoryId: BigNumberish,
+      from: AddressLike,
+      tokenAddress: AddressLike,
+      isERC20: boolean,
+      isERC721: boolean,
+      isERC1155: boolean,
+      amount: BigNumberish,
+      tokenIds: BigNumberish[],
+      remaining: BigNumberish
+    ],
+    [void],
+    "nonpayable"
+  >;
+  getFunction(
+    nameOrSignature: "categoriesLength"
+  ): TypedContractMethod<[], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "createCategory"
+  ): TypedContractMethod<[chance: BigNumberish], [bigint], "nonpayable">;
+  getFunction(
+    nameOrSignature: "enablePrizeCalculationInOracleResponse"
+  ): TypedContractMethod<[], [boolean], "view">;
+  getFunction(
+    nameOrSignature: "enableRequestRandomInOracle"
+  ): TypedContractMethod<[], [boolean], "view">;
+  getFunction(
+    nameOrSignature: "getCategory"
+  ): TypedContractMethod<
+    [categoryId: BigNumberish],
+    [[bigint, bigint[], boolean]],
+    "view"
+  >;
+  getFunction(
+    nameOrSignature: "getCategoryPrize"
+  ): TypedContractMethod<
+    [categoryId: BigNumberish, prizeId: BigNumberish],
+    [TokensPool.PrizeStructOutput],
+    "view"
+  >;
+  getFunction(
+    nameOrSignature: "getCategoryPrizes"
+  ): TypedContractMethod<
+    [categoryId: BigNumberish],
+    [TokensPool.PrizeStructOutput[]],
+    "view"
+  >;
+  getFunction(
+    nameOrSignature: "getCategoryRemainingPrizes"
+  ): TypedContractMethod<
+    [categoryId: BigNumberish],
+    [TokensPool.PrizeStructOutput[]],
+    "view"
+  >;
+  getFunction(
+    nameOrSignature: "getNonEmptyCategories"
+  ): TypedContractMethod<[], [bigint[]], "view">;
+  getFunction(
+    nameOrSignature: "getPrizeFromOracleRandom"
+  ): TypedContractMethod<[], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "getRoleAdmin"
+  ): TypedContractMethod<[role: BytesLike], [string], "view">;
+  getFunction(
+    nameOrSignature: "getTotalChance"
+  ): TypedContractMethod<[], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "grantRole"
+  ): TypedContractMethod<
+    [role: BytesLike, account: AddressLike],
+    [void],
+    "nonpayable"
+  >;
+  getFunction(
+    nameOrSignature: "hasActiveRequest"
+  ): TypedContractMethod<[sender: AddressLike], [boolean], "view">;
+  getFunction(
+    nameOrSignature: "hasRole"
+  ): TypedContractMethod<
+    [role: BytesLike, account: AddressLike],
+    [boolean],
+    "view"
+  >;
+  getFunction(
+    nameOrSignature: "initialize"
+  ): TypedContractMethod<
+    [
+      coordinator: AddressLike,
+      subscriptionId: BigNumberish,
+      keyHash: BytesLike
+    ],
+    [void],
+    "nonpayable"
+  >;
+  getFunction(
+    nameOrSignature: "onERC1155BatchReceived"
+  ): TypedContractMethod<
+    [
+      arg0: AddressLike,
+      arg1: AddressLike,
+      arg2: BigNumberish[],
+      arg3: BigNumberish[],
+      arg4: BytesLike
+    ],
+    [string],
+    "nonpayable"
+  >;
+  getFunction(
+    nameOrSignature: "onERC1155Received"
+  ): TypedContractMethod<
+    [
+      arg0: AddressLike,
+      arg1: AddressLike,
       arg2: BigNumberish,
-      arg3: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<string>;
+      arg3: BigNumberish,
+      arg4: BytesLike
+    ],
+    [string],
+    "nonpayable"
+  >;
+  getFunction(
+    nameOrSignature: "onERC721Received"
+  ): TypedContractMethod<
+    [arg0: AddressLike, arg1: AddressLike, arg2: BigNumberish, arg3: BytesLike],
+    [string],
+    "nonpayable"
+  >;
+  getFunction(
+    nameOrSignature: "pause"
+  ): TypedContractMethod<[], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "paused"
+  ): TypedContractMethod<[], [boolean], "view">;
+  getFunction(
+    nameOrSignature: "prizeCategories"
+  ): TypedContractMethod<
+    [arg0: BigNumberish],
+    [[bigint, boolean] & { chance: bigint; isEmpty: boolean }],
+    "view"
+  >;
+  getFunction(
+    nameOrSignature: "proxiableUUID"
+  ): TypedContractMethod<[], [string], "view">;
+  getFunction(
+    nameOrSignature: "rawFulfillRandomWords"
+  ): TypedContractMethod<
+    [requestId: BigNumberish, randomWords: BigNumberish[]],
+    [void],
+    "nonpayable"
+  >;
+  getFunction(
+    nameOrSignature: "removePrizeInCategory"
+  ): TypedContractMethod<
+    [categoryId: BigNumberish, prizeId: BigNumberish, receiver: AddressLike],
+    [void],
+    "nonpayable"
+  >;
+  getFunction(
+    nameOrSignature: "renounceRole"
+  ): TypedContractMethod<
+    [role: BytesLike, account: AddressLike],
+    [void],
+    "nonpayable"
+  >;
+  getFunction(
+    nameOrSignature: "requestPrize"
+  ): TypedContractMethod<[sender: AddressLike], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "revokeRole"
+  ): TypedContractMethod<
+    [role: BytesLike, account: AddressLike],
+    [void],
+    "nonpayable"
+  >;
+  getFunction(
+    nameOrSignature: "senderRequests"
+  ): TypedContractMethod<
+    [arg0: AddressLike, arg1: BigNumberish],
+    [bigint],
+    "view"
+  >;
+  getFunction(
+    nameOrSignature: "senderRequestsCount"
+  ): TypedContractMethod<[arg0: AddressLike], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "supportsInterface"
+  ): TypedContractMethod<[interfaceId: BytesLike], [boolean], "view">;
+  getFunction(
+    nameOrSignature: "unpause"
+  ): TypedContractMethod<[], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "updateCallbackGasLimit"
+  ): TypedContractMethod<[gasLimit: BigNumberish], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "updateCategoryChance"
+  ): TypedContractMethod<
+    [categoryId: BigNumberish, chance: BigNumberish],
+    [void],
+    "nonpayable"
+  >;
+  getFunction(
+    nameOrSignature: "updateKeyHash"
+  ): TypedContractMethod<[kayHash: BytesLike], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "updatePrizeCalculationInResponse"
+  ): TypedContractMethod<[isEnabled: boolean], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "updateRequestConfirmations"
+  ): TypedContractMethod<[confirmations: BigNumberish], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "updateRequestRandomInOracle"
+  ): TypedContractMethod<[isEnabled: boolean], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "updateSubscriptionId"
+  ): TypedContractMethod<[id: BigNumberish], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "upgradeTo"
+  ): TypedContractMethod<
+    [newImplementation: AddressLike],
+    [void],
+    "nonpayable"
+  >;
+  getFunction(
+    nameOrSignature: "upgradeToAndCall"
+  ): TypedContractMethod<
+    [newImplementation: AddressLike, data: BytesLike],
+    [void],
+    "payable"
+  >;
 
-    pause(overrides?: CallOverrides): Promise<void>;
-
-    paused(overrides?: CallOverrides): Promise<boolean>;
-
-    prizeCategories(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber, boolean] & { chance: BigNumber; isEmpty: boolean }>;
-
-    proxiableUUID(overrides?: CallOverrides): Promise<string>;
-
-    rawFulfillRandomWords(
-      requestId: BigNumberish,
-      randomWords: BigNumberish[],
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    removePrizeInCategory(
-      categoryId: BigNumberish,
-      prizeId: BigNumberish,
-      receiver: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    renounceRole(
-      role: BytesLike,
-      account: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    requestPrize(sender: string, overrides?: CallOverrides): Promise<void>;
-
-    revokeRole(
-      role: BytesLike,
-      account: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    senderRequests(
-      arg0: string,
-      arg1: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    senderRequestsCount(
-      arg0: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    supportsInterface(
-      interfaceId: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
-
-    unpause(overrides?: CallOverrides): Promise<void>;
-
-    updateCallbackGasLimit(
-      gasLimit: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    updateCategoryChance(
-      categoryId: BigNumberish,
-      chance: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    updateKeyHash(kayHash: BytesLike, overrides?: CallOverrides): Promise<void>;
-
-    updatePrizeCalculationInResponse(
-      isEnabled: boolean,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    updateRequestConfirmations(
-      confirmations: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    updateRequestRandomInOracle(
-      isEnabled: boolean,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    updateSubscriptionId(
-      id: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    upgradeTo(
-      newImplementation: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    upgradeToAndCall(
-      newImplementation: string,
-      data: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<void>;
-  };
+  getEvent(
+    key: "AdminChanged"
+  ): TypedContractEvent<
+    AdminChangedEvent.InputTuple,
+    AdminChangedEvent.OutputTuple,
+    AdminChangedEvent.OutputObject
+  >;
+  getEvent(
+    key: "BeaconUpgraded"
+  ): TypedContractEvent<
+    BeaconUpgradedEvent.InputTuple,
+    BeaconUpgradedEvent.OutputTuple,
+    BeaconUpgradedEvent.OutputObject
+  >;
+  getEvent(
+    key: "Initialized"
+  ): TypedContractEvent<
+    InitializedEvent.InputTuple,
+    InitializedEvent.OutputTuple,
+    InitializedEvent.OutputObject
+  >;
+  getEvent(
+    key: "OracleRequestFulfilled"
+  ): TypedContractEvent<
+    OracleRequestFulfilledEvent.InputTuple,
+    OracleRequestFulfilledEvent.OutputTuple,
+    OracleRequestFulfilledEvent.OutputObject
+  >;
+  getEvent(
+    key: "OracleRequestSent"
+  ): TypedContractEvent<
+    OracleRequestSentEvent.InputTuple,
+    OracleRequestSentEvent.OutputTuple,
+    OracleRequestSentEvent.OutputObject
+  >;
+  getEvent(
+    key: "Paused"
+  ): TypedContractEvent<
+    PausedEvent.InputTuple,
+    PausedEvent.OutputTuple,
+    PausedEvent.OutputObject
+  >;
+  getEvent(
+    key: "PrizeCategoryCreated"
+  ): TypedContractEvent<
+    PrizeCategoryCreatedEvent.InputTuple,
+    PrizeCategoryCreatedEvent.OutputTuple,
+    PrizeCategoryCreatedEvent.OutputObject
+  >;
+  getEvent(
+    key: "PrizeCategoryUpdated"
+  ): TypedContractEvent<
+    PrizeCategoryUpdatedEvent.InputTuple,
+    PrizeCategoryUpdatedEvent.OutputTuple,
+    PrizeCategoryUpdatedEvent.OutputObject
+  >;
+  getEvent(
+    key: "PrizeInCategoryAdded"
+  ): TypedContractEvent<
+    PrizeInCategoryAddedEvent.InputTuple,
+    PrizeInCategoryAddedEvent.OutputTuple,
+    PrizeInCategoryAddedEvent.OutputObject
+  >;
+  getEvent(
+    key: "PrizeInCategoryFinished"
+  ): TypedContractEvent<
+    PrizeInCategoryFinishedEvent.InputTuple,
+    PrizeInCategoryFinishedEvent.OutputTuple,
+    PrizeInCategoryFinishedEvent.OutputObject
+  >;
+  getEvent(
+    key: "PrizeInCategoryWithdrawn"
+  ): TypedContractEvent<
+    PrizeInCategoryWithdrawnEvent.InputTuple,
+    PrizeInCategoryWithdrawnEvent.OutputTuple,
+    PrizeInCategoryWithdrawnEvent.OutputObject
+  >;
+  getEvent(
+    key: "PrizeSent"
+  ): TypedContractEvent<
+    PrizeSentEvent.InputTuple,
+    PrizeSentEvent.OutputTuple,
+    PrizeSentEvent.OutputObject
+  >;
+  getEvent(
+    key: "RoleAdminChanged"
+  ): TypedContractEvent<
+    RoleAdminChangedEvent.InputTuple,
+    RoleAdminChangedEvent.OutputTuple,
+    RoleAdminChangedEvent.OutputObject
+  >;
+  getEvent(
+    key: "RoleGranted"
+  ): TypedContractEvent<
+    RoleGrantedEvent.InputTuple,
+    RoleGrantedEvent.OutputTuple,
+    RoleGrantedEvent.OutputObject
+  >;
+  getEvent(
+    key: "RoleRevoked"
+  ): TypedContractEvent<
+    RoleRevokedEvent.InputTuple,
+    RoleRevokedEvent.OutputTuple,
+    RoleRevokedEvent.OutputObject
+  >;
+  getEvent(
+    key: "Unpaused"
+  ): TypedContractEvent<
+    UnpausedEvent.InputTuple,
+    UnpausedEvent.OutputTuple,
+    UnpausedEvent.OutputObject
+  >;
+  getEvent(
+    key: "Upgraded"
+  ): TypedContractEvent<
+    UpgradedEvent.InputTuple,
+    UpgradedEvent.OutputTuple,
+    UpgradedEvent.OutputObject
+  >;
 
   filters: {
-    "AdminChanged(address,address)"(
-      previousAdmin?: null,
-      newAdmin?: null
-    ): AdminChangedEventFilter;
-    AdminChanged(
-      previousAdmin?: null,
-      newAdmin?: null
-    ): AdminChangedEventFilter;
-
-    "BeaconUpgraded(address)"(
-      beacon?: string | null
-    ): BeaconUpgradedEventFilter;
-    BeaconUpgraded(beacon?: string | null): BeaconUpgradedEventFilter;
-
-    "Initialized(uint8)"(version?: null): InitializedEventFilter;
-    Initialized(version?: null): InitializedEventFilter;
-
-    "OracleRequestFulfilled(address,uint256,uint256)"(
-      sender?: string | null,
-      requestId?: BigNumberish | null,
-      randomWord?: null
-    ): OracleRequestFulfilledEventFilter;
-    OracleRequestFulfilled(
-      sender?: string | null,
-      requestId?: BigNumberish | null,
-      randomWord?: null
-    ): OracleRequestFulfilledEventFilter;
-
-    "OracleRequestSent(address,uint256)"(
-      sender?: string | null,
-      requestId?: BigNumberish | null
-    ): OracleRequestSentEventFilter;
-    OracleRequestSent(
-      sender?: string | null,
-      requestId?: BigNumberish | null
-    ): OracleRequestSentEventFilter;
-
-    "Paused(address)"(account?: null): PausedEventFilter;
-    Paused(account?: null): PausedEventFilter;
-
-    "PrizeCategoryCreated(uint256,uint256)"(
-      categoryId?: BigNumberish | null,
-      chance?: null
-    ): PrizeCategoryCreatedEventFilter;
-    PrizeCategoryCreated(
-      categoryId?: BigNumberish | null,
-      chance?: null
-    ): PrizeCategoryCreatedEventFilter;
-
-    "PrizeCategoryUpdated(uint256,uint256)"(
-      categoryId?: BigNumberish | null,
-      chance?: null
-    ): PrizeCategoryUpdatedEventFilter;
-    PrizeCategoryUpdated(
-      categoryId?: BigNumberish | null,
-      chance?: null
-    ): PrizeCategoryUpdatedEventFilter;
-
-    "PrizeInCategoryAdded(uint256,uint256)"(
-      categoryId?: BigNumberish | null,
-      prizeId?: BigNumberish | null
-    ): PrizeInCategoryAddedEventFilter;
-    PrizeInCategoryAdded(
-      categoryId?: BigNumberish | null,
-      prizeId?: BigNumberish | null
-    ): PrizeInCategoryAddedEventFilter;
-
-    "PrizeInCategoryFinished(uint256)"(
-      categoryId?: BigNumberish | null
-    ): PrizeInCategoryFinishedEventFilter;
-    PrizeInCategoryFinished(
-      categoryId?: BigNumberish | null
-    ): PrizeInCategoryFinishedEventFilter;
-
-    "PrizeInCategoryWithdrawn(uint256,uint256,address,uint256)"(
-      categoryId?: BigNumberish | null,
-      prizeId?: BigNumberish | null,
-      to?: null,
-      remaining?: null
-    ): PrizeInCategoryWithdrawnEventFilter;
-    PrizeInCategoryWithdrawn(
-      categoryId?: BigNumberish | null,
-      prizeId?: BigNumberish | null,
-      to?: null,
-      remaining?: null
-    ): PrizeInCategoryWithdrawnEventFilter;
-
-    "PrizeSent(address,address,bool,bool,bool,uint256,uint256)"(
-      sender?: string | null,
-      tokenAddress?: null,
-      isERC20?: null,
-      isERC721?: null,
-      isERC1155?: null,
-      tokenId?: null,
-      amount?: null
-    ): PrizeSentEventFilter;
-    PrizeSent(
-      sender?: string | null,
-      tokenAddress?: null,
-      isERC20?: null,
-      isERC721?: null,
-      isERC1155?: null,
-      tokenId?: null,
-      amount?: null
-    ): PrizeSentEventFilter;
-
-    "RoleAdminChanged(bytes32,bytes32,bytes32)"(
-      role?: BytesLike | null,
-      previousAdminRole?: BytesLike | null,
-      newAdminRole?: BytesLike | null
-    ): RoleAdminChangedEventFilter;
-    RoleAdminChanged(
-      role?: BytesLike | null,
-      previousAdminRole?: BytesLike | null,
-      newAdminRole?: BytesLike | null
-    ): RoleAdminChangedEventFilter;
-
-    "RoleGranted(bytes32,address,address)"(
-      role?: BytesLike | null,
-      account?: string | null,
-      sender?: string | null
-    ): RoleGrantedEventFilter;
-    RoleGranted(
-      role?: BytesLike | null,
-      account?: string | null,
-      sender?: string | null
-    ): RoleGrantedEventFilter;
-
-    "RoleRevoked(bytes32,address,address)"(
-      role?: BytesLike | null,
-      account?: string | null,
-      sender?: string | null
-    ): RoleRevokedEventFilter;
-    RoleRevoked(
-      role?: BytesLike | null,
-      account?: string | null,
-      sender?: string | null
-    ): RoleRevokedEventFilter;
-
-    "Unpaused(address)"(account?: null): UnpausedEventFilter;
-    Unpaused(account?: null): UnpausedEventFilter;
-
-    "Upgraded(address)"(implementation?: string | null): UpgradedEventFilter;
-    Upgraded(implementation?: string | null): UpgradedEventFilter;
-  };
-
-  estimateGas: {
-    DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
-
-    OPERATOR_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
-
-    UPGRADER_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
-
-    addPrizeToCategory(
-      categoryId: BigNumberish,
-      from: string,
-      tokenAddress: string,
-      isERC20: boolean,
-      isERC721: boolean,
-      isERC1155: boolean,
-      amount: BigNumberish,
-      tokenIds: BigNumberish[],
-      remaining: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    categoriesLength(overrides?: CallOverrides): Promise<BigNumber>;
-
-    createCategory(
-      chance: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    enablePrizeCalculationInOracleResponse(
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    enableRequestRandomInOracle(overrides?: CallOverrides): Promise<BigNumber>;
-
-    getCategory(
-      categoryId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    getCategoryPrize(
-      categoryId: BigNumberish,
-      prizeId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    getCategoryPrizes(
-      categoryId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    getCategoryRemainingPrizes(
-      categoryId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    getNonEmptyCategories(overrides?: CallOverrides): Promise<BigNumber>;
-
-    getPrizeFromOracleRandom(
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    getRoleAdmin(
-      role: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    getTotalChance(overrides?: CallOverrides): Promise<BigNumber>;
-
-    grantRole(
-      role: BytesLike,
-      account: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    hasActiveRequest(
-      sender: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    hasRole(
-      role: BytesLike,
-      account: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    initialize(
-      coordinator: string,
-      subscriptionId: BigNumberish,
-      keyHash: BytesLike,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    onERC1155BatchReceived(
-      arg0: string,
-      arg1: string,
-      arg2: BigNumberish[],
-      arg3: BigNumberish[],
-      arg4: BytesLike,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    onERC1155Received(
-      arg0: string,
-      arg1: string,
-      arg2: BigNumberish,
-      arg3: BigNumberish,
-      arg4: BytesLike,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    onERC721Received(
-      arg0: string,
-      arg1: string,
-      arg2: BigNumberish,
-      arg3: BytesLike,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    pause(overrides?: Overrides & { from?: string }): Promise<BigNumber>;
-
-    paused(overrides?: CallOverrides): Promise<BigNumber>;
-
-    prizeCategories(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    proxiableUUID(overrides?: CallOverrides): Promise<BigNumber>;
-
-    rawFulfillRandomWords(
-      requestId: BigNumberish,
-      randomWords: BigNumberish[],
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    removePrizeInCategory(
-      categoryId: BigNumberish,
-      prizeId: BigNumberish,
-      receiver: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    renounceRole(
-      role: BytesLike,
-      account: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    requestPrize(
-      sender: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    revokeRole(
-      role: BytesLike,
-      account: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    senderRequests(
-      arg0: string,
-      arg1: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    senderRequestsCount(
-      arg0: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    supportsInterface(
-      interfaceId: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    unpause(overrides?: Overrides & { from?: string }): Promise<BigNumber>;
-
-    updateCallbackGasLimit(
-      gasLimit: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    updateCategoryChance(
-      categoryId: BigNumberish,
-      chance: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    updateKeyHash(
-      kayHash: BytesLike,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    updatePrizeCalculationInResponse(
-      isEnabled: boolean,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    updateRequestConfirmations(
-      confirmations: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    updateRequestRandomInOracle(
-      isEnabled: boolean,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    updateSubscriptionId(
-      id: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    upgradeTo(
-      newImplementation: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    upgradeToAndCall(
-      newImplementation: string,
-      data: BytesLike,
-      overrides?: PayableOverrides & { from?: string }
-    ): Promise<BigNumber>;
-  };
-
-  populateTransaction: {
-    DEFAULT_ADMIN_ROLE(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    OPERATOR_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    UPGRADER_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    addPrizeToCategory(
-      categoryId: BigNumberish,
-      from: string,
-      tokenAddress: string,
-      isERC20: boolean,
-      isERC721: boolean,
-      isERC1155: boolean,
-      amount: BigNumberish,
-      tokenIds: BigNumberish[],
-      remaining: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    categoriesLength(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    createCategory(
-      chance: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    enablePrizeCalculationInOracleResponse(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    enableRequestRandomInOracle(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    getCategory(
-      categoryId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    getCategoryPrize(
-      categoryId: BigNumberish,
-      prizeId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    getCategoryPrizes(
-      categoryId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    getCategoryRemainingPrizes(
-      categoryId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    getNonEmptyCategories(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    getPrizeFromOracleRandom(
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    getRoleAdmin(
-      role: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    getTotalChance(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    grantRole(
-      role: BytesLike,
-      account: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    hasActiveRequest(
-      sender: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    hasRole(
-      role: BytesLike,
-      account: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    initialize(
-      coordinator: string,
-      subscriptionId: BigNumberish,
-      keyHash: BytesLike,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    onERC1155BatchReceived(
-      arg0: string,
-      arg1: string,
-      arg2: BigNumberish[],
-      arg3: BigNumberish[],
-      arg4: BytesLike,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    onERC1155Received(
-      arg0: string,
-      arg1: string,
-      arg2: BigNumberish,
-      arg3: BigNumberish,
-      arg4: BytesLike,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    onERC721Received(
-      arg0: string,
-      arg1: string,
-      arg2: BigNumberish,
-      arg3: BytesLike,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    pause(
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    paused(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    prizeCategories(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    proxiableUUID(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    rawFulfillRandomWords(
-      requestId: BigNumberish,
-      randomWords: BigNumberish[],
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    removePrizeInCategory(
-      categoryId: BigNumberish,
-      prizeId: BigNumberish,
-      receiver: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    renounceRole(
-      role: BytesLike,
-      account: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    requestPrize(
-      sender: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    revokeRole(
-      role: BytesLike,
-      account: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    senderRequests(
-      arg0: string,
-      arg1: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    senderRequestsCount(
-      arg0: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    supportsInterface(
-      interfaceId: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    unpause(
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    updateCallbackGasLimit(
-      gasLimit: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    updateCategoryChance(
-      categoryId: BigNumberish,
-      chance: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    updateKeyHash(
-      kayHash: BytesLike,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    updatePrizeCalculationInResponse(
-      isEnabled: boolean,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    updateRequestConfirmations(
-      confirmations: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    updateRequestRandomInOracle(
-      isEnabled: boolean,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    updateSubscriptionId(
-      id: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    upgradeTo(
-      newImplementation: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    upgradeToAndCall(
-      newImplementation: string,
-      data: BytesLike,
-      overrides?: PayableOverrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
+    "AdminChanged(address,address)": TypedContractEvent<
+      AdminChangedEvent.InputTuple,
+      AdminChangedEvent.OutputTuple,
+      AdminChangedEvent.OutputObject
+    >;
+    AdminChanged: TypedContractEvent<
+      AdminChangedEvent.InputTuple,
+      AdminChangedEvent.OutputTuple,
+      AdminChangedEvent.OutputObject
+    >;
+
+    "BeaconUpgraded(address)": TypedContractEvent<
+      BeaconUpgradedEvent.InputTuple,
+      BeaconUpgradedEvent.OutputTuple,
+      BeaconUpgradedEvent.OutputObject
+    >;
+    BeaconUpgraded: TypedContractEvent<
+      BeaconUpgradedEvent.InputTuple,
+      BeaconUpgradedEvent.OutputTuple,
+      BeaconUpgradedEvent.OutputObject
+    >;
+
+    "Initialized(uint8)": TypedContractEvent<
+      InitializedEvent.InputTuple,
+      InitializedEvent.OutputTuple,
+      InitializedEvent.OutputObject
+    >;
+    Initialized: TypedContractEvent<
+      InitializedEvent.InputTuple,
+      InitializedEvent.OutputTuple,
+      InitializedEvent.OutputObject
+    >;
+
+    "OracleRequestFulfilled(address,uint256,uint256)": TypedContractEvent<
+      OracleRequestFulfilledEvent.InputTuple,
+      OracleRequestFulfilledEvent.OutputTuple,
+      OracleRequestFulfilledEvent.OutputObject
+    >;
+    OracleRequestFulfilled: TypedContractEvent<
+      OracleRequestFulfilledEvent.InputTuple,
+      OracleRequestFulfilledEvent.OutputTuple,
+      OracleRequestFulfilledEvent.OutputObject
+    >;
+
+    "OracleRequestSent(address,uint256)": TypedContractEvent<
+      OracleRequestSentEvent.InputTuple,
+      OracleRequestSentEvent.OutputTuple,
+      OracleRequestSentEvent.OutputObject
+    >;
+    OracleRequestSent: TypedContractEvent<
+      OracleRequestSentEvent.InputTuple,
+      OracleRequestSentEvent.OutputTuple,
+      OracleRequestSentEvent.OutputObject
+    >;
+
+    "Paused(address)": TypedContractEvent<
+      PausedEvent.InputTuple,
+      PausedEvent.OutputTuple,
+      PausedEvent.OutputObject
+    >;
+    Paused: TypedContractEvent<
+      PausedEvent.InputTuple,
+      PausedEvent.OutputTuple,
+      PausedEvent.OutputObject
+    >;
+
+    "PrizeCategoryCreated(uint256,uint256)": TypedContractEvent<
+      PrizeCategoryCreatedEvent.InputTuple,
+      PrizeCategoryCreatedEvent.OutputTuple,
+      PrizeCategoryCreatedEvent.OutputObject
+    >;
+    PrizeCategoryCreated: TypedContractEvent<
+      PrizeCategoryCreatedEvent.InputTuple,
+      PrizeCategoryCreatedEvent.OutputTuple,
+      PrizeCategoryCreatedEvent.OutputObject
+    >;
+
+    "PrizeCategoryUpdated(uint256,uint256)": TypedContractEvent<
+      PrizeCategoryUpdatedEvent.InputTuple,
+      PrizeCategoryUpdatedEvent.OutputTuple,
+      PrizeCategoryUpdatedEvent.OutputObject
+    >;
+    PrizeCategoryUpdated: TypedContractEvent<
+      PrizeCategoryUpdatedEvent.InputTuple,
+      PrizeCategoryUpdatedEvent.OutputTuple,
+      PrizeCategoryUpdatedEvent.OutputObject
+    >;
+
+    "PrizeInCategoryAdded(uint256,uint256)": TypedContractEvent<
+      PrizeInCategoryAddedEvent.InputTuple,
+      PrizeInCategoryAddedEvent.OutputTuple,
+      PrizeInCategoryAddedEvent.OutputObject
+    >;
+    PrizeInCategoryAdded: TypedContractEvent<
+      PrizeInCategoryAddedEvent.InputTuple,
+      PrizeInCategoryAddedEvent.OutputTuple,
+      PrizeInCategoryAddedEvent.OutputObject
+    >;
+
+    "PrizeInCategoryFinished(uint256)": TypedContractEvent<
+      PrizeInCategoryFinishedEvent.InputTuple,
+      PrizeInCategoryFinishedEvent.OutputTuple,
+      PrizeInCategoryFinishedEvent.OutputObject
+    >;
+    PrizeInCategoryFinished: TypedContractEvent<
+      PrizeInCategoryFinishedEvent.InputTuple,
+      PrizeInCategoryFinishedEvent.OutputTuple,
+      PrizeInCategoryFinishedEvent.OutputObject
+    >;
+
+    "PrizeInCategoryWithdrawn(uint256,uint256,address,uint256)": TypedContractEvent<
+      PrizeInCategoryWithdrawnEvent.InputTuple,
+      PrizeInCategoryWithdrawnEvent.OutputTuple,
+      PrizeInCategoryWithdrawnEvent.OutputObject
+    >;
+    PrizeInCategoryWithdrawn: TypedContractEvent<
+      PrizeInCategoryWithdrawnEvent.InputTuple,
+      PrizeInCategoryWithdrawnEvent.OutputTuple,
+      PrizeInCategoryWithdrawnEvent.OutputObject
+    >;
+
+    "PrizeSent(address,address,bool,bool,bool,uint256,uint256)": TypedContractEvent<
+      PrizeSentEvent.InputTuple,
+      PrizeSentEvent.OutputTuple,
+      PrizeSentEvent.OutputObject
+    >;
+    PrizeSent: TypedContractEvent<
+      PrizeSentEvent.InputTuple,
+      PrizeSentEvent.OutputTuple,
+      PrizeSentEvent.OutputObject
+    >;
+
+    "RoleAdminChanged(bytes32,bytes32,bytes32)": TypedContractEvent<
+      RoleAdminChangedEvent.InputTuple,
+      RoleAdminChangedEvent.OutputTuple,
+      RoleAdminChangedEvent.OutputObject
+    >;
+    RoleAdminChanged: TypedContractEvent<
+      RoleAdminChangedEvent.InputTuple,
+      RoleAdminChangedEvent.OutputTuple,
+      RoleAdminChangedEvent.OutputObject
+    >;
+
+    "RoleGranted(bytes32,address,address)": TypedContractEvent<
+      RoleGrantedEvent.InputTuple,
+      RoleGrantedEvent.OutputTuple,
+      RoleGrantedEvent.OutputObject
+    >;
+    RoleGranted: TypedContractEvent<
+      RoleGrantedEvent.InputTuple,
+      RoleGrantedEvent.OutputTuple,
+      RoleGrantedEvent.OutputObject
+    >;
+
+    "RoleRevoked(bytes32,address,address)": TypedContractEvent<
+      RoleRevokedEvent.InputTuple,
+      RoleRevokedEvent.OutputTuple,
+      RoleRevokedEvent.OutputObject
+    >;
+    RoleRevoked: TypedContractEvent<
+      RoleRevokedEvent.InputTuple,
+      RoleRevokedEvent.OutputTuple,
+      RoleRevokedEvent.OutputObject
+    >;
+
+    "Unpaused(address)": TypedContractEvent<
+      UnpausedEvent.InputTuple,
+      UnpausedEvent.OutputTuple,
+      UnpausedEvent.OutputObject
+    >;
+    Unpaused: TypedContractEvent<
+      UnpausedEvent.InputTuple,
+      UnpausedEvent.OutputTuple,
+      UnpausedEvent.OutputObject
+    >;
+
+    "Upgraded(address)": TypedContractEvent<
+      UpgradedEvent.InputTuple,
+      UpgradedEvent.OutputTuple,
+      UpgradedEvent.OutputObject
+    >;
+    Upgraded: TypedContractEvent<
+      UpgradedEvent.InputTuple,
+      UpgradedEvent.OutputTuple,
+      UpgradedEvent.OutputObject
+    >;
   };
 }

@@ -32,7 +32,7 @@ export const AvatarComponent = () => {
   const { metadata } = useAvatarMetadata();
   const { mutateAsync: setTokenName } = useTokenName();
   const { mutateAsync: setTokenTelegram } = useTokenTelegram();
-  const { mutateAsync: claimPrize } = useClaimPrize();
+  const { mutateAsync: claimPrize, isLoading: isPrizeClaimLoading } = useClaimPrize();
   const { data: hasBirthdayGift = null } = useIsBirthdayPrizeAvailable(activeAvatar?.tokenId);
 
   const handleNameSave = useCallback(
@@ -96,6 +96,7 @@ export const AvatarComponent = () => {
                         fontSize="12px"
                         size="sm"
                         variant="outlinedWhite"
+                        isLoading={isPrizeClaimLoading}
                         onClick={() => claimPrize()}
                       >
                         Claim

@@ -3,70 +3,29 @@
 /* eslint-disable */
 import type {
   BaseContract,
-  BigNumber,
   BigNumberish,
   BytesLike,
-  CallOverrides,
-  ContractTransaction,
-  Overrides,
-  PayableOverrides,
-  PopulatedTransaction,
-  Signer,
-  utils,
-} from "ethers";
-import type {
   FunctionFragment,
   Result,
+  Interface,
   EventFragment,
-} from "@ethersproject/abi";
-import type { Listener, Provider } from "@ethersproject/providers";
+  AddressLike,
+  ContractRunner,
+  ContractMethod,
+  Listener,
+} from "ethers";
 import type {
-  TypedEventFilter,
-  TypedEvent,
+  TypedContractEvent,
+  TypedDeferredTopicFilter,
+  TypedEventLog,
+  TypedLogDescription,
   TypedListener,
-  OnEvent,
+  TypedContractMethod,
 } from "../common";
 
-export interface AvatarSettingsInterface extends utils.Interface {
-  functions: {
-    "DEFAULT_ADMIN_ROLE()": FunctionFragment;
-    "POWER_DURATION()": FunctionFragment;
-    "UPGRADER_ROLE()": FunctionFragment;
-    "activateAvatar(address,uint256)": FunctionFragment;
-    "activatePower(uint256)": FunctionFragment;
-    "activatePowerAccess()": FunctionFragment;
-    "activeAvatars(address)": FunctionFragment;
-    "approveCollection(address,bool)": FunctionFragment;
-    "approvedCollections(address)": FunctionFragment;
-    "birthdayPrizeClaimPeriod()": FunctionFragment;
-    "deactivateAvatar()": FunctionFragment;
-    "getRoleAdmin(bytes32)": FunctionFragment;
-    "grantRole(bytes32,address)": FunctionFragment;
-    "hasRole(bytes32,address)": FunctionFragment;
-    "initialize(address)": FunctionFragment;
-    "isBirthdayInRange(uint256)": FunctionFragment;
-    "isBirthdayPrizeAvailable(uint256)": FunctionFragment;
-    "isPowerAccessActive()": FunctionFragment;
-    "pause()": FunctionFragment;
-    "paused()": FunctionFragment;
-    "powerActivationFee()": FunctionFragment;
-    "proxiableUUID()": FunctionFragment;
-    "renounceRole(bytes32,address)": FunctionFragment;
-    "requestBirthdayPrize()": FunctionFragment;
-    "revokeRole(bytes32,address)": FunctionFragment;
-    "setBirthdayPrizeClaimPeriod(uint256)": FunctionFragment;
-    "setTokenName(uint256,string)": FunctionFragment;
-    "setTokenTelegram(uint256,string)": FunctionFragment;
-    "supportsInterface(bytes4)": FunctionFragment;
-    "unpause()": FunctionFragment;
-    "updatePowerActivationFee(uint256)": FunctionFragment;
-    "upgradeTo(address)": FunctionFragment;
-    "upgradeToAndCall(address,bytes)": FunctionFragment;
-    "userPowers(address,uint256)": FunctionFragment;
-  };
-
+export interface AvatarSettingsInterface extends Interface {
   getFunction(
-    nameOrSignatureOrTopic:
+    nameOrSignature:
       | "DEFAULT_ADMIN_ROLE"
       | "POWER_DURATION"
       | "UPGRADER_ROLE"
@@ -79,6 +38,7 @@ export interface AvatarSettingsInterface extends utils.Interface {
       | "birthdayPrizeClaimPeriod"
       | "deactivateAvatar"
       | "getRoleAdmin"
+      | "getYear"
       | "grantRole"
       | "hasRole"
       | "initialize"
@@ -103,6 +63,29 @@ export interface AvatarSettingsInterface extends utils.Interface {
       | "userPowers"
   ): FunctionFragment;
 
+  getEvent(
+    nameOrSignatureOrTopic:
+      | "AdminChanged"
+      | "AvatarActivated"
+      | "AvatarDeactivated"
+      | "BeaconUpgraded"
+      | "BirthdayPrizeClaimed"
+      | "CollectionApprovalUpdated"
+      | "ExternalAvatarActivated"
+      | "Initialized"
+      | "NameChanged"
+      | "Paused"
+      | "PowerActivated"
+      | "PowerActivationFeeUpdated"
+      | "PowersAccessActivated"
+      | "RoleAdminChanged"
+      | "RoleGranted"
+      | "RoleRevoked"
+      | "TelegramChanged"
+      | "Unpaused"
+      | "Upgraded"
+  ): EventFragment;
+
   encodeFunctionData(
     functionFragment: "DEFAULT_ADMIN_ROLE",
     values?: undefined
@@ -117,7 +100,7 @@ export interface AvatarSettingsInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "activateAvatar",
-    values: [string, BigNumberish]
+    values: [AddressLike, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "activatePower",
@@ -129,15 +112,15 @@ export interface AvatarSettingsInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "activeAvatars",
-    values: [string]
+    values: [AddressLike]
   ): string;
   encodeFunctionData(
     functionFragment: "approveCollection",
-    values: [string, boolean]
+    values: [AddressLike, boolean]
   ): string;
   encodeFunctionData(
     functionFragment: "approvedCollections",
-    values: [string]
+    values: [AddressLike]
   ): string;
   encodeFunctionData(
     functionFragment: "birthdayPrizeClaimPeriod",
@@ -152,14 +135,21 @@ export interface AvatarSettingsInterface extends utils.Interface {
     values: [BytesLike]
   ): string;
   encodeFunctionData(
+    functionFragment: "getYear",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
     functionFragment: "grantRole",
-    values: [BytesLike, string]
+    values: [BytesLike, AddressLike]
   ): string;
   encodeFunctionData(
     functionFragment: "hasRole",
-    values: [BytesLike, string]
+    values: [BytesLike, AddressLike]
   ): string;
-  encodeFunctionData(functionFragment: "initialize", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "initialize",
+    values: [AddressLike]
+  ): string;
   encodeFunctionData(
     functionFragment: "isBirthdayInRange",
     values: [BigNumberish]
@@ -184,7 +174,7 @@ export interface AvatarSettingsInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "renounceRole",
-    values: [BytesLike, string]
+    values: [BytesLike, AddressLike]
   ): string;
   encodeFunctionData(
     functionFragment: "requestBirthdayPrize",
@@ -192,7 +182,7 @@ export interface AvatarSettingsInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "revokeRole",
-    values: [BytesLike, string]
+    values: [BytesLike, AddressLike]
   ): string;
   encodeFunctionData(
     functionFragment: "setBirthdayPrizeClaimPeriod",
@@ -215,14 +205,17 @@ export interface AvatarSettingsInterface extends utils.Interface {
     functionFragment: "updatePowerActivationFee",
     values: [BigNumberish]
   ): string;
-  encodeFunctionData(functionFragment: "upgradeTo", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "upgradeTo",
+    values: [AddressLike]
+  ): string;
   encodeFunctionData(
     functionFragment: "upgradeToAndCall",
-    values: [string, BytesLike]
+    values: [AddressLike, BytesLike]
   ): string;
   encodeFunctionData(
     functionFragment: "userPowers",
-    values: [string, BigNumberish]
+    values: [AddressLike, BigNumberish]
   ): string;
 
   decodeFunctionResult(
@@ -273,6 +266,7 @@ export interface AvatarSettingsInterface extends utils.Interface {
     functionFragment: "getRoleAdmin",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "getYear", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "grantRole", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "hasRole", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "initialize", data: BytesLike): Result;
@@ -334,1181 +328,1018 @@ export interface AvatarSettingsInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "userPowers", data: BytesLike): Result;
-
-  events: {
-    "AdminChanged(address,address)": EventFragment;
-    "AvatarActivated(address,uint256)": EventFragment;
-    "AvatarDeactivated(address,uint256,address,bool)": EventFragment;
-    "BeaconUpgraded(address)": EventFragment;
-    "CollectionApprovalUpdated(address,bool)": EventFragment;
-    "ExternalAvatarActivated(address,uint256,address)": EventFragment;
-    "Initialized(uint8)": EventFragment;
-    "NameChanged(address,uint256,string)": EventFragment;
-    "Paused(address)": EventFragment;
-    "PowerActivated(address,uint256,uint256)": EventFragment;
-    "PowerActivationFeeUpdated(uint256)": EventFragment;
-    "PowersAccessActivated(address)": EventFragment;
-    "RoleAdminChanged(bytes32,bytes32,bytes32)": EventFragment;
-    "RoleGranted(bytes32,address,address)": EventFragment;
-    "RoleRevoked(bytes32,address,address)": EventFragment;
-    "TelegramChanged(address,uint256,string)": EventFragment;
-    "Unpaused(address)": EventFragment;
-    "Upgraded(address)": EventFragment;
-  };
-
-  getEvent(nameOrSignatureOrTopic: "AdminChanged"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "AvatarActivated"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "AvatarDeactivated"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "BeaconUpgraded"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "CollectionApprovalUpdated"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "ExternalAvatarActivated"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "NameChanged"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Paused"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "PowerActivated"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "PowerActivationFeeUpdated"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "PowersAccessActivated"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "RoleAdminChanged"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "RoleGranted"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "RoleRevoked"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "TelegramChanged"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Unpaused"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Upgraded"): EventFragment;
 }
 
-export interface AdminChangedEventObject {
-  previousAdmin: string;
-  newAdmin: string;
+export namespace AdminChangedEvent {
+  export type InputTuple = [previousAdmin: AddressLike, newAdmin: AddressLike];
+  export type OutputTuple = [previousAdmin: string, newAdmin: string];
+  export interface OutputObject {
+    previousAdmin: string;
+    newAdmin: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type AdminChangedEvent = TypedEvent<
-  [string, string],
-  AdminChangedEventObject
->;
 
-export type AdminChangedEventFilter = TypedEventFilter<AdminChangedEvent>;
-
-export interface AvatarActivatedEventObject {
-  sender: string;
-  tokenId: BigNumber;
+export namespace AvatarActivatedEvent {
+  export type InputTuple = [sender: AddressLike, tokenId: BigNumberish];
+  export type OutputTuple = [sender: string, tokenId: bigint];
+  export interface OutputObject {
+    sender: string;
+    tokenId: bigint;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type AvatarActivatedEvent = TypedEvent<
-  [string, BigNumber],
-  AvatarActivatedEventObject
->;
 
-export type AvatarActivatedEventFilter = TypedEventFilter<AvatarActivatedEvent>;
-
-export interface AvatarDeactivatedEventObject {
-  sender: string;
-  tokenId: BigNumber;
-  collectionAddress: string;
-  isAvatarCollection: boolean;
+export namespace AvatarDeactivatedEvent {
+  export type InputTuple = [
+    sender: AddressLike,
+    tokenId: BigNumberish,
+    collectionAddress: AddressLike,
+    isAvatarCollection: boolean
+  ];
+  export type OutputTuple = [
+    sender: string,
+    tokenId: bigint,
+    collectionAddress: string,
+    isAvatarCollection: boolean
+  ];
+  export interface OutputObject {
+    sender: string;
+    tokenId: bigint;
+    collectionAddress: string;
+    isAvatarCollection: boolean;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type AvatarDeactivatedEvent = TypedEvent<
-  [string, BigNumber, string, boolean],
-  AvatarDeactivatedEventObject
->;
 
-export type AvatarDeactivatedEventFilter =
-  TypedEventFilter<AvatarDeactivatedEvent>;
-
-export interface BeaconUpgradedEventObject {
-  beacon: string;
+export namespace BeaconUpgradedEvent {
+  export type InputTuple = [beacon: AddressLike];
+  export type OutputTuple = [beacon: string];
+  export interface OutputObject {
+    beacon: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type BeaconUpgradedEvent = TypedEvent<
-  [string],
-  BeaconUpgradedEventObject
->;
 
-export type BeaconUpgradedEventFilter = TypedEventFilter<BeaconUpgradedEvent>;
-
-export interface CollectionApprovalUpdatedEventObject {
-  collection: string;
-  approved: boolean;
+export namespace BirthdayPrizeClaimedEvent {
+  export type InputTuple = [tokenId: BigNumberish, owner: AddressLike];
+  export type OutputTuple = [tokenId: bigint, owner: string];
+  export interface OutputObject {
+    tokenId: bigint;
+    owner: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type CollectionApprovalUpdatedEvent = TypedEvent<
-  [string, boolean],
-  CollectionApprovalUpdatedEventObject
->;
 
-export type CollectionApprovalUpdatedEventFilter =
-  TypedEventFilter<CollectionApprovalUpdatedEvent>;
-
-export interface ExternalAvatarActivatedEventObject {
-  sender: string;
-  tokenId: BigNumber;
-  collection: string;
+export namespace CollectionApprovalUpdatedEvent {
+  export type InputTuple = [collection: AddressLike, approved: boolean];
+  export type OutputTuple = [collection: string, approved: boolean];
+  export interface OutputObject {
+    collection: string;
+    approved: boolean;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type ExternalAvatarActivatedEvent = TypedEvent<
-  [string, BigNumber, string],
-  ExternalAvatarActivatedEventObject
->;
 
-export type ExternalAvatarActivatedEventFilter =
-  TypedEventFilter<ExternalAvatarActivatedEvent>;
-
-export interface InitializedEventObject {
-  version: number;
+export namespace ExternalAvatarActivatedEvent {
+  export type InputTuple = [
+    sender: AddressLike,
+    tokenId: BigNumberish,
+    collection: AddressLike
+  ];
+  export type OutputTuple = [
+    sender: string,
+    tokenId: bigint,
+    collection: string
+  ];
+  export interface OutputObject {
+    sender: string;
+    tokenId: bigint;
+    collection: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type InitializedEvent = TypedEvent<[number], InitializedEventObject>;
 
-export type InitializedEventFilter = TypedEventFilter<InitializedEvent>;
-
-export interface NameChangedEventObject {
-  sender: string;
-  tokenId: BigNumber;
-  name: string;
+export namespace InitializedEvent {
+  export type InputTuple = [version: BigNumberish];
+  export type OutputTuple = [version: bigint];
+  export interface OutputObject {
+    version: bigint;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type NameChangedEvent = TypedEvent<
-  [string, BigNumber, string],
-  NameChangedEventObject
->;
 
-export type NameChangedEventFilter = TypedEventFilter<NameChangedEvent>;
-
-export interface PausedEventObject {
-  account: string;
+export namespace NameChangedEvent {
+  export type InputTuple = [
+    sender: AddressLike,
+    tokenId: BigNumberish,
+    name: string
+  ];
+  export type OutputTuple = [sender: string, tokenId: bigint, name: string];
+  export interface OutputObject {
+    sender: string;
+    tokenId: bigint;
+    name: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type PausedEvent = TypedEvent<[string], PausedEventObject>;
 
-export type PausedEventFilter = TypedEventFilter<PausedEvent>;
-
-export interface PowerActivatedEventObject {
-  sender: string;
-  powerId: BigNumber;
-  expirationTime: BigNumber;
+export namespace PausedEvent {
+  export type InputTuple = [account: AddressLike];
+  export type OutputTuple = [account: string];
+  export interface OutputObject {
+    account: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type PowerActivatedEvent = TypedEvent<
-  [string, BigNumber, BigNumber],
-  PowerActivatedEventObject
->;
 
-export type PowerActivatedEventFilter = TypedEventFilter<PowerActivatedEvent>;
-
-export interface PowerActivationFeeUpdatedEventObject {
-  newFee: BigNumber;
+export namespace PowerActivatedEvent {
+  export type InputTuple = [
+    sender: AddressLike,
+    powerId: BigNumberish,
+    expirationTime: BigNumberish
+  ];
+  export type OutputTuple = [
+    sender: string,
+    powerId: bigint,
+    expirationTime: bigint
+  ];
+  export interface OutputObject {
+    sender: string;
+    powerId: bigint;
+    expirationTime: bigint;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type PowerActivationFeeUpdatedEvent = TypedEvent<
-  [BigNumber],
-  PowerActivationFeeUpdatedEventObject
->;
 
-export type PowerActivationFeeUpdatedEventFilter =
-  TypedEventFilter<PowerActivationFeeUpdatedEvent>;
-
-export interface PowersAccessActivatedEventObject {
-  sender: string;
+export namespace PowerActivationFeeUpdatedEvent {
+  export type InputTuple = [newFee: BigNumberish];
+  export type OutputTuple = [newFee: bigint];
+  export interface OutputObject {
+    newFee: bigint;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type PowersAccessActivatedEvent = TypedEvent<
-  [string],
-  PowersAccessActivatedEventObject
->;
 
-export type PowersAccessActivatedEventFilter =
-  TypedEventFilter<PowersAccessActivatedEvent>;
-
-export interface RoleAdminChangedEventObject {
-  role: string;
-  previousAdminRole: string;
-  newAdminRole: string;
+export namespace PowersAccessActivatedEvent {
+  export type InputTuple = [sender: AddressLike];
+  export type OutputTuple = [sender: string];
+  export interface OutputObject {
+    sender: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type RoleAdminChangedEvent = TypedEvent<
-  [string, string, string],
-  RoleAdminChangedEventObject
->;
 
-export type RoleAdminChangedEventFilter =
-  TypedEventFilter<RoleAdminChangedEvent>;
-
-export interface RoleGrantedEventObject {
-  role: string;
-  account: string;
-  sender: string;
+export namespace RoleAdminChangedEvent {
+  export type InputTuple = [
+    role: BytesLike,
+    previousAdminRole: BytesLike,
+    newAdminRole: BytesLike
+  ];
+  export type OutputTuple = [
+    role: string,
+    previousAdminRole: string,
+    newAdminRole: string
+  ];
+  export interface OutputObject {
+    role: string;
+    previousAdminRole: string;
+    newAdminRole: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type RoleGrantedEvent = TypedEvent<
-  [string, string, string],
-  RoleGrantedEventObject
->;
 
-export type RoleGrantedEventFilter = TypedEventFilter<RoleGrantedEvent>;
-
-export interface RoleRevokedEventObject {
-  role: string;
-  account: string;
-  sender: string;
+export namespace RoleGrantedEvent {
+  export type InputTuple = [
+    role: BytesLike,
+    account: AddressLike,
+    sender: AddressLike
+  ];
+  export type OutputTuple = [role: string, account: string, sender: string];
+  export interface OutputObject {
+    role: string;
+    account: string;
+    sender: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type RoleRevokedEvent = TypedEvent<
-  [string, string, string],
-  RoleRevokedEventObject
->;
 
-export type RoleRevokedEventFilter = TypedEventFilter<RoleRevokedEvent>;
-
-export interface TelegramChangedEventObject {
-  sender: string;
-  tokenId: BigNumber;
-  telegram: string;
+export namespace RoleRevokedEvent {
+  export type InputTuple = [
+    role: BytesLike,
+    account: AddressLike,
+    sender: AddressLike
+  ];
+  export type OutputTuple = [role: string, account: string, sender: string];
+  export interface OutputObject {
+    role: string;
+    account: string;
+    sender: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type TelegramChangedEvent = TypedEvent<
-  [string, BigNumber, string],
-  TelegramChangedEventObject
->;
 
-export type TelegramChangedEventFilter = TypedEventFilter<TelegramChangedEvent>;
-
-export interface UnpausedEventObject {
-  account: string;
+export namespace TelegramChangedEvent {
+  export type InputTuple = [
+    sender: AddressLike,
+    tokenId: BigNumberish,
+    telegram: string
+  ];
+  export type OutputTuple = [sender: string, tokenId: bigint, telegram: string];
+  export interface OutputObject {
+    sender: string;
+    tokenId: bigint;
+    telegram: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type UnpausedEvent = TypedEvent<[string], UnpausedEventObject>;
 
-export type UnpausedEventFilter = TypedEventFilter<UnpausedEvent>;
-
-export interface UpgradedEventObject {
-  implementation: string;
+export namespace UnpausedEvent {
+  export type InputTuple = [account: AddressLike];
+  export type OutputTuple = [account: string];
+  export interface OutputObject {
+    account: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type UpgradedEvent = TypedEvent<[string], UpgradedEventObject>;
 
-export type UpgradedEventFilter = TypedEventFilter<UpgradedEvent>;
+export namespace UpgradedEvent {
+  export type InputTuple = [implementation: AddressLike];
+  export type OutputTuple = [implementation: string];
+  export interface OutputObject {
+    implementation: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
+}
 
 export interface AvatarSettings extends BaseContract {
-  connect(signerOrProvider: Signer | Provider | string): this;
-  attach(addressOrName: string): this;
-  deployed(): Promise<this>;
+  connect(runner?: ContractRunner | null): AvatarSettings;
+  waitForDeployment(): Promise<this>;
 
   interface: AvatarSettingsInterface;
 
-  queryFilter<TEvent extends TypedEvent>(
-    event: TypedEventFilter<TEvent>,
+  queryFilter<TCEvent extends TypedContractEvent>(
+    event: TCEvent,
     fromBlockOrBlockhash?: string | number | undefined,
     toBlock?: string | number | undefined
-  ): Promise<Array<TEvent>>;
+  ): Promise<Array<TypedEventLog<TCEvent>>>;
+  queryFilter<TCEvent extends TypedContractEvent>(
+    filter: TypedDeferredTopicFilter<TCEvent>,
+    fromBlockOrBlockhash?: string | number | undefined,
+    toBlock?: string | number | undefined
+  ): Promise<Array<TypedEventLog<TCEvent>>>;
 
-  listeners<TEvent extends TypedEvent>(
-    eventFilter?: TypedEventFilter<TEvent>
-  ): Array<TypedListener<TEvent>>;
-  listeners(eventName?: string): Array<Listener>;
-  removeAllListeners<TEvent extends TypedEvent>(
-    eventFilter: TypedEventFilter<TEvent>
-  ): this;
-  removeAllListeners(eventName?: string): this;
-  off: OnEvent<this>;
-  on: OnEvent<this>;
-  once: OnEvent<this>;
-  removeListener: OnEvent<this>;
+  on<TCEvent extends TypedContractEvent>(
+    event: TCEvent,
+    listener: TypedListener<TCEvent>
+  ): Promise<this>;
+  on<TCEvent extends TypedContractEvent>(
+    filter: TypedDeferredTopicFilter<TCEvent>,
+    listener: TypedListener<TCEvent>
+  ): Promise<this>;
 
-  functions: {
-    DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<[string]>;
+  once<TCEvent extends TypedContractEvent>(
+    event: TCEvent,
+    listener: TypedListener<TCEvent>
+  ): Promise<this>;
+  once<TCEvent extends TypedContractEvent>(
+    filter: TypedDeferredTopicFilter<TCEvent>,
+    listener: TypedListener<TCEvent>
+  ): Promise<this>;
 
-    POWER_DURATION(overrides?: CallOverrides): Promise<[BigNumber]>;
+  listeners<TCEvent extends TypedContractEvent>(
+    event: TCEvent
+  ): Promise<Array<TypedListener<TCEvent>>>;
+  listeners(eventName?: string): Promise<Array<Listener>>;
+  removeAllListeners<TCEvent extends TypedContractEvent>(
+    event?: TCEvent
+  ): Promise<this>;
 
-    UPGRADER_ROLE(overrides?: CallOverrides): Promise<[string]>;
+  DEFAULT_ADMIN_ROLE: TypedContractMethod<[], [string], "view">;
 
-    activateAvatar(
-      collectionAddress: string,
-      tokenId: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
+  POWER_DURATION: TypedContractMethod<[], [bigint], "view">;
 
-    activatePower(
-      powerId: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
+  UPGRADER_ROLE: TypedContractMethod<[], [string], "view">;
 
-    activatePowerAccess(
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    activeAvatars(
-      arg0: string,
-      overrides?: CallOverrides
-    ): Promise<
-      [string, BigNumber, boolean, boolean] & {
-        collection: string;
-        tokenId: BigNumber;
-        isAvatarCollection: boolean;
-        isPowersAllowed: boolean;
-      }
-    >;
-
-    approveCollection(
-      collectionAddress: string,
-      approved: boolean,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    approvedCollections(
-      arg0: string,
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
-
-    birthdayPrizeClaimPeriod(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    deactivateAvatar(
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<[string]>;
-
-    grantRole(
-      role: BytesLike,
-      account: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    hasRole(
-      role: BytesLike,
-      account: string,
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
-
-    initialize(
-      contractManagerAddress: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    isBirthdayInRange(
-      birthdayTimestamp: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
-
-    isBirthdayPrizeAvailable(
-      tokenId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
-
-    isPowerAccessActive(overrides?: CallOverrides): Promise<[boolean]>;
-
-    pause(
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    paused(overrides?: CallOverrides): Promise<[boolean]>;
-
-    powerActivationFee(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    proxiableUUID(overrides?: CallOverrides): Promise<[string]>;
-
-    renounceRole(
-      role: BytesLike,
-      account: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    requestBirthdayPrize(
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    revokeRole(
-      role: BytesLike,
-      account: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    setBirthdayPrizeClaimPeriod(
-      _days: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    setTokenName(
-      _tokenId: BigNumberish,
-      _name: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    setTokenTelegram(
-      _tokenId: BigNumberish,
-      _telegram: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    supportsInterface(
-      interfaceId: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
-
-    unpause(
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    updatePowerActivationFee(
-      newFee: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    upgradeTo(
-      newImplementation: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    upgradeToAndCall(
-      newImplementation: string,
-      data: BytesLike,
-      overrides?: PayableOverrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    userPowers(
-      arg0: string,
-      arg1: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-  };
-
-  DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
-
-  POWER_DURATION(overrides?: CallOverrides): Promise<BigNumber>;
-
-  UPGRADER_ROLE(overrides?: CallOverrides): Promise<string>;
-
-  activateAvatar(
-    collectionAddress: string,
-    tokenId: BigNumberish,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  activatePower(
-    powerId: BigNumberish,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  activatePowerAccess(
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  activeAvatars(
-    arg0: string,
-    overrides?: CallOverrides
-  ): Promise<
-    [string, BigNumber, boolean, boolean] & {
-      collection: string;
-      tokenId: BigNumber;
-      isAvatarCollection: boolean;
-      isPowersAllowed: boolean;
-    }
+  activateAvatar: TypedContractMethod<
+    [collectionAddress: AddressLike, tokenId: BigNumberish],
+    [void],
+    "nonpayable"
   >;
 
-  approveCollection(
-    collectionAddress: string,
-    approved: boolean,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
+  activatePower: TypedContractMethod<
+    [powerId: BigNumberish],
+    [void],
+    "nonpayable"
+  >;
 
-  approvedCollections(
-    arg0: string,
-    overrides?: CallOverrides
-  ): Promise<boolean>;
+  activatePowerAccess: TypedContractMethod<[], [void], "nonpayable">;
 
-  birthdayPrizeClaimPeriod(overrides?: CallOverrides): Promise<BigNumber>;
-
-  deactivateAvatar(
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<string>;
-
-  grantRole(
-    role: BytesLike,
-    account: string,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  hasRole(
-    role: BytesLike,
-    account: string,
-    overrides?: CallOverrides
-  ): Promise<boolean>;
-
-  initialize(
-    contractManagerAddress: string,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  isBirthdayInRange(
-    birthdayTimestamp: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<boolean>;
-
-  isBirthdayPrizeAvailable(
-    tokenId: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<boolean>;
-
-  isPowerAccessActive(overrides?: CallOverrides): Promise<boolean>;
-
-  pause(
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  paused(overrides?: CallOverrides): Promise<boolean>;
-
-  powerActivationFee(overrides?: CallOverrides): Promise<BigNumber>;
-
-  proxiableUUID(overrides?: CallOverrides): Promise<string>;
-
-  renounceRole(
-    role: BytesLike,
-    account: string,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  requestBirthdayPrize(
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  revokeRole(
-    role: BytesLike,
-    account: string,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  setBirthdayPrizeClaimPeriod(
-    _days: BigNumberish,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  setTokenName(
-    _tokenId: BigNumberish,
-    _name: string,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  setTokenTelegram(
-    _tokenId: BigNumberish,
-    _telegram: string,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  supportsInterface(
-    interfaceId: BytesLike,
-    overrides?: CallOverrides
-  ): Promise<boolean>;
-
-  unpause(
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  updatePowerActivationFee(
-    newFee: BigNumberish,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  upgradeTo(
-    newImplementation: string,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  upgradeToAndCall(
-    newImplementation: string,
-    data: BytesLike,
-    overrides?: PayableOverrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  userPowers(
-    arg0: string,
-    arg1: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  callStatic: {
-    DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
-
-    POWER_DURATION(overrides?: CallOverrides): Promise<BigNumber>;
-
-    UPGRADER_ROLE(overrides?: CallOverrides): Promise<string>;
-
-    activateAvatar(
-      collectionAddress: string,
-      tokenId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    activatePower(
-      powerId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    activatePowerAccess(overrides?: CallOverrides): Promise<void>;
-
-    activeAvatars(
-      arg0: string,
-      overrides?: CallOverrides
-    ): Promise<
-      [string, BigNumber, boolean, boolean] & {
+  activeAvatars: TypedContractMethod<
+    [arg0: AddressLike],
+    [
+      [string, bigint, boolean, boolean] & {
         collection: string;
-        tokenId: BigNumber;
+        tokenId: bigint;
         isAvatarCollection: boolean;
         isPowersAllowed: boolean;
       }
-    >;
+    ],
+    "view"
+  >;
 
-    approveCollection(
-      collectionAddress: string,
-      approved: boolean,
-      overrides?: CallOverrides
-    ): Promise<void>;
+  approveCollection: TypedContractMethod<
+    [collectionAddress: AddressLike, approved: boolean],
+    [void],
+    "nonpayable"
+  >;
 
-    approvedCollections(
-      arg0: string,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
+  approvedCollections: TypedContractMethod<
+    [arg0: AddressLike],
+    [boolean],
+    "view"
+  >;
 
-    birthdayPrizeClaimPeriod(overrides?: CallOverrides): Promise<BigNumber>;
+  birthdayPrizeClaimPeriod: TypedContractMethod<[], [bigint], "view">;
 
-    deactivateAvatar(overrides?: CallOverrides): Promise<void>;
+  deactivateAvatar: TypedContractMethod<[], [void], "nonpayable">;
 
-    getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<string>;
+  getRoleAdmin: TypedContractMethod<[role: BytesLike], [string], "view">;
 
-    grantRole(
-      role: BytesLike,
-      account: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
+  getYear: TypedContractMethod<[timestamp: BigNumberish], [bigint], "view">;
 
-    hasRole(
-      role: BytesLike,
-      account: string,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
+  grantRole: TypedContractMethod<
+    [role: BytesLike, account: AddressLike],
+    [void],
+    "nonpayable"
+  >;
 
-    initialize(
-      contractManagerAddress: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
+  hasRole: TypedContractMethod<
+    [role: BytesLike, account: AddressLike],
+    [boolean],
+    "view"
+  >;
 
-    isBirthdayInRange(
-      birthdayTimestamp: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
+  initialize: TypedContractMethod<
+    [contractManagerAddress: AddressLike],
+    [void],
+    "nonpayable"
+  >;
 
-    isBirthdayPrizeAvailable(
-      tokenId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
+  isBirthdayInRange: TypedContractMethod<
+    [birthdayTimestamp: BigNumberish],
+    [boolean],
+    "view"
+  >;
 
-    isPowerAccessActive(overrides?: CallOverrides): Promise<boolean>;
+  isBirthdayPrizeAvailable: TypedContractMethod<
+    [tokenId: BigNumberish],
+    [boolean],
+    "view"
+  >;
 
-    pause(overrides?: CallOverrides): Promise<void>;
+  isPowerAccessActive: TypedContractMethod<[], [boolean], "view">;
 
-    paused(overrides?: CallOverrides): Promise<boolean>;
+  pause: TypedContractMethod<[], [void], "nonpayable">;
 
-    powerActivationFee(overrides?: CallOverrides): Promise<BigNumber>;
+  paused: TypedContractMethod<[], [boolean], "view">;
 
-    proxiableUUID(overrides?: CallOverrides): Promise<string>;
+  powerActivationFee: TypedContractMethod<[], [bigint], "view">;
 
-    renounceRole(
-      role: BytesLike,
-      account: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
+  proxiableUUID: TypedContractMethod<[], [string], "view">;
 
-    requestBirthdayPrize(overrides?: CallOverrides): Promise<void>;
+  renounceRole: TypedContractMethod<
+    [role: BytesLike, account: AddressLike],
+    [void],
+    "nonpayable"
+  >;
 
-    revokeRole(
-      role: BytesLike,
-      account: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
+  requestBirthdayPrize: TypedContractMethod<[], [void], "nonpayable">;
 
-    setBirthdayPrizeClaimPeriod(
-      _days: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
+  revokeRole: TypedContractMethod<
+    [role: BytesLike, account: AddressLike],
+    [void],
+    "nonpayable"
+  >;
 
-    setTokenName(
-      _tokenId: BigNumberish,
-      _name: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
+  setBirthdayPrizeClaimPeriod: TypedContractMethod<
+    [_days: BigNumberish],
+    [void],
+    "nonpayable"
+  >;
 
-    setTokenTelegram(
-      _tokenId: BigNumberish,
-      _telegram: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
+  setTokenName: TypedContractMethod<
+    [_tokenId: BigNumberish, _name: string],
+    [void],
+    "nonpayable"
+  >;
 
-    supportsInterface(
-      interfaceId: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
+  setTokenTelegram: TypedContractMethod<
+    [_tokenId: BigNumberish, _telegram: string],
+    [void],
+    "nonpayable"
+  >;
 
-    unpause(overrides?: CallOverrides): Promise<void>;
+  supportsInterface: TypedContractMethod<
+    [interfaceId: BytesLike],
+    [boolean],
+    "view"
+  >;
 
-    updatePowerActivationFee(
-      newFee: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
+  unpause: TypedContractMethod<[], [void], "nonpayable">;
 
-    upgradeTo(
-      newImplementation: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
+  updatePowerActivationFee: TypedContractMethod<
+    [newFee: BigNumberish],
+    [void],
+    "nonpayable"
+  >;
 
-    upgradeToAndCall(
-      newImplementation: string,
-      data: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<void>;
+  upgradeTo: TypedContractMethod<
+    [newImplementation: AddressLike],
+    [void],
+    "nonpayable"
+  >;
 
-    userPowers(
-      arg0: string,
-      arg1: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-  };
+  upgradeToAndCall: TypedContractMethod<
+    [newImplementation: AddressLike, data: BytesLike],
+    [void],
+    "payable"
+  >;
+
+  userPowers: TypedContractMethod<
+    [arg0: AddressLike, arg1: BigNumberish],
+    [bigint],
+    "view"
+  >;
+
+  getFunction<T extends ContractMethod = ContractMethod>(
+    key: string | FunctionFragment
+  ): T;
+
+  getFunction(
+    nameOrSignature: "DEFAULT_ADMIN_ROLE"
+  ): TypedContractMethod<[], [string], "view">;
+  getFunction(
+    nameOrSignature: "POWER_DURATION"
+  ): TypedContractMethod<[], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "UPGRADER_ROLE"
+  ): TypedContractMethod<[], [string], "view">;
+  getFunction(
+    nameOrSignature: "activateAvatar"
+  ): TypedContractMethod<
+    [collectionAddress: AddressLike, tokenId: BigNumberish],
+    [void],
+    "nonpayable"
+  >;
+  getFunction(
+    nameOrSignature: "activatePower"
+  ): TypedContractMethod<[powerId: BigNumberish], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "activatePowerAccess"
+  ): TypedContractMethod<[], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "activeAvatars"
+  ): TypedContractMethod<
+    [arg0: AddressLike],
+    [
+      [string, bigint, boolean, boolean] & {
+        collection: string;
+        tokenId: bigint;
+        isAvatarCollection: boolean;
+        isPowersAllowed: boolean;
+      }
+    ],
+    "view"
+  >;
+  getFunction(
+    nameOrSignature: "approveCollection"
+  ): TypedContractMethod<
+    [collectionAddress: AddressLike, approved: boolean],
+    [void],
+    "nonpayable"
+  >;
+  getFunction(
+    nameOrSignature: "approvedCollections"
+  ): TypedContractMethod<[arg0: AddressLike], [boolean], "view">;
+  getFunction(
+    nameOrSignature: "birthdayPrizeClaimPeriod"
+  ): TypedContractMethod<[], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "deactivateAvatar"
+  ): TypedContractMethod<[], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "getRoleAdmin"
+  ): TypedContractMethod<[role: BytesLike], [string], "view">;
+  getFunction(
+    nameOrSignature: "getYear"
+  ): TypedContractMethod<[timestamp: BigNumberish], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "grantRole"
+  ): TypedContractMethod<
+    [role: BytesLike, account: AddressLike],
+    [void],
+    "nonpayable"
+  >;
+  getFunction(
+    nameOrSignature: "hasRole"
+  ): TypedContractMethod<
+    [role: BytesLike, account: AddressLike],
+    [boolean],
+    "view"
+  >;
+  getFunction(
+    nameOrSignature: "initialize"
+  ): TypedContractMethod<
+    [contractManagerAddress: AddressLike],
+    [void],
+    "nonpayable"
+  >;
+  getFunction(
+    nameOrSignature: "isBirthdayInRange"
+  ): TypedContractMethod<[birthdayTimestamp: BigNumberish], [boolean], "view">;
+  getFunction(
+    nameOrSignature: "isBirthdayPrizeAvailable"
+  ): TypedContractMethod<[tokenId: BigNumberish], [boolean], "view">;
+  getFunction(
+    nameOrSignature: "isPowerAccessActive"
+  ): TypedContractMethod<[], [boolean], "view">;
+  getFunction(
+    nameOrSignature: "pause"
+  ): TypedContractMethod<[], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "paused"
+  ): TypedContractMethod<[], [boolean], "view">;
+  getFunction(
+    nameOrSignature: "powerActivationFee"
+  ): TypedContractMethod<[], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "proxiableUUID"
+  ): TypedContractMethod<[], [string], "view">;
+  getFunction(
+    nameOrSignature: "renounceRole"
+  ): TypedContractMethod<
+    [role: BytesLike, account: AddressLike],
+    [void],
+    "nonpayable"
+  >;
+  getFunction(
+    nameOrSignature: "requestBirthdayPrize"
+  ): TypedContractMethod<[], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "revokeRole"
+  ): TypedContractMethod<
+    [role: BytesLike, account: AddressLike],
+    [void],
+    "nonpayable"
+  >;
+  getFunction(
+    nameOrSignature: "setBirthdayPrizeClaimPeriod"
+  ): TypedContractMethod<[_days: BigNumberish], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "setTokenName"
+  ): TypedContractMethod<
+    [_tokenId: BigNumberish, _name: string],
+    [void],
+    "nonpayable"
+  >;
+  getFunction(
+    nameOrSignature: "setTokenTelegram"
+  ): TypedContractMethod<
+    [_tokenId: BigNumberish, _telegram: string],
+    [void],
+    "nonpayable"
+  >;
+  getFunction(
+    nameOrSignature: "supportsInterface"
+  ): TypedContractMethod<[interfaceId: BytesLike], [boolean], "view">;
+  getFunction(
+    nameOrSignature: "unpause"
+  ): TypedContractMethod<[], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "updatePowerActivationFee"
+  ): TypedContractMethod<[newFee: BigNumberish], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "upgradeTo"
+  ): TypedContractMethod<
+    [newImplementation: AddressLike],
+    [void],
+    "nonpayable"
+  >;
+  getFunction(
+    nameOrSignature: "upgradeToAndCall"
+  ): TypedContractMethod<
+    [newImplementation: AddressLike, data: BytesLike],
+    [void],
+    "payable"
+  >;
+  getFunction(
+    nameOrSignature: "userPowers"
+  ): TypedContractMethod<
+    [arg0: AddressLike, arg1: BigNumberish],
+    [bigint],
+    "view"
+  >;
+
+  getEvent(
+    key: "AdminChanged"
+  ): TypedContractEvent<
+    AdminChangedEvent.InputTuple,
+    AdminChangedEvent.OutputTuple,
+    AdminChangedEvent.OutputObject
+  >;
+  getEvent(
+    key: "AvatarActivated"
+  ): TypedContractEvent<
+    AvatarActivatedEvent.InputTuple,
+    AvatarActivatedEvent.OutputTuple,
+    AvatarActivatedEvent.OutputObject
+  >;
+  getEvent(
+    key: "AvatarDeactivated"
+  ): TypedContractEvent<
+    AvatarDeactivatedEvent.InputTuple,
+    AvatarDeactivatedEvent.OutputTuple,
+    AvatarDeactivatedEvent.OutputObject
+  >;
+  getEvent(
+    key: "BeaconUpgraded"
+  ): TypedContractEvent<
+    BeaconUpgradedEvent.InputTuple,
+    BeaconUpgradedEvent.OutputTuple,
+    BeaconUpgradedEvent.OutputObject
+  >;
+  getEvent(
+    key: "BirthdayPrizeClaimed"
+  ): TypedContractEvent<
+    BirthdayPrizeClaimedEvent.InputTuple,
+    BirthdayPrizeClaimedEvent.OutputTuple,
+    BirthdayPrizeClaimedEvent.OutputObject
+  >;
+  getEvent(
+    key: "CollectionApprovalUpdated"
+  ): TypedContractEvent<
+    CollectionApprovalUpdatedEvent.InputTuple,
+    CollectionApprovalUpdatedEvent.OutputTuple,
+    CollectionApprovalUpdatedEvent.OutputObject
+  >;
+  getEvent(
+    key: "ExternalAvatarActivated"
+  ): TypedContractEvent<
+    ExternalAvatarActivatedEvent.InputTuple,
+    ExternalAvatarActivatedEvent.OutputTuple,
+    ExternalAvatarActivatedEvent.OutputObject
+  >;
+  getEvent(
+    key: "Initialized"
+  ): TypedContractEvent<
+    InitializedEvent.InputTuple,
+    InitializedEvent.OutputTuple,
+    InitializedEvent.OutputObject
+  >;
+  getEvent(
+    key: "NameChanged"
+  ): TypedContractEvent<
+    NameChangedEvent.InputTuple,
+    NameChangedEvent.OutputTuple,
+    NameChangedEvent.OutputObject
+  >;
+  getEvent(
+    key: "Paused"
+  ): TypedContractEvent<
+    PausedEvent.InputTuple,
+    PausedEvent.OutputTuple,
+    PausedEvent.OutputObject
+  >;
+  getEvent(
+    key: "PowerActivated"
+  ): TypedContractEvent<
+    PowerActivatedEvent.InputTuple,
+    PowerActivatedEvent.OutputTuple,
+    PowerActivatedEvent.OutputObject
+  >;
+  getEvent(
+    key: "PowerActivationFeeUpdated"
+  ): TypedContractEvent<
+    PowerActivationFeeUpdatedEvent.InputTuple,
+    PowerActivationFeeUpdatedEvent.OutputTuple,
+    PowerActivationFeeUpdatedEvent.OutputObject
+  >;
+  getEvent(
+    key: "PowersAccessActivated"
+  ): TypedContractEvent<
+    PowersAccessActivatedEvent.InputTuple,
+    PowersAccessActivatedEvent.OutputTuple,
+    PowersAccessActivatedEvent.OutputObject
+  >;
+  getEvent(
+    key: "RoleAdminChanged"
+  ): TypedContractEvent<
+    RoleAdminChangedEvent.InputTuple,
+    RoleAdminChangedEvent.OutputTuple,
+    RoleAdminChangedEvent.OutputObject
+  >;
+  getEvent(
+    key: "RoleGranted"
+  ): TypedContractEvent<
+    RoleGrantedEvent.InputTuple,
+    RoleGrantedEvent.OutputTuple,
+    RoleGrantedEvent.OutputObject
+  >;
+  getEvent(
+    key: "RoleRevoked"
+  ): TypedContractEvent<
+    RoleRevokedEvent.InputTuple,
+    RoleRevokedEvent.OutputTuple,
+    RoleRevokedEvent.OutputObject
+  >;
+  getEvent(
+    key: "TelegramChanged"
+  ): TypedContractEvent<
+    TelegramChangedEvent.InputTuple,
+    TelegramChangedEvent.OutputTuple,
+    TelegramChangedEvent.OutputObject
+  >;
+  getEvent(
+    key: "Unpaused"
+  ): TypedContractEvent<
+    UnpausedEvent.InputTuple,
+    UnpausedEvent.OutputTuple,
+    UnpausedEvent.OutputObject
+  >;
+  getEvent(
+    key: "Upgraded"
+  ): TypedContractEvent<
+    UpgradedEvent.InputTuple,
+    UpgradedEvent.OutputTuple,
+    UpgradedEvent.OutputObject
+  >;
 
   filters: {
-    "AdminChanged(address,address)"(
-      previousAdmin?: null,
-      newAdmin?: null
-    ): AdminChangedEventFilter;
-    AdminChanged(
-      previousAdmin?: null,
-      newAdmin?: null
-    ): AdminChangedEventFilter;
-
-    "AvatarActivated(address,uint256)"(
-      sender?: string | null,
-      tokenId?: null
-    ): AvatarActivatedEventFilter;
-    AvatarActivated(
-      sender?: string | null,
-      tokenId?: null
-    ): AvatarActivatedEventFilter;
-
-    "AvatarDeactivated(address,uint256,address,bool)"(
-      sender?: string | null,
-      tokenId?: BigNumberish | null,
-      collectionAddress?: string | null,
-      isAvatarCollection?: null
-    ): AvatarDeactivatedEventFilter;
-    AvatarDeactivated(
-      sender?: string | null,
-      tokenId?: BigNumberish | null,
-      collectionAddress?: string | null,
-      isAvatarCollection?: null
-    ): AvatarDeactivatedEventFilter;
-
-    "BeaconUpgraded(address)"(
-      beacon?: string | null
-    ): BeaconUpgradedEventFilter;
-    BeaconUpgraded(beacon?: string | null): BeaconUpgradedEventFilter;
-
-    "CollectionApprovalUpdated(address,bool)"(
-      collection?: null,
-      approved?: null
-    ): CollectionApprovalUpdatedEventFilter;
-    CollectionApprovalUpdated(
-      collection?: null,
-      approved?: null
-    ): CollectionApprovalUpdatedEventFilter;
-
-    "ExternalAvatarActivated(address,uint256,address)"(
-      sender?: string | null,
-      tokenId?: null,
-      collection?: string | null
-    ): ExternalAvatarActivatedEventFilter;
-    ExternalAvatarActivated(
-      sender?: string | null,
-      tokenId?: null,
-      collection?: string | null
-    ): ExternalAvatarActivatedEventFilter;
-
-    "Initialized(uint8)"(version?: null): InitializedEventFilter;
-    Initialized(version?: null): InitializedEventFilter;
-
-    "NameChanged(address,uint256,string)"(
-      sender?: string | null,
-      tokenId?: null,
-      name?: null
-    ): NameChangedEventFilter;
-    NameChanged(
-      sender?: string | null,
-      tokenId?: null,
-      name?: null
-    ): NameChangedEventFilter;
-
-    "Paused(address)"(account?: null): PausedEventFilter;
-    Paused(account?: null): PausedEventFilter;
-
-    "PowerActivated(address,uint256,uint256)"(
-      sender?: string | null,
-      powerId?: BigNumberish | null,
-      expirationTime?: null
-    ): PowerActivatedEventFilter;
-    PowerActivated(
-      sender?: string | null,
-      powerId?: BigNumberish | null,
-      expirationTime?: null
-    ): PowerActivatedEventFilter;
-
-    "PowerActivationFeeUpdated(uint256)"(
-      newFee?: null
-    ): PowerActivationFeeUpdatedEventFilter;
-    PowerActivationFeeUpdated(
-      newFee?: null
-    ): PowerActivationFeeUpdatedEventFilter;
-
-    "PowersAccessActivated(address)"(
-      sender?: string | null
-    ): PowersAccessActivatedEventFilter;
-    PowersAccessActivated(
-      sender?: string | null
-    ): PowersAccessActivatedEventFilter;
-
-    "RoleAdminChanged(bytes32,bytes32,bytes32)"(
-      role?: BytesLike | null,
-      previousAdminRole?: BytesLike | null,
-      newAdminRole?: BytesLike | null
-    ): RoleAdminChangedEventFilter;
-    RoleAdminChanged(
-      role?: BytesLike | null,
-      previousAdminRole?: BytesLike | null,
-      newAdminRole?: BytesLike | null
-    ): RoleAdminChangedEventFilter;
-
-    "RoleGranted(bytes32,address,address)"(
-      role?: BytesLike | null,
-      account?: string | null,
-      sender?: string | null
-    ): RoleGrantedEventFilter;
-    RoleGranted(
-      role?: BytesLike | null,
-      account?: string | null,
-      sender?: string | null
-    ): RoleGrantedEventFilter;
-
-    "RoleRevoked(bytes32,address,address)"(
-      role?: BytesLike | null,
-      account?: string | null,
-      sender?: string | null
-    ): RoleRevokedEventFilter;
-    RoleRevoked(
-      role?: BytesLike | null,
-      account?: string | null,
-      sender?: string | null
-    ): RoleRevokedEventFilter;
-
-    "TelegramChanged(address,uint256,string)"(
-      sender?: string | null,
-      tokenId?: null,
-      telegram?: null
-    ): TelegramChangedEventFilter;
-    TelegramChanged(
-      sender?: string | null,
-      tokenId?: null,
-      telegram?: null
-    ): TelegramChangedEventFilter;
-
-    "Unpaused(address)"(account?: null): UnpausedEventFilter;
-    Unpaused(account?: null): UnpausedEventFilter;
-
-    "Upgraded(address)"(implementation?: string | null): UpgradedEventFilter;
-    Upgraded(implementation?: string | null): UpgradedEventFilter;
-  };
-
-  estimateGas: {
-    DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
-
-    POWER_DURATION(overrides?: CallOverrides): Promise<BigNumber>;
-
-    UPGRADER_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
-
-    activateAvatar(
-      collectionAddress: string,
-      tokenId: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    activatePower(
-      powerId: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    activatePowerAccess(
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    activeAvatars(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
-
-    approveCollection(
-      collectionAddress: string,
-      approved: boolean,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    approvedCollections(
-      arg0: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    birthdayPrizeClaimPeriod(overrides?: CallOverrides): Promise<BigNumber>;
-
-    deactivateAvatar(
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    getRoleAdmin(
-      role: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    grantRole(
-      role: BytesLike,
-      account: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    hasRole(
-      role: BytesLike,
-      account: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    initialize(
-      contractManagerAddress: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    isBirthdayInRange(
-      birthdayTimestamp: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    isBirthdayPrizeAvailable(
-      tokenId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    isPowerAccessActive(overrides?: CallOverrides): Promise<BigNumber>;
-
-    pause(overrides?: Overrides & { from?: string }): Promise<BigNumber>;
-
-    paused(overrides?: CallOverrides): Promise<BigNumber>;
-
-    powerActivationFee(overrides?: CallOverrides): Promise<BigNumber>;
-
-    proxiableUUID(overrides?: CallOverrides): Promise<BigNumber>;
-
-    renounceRole(
-      role: BytesLike,
-      account: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    requestBirthdayPrize(
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    revokeRole(
-      role: BytesLike,
-      account: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    setBirthdayPrizeClaimPeriod(
-      _days: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    setTokenName(
-      _tokenId: BigNumberish,
-      _name: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    setTokenTelegram(
-      _tokenId: BigNumberish,
-      _telegram: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    supportsInterface(
-      interfaceId: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    unpause(overrides?: Overrides & { from?: string }): Promise<BigNumber>;
-
-    updatePowerActivationFee(
-      newFee: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    upgradeTo(
-      newImplementation: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    upgradeToAndCall(
-      newImplementation: string,
-      data: BytesLike,
-      overrides?: PayableOverrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    userPowers(
-      arg0: string,
-      arg1: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-  };
-
-  populateTransaction: {
-    DEFAULT_ADMIN_ROLE(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    POWER_DURATION(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    UPGRADER_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    activateAvatar(
-      collectionAddress: string,
-      tokenId: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    activatePower(
-      powerId: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    activatePowerAccess(
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    activeAvatars(
-      arg0: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    approveCollection(
-      collectionAddress: string,
-      approved: boolean,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    approvedCollections(
-      arg0: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    birthdayPrizeClaimPeriod(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    deactivateAvatar(
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    getRoleAdmin(
-      role: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    grantRole(
-      role: BytesLike,
-      account: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    hasRole(
-      role: BytesLike,
-      account: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    initialize(
-      contractManagerAddress: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    isBirthdayInRange(
-      birthdayTimestamp: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    isBirthdayPrizeAvailable(
-      tokenId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    isPowerAccessActive(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    pause(
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    paused(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    powerActivationFee(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    proxiableUUID(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    renounceRole(
-      role: BytesLike,
-      account: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    requestBirthdayPrize(
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    revokeRole(
-      role: BytesLike,
-      account: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    setBirthdayPrizeClaimPeriod(
-      _days: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    setTokenName(
-      _tokenId: BigNumberish,
-      _name: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    setTokenTelegram(
-      _tokenId: BigNumberish,
-      _telegram: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    supportsInterface(
-      interfaceId: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    unpause(
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    updatePowerActivationFee(
-      newFee: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    upgradeTo(
-      newImplementation: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    upgradeToAndCall(
-      newImplementation: string,
-      data: BytesLike,
-      overrides?: PayableOverrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    userPowers(
-      arg0: string,
-      arg1: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
+    "AdminChanged(address,address)": TypedContractEvent<
+      AdminChangedEvent.InputTuple,
+      AdminChangedEvent.OutputTuple,
+      AdminChangedEvent.OutputObject
+    >;
+    AdminChanged: TypedContractEvent<
+      AdminChangedEvent.InputTuple,
+      AdminChangedEvent.OutputTuple,
+      AdminChangedEvent.OutputObject
+    >;
+
+    "AvatarActivated(address,uint256)": TypedContractEvent<
+      AvatarActivatedEvent.InputTuple,
+      AvatarActivatedEvent.OutputTuple,
+      AvatarActivatedEvent.OutputObject
+    >;
+    AvatarActivated: TypedContractEvent<
+      AvatarActivatedEvent.InputTuple,
+      AvatarActivatedEvent.OutputTuple,
+      AvatarActivatedEvent.OutputObject
+    >;
+
+    "AvatarDeactivated(address,uint256,address,bool)": TypedContractEvent<
+      AvatarDeactivatedEvent.InputTuple,
+      AvatarDeactivatedEvent.OutputTuple,
+      AvatarDeactivatedEvent.OutputObject
+    >;
+    AvatarDeactivated: TypedContractEvent<
+      AvatarDeactivatedEvent.InputTuple,
+      AvatarDeactivatedEvent.OutputTuple,
+      AvatarDeactivatedEvent.OutputObject
+    >;
+
+    "BeaconUpgraded(address)": TypedContractEvent<
+      BeaconUpgradedEvent.InputTuple,
+      BeaconUpgradedEvent.OutputTuple,
+      BeaconUpgradedEvent.OutputObject
+    >;
+    BeaconUpgraded: TypedContractEvent<
+      BeaconUpgradedEvent.InputTuple,
+      BeaconUpgradedEvent.OutputTuple,
+      BeaconUpgradedEvent.OutputObject
+    >;
+
+    "BirthdayPrizeClaimed(uint256,address)": TypedContractEvent<
+      BirthdayPrizeClaimedEvent.InputTuple,
+      BirthdayPrizeClaimedEvent.OutputTuple,
+      BirthdayPrizeClaimedEvent.OutputObject
+    >;
+    BirthdayPrizeClaimed: TypedContractEvent<
+      BirthdayPrizeClaimedEvent.InputTuple,
+      BirthdayPrizeClaimedEvent.OutputTuple,
+      BirthdayPrizeClaimedEvent.OutputObject
+    >;
+
+    "CollectionApprovalUpdated(address,bool)": TypedContractEvent<
+      CollectionApprovalUpdatedEvent.InputTuple,
+      CollectionApprovalUpdatedEvent.OutputTuple,
+      CollectionApprovalUpdatedEvent.OutputObject
+    >;
+    CollectionApprovalUpdated: TypedContractEvent<
+      CollectionApprovalUpdatedEvent.InputTuple,
+      CollectionApprovalUpdatedEvent.OutputTuple,
+      CollectionApprovalUpdatedEvent.OutputObject
+    >;
+
+    "ExternalAvatarActivated(address,uint256,address)": TypedContractEvent<
+      ExternalAvatarActivatedEvent.InputTuple,
+      ExternalAvatarActivatedEvent.OutputTuple,
+      ExternalAvatarActivatedEvent.OutputObject
+    >;
+    ExternalAvatarActivated: TypedContractEvent<
+      ExternalAvatarActivatedEvent.InputTuple,
+      ExternalAvatarActivatedEvent.OutputTuple,
+      ExternalAvatarActivatedEvent.OutputObject
+    >;
+
+    "Initialized(uint8)": TypedContractEvent<
+      InitializedEvent.InputTuple,
+      InitializedEvent.OutputTuple,
+      InitializedEvent.OutputObject
+    >;
+    Initialized: TypedContractEvent<
+      InitializedEvent.InputTuple,
+      InitializedEvent.OutputTuple,
+      InitializedEvent.OutputObject
+    >;
+
+    "NameChanged(address,uint256,string)": TypedContractEvent<
+      NameChangedEvent.InputTuple,
+      NameChangedEvent.OutputTuple,
+      NameChangedEvent.OutputObject
+    >;
+    NameChanged: TypedContractEvent<
+      NameChangedEvent.InputTuple,
+      NameChangedEvent.OutputTuple,
+      NameChangedEvent.OutputObject
+    >;
+
+    "Paused(address)": TypedContractEvent<
+      PausedEvent.InputTuple,
+      PausedEvent.OutputTuple,
+      PausedEvent.OutputObject
+    >;
+    Paused: TypedContractEvent<
+      PausedEvent.InputTuple,
+      PausedEvent.OutputTuple,
+      PausedEvent.OutputObject
+    >;
+
+    "PowerActivated(address,uint256,uint256)": TypedContractEvent<
+      PowerActivatedEvent.InputTuple,
+      PowerActivatedEvent.OutputTuple,
+      PowerActivatedEvent.OutputObject
+    >;
+    PowerActivated: TypedContractEvent<
+      PowerActivatedEvent.InputTuple,
+      PowerActivatedEvent.OutputTuple,
+      PowerActivatedEvent.OutputObject
+    >;
+
+    "PowerActivationFeeUpdated(uint256)": TypedContractEvent<
+      PowerActivationFeeUpdatedEvent.InputTuple,
+      PowerActivationFeeUpdatedEvent.OutputTuple,
+      PowerActivationFeeUpdatedEvent.OutputObject
+    >;
+    PowerActivationFeeUpdated: TypedContractEvent<
+      PowerActivationFeeUpdatedEvent.InputTuple,
+      PowerActivationFeeUpdatedEvent.OutputTuple,
+      PowerActivationFeeUpdatedEvent.OutputObject
+    >;
+
+    "PowersAccessActivated(address)": TypedContractEvent<
+      PowersAccessActivatedEvent.InputTuple,
+      PowersAccessActivatedEvent.OutputTuple,
+      PowersAccessActivatedEvent.OutputObject
+    >;
+    PowersAccessActivated: TypedContractEvent<
+      PowersAccessActivatedEvent.InputTuple,
+      PowersAccessActivatedEvent.OutputTuple,
+      PowersAccessActivatedEvent.OutputObject
+    >;
+
+    "RoleAdminChanged(bytes32,bytes32,bytes32)": TypedContractEvent<
+      RoleAdminChangedEvent.InputTuple,
+      RoleAdminChangedEvent.OutputTuple,
+      RoleAdminChangedEvent.OutputObject
+    >;
+    RoleAdminChanged: TypedContractEvent<
+      RoleAdminChangedEvent.InputTuple,
+      RoleAdminChangedEvent.OutputTuple,
+      RoleAdminChangedEvent.OutputObject
+    >;
+
+    "RoleGranted(bytes32,address,address)": TypedContractEvent<
+      RoleGrantedEvent.InputTuple,
+      RoleGrantedEvent.OutputTuple,
+      RoleGrantedEvent.OutputObject
+    >;
+    RoleGranted: TypedContractEvent<
+      RoleGrantedEvent.InputTuple,
+      RoleGrantedEvent.OutputTuple,
+      RoleGrantedEvent.OutputObject
+    >;
+
+    "RoleRevoked(bytes32,address,address)": TypedContractEvent<
+      RoleRevokedEvent.InputTuple,
+      RoleRevokedEvent.OutputTuple,
+      RoleRevokedEvent.OutputObject
+    >;
+    RoleRevoked: TypedContractEvent<
+      RoleRevokedEvent.InputTuple,
+      RoleRevokedEvent.OutputTuple,
+      RoleRevokedEvent.OutputObject
+    >;
+
+    "TelegramChanged(address,uint256,string)": TypedContractEvent<
+      TelegramChangedEvent.InputTuple,
+      TelegramChangedEvent.OutputTuple,
+      TelegramChangedEvent.OutputObject
+    >;
+    TelegramChanged: TypedContractEvent<
+      TelegramChangedEvent.InputTuple,
+      TelegramChangedEvent.OutputTuple,
+      TelegramChangedEvent.OutputObject
+    >;
+
+    "Unpaused(address)": TypedContractEvent<
+      UnpausedEvent.InputTuple,
+      UnpausedEvent.OutputTuple,
+      UnpausedEvent.OutputObject
+    >;
+    Unpaused: TypedContractEvent<
+      UnpausedEvent.InputTuple,
+      UnpausedEvent.OutputTuple,
+      UnpausedEvent.OutputObject
+    >;
+
+    "Upgraded(address)": TypedContractEvent<
+      UpgradedEvent.InputTuple,
+      UpgradedEvent.OutputTuple,
+      UpgradedEvent.OutputObject
+    >;
+    Upgraded: TypedContractEvent<
+      UpgradedEvent.InputTuple,
+      UpgradedEvent.OutputTuple,
+      UpgradedEvent.OutputObject
+    >;
   };
 }

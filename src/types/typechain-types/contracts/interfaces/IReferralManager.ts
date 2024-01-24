@@ -3,30 +3,29 @@
 /* eslint-disable */
 import type {
   BaseContract,
-  BigNumber,
   BigNumberish,
   BytesLike,
-  CallOverrides,
-  ContractTransaction,
-  Overrides,
-  PopulatedTransaction,
-  Signer,
-  utils,
+  FunctionFragment,
+  Result,
+  Interface,
+  AddressLike,
+  ContractRunner,
+  ContractMethod,
+  Listener,
 } from "ethers";
-import type { FunctionFragment, Result } from "@ethersproject/abi";
-import type { Listener, Provider } from "@ethersproject/providers";
 import type {
-  TypedEventFilter,
-  TypedEvent,
+  TypedContractEvent,
+  TypedDeferredTopicFilter,
+  TypedEventLog,
   TypedListener,
-  OnEvent,
+  TypedContractMethod,
 } from "../../common";
 
 export declare namespace IReferralManager {
   export type AddDividendsParamsStruct = {
-    user: string;
+    user: AddressLike;
     reward: BigNumberish;
-    referral: string;
+    referral: AddressLike;
     level: BigNumberish;
     depositAmount: BigNumberish;
     stakingPlanId: BigNumberish;
@@ -34,51 +33,46 @@ export declare namespace IReferralManager {
   };
 
   export type AddDividendsParamsStructOutput = [
-    string,
-    BigNumber,
-    string,
-    BigNumber,
-    BigNumber,
-    BigNumber,
-    BigNumber
+    user: string,
+    reward: bigint,
+    referral: string,
+    level: bigint,
+    depositAmount: bigint,
+    stakingPlanId: bigint,
+    reason: bigint
   ] & {
     user: string;
-    reward: BigNumber;
+    reward: bigint;
     referral: string;
-    level: BigNumber;
-    depositAmount: BigNumber;
-    stakingPlanId: BigNumber;
-    reason: BigNumber;
+    level: bigint;
+    depositAmount: bigint;
+    stakingPlanId: bigint;
+    reason: bigint;
   };
 
   export type ReferralStruct = {
-    referralAddress: string;
+    referralAddress: AddressLike;
     level: BigNumberish;
     activationDate: BigNumberish;
     isReferralSubscriptionActive: boolean;
   };
 
-  export type ReferralStructOutput = [string, BigNumber, BigNumber, boolean] & {
+  export type ReferralStructOutput = [
+    referralAddress: string,
+    level: bigint,
+    activationDate: bigint,
+    isReferralSubscriptionActive: boolean
+  ] & {
     referralAddress: string;
-    level: BigNumber;
-    activationDate: BigNumber;
+    level: bigint;
+    activationDate: bigint;
     isReferralSubscriptionActive: boolean;
   };
 }
 
-export interface IReferralManagerInterface extends utils.Interface {
-  functions: {
-    "addUserDividends((address,uint256,address,uint256,uint256,uint256,uint256))": FunctionFragment;
-    "calculateRefReward(uint256,uint256)": FunctionFragment;
-    "getReferralLevels()": FunctionFragment;
-    "getUserReferralsByLevel(address,uint256)": FunctionFragment;
-    "getUserReferrer(address)": FunctionFragment;
-    "setUserReferrer(address,address)": FunctionFragment;
-    "userHasSubscription(address,uint256)": FunctionFragment;
-  };
-
+export interface IReferralManagerInterface extends Interface {
   getFunction(
-    nameOrSignatureOrTopic:
+    nameOrSignature:
       | "addUserDividends"
       | "calculateRefReward"
       | "getReferralLevels"
@@ -102,19 +96,19 @@ export interface IReferralManagerInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "getUserReferralsByLevel",
-    values: [string, BigNumberish]
+    values: [AddressLike, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "getUserReferrer",
-    values: [string]
+    values: [AddressLike]
   ): string;
   encodeFunctionData(
     functionFragment: "setUserReferrer",
-    values: [string, string]
+    values: [AddressLike, AddressLike]
   ): string;
   encodeFunctionData(
     functionFragment: "userHasSubscription",
-    values: [string, BigNumberish]
+    values: [AddressLike, BigNumberish]
   ): string;
 
   decodeFunctionResult(
@@ -145,214 +139,130 @@ export interface IReferralManagerInterface extends utils.Interface {
     functionFragment: "userHasSubscription",
     data: BytesLike
   ): Result;
-
-  events: {};
 }
 
 export interface IReferralManager extends BaseContract {
-  connect(signerOrProvider: Signer | Provider | string): this;
-  attach(addressOrName: string): this;
-  deployed(): Promise<this>;
+  connect(runner?: ContractRunner | null): IReferralManager;
+  waitForDeployment(): Promise<this>;
 
   interface: IReferralManagerInterface;
 
-  queryFilter<TEvent extends TypedEvent>(
-    event: TypedEventFilter<TEvent>,
+  queryFilter<TCEvent extends TypedContractEvent>(
+    event: TCEvent,
     fromBlockOrBlockhash?: string | number | undefined,
     toBlock?: string | number | undefined
-  ): Promise<Array<TEvent>>;
+  ): Promise<Array<TypedEventLog<TCEvent>>>;
+  queryFilter<TCEvent extends TypedContractEvent>(
+    filter: TypedDeferredTopicFilter<TCEvent>,
+    fromBlockOrBlockhash?: string | number | undefined,
+    toBlock?: string | number | undefined
+  ): Promise<Array<TypedEventLog<TCEvent>>>;
 
-  listeners<TEvent extends TypedEvent>(
-    eventFilter?: TypedEventFilter<TEvent>
-  ): Array<TypedListener<TEvent>>;
-  listeners(eventName?: string): Array<Listener>;
-  removeAllListeners<TEvent extends TypedEvent>(
-    eventFilter: TypedEventFilter<TEvent>
-  ): this;
-  removeAllListeners(eventName?: string): this;
-  off: OnEvent<this>;
-  on: OnEvent<this>;
-  once: OnEvent<this>;
-  removeListener: OnEvent<this>;
+  on<TCEvent extends TypedContractEvent>(
+    event: TCEvent,
+    listener: TypedListener<TCEvent>
+  ): Promise<this>;
+  on<TCEvent extends TypedContractEvent>(
+    filter: TypedDeferredTopicFilter<TCEvent>,
+    listener: TypedListener<TCEvent>
+  ): Promise<this>;
 
-  functions: {
-    addUserDividends(
-      params: IReferralManager.AddDividendsParamsStruct,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
+  once<TCEvent extends TypedContractEvent>(
+    event: TCEvent,
+    listener: TypedListener<TCEvent>
+  ): Promise<this>;
+  once<TCEvent extends TypedContractEvent>(
+    filter: TypedDeferredTopicFilter<TCEvent>,
+    listener: TypedListener<TCEvent>
+  ): Promise<this>;
 
-    calculateRefReward(
-      amount: BigNumberish,
-      level: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+  listeners<TCEvent extends TypedContractEvent>(
+    event: TCEvent
+  ): Promise<Array<TypedListener<TCEvent>>>;
+  listeners(eventName?: string): Promise<Array<Listener>>;
+  removeAllListeners<TCEvent extends TypedContractEvent>(
+    event?: TCEvent
+  ): Promise<this>;
 
-    getReferralLevels(overrides?: CallOverrides): Promise<[BigNumber]>;
+  addUserDividends: TypedContractMethod<
+    [params: IReferralManager.AddDividendsParamsStruct],
+    [void],
+    "nonpayable"
+  >;
 
-    getUserReferralsByLevel(
-      userAddress: string,
-      level: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[IReferralManager.ReferralStructOutput[]]>;
+  calculateRefReward: TypedContractMethod<
+    [amount: BigNumberish, level: BigNumberish],
+    [bigint],
+    "view"
+  >;
 
-    getUserReferrer(user: string, overrides?: CallOverrides): Promise<[string]>;
+  getReferralLevels: TypedContractMethod<[], [bigint], "view">;
 
-    setUserReferrer(
-      user: string,
-      referrer: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
+  getUserReferralsByLevel: TypedContractMethod<
+    [userAddress: AddressLike, level: BigNumberish],
+    [IReferralManager.ReferralStructOutput[]],
+    "view"
+  >;
 
-    userHasSubscription(
-      user: string,
-      level: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
-  };
+  getUserReferrer: TypedContractMethod<[user: AddressLike], [string], "view">;
 
-  addUserDividends(
-    params: IReferralManager.AddDividendsParamsStruct,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
+  setUserReferrer: TypedContractMethod<
+    [user: AddressLike, referrer: AddressLike],
+    [void],
+    "nonpayable"
+  >;
 
-  calculateRefReward(
-    amount: BigNumberish,
-    level: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
+  userHasSubscription: TypedContractMethod<
+    [user: AddressLike, level: BigNumberish],
+    [boolean],
+    "view"
+  >;
 
-  getReferralLevels(overrides?: CallOverrides): Promise<BigNumber>;
+  getFunction<T extends ContractMethod = ContractMethod>(
+    key: string | FunctionFragment
+  ): T;
 
-  getUserReferralsByLevel(
-    userAddress: string,
-    level: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<IReferralManager.ReferralStructOutput[]>;
-
-  getUserReferrer(user: string, overrides?: CallOverrides): Promise<string>;
-
-  setUserReferrer(
-    user: string,
-    referrer: string,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  userHasSubscription(
-    user: string,
-    level: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<boolean>;
-
-  callStatic: {
-    addUserDividends(
-      params: IReferralManager.AddDividendsParamsStruct,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    calculateRefReward(
-      amount: BigNumberish,
-      level: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    getReferralLevels(overrides?: CallOverrides): Promise<BigNumber>;
-
-    getUserReferralsByLevel(
-      userAddress: string,
-      level: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<IReferralManager.ReferralStructOutput[]>;
-
-    getUserReferrer(user: string, overrides?: CallOverrides): Promise<string>;
-
-    setUserReferrer(
-      user: string,
-      referrer: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    userHasSubscription(
-      user: string,
-      level: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
-  };
+  getFunction(
+    nameOrSignature: "addUserDividends"
+  ): TypedContractMethod<
+    [params: IReferralManager.AddDividendsParamsStruct],
+    [void],
+    "nonpayable"
+  >;
+  getFunction(
+    nameOrSignature: "calculateRefReward"
+  ): TypedContractMethod<
+    [amount: BigNumberish, level: BigNumberish],
+    [bigint],
+    "view"
+  >;
+  getFunction(
+    nameOrSignature: "getReferralLevels"
+  ): TypedContractMethod<[], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "getUserReferralsByLevel"
+  ): TypedContractMethod<
+    [userAddress: AddressLike, level: BigNumberish],
+    [IReferralManager.ReferralStructOutput[]],
+    "view"
+  >;
+  getFunction(
+    nameOrSignature: "getUserReferrer"
+  ): TypedContractMethod<[user: AddressLike], [string], "view">;
+  getFunction(
+    nameOrSignature: "setUserReferrer"
+  ): TypedContractMethod<
+    [user: AddressLike, referrer: AddressLike],
+    [void],
+    "nonpayable"
+  >;
+  getFunction(
+    nameOrSignature: "userHasSubscription"
+  ): TypedContractMethod<
+    [user: AddressLike, level: BigNumberish],
+    [boolean],
+    "view"
+  >;
 
   filters: {};
-
-  estimateGas: {
-    addUserDividends(
-      params: IReferralManager.AddDividendsParamsStruct,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    calculateRefReward(
-      amount: BigNumberish,
-      level: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    getReferralLevels(overrides?: CallOverrides): Promise<BigNumber>;
-
-    getUserReferralsByLevel(
-      userAddress: string,
-      level: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    getUserReferrer(
-      user: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    setUserReferrer(
-      user: string,
-      referrer: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    userHasSubscription(
-      user: string,
-      level: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-  };
-
-  populateTransaction: {
-    addUserDividends(
-      params: IReferralManager.AddDividendsParamsStruct,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    calculateRefReward(
-      amount: BigNumberish,
-      level: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    getReferralLevels(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    getUserReferralsByLevel(
-      userAddress: string,
-      level: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    getUserReferrer(
-      user: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    setUserReferrer(
-      user: string,
-      referrer: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    userHasSubscription(
-      user: string,
-      level: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-  };
 }

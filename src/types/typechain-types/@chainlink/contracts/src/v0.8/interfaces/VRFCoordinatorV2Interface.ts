@@ -3,41 +3,27 @@
 /* eslint-disable */
 import type {
   BaseContract,
-  BigNumber,
   BigNumberish,
   BytesLike,
-  CallOverrides,
-  ContractTransaction,
-  Overrides,
-  PopulatedTransaction,
-  Signer,
-  utils,
+  FunctionFragment,
+  Result,
+  Interface,
+  AddressLike,
+  ContractRunner,
+  ContractMethod,
+  Listener,
 } from "ethers";
-import type { FunctionFragment, Result } from "@ethersproject/abi";
-import type { Listener, Provider } from "@ethersproject/providers";
 import type {
-  TypedEventFilter,
-  TypedEvent,
+  TypedContractEvent,
+  TypedDeferredTopicFilter,
+  TypedEventLog,
   TypedListener,
-  OnEvent,
+  TypedContractMethod,
 } from "../../../../../common";
 
-export interface VRFCoordinatorV2InterfaceInterface extends utils.Interface {
-  functions: {
-    "acceptSubscriptionOwnerTransfer(uint64)": FunctionFragment;
-    "addConsumer(uint64,address)": FunctionFragment;
-    "cancelSubscription(uint64,address)": FunctionFragment;
-    "createSubscription()": FunctionFragment;
-    "getRequestConfig()": FunctionFragment;
-    "getSubscription(uint64)": FunctionFragment;
-    "pendingRequestExists(uint64)": FunctionFragment;
-    "removeConsumer(uint64,address)": FunctionFragment;
-    "requestRandomWords(bytes32,uint64,uint16,uint32,uint32)": FunctionFragment;
-    "requestSubscriptionOwnerTransfer(uint64,address)": FunctionFragment;
-  };
-
+export interface VRFCoordinatorV2InterfaceInterface extends Interface {
   getFunction(
-    nameOrSignatureOrTopic:
+    nameOrSignature:
       | "acceptSubscriptionOwnerTransfer"
       | "addConsumer"
       | "cancelSubscription"
@@ -56,11 +42,11 @@ export interface VRFCoordinatorV2InterfaceInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "addConsumer",
-    values: [BigNumberish, string]
+    values: [BigNumberish, AddressLike]
   ): string;
   encodeFunctionData(
     functionFragment: "cancelSubscription",
-    values: [BigNumberish, string]
+    values: [BigNumberish, AddressLike]
   ): string;
   encodeFunctionData(
     functionFragment: "createSubscription",
@@ -80,7 +66,7 @@ export interface VRFCoordinatorV2InterfaceInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "removeConsumer",
-    values: [BigNumberish, string]
+    values: [BigNumberish, AddressLike]
   ): string;
   encodeFunctionData(
     functionFragment: "requestRandomWords",
@@ -88,7 +74,7 @@ export interface VRFCoordinatorV2InterfaceInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "requestSubscriptionOwnerTransfer",
-    values: [BigNumberish, string]
+    values: [BigNumberish, AddressLike]
   ): string;
 
   decodeFunctionResult(
@@ -131,338 +117,191 @@ export interface VRFCoordinatorV2InterfaceInterface extends utils.Interface {
     functionFragment: "requestSubscriptionOwnerTransfer",
     data: BytesLike
   ): Result;
-
-  events: {};
 }
 
 export interface VRFCoordinatorV2Interface extends BaseContract {
-  connect(signerOrProvider: Signer | Provider | string): this;
-  attach(addressOrName: string): this;
-  deployed(): Promise<this>;
+  connect(runner?: ContractRunner | null): VRFCoordinatorV2Interface;
+  waitForDeployment(): Promise<this>;
 
   interface: VRFCoordinatorV2InterfaceInterface;
 
-  queryFilter<TEvent extends TypedEvent>(
-    event: TypedEventFilter<TEvent>,
+  queryFilter<TCEvent extends TypedContractEvent>(
+    event: TCEvent,
     fromBlockOrBlockhash?: string | number | undefined,
     toBlock?: string | number | undefined
-  ): Promise<Array<TEvent>>;
+  ): Promise<Array<TypedEventLog<TCEvent>>>;
+  queryFilter<TCEvent extends TypedContractEvent>(
+    filter: TypedDeferredTopicFilter<TCEvent>,
+    fromBlockOrBlockhash?: string | number | undefined,
+    toBlock?: string | number | undefined
+  ): Promise<Array<TypedEventLog<TCEvent>>>;
 
-  listeners<TEvent extends TypedEvent>(
-    eventFilter?: TypedEventFilter<TEvent>
-  ): Array<TypedListener<TEvent>>;
-  listeners(eventName?: string): Array<Listener>;
-  removeAllListeners<TEvent extends TypedEvent>(
-    eventFilter: TypedEventFilter<TEvent>
-  ): this;
-  removeAllListeners(eventName?: string): this;
-  off: OnEvent<this>;
-  on: OnEvent<this>;
-  once: OnEvent<this>;
-  removeListener: OnEvent<this>;
+  on<TCEvent extends TypedContractEvent>(
+    event: TCEvent,
+    listener: TypedListener<TCEvent>
+  ): Promise<this>;
+  on<TCEvent extends TypedContractEvent>(
+    filter: TypedDeferredTopicFilter<TCEvent>,
+    listener: TypedListener<TCEvent>
+  ): Promise<this>;
 
-  functions: {
-    acceptSubscriptionOwnerTransfer(
-      subId: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
+  once<TCEvent extends TypedContractEvent>(
+    event: TCEvent,
+    listener: TypedListener<TCEvent>
+  ): Promise<this>;
+  once<TCEvent extends TypedContractEvent>(
+    filter: TypedDeferredTopicFilter<TCEvent>,
+    listener: TypedListener<TCEvent>
+  ): Promise<this>;
 
-    addConsumer(
-      subId: BigNumberish,
-      consumer: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
+  listeners<TCEvent extends TypedContractEvent>(
+    event: TCEvent
+  ): Promise<Array<TypedListener<TCEvent>>>;
+  listeners(eventName?: string): Promise<Array<Listener>>;
+  removeAllListeners<TCEvent extends TypedContractEvent>(
+    event?: TCEvent
+  ): Promise<this>;
 
-    cancelSubscription(
-      subId: BigNumberish,
-      to: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    createSubscription(
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    getRequestConfig(
-      overrides?: CallOverrides
-    ): Promise<[number, number, string[]]>;
-
-    getSubscription(
-      subId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber, string, string[]] & {
-        balance: BigNumber;
-        reqCount: BigNumber;
-        owner: string;
-        consumers: string[];
-      }
-    >;
-
-    pendingRequestExists(
-      subId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
-
-    removeConsumer(
-      subId: BigNumberish,
-      consumer: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    requestRandomWords(
-      keyHash: BytesLike,
-      subId: BigNumberish,
-      minimumRequestConfirmations: BigNumberish,
-      callbackGasLimit: BigNumberish,
-      numWords: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    requestSubscriptionOwnerTransfer(
-      subId: BigNumberish,
-      newOwner: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-  };
-
-  acceptSubscriptionOwnerTransfer(
-    subId: BigNumberish,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  addConsumer(
-    subId: BigNumberish,
-    consumer: string,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  cancelSubscription(
-    subId: BigNumberish,
-    to: string,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  createSubscription(
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  getRequestConfig(
-    overrides?: CallOverrides
-  ): Promise<[number, number, string[]]>;
-
-  getSubscription(
-    subId: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<
-    [BigNumber, BigNumber, string, string[]] & {
-      balance: BigNumber;
-      reqCount: BigNumber;
-      owner: string;
-      consumers: string[];
-    }
+  acceptSubscriptionOwnerTransfer: TypedContractMethod<
+    [subId: BigNumberish],
+    [void],
+    "nonpayable"
   >;
 
-  pendingRequestExists(
-    subId: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<boolean>;
+  addConsumer: TypedContractMethod<
+    [subId: BigNumberish, consumer: AddressLike],
+    [void],
+    "nonpayable"
+  >;
 
-  removeConsumer(
-    subId: BigNumberish,
-    consumer: string,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
+  cancelSubscription: TypedContractMethod<
+    [subId: BigNumberish, to: AddressLike],
+    [void],
+    "nonpayable"
+  >;
 
-  requestRandomWords(
-    keyHash: BytesLike,
-    subId: BigNumberish,
-    minimumRequestConfirmations: BigNumberish,
-    callbackGasLimit: BigNumberish,
-    numWords: BigNumberish,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
+  createSubscription: TypedContractMethod<[], [bigint], "nonpayable">;
 
-  requestSubscriptionOwnerTransfer(
-    subId: BigNumberish,
-    newOwner: string,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
+  getRequestConfig: TypedContractMethod<
+    [],
+    [[bigint, bigint, string[]]],
+    "view"
+  >;
 
-  callStatic: {
-    acceptSubscriptionOwnerTransfer(
-      subId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    addConsumer(
-      subId: BigNumberish,
-      consumer: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    cancelSubscription(
-      subId: BigNumberish,
-      to: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    createSubscription(overrides?: CallOverrides): Promise<BigNumber>;
-
-    getRequestConfig(
-      overrides?: CallOverrides
-    ): Promise<[number, number, string[]]>;
-
-    getSubscription(
-      subId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber, string, string[]] & {
-        balance: BigNumber;
-        reqCount: BigNumber;
+  getSubscription: TypedContractMethod<
+    [subId: BigNumberish],
+    [
+      [bigint, bigint, string, string[]] & {
+        balance: bigint;
+        reqCount: bigint;
         owner: string;
         consumers: string[];
       }
-    >;
+    ],
+    "view"
+  >;
 
-    pendingRequestExists(
-      subId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
+  pendingRequestExists: TypedContractMethod<
+    [subId: BigNumberish],
+    [boolean],
+    "view"
+  >;
 
-    removeConsumer(
-      subId: BigNumberish,
-      consumer: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
+  removeConsumer: TypedContractMethod<
+    [subId: BigNumberish, consumer: AddressLike],
+    [void],
+    "nonpayable"
+  >;
 
-    requestRandomWords(
+  requestRandomWords: TypedContractMethod<
+    [
       keyHash: BytesLike,
       subId: BigNumberish,
       minimumRequestConfirmations: BigNumberish,
       callbackGasLimit: BigNumberish,
-      numWords: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+      numWords: BigNumberish
+    ],
+    [bigint],
+    "nonpayable"
+  >;
 
-    requestSubscriptionOwnerTransfer(
+  requestSubscriptionOwnerTransfer: TypedContractMethod<
+    [subId: BigNumberish, newOwner: AddressLike],
+    [void],
+    "nonpayable"
+  >;
+
+  getFunction<T extends ContractMethod = ContractMethod>(
+    key: string | FunctionFragment
+  ): T;
+
+  getFunction(
+    nameOrSignature: "acceptSubscriptionOwnerTransfer"
+  ): TypedContractMethod<[subId: BigNumberish], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "addConsumer"
+  ): TypedContractMethod<
+    [subId: BigNumberish, consumer: AddressLike],
+    [void],
+    "nonpayable"
+  >;
+  getFunction(
+    nameOrSignature: "cancelSubscription"
+  ): TypedContractMethod<
+    [subId: BigNumberish, to: AddressLike],
+    [void],
+    "nonpayable"
+  >;
+  getFunction(
+    nameOrSignature: "createSubscription"
+  ): TypedContractMethod<[], [bigint], "nonpayable">;
+  getFunction(
+    nameOrSignature: "getRequestConfig"
+  ): TypedContractMethod<[], [[bigint, bigint, string[]]], "view">;
+  getFunction(
+    nameOrSignature: "getSubscription"
+  ): TypedContractMethod<
+    [subId: BigNumberish],
+    [
+      [bigint, bigint, string, string[]] & {
+        balance: bigint;
+        reqCount: bigint;
+        owner: string;
+        consumers: string[];
+      }
+    ],
+    "view"
+  >;
+  getFunction(
+    nameOrSignature: "pendingRequestExists"
+  ): TypedContractMethod<[subId: BigNumberish], [boolean], "view">;
+  getFunction(
+    nameOrSignature: "removeConsumer"
+  ): TypedContractMethod<
+    [subId: BigNumberish, consumer: AddressLike],
+    [void],
+    "nonpayable"
+  >;
+  getFunction(
+    nameOrSignature: "requestRandomWords"
+  ): TypedContractMethod<
+    [
+      keyHash: BytesLike,
       subId: BigNumberish,
-      newOwner: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
-  };
+      minimumRequestConfirmations: BigNumberish,
+      callbackGasLimit: BigNumberish,
+      numWords: BigNumberish
+    ],
+    [bigint],
+    "nonpayable"
+  >;
+  getFunction(
+    nameOrSignature: "requestSubscriptionOwnerTransfer"
+  ): TypedContractMethod<
+    [subId: BigNumberish, newOwner: AddressLike],
+    [void],
+    "nonpayable"
+  >;
 
   filters: {};
-
-  estimateGas: {
-    acceptSubscriptionOwnerTransfer(
-      subId: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    addConsumer(
-      subId: BigNumberish,
-      consumer: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    cancelSubscription(
-      subId: BigNumberish,
-      to: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    createSubscription(
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    getRequestConfig(overrides?: CallOverrides): Promise<BigNumber>;
-
-    getSubscription(
-      subId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    pendingRequestExists(
-      subId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    removeConsumer(
-      subId: BigNumberish,
-      consumer: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    requestRandomWords(
-      keyHash: BytesLike,
-      subId: BigNumberish,
-      minimumRequestConfirmations: BigNumberish,
-      callbackGasLimit: BigNumberish,
-      numWords: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    requestSubscriptionOwnerTransfer(
-      subId: BigNumberish,
-      newOwner: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-  };
-
-  populateTransaction: {
-    acceptSubscriptionOwnerTransfer(
-      subId: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    addConsumer(
-      subId: BigNumberish,
-      consumer: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    cancelSubscription(
-      subId: BigNumberish,
-      to: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    createSubscription(
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    getRequestConfig(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    getSubscription(
-      subId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    pendingRequestExists(
-      subId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    removeConsumer(
-      subId: BigNumberish,
-      consumer: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    requestRandomWords(
-      keyHash: BytesLike,
-      subId: BigNumberish,
-      minimumRequestConfirmations: BigNumberish,
-      callbackGasLimit: BigNumberish,
-      numWords: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    requestSubscriptionOwnerTransfer(
-      subId: BigNumberish,
-      newOwner: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-  };
 }

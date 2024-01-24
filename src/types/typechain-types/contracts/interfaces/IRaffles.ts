@@ -3,21 +3,22 @@
 /* eslint-disable */
 import type {
   BaseContract,
-  BigNumber,
   BigNumberish,
   BytesLike,
-  CallOverrides,
-  PopulatedTransaction,
-  Signer,
-  utils,
+  FunctionFragment,
+  Result,
+  Interface,
+  AddressLike,
+  ContractRunner,
+  ContractMethod,
+  Listener,
 } from "ethers";
-import type { FunctionFragment, Result } from "@ethersproject/abi";
-import type { Listener, Provider } from "@ethersproject/providers";
 import type {
-  TypedEventFilter,
-  TypedEvent,
+  TypedContractEvent,
+  TypedDeferredTopicFilter,
+  TypedEventLog,
   TypedListener,
-  OnEvent,
+  TypedContractMethod,
 } from "../../common";
 
 export declare namespace IRaffles {
@@ -35,56 +36,51 @@ export declare namespace IRaffles {
     winnersForLevel: BigNumberish[];
     prizeForLevel: BigNumberish[];
     totalTickets: BigNumberish;
-    members: string[];
+    members: AddressLike[];
     randomWord: BigNumberish;
-    winners: string[][];
+    winners: AddressLike[][];
   };
 
   export type RoundStructOutput = [
-    BigNumber,
-    BigNumber,
-    BigNumber,
-    boolean,
-    boolean,
-    boolean,
-    BigNumber,
-    BigNumber,
-    BigNumber,
-    BigNumber,
-    BigNumber[],
-    BigNumber[],
-    BigNumber,
-    string[],
-    BigNumber,
-    string[][]
+    id: bigint,
+    startTime: bigint,
+    duration: bigint,
+    isClosed: boolean,
+    isOracleFulfilled: boolean,
+    isFinished: boolean,
+    initialPrize: bigint,
+    totalPrize: bigint,
+    maxTicketsFromOneMember: bigint,
+    tokensForOneTicket: bigint,
+    winnersForLevel: bigint[],
+    prizeForLevel: bigint[],
+    totalTickets: bigint,
+    members: string[],
+    randomWord: bigint,
+    winners: string[][]
   ] & {
-    id: BigNumber;
-    startTime: BigNumber;
-    duration: BigNumber;
+    id: bigint;
+    startTime: bigint;
+    duration: bigint;
     isClosed: boolean;
     isOracleFulfilled: boolean;
     isFinished: boolean;
-    initialPrize: BigNumber;
-    totalPrize: BigNumber;
-    maxTicketsFromOneMember: BigNumber;
-    tokensForOneTicket: BigNumber;
-    winnersForLevel: BigNumber[];
-    prizeForLevel: BigNumber[];
-    totalTickets: BigNumber;
+    initialPrize: bigint;
+    totalPrize: bigint;
+    maxTicketsFromOneMember: bigint;
+    tokensForOneTicket: bigint;
+    winnersForLevel: bigint[];
+    prizeForLevel: bigint[];
+    totalTickets: bigint;
     members: string[];
-    randomWord: BigNumber;
+    randomWord: bigint;
     winners: string[][];
   };
 }
 
-export interface IRafflesInterface extends utils.Interface {
-  functions: {
-    "getRound(uint256)": FunctionFragment;
-    "getUserRoundEntry(address,uint256)": FunctionFragment;
-  };
-
+export interface IRafflesInterface extends Interface {
   getFunction(
-    nameOrSignatureOrTopic: "getRound" | "getUserRoundEntry"
+    nameOrSignature: "getRound" | "getUserRoundEntry"
   ): FunctionFragment;
 
   encodeFunctionData(
@@ -93,7 +89,7 @@ export interface IRafflesInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "getUserRoundEntry",
-    values: [string, BigNumberish]
+    values: [AddressLike, BigNumberish]
   ): string;
 
   decodeFunctionResult(functionFragment: "getRound", data: BytesLike): Result;
@@ -101,95 +97,81 @@ export interface IRafflesInterface extends utils.Interface {
     functionFragment: "getUserRoundEntry",
     data: BytesLike
   ): Result;
-
-  events: {};
 }
 
 export interface IRaffles extends BaseContract {
-  connect(signerOrProvider: Signer | Provider | string): this;
-  attach(addressOrName: string): this;
-  deployed(): Promise<this>;
+  connect(runner?: ContractRunner | null): IRaffles;
+  waitForDeployment(): Promise<this>;
 
   interface: IRafflesInterface;
 
-  queryFilter<TEvent extends TypedEvent>(
-    event: TypedEventFilter<TEvent>,
+  queryFilter<TCEvent extends TypedContractEvent>(
+    event: TCEvent,
     fromBlockOrBlockhash?: string | number | undefined,
     toBlock?: string | number | undefined
-  ): Promise<Array<TEvent>>;
+  ): Promise<Array<TypedEventLog<TCEvent>>>;
+  queryFilter<TCEvent extends TypedContractEvent>(
+    filter: TypedDeferredTopicFilter<TCEvent>,
+    fromBlockOrBlockhash?: string | number | undefined,
+    toBlock?: string | number | undefined
+  ): Promise<Array<TypedEventLog<TCEvent>>>;
 
-  listeners<TEvent extends TypedEvent>(
-    eventFilter?: TypedEventFilter<TEvent>
-  ): Array<TypedListener<TEvent>>;
-  listeners(eventName?: string): Array<Listener>;
-  removeAllListeners<TEvent extends TypedEvent>(
-    eventFilter: TypedEventFilter<TEvent>
-  ): this;
-  removeAllListeners(eventName?: string): this;
-  off: OnEvent<this>;
-  on: OnEvent<this>;
-  once: OnEvent<this>;
-  removeListener: OnEvent<this>;
+  on<TCEvent extends TypedContractEvent>(
+    event: TCEvent,
+    listener: TypedListener<TCEvent>
+  ): Promise<this>;
+  on<TCEvent extends TypedContractEvent>(
+    filter: TypedDeferredTopicFilter<TCEvent>,
+    listener: TypedListener<TCEvent>
+  ): Promise<this>;
 
-  functions: {
-    getRound(
-      id: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[IRaffles.RoundStructOutput]>;
+  once<TCEvent extends TypedContractEvent>(
+    event: TCEvent,
+    listener: TypedListener<TCEvent>
+  ): Promise<this>;
+  once<TCEvent extends TypedContractEvent>(
+    filter: TypedDeferredTopicFilter<TCEvent>,
+    listener: TypedListener<TCEvent>
+  ): Promise<this>;
 
-    getUserRoundEntry(
-      user: string,
-      roundId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-  };
+  listeners<TCEvent extends TypedContractEvent>(
+    event: TCEvent
+  ): Promise<Array<TypedListener<TCEvent>>>;
+  listeners(eventName?: string): Promise<Array<Listener>>;
+  removeAllListeners<TCEvent extends TypedContractEvent>(
+    event?: TCEvent
+  ): Promise<this>;
 
-  getRound(
-    id: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<IRaffles.RoundStructOutput>;
+  getRound: TypedContractMethod<
+    [id: BigNumberish],
+    [IRaffles.RoundStructOutput],
+    "view"
+  >;
 
-  getUserRoundEntry(
-    user: string,
-    roundId: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
+  getUserRoundEntry: TypedContractMethod<
+    [user: AddressLike, roundId: BigNumberish],
+    [bigint],
+    "view"
+  >;
 
-  callStatic: {
-    getRound(
-      id: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<IRaffles.RoundStructOutput>;
+  getFunction<T extends ContractMethod = ContractMethod>(
+    key: string | FunctionFragment
+  ): T;
 
-    getUserRoundEntry(
-      user: string,
-      roundId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-  };
+  getFunction(
+    nameOrSignature: "getRound"
+  ): TypedContractMethod<
+    [id: BigNumberish],
+    [IRaffles.RoundStructOutput],
+    "view"
+  >;
+  getFunction(
+    nameOrSignature: "getUserRoundEntry"
+  ): TypedContractMethod<
+    [user: AddressLike, roundId: BigNumberish],
+    [bigint],
+    "view"
+  >;
 
   filters: {};
-
-  estimateGas: {
-    getRound(id: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
-
-    getUserRoundEntry(
-      user: string,
-      roundId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-  };
-
-  populateTransaction: {
-    getRound(
-      id: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    getUserRoundEntry(
-      user: string,
-      roundId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-  };
 }

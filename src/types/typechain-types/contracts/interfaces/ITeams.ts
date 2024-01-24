@@ -3,23 +3,22 @@
 /* eslint-disable */
 import type {
   BaseContract,
-  BigNumber,
   BigNumberish,
   BytesLike,
-  CallOverrides,
-  ContractTransaction,
-  Overrides,
-  PopulatedTransaction,
-  Signer,
-  utils,
+  FunctionFragment,
+  Result,
+  Interface,
+  AddressLike,
+  ContractRunner,
+  ContractMethod,
+  Listener,
 } from "ethers";
-import type { FunctionFragment, Result } from "@ethersproject/abi";
-import type { Listener, Provider } from "@ethersproject/providers";
 import type {
-  TypedEventFilter,
-  TypedEvent,
+  TypedContractEvent,
+  TypedDeferredTopicFilter,
+  TypedEventLog,
   TypedListener,
-  OnEvent,
+  TypedContractMethod,
 } from "../../common";
 
 export declare namespace ITeams {
@@ -34,20 +33,20 @@ export declare namespace ITeams {
   };
 
   export type TeamPlanStructOutput = [
-    BigNumber,
-    BigNumber,
-    BigNumber,
-    BigNumber,
-    BigNumber,
-    BigNumber,
-    boolean
+    teamPlanId: bigint,
+    subscriptionCost: bigint,
+    reward: bigint,
+    stakingThreshold: bigint,
+    teamSize: bigint,
+    stakingPlanId: bigint,
+    isActive: boolean
   ] & {
-    teamPlanId: BigNumber;
-    subscriptionCost: BigNumber;
-    reward: BigNumber;
-    stakingThreshold: BigNumber;
-    teamSize: BigNumber;
-    stakingPlanId: BigNumber;
+    teamPlanId: bigint;
+    subscriptionCost: bigint;
+    reward: bigint;
+    stakingThreshold: bigint;
+    teamSize: bigint;
+    stakingPlanId: bigint;
     isActive: boolean;
   };
 
@@ -56,29 +55,15 @@ export declare namespace ITeams {
     teamsFilled: BigNumberish;
   };
 
-  export type TeamStructOutput = [BigNumber, BigNumber] & {
-    subscription: BigNumber;
-    teamsFilled: BigNumber;
+  export type TeamStructOutput = [subscription: bigint, teamsFilled: bigint] & {
+    subscription: bigint;
+    teamsFilled: bigint;
   };
 }
 
-export interface ITeamsInterface extends utils.Interface {
-  functions: {
-    "getActivePlans()": FunctionFragment;
-    "getPlan(uint256)": FunctionFragment;
-    "getPlans()": FunctionFragment;
-    "getSufficientPlanIdByStakingAmount(uint256,uint256)": FunctionFragment;
-    "getUserSubscription(address,uint256)": FunctionFragment;
-    "getUserTeamMembers(address,uint256)": FunctionFragment;
-    "hasAnySubscription(address)": FunctionFragment;
-    "subscribe(uint256)": FunctionFragment;
-    "tryToAddMember(uint256,address,address,uint256)": FunctionFragment;
-    "userHasPlanSubscription(address,uint256)": FunctionFragment;
-    "userHasSufficientStaking(address,uint256)": FunctionFragment;
-  };
-
+export interface ITeamsInterface extends Interface {
   getFunction(
-    nameOrSignatureOrTopic:
+    nameOrSignature:
       | "getActivePlans"
       | "getPlan"
       | "getPlans"
@@ -107,15 +92,15 @@ export interface ITeamsInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "getUserSubscription",
-    values: [string, BigNumberish]
+    values: [AddressLike, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "getUserTeamMembers",
-    values: [string, BigNumberish]
+    values: [AddressLike, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "hasAnySubscription",
-    values: [string]
+    values: [AddressLike]
   ): string;
   encodeFunctionData(
     functionFragment: "subscribe",
@@ -123,15 +108,15 @@ export interface ITeamsInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "tryToAddMember",
-    values: [BigNumberish, string, string, BigNumberish]
+    values: [BigNumberish, AddressLike, AddressLike, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "userHasPlanSubscription",
-    values: [string, BigNumberish]
+    values: [AddressLike, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "userHasSufficientStaking",
-    values: [string, BigNumberish]
+    values: [AddressLike, BigNumberish]
   ): string;
 
   decodeFunctionResult(
@@ -169,330 +154,184 @@ export interface ITeamsInterface extends utils.Interface {
     functionFragment: "userHasSufficientStaking",
     data: BytesLike
   ): Result;
-
-  events: {};
 }
 
 export interface ITeams extends BaseContract {
-  connect(signerOrProvider: Signer | Provider | string): this;
-  attach(addressOrName: string): this;
-  deployed(): Promise<this>;
+  connect(runner?: ContractRunner | null): ITeams;
+  waitForDeployment(): Promise<this>;
 
   interface: ITeamsInterface;
 
-  queryFilter<TEvent extends TypedEvent>(
-    event: TypedEventFilter<TEvent>,
+  queryFilter<TCEvent extends TypedContractEvent>(
+    event: TCEvent,
     fromBlockOrBlockhash?: string | number | undefined,
     toBlock?: string | number | undefined
-  ): Promise<Array<TEvent>>;
+  ): Promise<Array<TypedEventLog<TCEvent>>>;
+  queryFilter<TCEvent extends TypedContractEvent>(
+    filter: TypedDeferredTopicFilter<TCEvent>,
+    fromBlockOrBlockhash?: string | number | undefined,
+    toBlock?: string | number | undefined
+  ): Promise<Array<TypedEventLog<TCEvent>>>;
 
-  listeners<TEvent extends TypedEvent>(
-    eventFilter?: TypedEventFilter<TEvent>
-  ): Array<TypedListener<TEvent>>;
-  listeners(eventName?: string): Array<Listener>;
-  removeAllListeners<TEvent extends TypedEvent>(
-    eventFilter: TypedEventFilter<TEvent>
-  ): this;
-  removeAllListeners(eventName?: string): this;
-  off: OnEvent<this>;
-  on: OnEvent<this>;
-  once: OnEvent<this>;
-  removeListener: OnEvent<this>;
+  on<TCEvent extends TypedContractEvent>(
+    event: TCEvent,
+    listener: TypedListener<TCEvent>
+  ): Promise<this>;
+  on<TCEvent extends TypedContractEvent>(
+    filter: TypedDeferredTopicFilter<TCEvent>,
+    listener: TypedListener<TCEvent>
+  ): Promise<this>;
 
-  functions: {
-    getActivePlans(
-      overrides?: CallOverrides
-    ): Promise<[ITeams.TeamPlanStructOutput[]]>;
+  once<TCEvent extends TypedContractEvent>(
+    event: TCEvent,
+    listener: TypedListener<TCEvent>
+  ): Promise<this>;
+  once<TCEvent extends TypedContractEvent>(
+    filter: TypedDeferredTopicFilter<TCEvent>,
+    listener: TypedListener<TCEvent>
+  ): Promise<this>;
 
-    getPlan(
-      planId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[ITeams.TeamPlanStructOutput]>;
+  listeners<TCEvent extends TypedContractEvent>(
+    event: TCEvent
+  ): Promise<Array<TypedListener<TCEvent>>>;
+  listeners(eventName?: string): Promise<Array<Listener>>;
+  removeAllListeners<TCEvent extends TypedContractEvent>(
+    event?: TCEvent
+  ): Promise<this>;
 
-    getPlans(
-      overrides?: CallOverrides
-    ): Promise<[ITeams.TeamPlanStructOutput[]]>;
+  getActivePlans: TypedContractMethod<
+    [],
+    [ITeams.TeamPlanStructOutput[]],
+    "view"
+  >;
 
-    getSufficientPlanIdByStakingAmount(
+  getPlan: TypedContractMethod<
+    [planId: BigNumberish],
+    [ITeams.TeamPlanStructOutput],
+    "view"
+  >;
+
+  getPlans: TypedContractMethod<[], [ITeams.TeamPlanStructOutput[]], "view">;
+
+  getSufficientPlanIdByStakingAmount: TypedContractMethod<
+    [stakingPlanId: BigNumberish, amount: BigNumberish],
+    [bigint],
+    "view"
+  >;
+
+  getUserSubscription: TypedContractMethod<
+    [user: AddressLike, planId: BigNumberish],
+    [ITeams.TeamStructOutput],
+    "view"
+  >;
+
+  getUserTeamMembers: TypedContractMethod<
+    [user: AddressLike, planId: BigNumberish],
+    [string[]],
+    "view"
+  >;
+
+  hasAnySubscription: TypedContractMethod<
+    [user: AddressLike],
+    [boolean],
+    "view"
+  >;
+
+  subscribe: TypedContractMethod<[planId: BigNumberish], [void], "nonpayable">;
+
+  tryToAddMember: TypedContractMethod<
+    [
       stakingPlanId: BigNumberish,
-      amount: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+      user: AddressLike,
+      member: AddressLike,
+      amount: BigNumberish
+    ],
+    [boolean],
+    "nonpayable"
+  >;
 
-    getUserSubscription(
-      user: string,
-      planId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[ITeams.TeamStructOutput]>;
+  userHasPlanSubscription: TypedContractMethod<
+    [user: AddressLike, planId: BigNumberish],
+    [boolean],
+    "view"
+  >;
 
-    getUserTeamMembers(
-      user: string,
-      planId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[string[]]>;
+  userHasSufficientStaking: TypedContractMethod<
+    [user: AddressLike, planId: BigNumberish],
+    [boolean],
+    "view"
+  >;
 
-    hasAnySubscription(
-      user: string,
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
+  getFunction<T extends ContractMethod = ContractMethod>(
+    key: string | FunctionFragment
+  ): T;
 
-    subscribe(
-      planId: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    tryToAddMember(
+  getFunction(
+    nameOrSignature: "getActivePlans"
+  ): TypedContractMethod<[], [ITeams.TeamPlanStructOutput[]], "view">;
+  getFunction(
+    nameOrSignature: "getPlan"
+  ): TypedContractMethod<
+    [planId: BigNumberish],
+    [ITeams.TeamPlanStructOutput],
+    "view"
+  >;
+  getFunction(
+    nameOrSignature: "getPlans"
+  ): TypedContractMethod<[], [ITeams.TeamPlanStructOutput[]], "view">;
+  getFunction(
+    nameOrSignature: "getSufficientPlanIdByStakingAmount"
+  ): TypedContractMethod<
+    [stakingPlanId: BigNumberish, amount: BigNumberish],
+    [bigint],
+    "view"
+  >;
+  getFunction(
+    nameOrSignature: "getUserSubscription"
+  ): TypedContractMethod<
+    [user: AddressLike, planId: BigNumberish],
+    [ITeams.TeamStructOutput],
+    "view"
+  >;
+  getFunction(
+    nameOrSignature: "getUserTeamMembers"
+  ): TypedContractMethod<
+    [user: AddressLike, planId: BigNumberish],
+    [string[]],
+    "view"
+  >;
+  getFunction(
+    nameOrSignature: "hasAnySubscription"
+  ): TypedContractMethod<[user: AddressLike], [boolean], "view">;
+  getFunction(
+    nameOrSignature: "subscribe"
+  ): TypedContractMethod<[planId: BigNumberish], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "tryToAddMember"
+  ): TypedContractMethod<
+    [
       stakingPlanId: BigNumberish,
-      user: string,
-      member: string,
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    userHasPlanSubscription(
-      user: string,
-      planId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
-
-    userHasSufficientStaking(
-      user: string,
-      planId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
-  };
-
-  getActivePlans(
-    overrides?: CallOverrides
-  ): Promise<ITeams.TeamPlanStructOutput[]>;
-
-  getPlan(
-    planId: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<ITeams.TeamPlanStructOutput>;
-
-  getPlans(overrides?: CallOverrides): Promise<ITeams.TeamPlanStructOutput[]>;
-
-  getSufficientPlanIdByStakingAmount(
-    stakingPlanId: BigNumberish,
-    amount: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  getUserSubscription(
-    user: string,
-    planId: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<ITeams.TeamStructOutput>;
-
-  getUserTeamMembers(
-    user: string,
-    planId: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<string[]>;
-
-  hasAnySubscription(user: string, overrides?: CallOverrides): Promise<boolean>;
-
-  subscribe(
-    planId: BigNumberish,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  tryToAddMember(
-    stakingPlanId: BigNumberish,
-    user: string,
-    member: string,
-    amount: BigNumberish,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  userHasPlanSubscription(
-    user: string,
-    planId: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<boolean>;
-
-  userHasSufficientStaking(
-    user: string,
-    planId: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<boolean>;
-
-  callStatic: {
-    getActivePlans(
-      overrides?: CallOverrides
-    ): Promise<ITeams.TeamPlanStructOutput[]>;
-
-    getPlan(
-      planId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<ITeams.TeamPlanStructOutput>;
-
-    getPlans(overrides?: CallOverrides): Promise<ITeams.TeamPlanStructOutput[]>;
-
-    getSufficientPlanIdByStakingAmount(
-      stakingPlanId: BigNumberish,
-      amount: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    getUserSubscription(
-      user: string,
-      planId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<ITeams.TeamStructOutput>;
-
-    getUserTeamMembers(
-      user: string,
-      planId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<string[]>;
-
-    hasAnySubscription(
-      user: string,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
-
-    subscribe(planId: BigNumberish, overrides?: CallOverrides): Promise<void>;
-
-    tryToAddMember(
-      stakingPlanId: BigNumberish,
-      user: string,
-      member: string,
-      amount: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
-
-    userHasPlanSubscription(
-      user: string,
-      planId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
-
-    userHasSufficientStaking(
-      user: string,
-      planId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
-  };
+      user: AddressLike,
+      member: AddressLike,
+      amount: BigNumberish
+    ],
+    [boolean],
+    "nonpayable"
+  >;
+  getFunction(
+    nameOrSignature: "userHasPlanSubscription"
+  ): TypedContractMethod<
+    [user: AddressLike, planId: BigNumberish],
+    [boolean],
+    "view"
+  >;
+  getFunction(
+    nameOrSignature: "userHasSufficientStaking"
+  ): TypedContractMethod<
+    [user: AddressLike, planId: BigNumberish],
+    [boolean],
+    "view"
+  >;
 
   filters: {};
-
-  estimateGas: {
-    getActivePlans(overrides?: CallOverrides): Promise<BigNumber>;
-
-    getPlan(
-      planId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    getPlans(overrides?: CallOverrides): Promise<BigNumber>;
-
-    getSufficientPlanIdByStakingAmount(
-      stakingPlanId: BigNumberish,
-      amount: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    getUserSubscription(
-      user: string,
-      planId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    getUserTeamMembers(
-      user: string,
-      planId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    hasAnySubscription(
-      user: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    subscribe(
-      planId: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    tryToAddMember(
-      stakingPlanId: BigNumberish,
-      user: string,
-      member: string,
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    userHasPlanSubscription(
-      user: string,
-      planId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    userHasSufficientStaking(
-      user: string,
-      planId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-  };
-
-  populateTransaction: {
-    getActivePlans(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    getPlan(
-      planId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    getPlans(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    getSufficientPlanIdByStakingAmount(
-      stakingPlanId: BigNumberish,
-      amount: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    getUserSubscription(
-      user: string,
-      planId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    getUserTeamMembers(
-      user: string,
-      planId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    hasAnySubscription(
-      user: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    subscribe(
-      planId: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    tryToAddMember(
-      stakingPlanId: BigNumberish,
-      user: string,
-      member: string,
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    userHasPlanSubscription(
-      user: string,
-      planId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    userHasSufficientStaking(
-      user: string,
-      planId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-  };
 }

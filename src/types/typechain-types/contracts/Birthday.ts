@@ -8,7 +8,6 @@ import type {
   FunctionFragment,
   Result,
   Interface,
-  EventFragment,
   ContractRunner,
   ContractMethod,
   Listener,
@@ -17,44 +16,29 @@ import type {
   TypedContractEvent,
   TypedDeferredTopicFilter,
   TypedEventLog,
-  TypedLogDescription,
   TypedListener,
   TypedContractMethod,
-} from "../../../../common";
+} from "../common";
 
-export interface ERC165UpgradeableInterface extends Interface {
-  getFunction(nameOrSignature: "supportsInterface"): FunctionFragment;
-
-  getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
+export interface BirthdayInterface extends Interface {
+  getFunction(nameOrSignature: "isBirthdayInRange"): FunctionFragment;
 
   encodeFunctionData(
-    functionFragment: "supportsInterface",
-    values: [BytesLike]
+    functionFragment: "isBirthdayInRange",
+    values: [BigNumberish]
   ): string;
 
   decodeFunctionResult(
-    functionFragment: "supportsInterface",
+    functionFragment: "isBirthdayInRange",
     data: BytesLike
   ): Result;
 }
 
-export namespace InitializedEvent {
-  export type InputTuple = [version: BigNumberish];
-  export type OutputTuple = [version: bigint];
-  export interface OutputObject {
-    version: bigint;
-  }
-  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
-  export type Filter = TypedDeferredTopicFilter<Event>;
-  export type Log = TypedEventLog<Event>;
-  export type LogDescription = TypedLogDescription<Event>;
-}
-
-export interface ERC165Upgradeable extends BaseContract {
-  connect(runner?: ContractRunner | null): ERC165Upgradeable;
+export interface Birthday extends BaseContract {
+  connect(runner?: ContractRunner | null): Birthday;
   waitForDeployment(): Promise<this>;
 
-  interface: ERC165UpgradeableInterface;
+  interface: BirthdayInterface;
 
   queryFilter<TCEvent extends TypedContractEvent>(
     event: TCEvent,
@@ -93,8 +77,8 @@ export interface ERC165Upgradeable extends BaseContract {
     event?: TCEvent
   ): Promise<this>;
 
-  supportsInterface: TypedContractMethod<
-    [interfaceId: BytesLike],
+  isBirthdayInRange: TypedContractMethod<
+    [birthdayTimestamp: BigNumberish],
     [boolean],
     "view"
   >;
@@ -104,27 +88,8 @@ export interface ERC165Upgradeable extends BaseContract {
   ): T;
 
   getFunction(
-    nameOrSignature: "supportsInterface"
-  ): TypedContractMethod<[interfaceId: BytesLike], [boolean], "view">;
+    nameOrSignature: "isBirthdayInRange"
+  ): TypedContractMethod<[birthdayTimestamp: BigNumberish], [boolean], "view">;
 
-  getEvent(
-    key: "Initialized"
-  ): TypedContractEvent<
-    InitializedEvent.InputTuple,
-    InitializedEvent.OutputTuple,
-    InitializedEvent.OutputObject
-  >;
-
-  filters: {
-    "Initialized(uint8)": TypedContractEvent<
-      InitializedEvent.InputTuple,
-      InitializedEvent.OutputTuple,
-      InitializedEvent.OutputObject
-    >;
-    Initialized: TypedContractEvent<
-      InitializedEvent.InputTuple,
-      InitializedEvent.OutputTuple,
-      InitializedEvent.OutputObject
-    >;
-  };
+  filters: {};
 }

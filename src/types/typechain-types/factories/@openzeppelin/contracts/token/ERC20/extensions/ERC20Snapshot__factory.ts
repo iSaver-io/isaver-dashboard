@@ -2,8 +2,7 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import { Contract, Signer, utils } from "ethers";
-import type { Provider } from "@ethersproject/providers";
+import { Contract, Interface, type ContractRunner } from "ethers";
 import type {
   ERC20Snapshot,
   ERC20SnapshotInterface,
@@ -341,12 +340,12 @@ const _abi = [
 export class ERC20Snapshot__factory {
   static readonly abi = _abi;
   static createInterface(): ERC20SnapshotInterface {
-    return new utils.Interface(_abi) as ERC20SnapshotInterface;
+    return new Interface(_abi) as ERC20SnapshotInterface;
   }
   static connect(
     address: string,
-    signerOrProvider: Signer | Provider
+    runner?: ContractRunner | null
   ): ERC20Snapshot {
-    return new Contract(address, _abi, signerOrProvider) as ERC20Snapshot;
+    return new Contract(address, _abi, runner) as unknown as ERC20Snapshot;
   }
 }

@@ -3,38 +3,25 @@
 /* eslint-disable */
 import type {
   BaseContract,
-  BigNumber,
   BytesLike,
-  CallOverrides,
-  PopulatedTransaction,
-  Signer,
-  utils,
+  FunctionFragment,
+  Result,
+  Interface,
+  ContractRunner,
+  ContractMethod,
+  Listener,
 } from "ethers";
-import type { FunctionFragment, Result } from "@ethersproject/abi";
-import type { Listener, Provider } from "@ethersproject/providers";
 import type {
-  TypedEventFilter,
-  TypedEvent,
+  TypedContractEvent,
+  TypedDeferredTopicFilter,
+  TypedEventLog,
   TypedListener,
-  OnEvent,
+  TypedContractMethod,
 } from "../../common";
 
-export interface IContractManagerInterface extends utils.Interface {
-  functions: {
-    "getAvatarsAddress()": FunctionFragment;
-    "getBirthdayPrizesPool()": FunctionFragment;
-    "getPowersAddress()": FunctionFragment;
-    "getRafflesAddress()": FunctionFragment;
-    "getReferralManagerAddress()": FunctionFragment;
-    "getSavTokenAddress()": FunctionFragment;
-    "getSavrTokenAddress()": FunctionFragment;
-    "getStakingAddress()": FunctionFragment;
-    "getTeamsAddress()": FunctionFragment;
-    "getTicketAddress()": FunctionFragment;
-  };
-
+export interface IContractManagerInterface extends Interface {
   getFunction(
-    nameOrSignatureOrTopic:
+    nameOrSignature:
       | "getAvatarsAddress"
       | "getBirthdayPrizesPool"
       | "getPowersAddress"
@@ -128,151 +115,105 @@ export interface IContractManagerInterface extends utils.Interface {
     functionFragment: "getTicketAddress",
     data: BytesLike
   ): Result;
-
-  events: {};
 }
 
 export interface IContractManager extends BaseContract {
-  connect(signerOrProvider: Signer | Provider | string): this;
-  attach(addressOrName: string): this;
-  deployed(): Promise<this>;
+  connect(runner?: ContractRunner | null): IContractManager;
+  waitForDeployment(): Promise<this>;
 
   interface: IContractManagerInterface;
 
-  queryFilter<TEvent extends TypedEvent>(
-    event: TypedEventFilter<TEvent>,
+  queryFilter<TCEvent extends TypedContractEvent>(
+    event: TCEvent,
     fromBlockOrBlockhash?: string | number | undefined,
     toBlock?: string | number | undefined
-  ): Promise<Array<TEvent>>;
+  ): Promise<Array<TypedEventLog<TCEvent>>>;
+  queryFilter<TCEvent extends TypedContractEvent>(
+    filter: TypedDeferredTopicFilter<TCEvent>,
+    fromBlockOrBlockhash?: string | number | undefined,
+    toBlock?: string | number | undefined
+  ): Promise<Array<TypedEventLog<TCEvent>>>;
 
-  listeners<TEvent extends TypedEvent>(
-    eventFilter?: TypedEventFilter<TEvent>
-  ): Array<TypedListener<TEvent>>;
-  listeners(eventName?: string): Array<Listener>;
-  removeAllListeners<TEvent extends TypedEvent>(
-    eventFilter: TypedEventFilter<TEvent>
-  ): this;
-  removeAllListeners(eventName?: string): this;
-  off: OnEvent<this>;
-  on: OnEvent<this>;
-  once: OnEvent<this>;
-  removeListener: OnEvent<this>;
+  on<TCEvent extends TypedContractEvent>(
+    event: TCEvent,
+    listener: TypedListener<TCEvent>
+  ): Promise<this>;
+  on<TCEvent extends TypedContractEvent>(
+    filter: TypedDeferredTopicFilter<TCEvent>,
+    listener: TypedListener<TCEvent>
+  ): Promise<this>;
 
-  functions: {
-    getAvatarsAddress(overrides?: CallOverrides): Promise<[string]>;
+  once<TCEvent extends TypedContractEvent>(
+    event: TCEvent,
+    listener: TypedListener<TCEvent>
+  ): Promise<this>;
+  once<TCEvent extends TypedContractEvent>(
+    filter: TypedDeferredTopicFilter<TCEvent>,
+    listener: TypedListener<TCEvent>
+  ): Promise<this>;
 
-    getBirthdayPrizesPool(overrides?: CallOverrides): Promise<[string]>;
+  listeners<TCEvent extends TypedContractEvent>(
+    event: TCEvent
+  ): Promise<Array<TypedListener<TCEvent>>>;
+  listeners(eventName?: string): Promise<Array<Listener>>;
+  removeAllListeners<TCEvent extends TypedContractEvent>(
+    event?: TCEvent
+  ): Promise<this>;
 
-    getPowersAddress(overrides?: CallOverrides): Promise<[string]>;
+  getAvatarsAddress: TypedContractMethod<[], [string], "view">;
 
-    getRafflesAddress(overrides?: CallOverrides): Promise<[string]>;
+  getBirthdayPrizesPool: TypedContractMethod<[], [string], "view">;
 
-    getReferralManagerAddress(overrides?: CallOverrides): Promise<[string]>;
+  getPowersAddress: TypedContractMethod<[], [string], "view">;
 
-    getSavTokenAddress(overrides?: CallOverrides): Promise<[string]>;
+  getRafflesAddress: TypedContractMethod<[], [string], "view">;
 
-    getSavrTokenAddress(overrides?: CallOverrides): Promise<[string]>;
+  getReferralManagerAddress: TypedContractMethod<[], [string], "view">;
 
-    getStakingAddress(overrides?: CallOverrides): Promise<[string]>;
+  getSavTokenAddress: TypedContractMethod<[], [string], "view">;
 
-    getTeamsAddress(overrides?: CallOverrides): Promise<[string]>;
+  getSavrTokenAddress: TypedContractMethod<[], [string], "view">;
 
-    getTicketAddress(overrides?: CallOverrides): Promise<[string]>;
-  };
+  getStakingAddress: TypedContractMethod<[], [string], "view">;
 
-  getAvatarsAddress(overrides?: CallOverrides): Promise<string>;
+  getTeamsAddress: TypedContractMethod<[], [string], "view">;
 
-  getBirthdayPrizesPool(overrides?: CallOverrides): Promise<string>;
+  getTicketAddress: TypedContractMethod<[], [string], "view">;
 
-  getPowersAddress(overrides?: CallOverrides): Promise<string>;
+  getFunction<T extends ContractMethod = ContractMethod>(
+    key: string | FunctionFragment
+  ): T;
 
-  getRafflesAddress(overrides?: CallOverrides): Promise<string>;
-
-  getReferralManagerAddress(overrides?: CallOverrides): Promise<string>;
-
-  getSavTokenAddress(overrides?: CallOverrides): Promise<string>;
-
-  getSavrTokenAddress(overrides?: CallOverrides): Promise<string>;
-
-  getStakingAddress(overrides?: CallOverrides): Promise<string>;
-
-  getTeamsAddress(overrides?: CallOverrides): Promise<string>;
-
-  getTicketAddress(overrides?: CallOverrides): Promise<string>;
-
-  callStatic: {
-    getAvatarsAddress(overrides?: CallOverrides): Promise<string>;
-
-    getBirthdayPrizesPool(overrides?: CallOverrides): Promise<string>;
-
-    getPowersAddress(overrides?: CallOverrides): Promise<string>;
-
-    getRafflesAddress(overrides?: CallOverrides): Promise<string>;
-
-    getReferralManagerAddress(overrides?: CallOverrides): Promise<string>;
-
-    getSavTokenAddress(overrides?: CallOverrides): Promise<string>;
-
-    getSavrTokenAddress(overrides?: CallOverrides): Promise<string>;
-
-    getStakingAddress(overrides?: CallOverrides): Promise<string>;
-
-    getTeamsAddress(overrides?: CallOverrides): Promise<string>;
-
-    getTicketAddress(overrides?: CallOverrides): Promise<string>;
-  };
+  getFunction(
+    nameOrSignature: "getAvatarsAddress"
+  ): TypedContractMethod<[], [string], "view">;
+  getFunction(
+    nameOrSignature: "getBirthdayPrizesPool"
+  ): TypedContractMethod<[], [string], "view">;
+  getFunction(
+    nameOrSignature: "getPowersAddress"
+  ): TypedContractMethod<[], [string], "view">;
+  getFunction(
+    nameOrSignature: "getRafflesAddress"
+  ): TypedContractMethod<[], [string], "view">;
+  getFunction(
+    nameOrSignature: "getReferralManagerAddress"
+  ): TypedContractMethod<[], [string], "view">;
+  getFunction(
+    nameOrSignature: "getSavTokenAddress"
+  ): TypedContractMethod<[], [string], "view">;
+  getFunction(
+    nameOrSignature: "getSavrTokenAddress"
+  ): TypedContractMethod<[], [string], "view">;
+  getFunction(
+    nameOrSignature: "getStakingAddress"
+  ): TypedContractMethod<[], [string], "view">;
+  getFunction(
+    nameOrSignature: "getTeamsAddress"
+  ): TypedContractMethod<[], [string], "view">;
+  getFunction(
+    nameOrSignature: "getTicketAddress"
+  ): TypedContractMethod<[], [string], "view">;
 
   filters: {};
-
-  estimateGas: {
-    getAvatarsAddress(overrides?: CallOverrides): Promise<BigNumber>;
-
-    getBirthdayPrizesPool(overrides?: CallOverrides): Promise<BigNumber>;
-
-    getPowersAddress(overrides?: CallOverrides): Promise<BigNumber>;
-
-    getRafflesAddress(overrides?: CallOverrides): Promise<BigNumber>;
-
-    getReferralManagerAddress(overrides?: CallOverrides): Promise<BigNumber>;
-
-    getSavTokenAddress(overrides?: CallOverrides): Promise<BigNumber>;
-
-    getSavrTokenAddress(overrides?: CallOverrides): Promise<BigNumber>;
-
-    getStakingAddress(overrides?: CallOverrides): Promise<BigNumber>;
-
-    getTeamsAddress(overrides?: CallOverrides): Promise<BigNumber>;
-
-    getTicketAddress(overrides?: CallOverrides): Promise<BigNumber>;
-  };
-
-  populateTransaction: {
-    getAvatarsAddress(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    getBirthdayPrizesPool(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    getPowersAddress(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    getRafflesAddress(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    getReferralManagerAddress(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    getSavTokenAddress(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    getSavrTokenAddress(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    getStakingAddress(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    getTeamsAddress(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    getTicketAddress(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-  };
 }

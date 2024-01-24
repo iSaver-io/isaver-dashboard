@@ -2,8 +2,7 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import { Contract, Signer, utils } from "ethers";
-import type { Provider } from "@ethersproject/providers";
+import { Contract, Interface, type ContractRunner } from "ethers";
 import type {
   ERC1155BurnableUpgradeable,
   ERC1155BurnableUpgradeableInterface,
@@ -386,16 +385,16 @@ const _abi = [
 export class ERC1155BurnableUpgradeable__factory {
   static readonly abi = _abi;
   static createInterface(): ERC1155BurnableUpgradeableInterface {
-    return new utils.Interface(_abi) as ERC1155BurnableUpgradeableInterface;
+    return new Interface(_abi) as ERC1155BurnableUpgradeableInterface;
   }
   static connect(
     address: string,
-    signerOrProvider: Signer | Provider
+    runner?: ContractRunner | null
   ): ERC1155BurnableUpgradeable {
     return new Contract(
       address,
       _abi,
-      signerOrProvider
-    ) as ERC1155BurnableUpgradeable;
+      runner
+    ) as unknown as ERC1155BurnableUpgradeable;
   }
 }
