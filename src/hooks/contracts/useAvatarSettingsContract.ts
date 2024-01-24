@@ -17,6 +17,7 @@ const eventLabels: Record<string, string> = {
   ISaverAvatarDeactivated: 'iSaver Avatar deactivation',
   NameChanged: 'Name change',
   TelegramChanged: 'Telegram change',
+  BirthdayPrizeClaimed: 'Birthday prize claimed',
 };
 
 const powerActivationLabels: Record<number, string> = {
@@ -55,6 +56,7 @@ export const useAvatarSettingsContract = () => {
       avatarSettings.filters.PowerActivated(address),
       avatarSettings.filters.NameChanged(address),
       avatarSettings.filters.TelegramChanged(address),
+      avatarSettings.filters.BirthdayPrizeClaimed(null, address),
     ];
 
     let allEvents: Event[] = [];

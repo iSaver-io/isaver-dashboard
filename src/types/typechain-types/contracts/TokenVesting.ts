@@ -3,33 +3,29 @@
 /* eslint-disable */
 import type {
   BaseContract,
-  BigNumber,
   BigNumberish,
   BytesLike,
-  CallOverrides,
-  ContractTransaction,
-  Overrides,
-  PayableOverrides,
-  PopulatedTransaction,
-  Signer,
-  utils,
-} from "ethers";
-import type {
   FunctionFragment,
   Result,
+  Interface,
   EventFragment,
-} from "@ethersproject/abi";
-import type { Listener, Provider } from "@ethersproject/providers";
+  AddressLike,
+  ContractRunner,
+  ContractMethod,
+  Listener,
+} from "ethers";
 import type {
-  TypedEventFilter,
-  TypedEvent,
+  TypedContractEvent,
+  TypedDeferredTopicFilter,
+  TypedEventLog,
+  TypedLogDescription,
   TypedListener,
-  OnEvent,
+  TypedContractMethod,
 } from "../common";
 
 export declare namespace TokenVesting {
   export type VestingScheduleStruct = {
-    beneficiary: string;
+    beneficiary: AddressLike;
     cliff: BigNumberish;
     start: BigNumberish;
     duration: BigNumberish;
@@ -41,24 +37,24 @@ export declare namespace TokenVesting {
   };
 
   export type VestingScheduleStructOutput = [
-    string,
-    BigNumber,
-    BigNumber,
-    BigNumber,
-    BigNumber,
-    boolean,
-    BigNumber,
-    BigNumber,
-    boolean
+    beneficiary: string,
+    cliff: bigint,
+    start: bigint,
+    duration: bigint,
+    slicePeriodSeconds: bigint,
+    revocable: boolean,
+    amountTotal: bigint,
+    released: bigint,
+    revoked: boolean
   ] & {
     beneficiary: string;
-    cliff: BigNumber;
-    start: BigNumber;
-    duration: BigNumber;
-    slicePeriodSeconds: BigNumber;
+    cliff: bigint;
+    start: bigint;
+    duration: bigint;
+    slicePeriodSeconds: bigint;
     revocable: boolean;
-    amountTotal: BigNumber;
-    released: BigNumber;
+    amountTotal: bigint;
+    released: bigint;
     revoked: boolean;
   };
 
@@ -69,49 +65,19 @@ export declare namespace TokenVesting {
   };
 
   export type VestingScheduleWithReleaseAmountStructOutput = [
-    BigNumber,
-    TokenVesting.VestingScheduleStructOutput,
-    BigNumber
+    id: bigint,
+    schedule: TokenVesting.VestingScheduleStructOutput,
+    releaseAmount: bigint
   ] & {
-    id: BigNumber;
+    id: bigint;
     schedule: TokenVesting.VestingScheduleStructOutput;
-    releaseAmount: BigNumber;
+    releaseAmount: bigint;
   };
 }
 
-export interface TokenVestingInterface extends utils.Interface {
-  functions: {
-    "DEFAULT_ADMIN_ROLE()": FunctionFragment;
-    "UPGRADER_ROLE()": FunctionFragment;
-    "computeReleasableAmount(uint256)": FunctionFragment;
-    "createVestingSchedule(address,uint256,uint256,uint256,uint256,bool,uint256)": FunctionFragment;
-    "createVestingSchedules(address[],uint256,uint256,uint256,uint256,bool,uint256)": FunctionFragment;
-    "getReservesBalance()": FunctionFragment;
-    "getRoleAdmin(bytes32)": FunctionFragment;
-    "getVestingScheduleById(uint256)": FunctionFragment;
-    "getVestingSchedules()": FunctionFragment;
-    "getVestingSchedulesByBeneficiary(address)": FunctionFragment;
-    "getVestingSchedulesCount()": FunctionFragment;
-    "getVestingSchedulesCountByBeneficiary(address)": FunctionFragment;
-    "getVestingSchedulesIdsByBeneficiary(address)": FunctionFragment;
-    "getVestingSchedulesTotalAmount()": FunctionFragment;
-    "getVestingSchedulesWithReleasableAmountByBeneficiary(address)": FunctionFragment;
-    "grantRole(bytes32,address)": FunctionFragment;
-    "hasRole(bytes32,address)": FunctionFragment;
-    "initialize(address,address)": FunctionFragment;
-    "proxiableUUID()": FunctionFragment;
-    "release(uint256,uint256)": FunctionFragment;
-    "renounceRole(bytes32,address)": FunctionFragment;
-    "revoke(uint256)": FunctionFragment;
-    "revokeRole(bytes32,address)": FunctionFragment;
-    "supportsInterface(bytes4)": FunctionFragment;
-    "updateVestingPool(address)": FunctionFragment;
-    "upgradeTo(address)": FunctionFragment;
-    "upgradeToAndCall(address,bytes)": FunctionFragment;
-  };
-
+export interface TokenVestingInterface extends Interface {
   getFunction(
-    nameOrSignatureOrTopic:
+    nameOrSignature:
       | "DEFAULT_ADMIN_ROLE"
       | "UPGRADER_ROLE"
       | "computeReleasableAmount"
@@ -141,6 +107,20 @@ export interface TokenVestingInterface extends utils.Interface {
       | "upgradeToAndCall"
   ): FunctionFragment;
 
+  getEvent(
+    nameOrSignatureOrTopic:
+      | "AdminChanged"
+      | "BeaconUpgraded"
+      | "Initialized"
+      | "Released"
+      | "Revoked"
+      | "RoleAdminChanged"
+      | "RoleGranted"
+      | "RoleRevoked"
+      | "ScheduleCreated"
+      | "Upgraded"
+  ): EventFragment;
+
   encodeFunctionData(
     functionFragment: "DEFAULT_ADMIN_ROLE",
     values?: undefined
@@ -156,7 +136,7 @@ export interface TokenVestingInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "createVestingSchedule",
     values: [
-      string,
+      AddressLike,
       BigNumberish,
       BigNumberish,
       BigNumberish,
@@ -168,7 +148,7 @@ export interface TokenVestingInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "createVestingSchedules",
     values: [
-      string[],
+      AddressLike[],
       BigNumberish,
       BigNumberish,
       BigNumberish,
@@ -195,7 +175,7 @@ export interface TokenVestingInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "getVestingSchedulesByBeneficiary",
-    values: [string]
+    values: [AddressLike]
   ): string;
   encodeFunctionData(
     functionFragment: "getVestingSchedulesCount",
@@ -203,11 +183,11 @@ export interface TokenVestingInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "getVestingSchedulesCountByBeneficiary",
-    values: [string]
+    values: [AddressLike]
   ): string;
   encodeFunctionData(
     functionFragment: "getVestingSchedulesIdsByBeneficiary",
-    values: [string]
+    values: [AddressLike]
   ): string;
   encodeFunctionData(
     functionFragment: "getVestingSchedulesTotalAmount",
@@ -215,19 +195,19 @@ export interface TokenVestingInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "getVestingSchedulesWithReleasableAmountByBeneficiary",
-    values: [string]
+    values: [AddressLike]
   ): string;
   encodeFunctionData(
     functionFragment: "grantRole",
-    values: [BytesLike, string]
+    values: [BytesLike, AddressLike]
   ): string;
   encodeFunctionData(
     functionFragment: "hasRole",
-    values: [BytesLike, string]
+    values: [BytesLike, AddressLike]
   ): string;
   encodeFunctionData(
     functionFragment: "initialize",
-    values: [string, string]
+    values: [AddressLike, AddressLike]
   ): string;
   encodeFunctionData(
     functionFragment: "proxiableUUID",
@@ -239,7 +219,7 @@ export interface TokenVestingInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "renounceRole",
-    values: [BytesLike, string]
+    values: [BytesLike, AddressLike]
   ): string;
   encodeFunctionData(
     functionFragment: "revoke",
@@ -247,7 +227,7 @@ export interface TokenVestingInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "revokeRole",
-    values: [BytesLike, string]
+    values: [BytesLike, AddressLike]
   ): string;
   encodeFunctionData(
     functionFragment: "supportsInterface",
@@ -255,12 +235,15 @@ export interface TokenVestingInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "updateVestingPool",
-    values: [string]
+    values: [AddressLike]
   ): string;
-  encodeFunctionData(functionFragment: "upgradeTo", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "upgradeTo",
+    values: [AddressLike]
+  ): string;
   encodeFunctionData(
     functionFragment: "upgradeToAndCall",
-    values: [string, BytesLike]
+    values: [AddressLike, BytesLike]
   ): string;
 
   decodeFunctionResult(
@@ -350,920 +333,700 @@ export interface TokenVestingInterface extends utils.Interface {
     functionFragment: "upgradeToAndCall",
     data: BytesLike
   ): Result;
-
-  events: {
-    "AdminChanged(address,address)": EventFragment;
-    "BeaconUpgraded(address)": EventFragment;
-    "Initialized(uint8)": EventFragment;
-    "Released(uint256,address,uint256)": EventFragment;
-    "Revoked(uint256)": EventFragment;
-    "RoleAdminChanged(bytes32,bytes32,bytes32)": EventFragment;
-    "RoleGranted(bytes32,address,address)": EventFragment;
-    "RoleRevoked(bytes32,address,address)": EventFragment;
-    "ScheduleCreated(address,uint256)": EventFragment;
-    "Upgraded(address)": EventFragment;
-  };
-
-  getEvent(nameOrSignatureOrTopic: "AdminChanged"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "BeaconUpgraded"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Released"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Revoked"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "RoleAdminChanged"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "RoleGranted"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "RoleRevoked"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "ScheduleCreated"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Upgraded"): EventFragment;
 }
 
-export interface AdminChangedEventObject {
-  previousAdmin: string;
-  newAdmin: string;
+export namespace AdminChangedEvent {
+  export type InputTuple = [previousAdmin: AddressLike, newAdmin: AddressLike];
+  export type OutputTuple = [previousAdmin: string, newAdmin: string];
+  export interface OutputObject {
+    previousAdmin: string;
+    newAdmin: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type AdminChangedEvent = TypedEvent<
-  [string, string],
-  AdminChangedEventObject
->;
 
-export type AdminChangedEventFilter = TypedEventFilter<AdminChangedEvent>;
-
-export interface BeaconUpgradedEventObject {
-  beacon: string;
+export namespace BeaconUpgradedEvent {
+  export type InputTuple = [beacon: AddressLike];
+  export type OutputTuple = [beacon: string];
+  export interface OutputObject {
+    beacon: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type BeaconUpgradedEvent = TypedEvent<
-  [string],
-  BeaconUpgradedEventObject
->;
 
-export type BeaconUpgradedEventFilter = TypedEventFilter<BeaconUpgradedEvent>;
-
-export interface InitializedEventObject {
-  version: number;
+export namespace InitializedEvent {
+  export type InputTuple = [version: BigNumberish];
+  export type OutputTuple = [version: bigint];
+  export interface OutputObject {
+    version: bigint;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type InitializedEvent = TypedEvent<[number], InitializedEventObject>;
 
-export type InitializedEventFilter = TypedEventFilter<InitializedEvent>;
-
-export interface ReleasedEventObject {
-  vestingScheduleId: BigNumber;
-  to: string;
-  amount: BigNumber;
+export namespace ReleasedEvent {
+  export type InputTuple = [
+    vestingScheduleId: BigNumberish,
+    to: AddressLike,
+    amount: BigNumberish
+  ];
+  export type OutputTuple = [
+    vestingScheduleId: bigint,
+    to: string,
+    amount: bigint
+  ];
+  export interface OutputObject {
+    vestingScheduleId: bigint;
+    to: string;
+    amount: bigint;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type ReleasedEvent = TypedEvent<
-  [BigNumber, string, BigNumber],
-  ReleasedEventObject
->;
 
-export type ReleasedEventFilter = TypedEventFilter<ReleasedEvent>;
-
-export interface RevokedEventObject {
-  vestingScheduleId: BigNumber;
+export namespace RevokedEvent {
+  export type InputTuple = [vestingScheduleId: BigNumberish];
+  export type OutputTuple = [vestingScheduleId: bigint];
+  export interface OutputObject {
+    vestingScheduleId: bigint;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type RevokedEvent = TypedEvent<[BigNumber], RevokedEventObject>;
 
-export type RevokedEventFilter = TypedEventFilter<RevokedEvent>;
-
-export interface RoleAdminChangedEventObject {
-  role: string;
-  previousAdminRole: string;
-  newAdminRole: string;
+export namespace RoleAdminChangedEvent {
+  export type InputTuple = [
+    role: BytesLike,
+    previousAdminRole: BytesLike,
+    newAdminRole: BytesLike
+  ];
+  export type OutputTuple = [
+    role: string,
+    previousAdminRole: string,
+    newAdminRole: string
+  ];
+  export interface OutputObject {
+    role: string;
+    previousAdminRole: string;
+    newAdminRole: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type RoleAdminChangedEvent = TypedEvent<
-  [string, string, string],
-  RoleAdminChangedEventObject
->;
 
-export type RoleAdminChangedEventFilter =
-  TypedEventFilter<RoleAdminChangedEvent>;
-
-export interface RoleGrantedEventObject {
-  role: string;
-  account: string;
-  sender: string;
+export namespace RoleGrantedEvent {
+  export type InputTuple = [
+    role: BytesLike,
+    account: AddressLike,
+    sender: AddressLike
+  ];
+  export type OutputTuple = [role: string, account: string, sender: string];
+  export interface OutputObject {
+    role: string;
+    account: string;
+    sender: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type RoleGrantedEvent = TypedEvent<
-  [string, string, string],
-  RoleGrantedEventObject
->;
 
-export type RoleGrantedEventFilter = TypedEventFilter<RoleGrantedEvent>;
-
-export interface RoleRevokedEventObject {
-  role: string;
-  account: string;
-  sender: string;
+export namespace RoleRevokedEvent {
+  export type InputTuple = [
+    role: BytesLike,
+    account: AddressLike,
+    sender: AddressLike
+  ];
+  export type OutputTuple = [role: string, account: string, sender: string];
+  export interface OutputObject {
+    role: string;
+    account: string;
+    sender: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type RoleRevokedEvent = TypedEvent<
-  [string, string, string],
-  RoleRevokedEventObject
->;
 
-export type RoleRevokedEventFilter = TypedEventFilter<RoleRevokedEvent>;
-
-export interface ScheduleCreatedEventObject {
-  beneficiary: string;
-  vestingScheduleId: BigNumber;
+export namespace ScheduleCreatedEvent {
+  export type InputTuple = [
+    beneficiary: AddressLike,
+    vestingScheduleId: BigNumberish
+  ];
+  export type OutputTuple = [beneficiary: string, vestingScheduleId: bigint];
+  export interface OutputObject {
+    beneficiary: string;
+    vestingScheduleId: bigint;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type ScheduleCreatedEvent = TypedEvent<
-  [string, BigNumber],
-  ScheduleCreatedEventObject
->;
 
-export type ScheduleCreatedEventFilter = TypedEventFilter<ScheduleCreatedEvent>;
-
-export interface UpgradedEventObject {
-  implementation: string;
+export namespace UpgradedEvent {
+  export type InputTuple = [implementation: AddressLike];
+  export type OutputTuple = [implementation: string];
+  export interface OutputObject {
+    implementation: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type UpgradedEvent = TypedEvent<[string], UpgradedEventObject>;
-
-export type UpgradedEventFilter = TypedEventFilter<UpgradedEvent>;
 
 export interface TokenVesting extends BaseContract {
-  connect(signerOrProvider: Signer | Provider | string): this;
-  attach(addressOrName: string): this;
-  deployed(): Promise<this>;
+  connect(runner?: ContractRunner | null): TokenVesting;
+  waitForDeployment(): Promise<this>;
 
   interface: TokenVestingInterface;
 
-  queryFilter<TEvent extends TypedEvent>(
-    event: TypedEventFilter<TEvent>,
+  queryFilter<TCEvent extends TypedContractEvent>(
+    event: TCEvent,
     fromBlockOrBlockhash?: string | number | undefined,
     toBlock?: string | number | undefined
-  ): Promise<Array<TEvent>>;
+  ): Promise<Array<TypedEventLog<TCEvent>>>;
+  queryFilter<TCEvent extends TypedContractEvent>(
+    filter: TypedDeferredTopicFilter<TCEvent>,
+    fromBlockOrBlockhash?: string | number | undefined,
+    toBlock?: string | number | undefined
+  ): Promise<Array<TypedEventLog<TCEvent>>>;
 
-  listeners<TEvent extends TypedEvent>(
-    eventFilter?: TypedEventFilter<TEvent>
-  ): Array<TypedListener<TEvent>>;
-  listeners(eventName?: string): Array<Listener>;
-  removeAllListeners<TEvent extends TypedEvent>(
-    eventFilter: TypedEventFilter<TEvent>
-  ): this;
-  removeAllListeners(eventName?: string): this;
-  off: OnEvent<this>;
-  on: OnEvent<this>;
-  once: OnEvent<this>;
-  removeListener: OnEvent<this>;
+  on<TCEvent extends TypedContractEvent>(
+    event: TCEvent,
+    listener: TypedListener<TCEvent>
+  ): Promise<this>;
+  on<TCEvent extends TypedContractEvent>(
+    filter: TypedDeferredTopicFilter<TCEvent>,
+    listener: TypedListener<TCEvent>
+  ): Promise<this>;
 
-  functions: {
-    DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<[string]>;
+  once<TCEvent extends TypedContractEvent>(
+    event: TCEvent,
+    listener: TypedListener<TCEvent>
+  ): Promise<this>;
+  once<TCEvent extends TypedContractEvent>(
+    filter: TypedDeferredTopicFilter<TCEvent>,
+    listener: TypedListener<TCEvent>
+  ): Promise<this>;
 
-    UPGRADER_ROLE(overrides?: CallOverrides): Promise<[string]>;
+  listeners<TCEvent extends TypedContractEvent>(
+    event: TCEvent
+  ): Promise<Array<TypedListener<TCEvent>>>;
+  listeners(eventName?: string): Promise<Array<Listener>>;
+  removeAllListeners<TCEvent extends TypedContractEvent>(
+    event?: TCEvent
+  ): Promise<this>;
 
-    computeReleasableAmount(
-      vestingScheduleId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+  DEFAULT_ADMIN_ROLE: TypedContractMethod<[], [string], "view">;
 
-    createVestingSchedule(
-      _beneficiary: string,
+  UPGRADER_ROLE: TypedContractMethod<[], [string], "view">;
+
+  computeReleasableAmount: TypedContractMethod<
+    [vestingScheduleId: BigNumberish],
+    [bigint],
+    "view"
+  >;
+
+  createVestingSchedule: TypedContractMethod<
+    [
+      _beneficiary: AddressLike,
       _start: BigNumberish,
       _cliff: BigNumberish,
       _duration: BigNumberish,
       _slicePeriodSeconds: BigNumberish,
       _revocable: boolean,
-      _amount: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
+      _amount: BigNumberish
+    ],
+    [void],
+    "nonpayable"
+  >;
 
-    createVestingSchedules(
-      _beneficiaries: string[],
+  createVestingSchedules: TypedContractMethod<
+    [
+      _beneficiaries: AddressLike[],
       _start: BigNumberish,
       _cliff: BigNumberish,
       _duration: BigNumberish,
       _slicePeriodSeconds: BigNumberish,
       _revocable: boolean,
-      _amount: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
+      _amount: BigNumberish
+    ],
+    [void],
+    "nonpayable"
+  >;
 
-    getReservesBalance(overrides?: CallOverrides): Promise<[BigNumber]>;
+  getReservesBalance: TypedContractMethod<[], [bigint], "view">;
 
-    getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<[string]>;
+  getRoleAdmin: TypedContractMethod<[role: BytesLike], [string], "view">;
 
-    getVestingScheduleById(
-      id: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[TokenVesting.VestingScheduleStructOutput]>;
+  getVestingScheduleById: TypedContractMethod<
+    [id: BigNumberish],
+    [TokenVesting.VestingScheduleStructOutput],
+    "view"
+  >;
 
-    getVestingSchedules(
-      overrides?: CallOverrides
-    ): Promise<[TokenVesting.VestingScheduleStructOutput[]]>;
+  getVestingSchedules: TypedContractMethod<
+    [],
+    [TokenVesting.VestingScheduleStructOutput[]],
+    "view"
+  >;
 
-    getVestingSchedulesByBeneficiary(
-      beneficiary: string,
-      overrides?: CallOverrides
-    ): Promise<[TokenVesting.VestingScheduleStructOutput[]]>;
+  getVestingSchedulesByBeneficiary: TypedContractMethod<
+    [beneficiary: AddressLike],
+    [TokenVesting.VestingScheduleStructOutput[]],
+    "view"
+  >;
 
-    getVestingSchedulesCount(overrides?: CallOverrides): Promise<[BigNumber]>;
+  getVestingSchedulesCount: TypedContractMethod<[], [bigint], "view">;
 
-    getVestingSchedulesCountByBeneficiary(
-      _beneficiary: string,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+  getVestingSchedulesCountByBeneficiary: TypedContractMethod<
+    [_beneficiary: AddressLike],
+    [bigint],
+    "view"
+  >;
 
-    getVestingSchedulesIdsByBeneficiary(
-      _beneficiary: string,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber[]]>;
+  getVestingSchedulesIdsByBeneficiary: TypedContractMethod<
+    [_beneficiary: AddressLike],
+    [bigint[]],
+    "view"
+  >;
 
-    getVestingSchedulesTotalAmount(
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+  getVestingSchedulesTotalAmount: TypedContractMethod<[], [bigint], "view">;
 
-    getVestingSchedulesWithReleasableAmountByBeneficiary(
-      beneficiary: string,
-      overrides?: CallOverrides
-    ): Promise<[TokenVesting.VestingScheduleWithReleaseAmountStructOutput[]]>;
+  getVestingSchedulesWithReleasableAmountByBeneficiary: TypedContractMethod<
+    [beneficiary: AddressLike],
+    [TokenVesting.VestingScheduleWithReleaseAmountStructOutput[]],
+    "view"
+  >;
 
-    grantRole(
-      role: BytesLike,
-      account: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
+  grantRole: TypedContractMethod<
+    [role: BytesLike, account: AddressLike],
+    [void],
+    "nonpayable"
+  >;
 
-    hasRole(
-      role: BytesLike,
-      account: string,
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
+  hasRole: TypedContractMethod<
+    [role: BytesLike, account: AddressLike],
+    [boolean],
+    "view"
+  >;
 
-    initialize(
-      contractManagerAddress: string,
-      vestingPoolAddress: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
+  initialize: TypedContractMethod<
+    [contractManagerAddress: AddressLike, vestingPoolAddress: AddressLike],
+    [void],
+    "nonpayable"
+  >;
 
-    proxiableUUID(overrides?: CallOverrides): Promise<[string]>;
+  proxiableUUID: TypedContractMethod<[], [string], "view">;
 
-    release(
-      vestingScheduleId: BigNumberish,
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
+  release: TypedContractMethod<
+    [vestingScheduleId: BigNumberish, amount: BigNumberish],
+    [void],
+    "nonpayable"
+  >;
 
-    renounceRole(
-      role: BytesLike,
-      account: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
+  renounceRole: TypedContractMethod<
+    [role: BytesLike, account: AddressLike],
+    [void],
+    "nonpayable"
+  >;
 
-    revoke(
-      vestingScheduleId: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
+  revoke: TypedContractMethod<
+    [vestingScheduleId: BigNumberish],
+    [void],
+    "nonpayable"
+  >;
 
-    revokeRole(
-      role: BytesLike,
-      account: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
+  revokeRole: TypedContractMethod<
+    [role: BytesLike, account: AddressLike],
+    [void],
+    "nonpayable"
+  >;
 
-    supportsInterface(
-      interfaceId: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
+  supportsInterface: TypedContractMethod<
+    [interfaceId: BytesLike],
+    [boolean],
+    "view"
+  >;
 
-    updateVestingPool(
-      pool: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
+  updateVestingPool: TypedContractMethod<
+    [pool: AddressLike],
+    [void],
+    "nonpayable"
+  >;
 
-    upgradeTo(
-      newImplementation: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
+  upgradeTo: TypedContractMethod<
+    [newImplementation: AddressLike],
+    [void],
+    "nonpayable"
+  >;
 
-    upgradeToAndCall(
-      newImplementation: string,
-      data: BytesLike,
-      overrides?: PayableOverrides & { from?: string }
-    ): Promise<ContractTransaction>;
-  };
+  upgradeToAndCall: TypedContractMethod<
+    [newImplementation: AddressLike, data: BytesLike],
+    [void],
+    "payable"
+  >;
 
-  DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
+  getFunction<T extends ContractMethod = ContractMethod>(
+    key: string | FunctionFragment
+  ): T;
 
-  UPGRADER_ROLE(overrides?: CallOverrides): Promise<string>;
-
-  computeReleasableAmount(
-    vestingScheduleId: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  createVestingSchedule(
-    _beneficiary: string,
-    _start: BigNumberish,
-    _cliff: BigNumberish,
-    _duration: BigNumberish,
-    _slicePeriodSeconds: BigNumberish,
-    _revocable: boolean,
-    _amount: BigNumberish,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  createVestingSchedules(
-    _beneficiaries: string[],
-    _start: BigNumberish,
-    _cliff: BigNumberish,
-    _duration: BigNumberish,
-    _slicePeriodSeconds: BigNumberish,
-    _revocable: boolean,
-    _amount: BigNumberish,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  getReservesBalance(overrides?: CallOverrides): Promise<BigNumber>;
-
-  getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<string>;
-
-  getVestingScheduleById(
-    id: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<TokenVesting.VestingScheduleStructOutput>;
-
-  getVestingSchedules(
-    overrides?: CallOverrides
-  ): Promise<TokenVesting.VestingScheduleStructOutput[]>;
-
-  getVestingSchedulesByBeneficiary(
-    beneficiary: string,
-    overrides?: CallOverrides
-  ): Promise<TokenVesting.VestingScheduleStructOutput[]>;
-
-  getVestingSchedulesCount(overrides?: CallOverrides): Promise<BigNumber>;
-
-  getVestingSchedulesCountByBeneficiary(
-    _beneficiary: string,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  getVestingSchedulesIdsByBeneficiary(
-    _beneficiary: string,
-    overrides?: CallOverrides
-  ): Promise<BigNumber[]>;
-
-  getVestingSchedulesTotalAmount(overrides?: CallOverrides): Promise<BigNumber>;
-
-  getVestingSchedulesWithReleasableAmountByBeneficiary(
-    beneficiary: string,
-    overrides?: CallOverrides
-  ): Promise<TokenVesting.VestingScheduleWithReleaseAmountStructOutput[]>;
-
-  grantRole(
-    role: BytesLike,
-    account: string,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  hasRole(
-    role: BytesLike,
-    account: string,
-    overrides?: CallOverrides
-  ): Promise<boolean>;
-
-  initialize(
-    contractManagerAddress: string,
-    vestingPoolAddress: string,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  proxiableUUID(overrides?: CallOverrides): Promise<string>;
-
-  release(
-    vestingScheduleId: BigNumberish,
-    amount: BigNumberish,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  renounceRole(
-    role: BytesLike,
-    account: string,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  revoke(
-    vestingScheduleId: BigNumberish,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  revokeRole(
-    role: BytesLike,
-    account: string,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  supportsInterface(
-    interfaceId: BytesLike,
-    overrides?: CallOverrides
-  ): Promise<boolean>;
-
-  updateVestingPool(
-    pool: string,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  upgradeTo(
-    newImplementation: string,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  upgradeToAndCall(
-    newImplementation: string,
-    data: BytesLike,
-    overrides?: PayableOverrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  callStatic: {
-    DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
-
-    UPGRADER_ROLE(overrides?: CallOverrides): Promise<string>;
-
-    computeReleasableAmount(
-      vestingScheduleId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    createVestingSchedule(
-      _beneficiary: string,
+  getFunction(
+    nameOrSignature: "DEFAULT_ADMIN_ROLE"
+  ): TypedContractMethod<[], [string], "view">;
+  getFunction(
+    nameOrSignature: "UPGRADER_ROLE"
+  ): TypedContractMethod<[], [string], "view">;
+  getFunction(
+    nameOrSignature: "computeReleasableAmount"
+  ): TypedContractMethod<[vestingScheduleId: BigNumberish], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "createVestingSchedule"
+  ): TypedContractMethod<
+    [
+      _beneficiary: AddressLike,
       _start: BigNumberish,
       _cliff: BigNumberish,
       _duration: BigNumberish,
       _slicePeriodSeconds: BigNumberish,
       _revocable: boolean,
-      _amount: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    createVestingSchedules(
-      _beneficiaries: string[],
+      _amount: BigNumberish
+    ],
+    [void],
+    "nonpayable"
+  >;
+  getFunction(
+    nameOrSignature: "createVestingSchedules"
+  ): TypedContractMethod<
+    [
+      _beneficiaries: AddressLike[],
       _start: BigNumberish,
       _cliff: BigNumberish,
       _duration: BigNumberish,
       _slicePeriodSeconds: BigNumberish,
       _revocable: boolean,
-      _amount: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
+      _amount: BigNumberish
+    ],
+    [void],
+    "nonpayable"
+  >;
+  getFunction(
+    nameOrSignature: "getReservesBalance"
+  ): TypedContractMethod<[], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "getRoleAdmin"
+  ): TypedContractMethod<[role: BytesLike], [string], "view">;
+  getFunction(
+    nameOrSignature: "getVestingScheduleById"
+  ): TypedContractMethod<
+    [id: BigNumberish],
+    [TokenVesting.VestingScheduleStructOutput],
+    "view"
+  >;
+  getFunction(
+    nameOrSignature: "getVestingSchedules"
+  ): TypedContractMethod<
+    [],
+    [TokenVesting.VestingScheduleStructOutput[]],
+    "view"
+  >;
+  getFunction(
+    nameOrSignature: "getVestingSchedulesByBeneficiary"
+  ): TypedContractMethod<
+    [beneficiary: AddressLike],
+    [TokenVesting.VestingScheduleStructOutput[]],
+    "view"
+  >;
+  getFunction(
+    nameOrSignature: "getVestingSchedulesCount"
+  ): TypedContractMethod<[], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "getVestingSchedulesCountByBeneficiary"
+  ): TypedContractMethod<[_beneficiary: AddressLike], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "getVestingSchedulesIdsByBeneficiary"
+  ): TypedContractMethod<[_beneficiary: AddressLike], [bigint[]], "view">;
+  getFunction(
+    nameOrSignature: "getVestingSchedulesTotalAmount"
+  ): TypedContractMethod<[], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "getVestingSchedulesWithReleasableAmountByBeneficiary"
+  ): TypedContractMethod<
+    [beneficiary: AddressLike],
+    [TokenVesting.VestingScheduleWithReleaseAmountStructOutput[]],
+    "view"
+  >;
+  getFunction(
+    nameOrSignature: "grantRole"
+  ): TypedContractMethod<
+    [role: BytesLike, account: AddressLike],
+    [void],
+    "nonpayable"
+  >;
+  getFunction(
+    nameOrSignature: "hasRole"
+  ): TypedContractMethod<
+    [role: BytesLike, account: AddressLike],
+    [boolean],
+    "view"
+  >;
+  getFunction(
+    nameOrSignature: "initialize"
+  ): TypedContractMethod<
+    [contractManagerAddress: AddressLike, vestingPoolAddress: AddressLike],
+    [void],
+    "nonpayable"
+  >;
+  getFunction(
+    nameOrSignature: "proxiableUUID"
+  ): TypedContractMethod<[], [string], "view">;
+  getFunction(
+    nameOrSignature: "release"
+  ): TypedContractMethod<
+    [vestingScheduleId: BigNumberish, amount: BigNumberish],
+    [void],
+    "nonpayable"
+  >;
+  getFunction(
+    nameOrSignature: "renounceRole"
+  ): TypedContractMethod<
+    [role: BytesLike, account: AddressLike],
+    [void],
+    "nonpayable"
+  >;
+  getFunction(
+    nameOrSignature: "revoke"
+  ): TypedContractMethod<
+    [vestingScheduleId: BigNumberish],
+    [void],
+    "nonpayable"
+  >;
+  getFunction(
+    nameOrSignature: "revokeRole"
+  ): TypedContractMethod<
+    [role: BytesLike, account: AddressLike],
+    [void],
+    "nonpayable"
+  >;
+  getFunction(
+    nameOrSignature: "supportsInterface"
+  ): TypedContractMethod<[interfaceId: BytesLike], [boolean], "view">;
+  getFunction(
+    nameOrSignature: "updateVestingPool"
+  ): TypedContractMethod<[pool: AddressLike], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "upgradeTo"
+  ): TypedContractMethod<
+    [newImplementation: AddressLike],
+    [void],
+    "nonpayable"
+  >;
+  getFunction(
+    nameOrSignature: "upgradeToAndCall"
+  ): TypedContractMethod<
+    [newImplementation: AddressLike, data: BytesLike],
+    [void],
+    "payable"
+  >;
 
-    getReservesBalance(overrides?: CallOverrides): Promise<BigNumber>;
-
-    getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<string>;
-
-    getVestingScheduleById(
-      id: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<TokenVesting.VestingScheduleStructOutput>;
-
-    getVestingSchedules(
-      overrides?: CallOverrides
-    ): Promise<TokenVesting.VestingScheduleStructOutput[]>;
-
-    getVestingSchedulesByBeneficiary(
-      beneficiary: string,
-      overrides?: CallOverrides
-    ): Promise<TokenVesting.VestingScheduleStructOutput[]>;
-
-    getVestingSchedulesCount(overrides?: CallOverrides): Promise<BigNumber>;
-
-    getVestingSchedulesCountByBeneficiary(
-      _beneficiary: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    getVestingSchedulesIdsByBeneficiary(
-      _beneficiary: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber[]>;
-
-    getVestingSchedulesTotalAmount(
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    getVestingSchedulesWithReleasableAmountByBeneficiary(
-      beneficiary: string,
-      overrides?: CallOverrides
-    ): Promise<TokenVesting.VestingScheduleWithReleaseAmountStructOutput[]>;
-
-    grantRole(
-      role: BytesLike,
-      account: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    hasRole(
-      role: BytesLike,
-      account: string,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
-
-    initialize(
-      contractManagerAddress: string,
-      vestingPoolAddress: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    proxiableUUID(overrides?: CallOverrides): Promise<string>;
-
-    release(
-      vestingScheduleId: BigNumberish,
-      amount: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    renounceRole(
-      role: BytesLike,
-      account: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    revoke(
-      vestingScheduleId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    revokeRole(
-      role: BytesLike,
-      account: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    supportsInterface(
-      interfaceId: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
-
-    updateVestingPool(pool: string, overrides?: CallOverrides): Promise<void>;
-
-    upgradeTo(
-      newImplementation: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    upgradeToAndCall(
-      newImplementation: string,
-      data: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<void>;
-  };
+  getEvent(
+    key: "AdminChanged"
+  ): TypedContractEvent<
+    AdminChangedEvent.InputTuple,
+    AdminChangedEvent.OutputTuple,
+    AdminChangedEvent.OutputObject
+  >;
+  getEvent(
+    key: "BeaconUpgraded"
+  ): TypedContractEvent<
+    BeaconUpgradedEvent.InputTuple,
+    BeaconUpgradedEvent.OutputTuple,
+    BeaconUpgradedEvent.OutputObject
+  >;
+  getEvent(
+    key: "Initialized"
+  ): TypedContractEvent<
+    InitializedEvent.InputTuple,
+    InitializedEvent.OutputTuple,
+    InitializedEvent.OutputObject
+  >;
+  getEvent(
+    key: "Released"
+  ): TypedContractEvent<
+    ReleasedEvent.InputTuple,
+    ReleasedEvent.OutputTuple,
+    ReleasedEvent.OutputObject
+  >;
+  getEvent(
+    key: "Revoked"
+  ): TypedContractEvent<
+    RevokedEvent.InputTuple,
+    RevokedEvent.OutputTuple,
+    RevokedEvent.OutputObject
+  >;
+  getEvent(
+    key: "RoleAdminChanged"
+  ): TypedContractEvent<
+    RoleAdminChangedEvent.InputTuple,
+    RoleAdminChangedEvent.OutputTuple,
+    RoleAdminChangedEvent.OutputObject
+  >;
+  getEvent(
+    key: "RoleGranted"
+  ): TypedContractEvent<
+    RoleGrantedEvent.InputTuple,
+    RoleGrantedEvent.OutputTuple,
+    RoleGrantedEvent.OutputObject
+  >;
+  getEvent(
+    key: "RoleRevoked"
+  ): TypedContractEvent<
+    RoleRevokedEvent.InputTuple,
+    RoleRevokedEvent.OutputTuple,
+    RoleRevokedEvent.OutputObject
+  >;
+  getEvent(
+    key: "ScheduleCreated"
+  ): TypedContractEvent<
+    ScheduleCreatedEvent.InputTuple,
+    ScheduleCreatedEvent.OutputTuple,
+    ScheduleCreatedEvent.OutputObject
+  >;
+  getEvent(
+    key: "Upgraded"
+  ): TypedContractEvent<
+    UpgradedEvent.InputTuple,
+    UpgradedEvent.OutputTuple,
+    UpgradedEvent.OutputObject
+  >;
 
   filters: {
-    "AdminChanged(address,address)"(
-      previousAdmin?: null,
-      newAdmin?: null
-    ): AdminChangedEventFilter;
-    AdminChanged(
-      previousAdmin?: null,
-      newAdmin?: null
-    ): AdminChangedEventFilter;
+    "AdminChanged(address,address)": TypedContractEvent<
+      AdminChangedEvent.InputTuple,
+      AdminChangedEvent.OutputTuple,
+      AdminChangedEvent.OutputObject
+    >;
+    AdminChanged: TypedContractEvent<
+      AdminChangedEvent.InputTuple,
+      AdminChangedEvent.OutputTuple,
+      AdminChangedEvent.OutputObject
+    >;
 
-    "BeaconUpgraded(address)"(
-      beacon?: string | null
-    ): BeaconUpgradedEventFilter;
-    BeaconUpgraded(beacon?: string | null): BeaconUpgradedEventFilter;
+    "BeaconUpgraded(address)": TypedContractEvent<
+      BeaconUpgradedEvent.InputTuple,
+      BeaconUpgradedEvent.OutputTuple,
+      BeaconUpgradedEvent.OutputObject
+    >;
+    BeaconUpgraded: TypedContractEvent<
+      BeaconUpgradedEvent.InputTuple,
+      BeaconUpgradedEvent.OutputTuple,
+      BeaconUpgradedEvent.OutputObject
+    >;
 
-    "Initialized(uint8)"(version?: null): InitializedEventFilter;
-    Initialized(version?: null): InitializedEventFilter;
+    "Initialized(uint8)": TypedContractEvent<
+      InitializedEvent.InputTuple,
+      InitializedEvent.OutputTuple,
+      InitializedEvent.OutputObject
+    >;
+    Initialized: TypedContractEvent<
+      InitializedEvent.InputTuple,
+      InitializedEvent.OutputTuple,
+      InitializedEvent.OutputObject
+    >;
 
-    "Released(uint256,address,uint256)"(
-      vestingScheduleId?: BigNumberish | null,
-      to?: string | null,
-      amount?: null
-    ): ReleasedEventFilter;
-    Released(
-      vestingScheduleId?: BigNumberish | null,
-      to?: string | null,
-      amount?: null
-    ): ReleasedEventFilter;
+    "Released(uint256,address,uint256)": TypedContractEvent<
+      ReleasedEvent.InputTuple,
+      ReleasedEvent.OutputTuple,
+      ReleasedEvent.OutputObject
+    >;
+    Released: TypedContractEvent<
+      ReleasedEvent.InputTuple,
+      ReleasedEvent.OutputTuple,
+      ReleasedEvent.OutputObject
+    >;
 
-    "Revoked(uint256)"(
-      vestingScheduleId?: BigNumberish | null
-    ): RevokedEventFilter;
-    Revoked(vestingScheduleId?: BigNumberish | null): RevokedEventFilter;
+    "Revoked(uint256)": TypedContractEvent<
+      RevokedEvent.InputTuple,
+      RevokedEvent.OutputTuple,
+      RevokedEvent.OutputObject
+    >;
+    Revoked: TypedContractEvent<
+      RevokedEvent.InputTuple,
+      RevokedEvent.OutputTuple,
+      RevokedEvent.OutputObject
+    >;
 
-    "RoleAdminChanged(bytes32,bytes32,bytes32)"(
-      role?: BytesLike | null,
-      previousAdminRole?: BytesLike | null,
-      newAdminRole?: BytesLike | null
-    ): RoleAdminChangedEventFilter;
-    RoleAdminChanged(
-      role?: BytesLike | null,
-      previousAdminRole?: BytesLike | null,
-      newAdminRole?: BytesLike | null
-    ): RoleAdminChangedEventFilter;
+    "RoleAdminChanged(bytes32,bytes32,bytes32)": TypedContractEvent<
+      RoleAdminChangedEvent.InputTuple,
+      RoleAdminChangedEvent.OutputTuple,
+      RoleAdminChangedEvent.OutputObject
+    >;
+    RoleAdminChanged: TypedContractEvent<
+      RoleAdminChangedEvent.InputTuple,
+      RoleAdminChangedEvent.OutputTuple,
+      RoleAdminChangedEvent.OutputObject
+    >;
 
-    "RoleGranted(bytes32,address,address)"(
-      role?: BytesLike | null,
-      account?: string | null,
-      sender?: string | null
-    ): RoleGrantedEventFilter;
-    RoleGranted(
-      role?: BytesLike | null,
-      account?: string | null,
-      sender?: string | null
-    ): RoleGrantedEventFilter;
+    "RoleGranted(bytes32,address,address)": TypedContractEvent<
+      RoleGrantedEvent.InputTuple,
+      RoleGrantedEvent.OutputTuple,
+      RoleGrantedEvent.OutputObject
+    >;
+    RoleGranted: TypedContractEvent<
+      RoleGrantedEvent.InputTuple,
+      RoleGrantedEvent.OutputTuple,
+      RoleGrantedEvent.OutputObject
+    >;
 
-    "RoleRevoked(bytes32,address,address)"(
-      role?: BytesLike | null,
-      account?: string | null,
-      sender?: string | null
-    ): RoleRevokedEventFilter;
-    RoleRevoked(
-      role?: BytesLike | null,
-      account?: string | null,
-      sender?: string | null
-    ): RoleRevokedEventFilter;
+    "RoleRevoked(bytes32,address,address)": TypedContractEvent<
+      RoleRevokedEvent.InputTuple,
+      RoleRevokedEvent.OutputTuple,
+      RoleRevokedEvent.OutputObject
+    >;
+    RoleRevoked: TypedContractEvent<
+      RoleRevokedEvent.InputTuple,
+      RoleRevokedEvent.OutputTuple,
+      RoleRevokedEvent.OutputObject
+    >;
 
-    "ScheduleCreated(address,uint256)"(
-      beneficiary?: string | null,
-      vestingScheduleId?: BigNumberish | null
-    ): ScheduleCreatedEventFilter;
-    ScheduleCreated(
-      beneficiary?: string | null,
-      vestingScheduleId?: BigNumberish | null
-    ): ScheduleCreatedEventFilter;
+    "ScheduleCreated(address,uint256)": TypedContractEvent<
+      ScheduleCreatedEvent.InputTuple,
+      ScheduleCreatedEvent.OutputTuple,
+      ScheduleCreatedEvent.OutputObject
+    >;
+    ScheduleCreated: TypedContractEvent<
+      ScheduleCreatedEvent.InputTuple,
+      ScheduleCreatedEvent.OutputTuple,
+      ScheduleCreatedEvent.OutputObject
+    >;
 
-    "Upgraded(address)"(implementation?: string | null): UpgradedEventFilter;
-    Upgraded(implementation?: string | null): UpgradedEventFilter;
-  };
-
-  estimateGas: {
-    DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
-
-    UPGRADER_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
-
-    computeReleasableAmount(
-      vestingScheduleId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    createVestingSchedule(
-      _beneficiary: string,
-      _start: BigNumberish,
-      _cliff: BigNumberish,
-      _duration: BigNumberish,
-      _slicePeriodSeconds: BigNumberish,
-      _revocable: boolean,
-      _amount: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    createVestingSchedules(
-      _beneficiaries: string[],
-      _start: BigNumberish,
-      _cliff: BigNumberish,
-      _duration: BigNumberish,
-      _slicePeriodSeconds: BigNumberish,
-      _revocable: boolean,
-      _amount: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    getReservesBalance(overrides?: CallOverrides): Promise<BigNumber>;
-
-    getRoleAdmin(
-      role: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    getVestingScheduleById(
-      id: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    getVestingSchedules(overrides?: CallOverrides): Promise<BigNumber>;
-
-    getVestingSchedulesByBeneficiary(
-      beneficiary: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    getVestingSchedulesCount(overrides?: CallOverrides): Promise<BigNumber>;
-
-    getVestingSchedulesCountByBeneficiary(
-      _beneficiary: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    getVestingSchedulesIdsByBeneficiary(
-      _beneficiary: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    getVestingSchedulesTotalAmount(
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    getVestingSchedulesWithReleasableAmountByBeneficiary(
-      beneficiary: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    grantRole(
-      role: BytesLike,
-      account: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    hasRole(
-      role: BytesLike,
-      account: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    initialize(
-      contractManagerAddress: string,
-      vestingPoolAddress: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    proxiableUUID(overrides?: CallOverrides): Promise<BigNumber>;
-
-    release(
-      vestingScheduleId: BigNumberish,
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    renounceRole(
-      role: BytesLike,
-      account: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    revoke(
-      vestingScheduleId: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    revokeRole(
-      role: BytesLike,
-      account: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    supportsInterface(
-      interfaceId: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    updateVestingPool(
-      pool: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    upgradeTo(
-      newImplementation: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    upgradeToAndCall(
-      newImplementation: string,
-      data: BytesLike,
-      overrides?: PayableOverrides & { from?: string }
-    ): Promise<BigNumber>;
-  };
-
-  populateTransaction: {
-    DEFAULT_ADMIN_ROLE(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    UPGRADER_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    computeReleasableAmount(
-      vestingScheduleId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    createVestingSchedule(
-      _beneficiary: string,
-      _start: BigNumberish,
-      _cliff: BigNumberish,
-      _duration: BigNumberish,
-      _slicePeriodSeconds: BigNumberish,
-      _revocable: boolean,
-      _amount: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    createVestingSchedules(
-      _beneficiaries: string[],
-      _start: BigNumberish,
-      _cliff: BigNumberish,
-      _duration: BigNumberish,
-      _slicePeriodSeconds: BigNumberish,
-      _revocable: boolean,
-      _amount: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    getReservesBalance(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    getRoleAdmin(
-      role: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    getVestingScheduleById(
-      id: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    getVestingSchedules(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    getVestingSchedulesByBeneficiary(
-      beneficiary: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    getVestingSchedulesCount(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    getVestingSchedulesCountByBeneficiary(
-      _beneficiary: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    getVestingSchedulesIdsByBeneficiary(
-      _beneficiary: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    getVestingSchedulesTotalAmount(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    getVestingSchedulesWithReleasableAmountByBeneficiary(
-      beneficiary: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    grantRole(
-      role: BytesLike,
-      account: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    hasRole(
-      role: BytesLike,
-      account: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    initialize(
-      contractManagerAddress: string,
-      vestingPoolAddress: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    proxiableUUID(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    release(
-      vestingScheduleId: BigNumberish,
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    renounceRole(
-      role: BytesLike,
-      account: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    revoke(
-      vestingScheduleId: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    revokeRole(
-      role: BytesLike,
-      account: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    supportsInterface(
-      interfaceId: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    updateVestingPool(
-      pool: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    upgradeTo(
-      newImplementation: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    upgradeToAndCall(
-      newImplementation: string,
-      data: BytesLike,
-      overrides?: PayableOverrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
+    "Upgraded(address)": TypedContractEvent<
+      UpgradedEvent.InputTuple,
+      UpgradedEvent.OutputTuple,
+      UpgradedEvent.OutputObject
+    >;
+    Upgraded: TypedContractEvent<
+      UpgradedEvent.InputTuple,
+      UpgradedEvent.OutputTuple,
+      UpgradedEvent.OutputObject
+    >;
   };
 }

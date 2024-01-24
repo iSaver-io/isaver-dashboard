@@ -3,71 +3,29 @@
 /* eslint-disable */
 import type {
   BaseContract,
-  BigNumber,
   BigNumberish,
   BytesLike,
-  CallOverrides,
-  ContractTransaction,
-  Overrides,
-  PayableOverrides,
-  PopulatedTransaction,
-  Signer,
-  utils,
-} from "ethers";
-import type {
   FunctionFragment,
   Result,
+  Interface,
   EventFragment,
-} from "@ethersproject/abi";
-import type { Listener, Provider } from "@ethersproject/providers";
+  AddressLike,
+  ContractRunner,
+  ContractMethod,
+  Listener,
+} from "ethers";
 import type {
-  TypedEventFilter,
-  TypedEvent,
+  TypedContractEvent,
+  TypedDeferredTopicFilter,
+  TypedEventLog,
+  TypedLogDescription,
   TypedListener,
-  OnEvent,
+  TypedContractMethod,
 } from "../../common";
 
-export interface ISaverPowersInterface extends utils.Interface {
-  functions: {
-    "DEFAULT_ADMIN_ROLE()": FunctionFragment;
-    "MINTER_ROLE()": FunctionFragment;
-    "UPGRADER_ROLE()": FunctionFragment;
-    "balanceOf(address,uint256)": FunctionFragment;
-    "balanceOfBatch(address[],uint256[])": FunctionFragment;
-    "burn(address,uint256,uint256)": FunctionFragment;
-    "burnBatch(address,uint256[],uint256[])": FunctionFragment;
-    "contractURI()": FunctionFragment;
-    "getRoleAdmin(bytes32)": FunctionFragment;
-    "grantRole(bytes32,address)": FunctionFragment;
-    "hasRole(bytes32,address)": FunctionFragment;
-    "initialize()": FunctionFragment;
-    "isApprovedForAll(address,address)": FunctionFragment;
-    "isValidToken(uint256)": FunctionFragment;
-    "mint(address,uint256,uint256,bytes)": FunctionFragment;
-    "mintBatch(address,uint256[],uint256[],bytes)": FunctionFragment;
-    "proxiableUUID()": FunctionFragment;
-    "renounceRole(bytes32,address)": FunctionFragment;
-    "revokeRole(bytes32,address)": FunctionFragment;
-    "safeBatchTransferFrom(address,address,uint256[],uint256[],bytes)": FunctionFragment;
-    "safeTransferFrom(address,address,uint256,uint256,bytes)": FunctionFragment;
-    "setApprovalForAll(address,bool)": FunctionFragment;
-    "setContractDescription(string)": FunctionFragment;
-    "setContractExternalUrl(string)": FunctionFragment;
-    "setContractImageUrl(string)": FunctionFragment;
-    "setTokenData(uint256,string,string,string,string,string)": FunctionFragment;
-    "setTokenDescription(uint256,string)": FunctionFragment;
-    "setTokenExternalUrl(string)": FunctionFragment;
-    "setTokenImageBaseUrl(string)": FunctionFragment;
-    "supportsInterface(bytes4)": FunctionFragment;
-    "tokenData(uint256)": FunctionFragment;
-    "tokenURI(uint256)": FunctionFragment;
-    "upgradeTo(address)": FunctionFragment;
-    "upgradeToAndCall(address,bytes)": FunctionFragment;
-    "uri(uint256)": FunctionFragment;
-  };
-
+export interface ISaverPowersInterface extends Interface {
   getFunction(
-    nameOrSignatureOrTopic:
+    nameOrSignature:
       | "DEFAULT_ADMIN_ROLE"
       | "MINTER_ROLE"
       | "UPGRADER_ROLE"
@@ -105,6 +63,21 @@ export interface ISaverPowersInterface extends utils.Interface {
       | "uri"
   ): FunctionFragment;
 
+  getEvent(
+    nameOrSignatureOrTopic:
+      | "AdminChanged"
+      | "ApprovalForAll"
+      | "BeaconUpgraded"
+      | "Initialized"
+      | "RoleAdminChanged"
+      | "RoleGranted"
+      | "RoleRevoked"
+      | "TransferBatch"
+      | "TransferSingle"
+      | "URI"
+      | "Upgraded"
+  ): EventFragment;
+
   encodeFunctionData(
     functionFragment: "DEFAULT_ADMIN_ROLE",
     values?: undefined
@@ -119,19 +92,19 @@ export interface ISaverPowersInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "balanceOf",
-    values: [string, BigNumberish]
+    values: [AddressLike, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "balanceOfBatch",
-    values: [string[], BigNumberish[]]
+    values: [AddressLike[], BigNumberish[]]
   ): string;
   encodeFunctionData(
     functionFragment: "burn",
-    values: [string, BigNumberish, BigNumberish]
+    values: [AddressLike, BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "burnBatch",
-    values: [string, BigNumberish[], BigNumberish[]]
+    values: [AddressLike, BigNumberish[], BigNumberish[]]
   ): string;
   encodeFunctionData(
     functionFragment: "contractURI",
@@ -143,11 +116,11 @@ export interface ISaverPowersInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "grantRole",
-    values: [BytesLike, string]
+    values: [BytesLike, AddressLike]
   ): string;
   encodeFunctionData(
     functionFragment: "hasRole",
-    values: [BytesLike, string]
+    values: [BytesLike, AddressLike]
   ): string;
   encodeFunctionData(
     functionFragment: "initialize",
@@ -155,7 +128,7 @@ export interface ISaverPowersInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "isApprovedForAll",
-    values: [string, string]
+    values: [AddressLike, AddressLike]
   ): string;
   encodeFunctionData(
     functionFragment: "isValidToken",
@@ -163,11 +136,11 @@ export interface ISaverPowersInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "mint",
-    values: [string, BigNumberish, BigNumberish, BytesLike]
+    values: [AddressLike, BigNumberish, BigNumberish, BytesLike]
   ): string;
   encodeFunctionData(
     functionFragment: "mintBatch",
-    values: [string, BigNumberish[], BigNumberish[], BytesLike]
+    values: [AddressLike, BigNumberish[], BigNumberish[], BytesLike]
   ): string;
   encodeFunctionData(
     functionFragment: "proxiableUUID",
@@ -175,23 +148,29 @@ export interface ISaverPowersInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "renounceRole",
-    values: [BytesLike, string]
+    values: [BytesLike, AddressLike]
   ): string;
   encodeFunctionData(
     functionFragment: "revokeRole",
-    values: [BytesLike, string]
+    values: [BytesLike, AddressLike]
   ): string;
   encodeFunctionData(
     functionFragment: "safeBatchTransferFrom",
-    values: [string, string, BigNumberish[], BigNumberish[], BytesLike]
+    values: [
+      AddressLike,
+      AddressLike,
+      BigNumberish[],
+      BigNumberish[],
+      BytesLike
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "safeTransferFrom",
-    values: [string, string, BigNumberish, BigNumberish, BytesLike]
+    values: [AddressLike, AddressLike, BigNumberish, BigNumberish, BytesLike]
   ): string;
   encodeFunctionData(
     functionFragment: "setApprovalForAll",
-    values: [string, boolean]
+    values: [AddressLike, boolean]
   ): string;
   encodeFunctionData(
     functionFragment: "setContractDescription",
@@ -233,10 +212,13 @@ export interface ISaverPowersInterface extends utils.Interface {
     functionFragment: "tokenURI",
     values: [BigNumberish]
   ): string;
-  encodeFunctionData(functionFragment: "upgradeTo", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "upgradeTo",
+    values: [AddressLike]
+  ): string;
   encodeFunctionData(
     functionFragment: "upgradeToAndCall",
-    values: [string, BytesLike]
+    values: [AddressLike, BytesLike]
   ): string;
   encodeFunctionData(functionFragment: "uri", values: [BigNumberish]): string;
 
@@ -341,733 +323,429 @@ export interface ISaverPowersInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "uri", data: BytesLike): Result;
-
-  events: {
-    "AdminChanged(address,address)": EventFragment;
-    "ApprovalForAll(address,address,bool)": EventFragment;
-    "BeaconUpgraded(address)": EventFragment;
-    "Initialized(uint8)": EventFragment;
-    "RoleAdminChanged(bytes32,bytes32,bytes32)": EventFragment;
-    "RoleGranted(bytes32,address,address)": EventFragment;
-    "RoleRevoked(bytes32,address,address)": EventFragment;
-    "TransferBatch(address,address,address,uint256[],uint256[])": EventFragment;
-    "TransferSingle(address,address,address,uint256,uint256)": EventFragment;
-    "URI(string,uint256)": EventFragment;
-    "Upgraded(address)": EventFragment;
-  };
-
-  getEvent(nameOrSignatureOrTopic: "AdminChanged"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "ApprovalForAll"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "BeaconUpgraded"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "RoleAdminChanged"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "RoleGranted"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "RoleRevoked"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "TransferBatch"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "TransferSingle"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "URI"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Upgraded"): EventFragment;
 }
 
-export interface AdminChangedEventObject {
-  previousAdmin: string;
-  newAdmin: string;
+export namespace AdminChangedEvent {
+  export type InputTuple = [previousAdmin: AddressLike, newAdmin: AddressLike];
+  export type OutputTuple = [previousAdmin: string, newAdmin: string];
+  export interface OutputObject {
+    previousAdmin: string;
+    newAdmin: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type AdminChangedEvent = TypedEvent<
-  [string, string],
-  AdminChangedEventObject
->;
 
-export type AdminChangedEventFilter = TypedEventFilter<AdminChangedEvent>;
-
-export interface ApprovalForAllEventObject {
-  account: string;
-  operator: string;
-  approved: boolean;
+export namespace ApprovalForAllEvent {
+  export type InputTuple = [
+    account: AddressLike,
+    operator: AddressLike,
+    approved: boolean
+  ];
+  export type OutputTuple = [
+    account: string,
+    operator: string,
+    approved: boolean
+  ];
+  export interface OutputObject {
+    account: string;
+    operator: string;
+    approved: boolean;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type ApprovalForAllEvent = TypedEvent<
-  [string, string, boolean],
-  ApprovalForAllEventObject
->;
 
-export type ApprovalForAllEventFilter = TypedEventFilter<ApprovalForAllEvent>;
-
-export interface BeaconUpgradedEventObject {
-  beacon: string;
+export namespace BeaconUpgradedEvent {
+  export type InputTuple = [beacon: AddressLike];
+  export type OutputTuple = [beacon: string];
+  export interface OutputObject {
+    beacon: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type BeaconUpgradedEvent = TypedEvent<
-  [string],
-  BeaconUpgradedEventObject
->;
 
-export type BeaconUpgradedEventFilter = TypedEventFilter<BeaconUpgradedEvent>;
-
-export interface InitializedEventObject {
-  version: number;
+export namespace InitializedEvent {
+  export type InputTuple = [version: BigNumberish];
+  export type OutputTuple = [version: bigint];
+  export interface OutputObject {
+    version: bigint;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type InitializedEvent = TypedEvent<[number], InitializedEventObject>;
 
-export type InitializedEventFilter = TypedEventFilter<InitializedEvent>;
-
-export interface RoleAdminChangedEventObject {
-  role: string;
-  previousAdminRole: string;
-  newAdminRole: string;
+export namespace RoleAdminChangedEvent {
+  export type InputTuple = [
+    role: BytesLike,
+    previousAdminRole: BytesLike,
+    newAdminRole: BytesLike
+  ];
+  export type OutputTuple = [
+    role: string,
+    previousAdminRole: string,
+    newAdminRole: string
+  ];
+  export interface OutputObject {
+    role: string;
+    previousAdminRole: string;
+    newAdminRole: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type RoleAdminChangedEvent = TypedEvent<
-  [string, string, string],
-  RoleAdminChangedEventObject
->;
 
-export type RoleAdminChangedEventFilter =
-  TypedEventFilter<RoleAdminChangedEvent>;
-
-export interface RoleGrantedEventObject {
-  role: string;
-  account: string;
-  sender: string;
+export namespace RoleGrantedEvent {
+  export type InputTuple = [
+    role: BytesLike,
+    account: AddressLike,
+    sender: AddressLike
+  ];
+  export type OutputTuple = [role: string, account: string, sender: string];
+  export interface OutputObject {
+    role: string;
+    account: string;
+    sender: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type RoleGrantedEvent = TypedEvent<
-  [string, string, string],
-  RoleGrantedEventObject
->;
 
-export type RoleGrantedEventFilter = TypedEventFilter<RoleGrantedEvent>;
-
-export interface RoleRevokedEventObject {
-  role: string;
-  account: string;
-  sender: string;
+export namespace RoleRevokedEvent {
+  export type InputTuple = [
+    role: BytesLike,
+    account: AddressLike,
+    sender: AddressLike
+  ];
+  export type OutputTuple = [role: string, account: string, sender: string];
+  export interface OutputObject {
+    role: string;
+    account: string;
+    sender: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type RoleRevokedEvent = TypedEvent<
-  [string, string, string],
-  RoleRevokedEventObject
->;
 
-export type RoleRevokedEventFilter = TypedEventFilter<RoleRevokedEvent>;
-
-export interface TransferBatchEventObject {
-  operator: string;
-  from: string;
-  to: string;
-  ids: BigNumber[];
-  values: BigNumber[];
+export namespace TransferBatchEvent {
+  export type InputTuple = [
+    operator: AddressLike,
+    from: AddressLike,
+    to: AddressLike,
+    ids: BigNumberish[],
+    values: BigNumberish[]
+  ];
+  export type OutputTuple = [
+    operator: string,
+    from: string,
+    to: string,
+    ids: bigint[],
+    values: bigint[]
+  ];
+  export interface OutputObject {
+    operator: string;
+    from: string;
+    to: string;
+    ids: bigint[];
+    values: bigint[];
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type TransferBatchEvent = TypedEvent<
-  [string, string, string, BigNumber[], BigNumber[]],
-  TransferBatchEventObject
->;
 
-export type TransferBatchEventFilter = TypedEventFilter<TransferBatchEvent>;
-
-export interface TransferSingleEventObject {
-  operator: string;
-  from: string;
-  to: string;
-  id: BigNumber;
-  value: BigNumber;
+export namespace TransferSingleEvent {
+  export type InputTuple = [
+    operator: AddressLike,
+    from: AddressLike,
+    to: AddressLike,
+    id: BigNumberish,
+    value: BigNumberish
+  ];
+  export type OutputTuple = [
+    operator: string,
+    from: string,
+    to: string,
+    id: bigint,
+    value: bigint
+  ];
+  export interface OutputObject {
+    operator: string;
+    from: string;
+    to: string;
+    id: bigint;
+    value: bigint;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type TransferSingleEvent = TypedEvent<
-  [string, string, string, BigNumber, BigNumber],
-  TransferSingleEventObject
->;
 
-export type TransferSingleEventFilter = TypedEventFilter<TransferSingleEvent>;
-
-export interface URIEventObject {
-  value: string;
-  id: BigNumber;
+export namespace URIEvent {
+  export type InputTuple = [value: string, id: BigNumberish];
+  export type OutputTuple = [value: string, id: bigint];
+  export interface OutputObject {
+    value: string;
+    id: bigint;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type URIEvent = TypedEvent<[string, BigNumber], URIEventObject>;
 
-export type URIEventFilter = TypedEventFilter<URIEvent>;
-
-export interface UpgradedEventObject {
-  implementation: string;
+export namespace UpgradedEvent {
+  export type InputTuple = [implementation: AddressLike];
+  export type OutputTuple = [implementation: string];
+  export interface OutputObject {
+    implementation: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type UpgradedEvent = TypedEvent<[string], UpgradedEventObject>;
-
-export type UpgradedEventFilter = TypedEventFilter<UpgradedEvent>;
 
 export interface ISaverPowers extends BaseContract {
-  connect(signerOrProvider: Signer | Provider | string): this;
-  attach(addressOrName: string): this;
-  deployed(): Promise<this>;
+  connect(runner?: ContractRunner | null): ISaverPowers;
+  waitForDeployment(): Promise<this>;
 
   interface: ISaverPowersInterface;
 
-  queryFilter<TEvent extends TypedEvent>(
-    event: TypedEventFilter<TEvent>,
+  queryFilter<TCEvent extends TypedContractEvent>(
+    event: TCEvent,
     fromBlockOrBlockhash?: string | number | undefined,
     toBlock?: string | number | undefined
-  ): Promise<Array<TEvent>>;
-
-  listeners<TEvent extends TypedEvent>(
-    eventFilter?: TypedEventFilter<TEvent>
-  ): Array<TypedListener<TEvent>>;
-  listeners(eventName?: string): Array<Listener>;
-  removeAllListeners<TEvent extends TypedEvent>(
-    eventFilter: TypedEventFilter<TEvent>
-  ): this;
-  removeAllListeners(eventName?: string): this;
-  off: OnEvent<this>;
-  on: OnEvent<this>;
-  once: OnEvent<this>;
-  removeListener: OnEvent<this>;
-
-  functions: {
-    DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<[string]>;
-
-    MINTER_ROLE(overrides?: CallOverrides): Promise<[string]>;
-
-    UPGRADER_ROLE(overrides?: CallOverrides): Promise<[string]>;
-
-    balanceOf(
-      account: string,
-      id: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    balanceOfBatch(
-      accounts: string[],
-      ids: BigNumberish[],
-      overrides?: CallOverrides
-    ): Promise<[BigNumber[]]>;
-
-    burn(
-      account: string,
-      id: BigNumberish,
-      value: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    burnBatch(
-      account: string,
-      ids: BigNumberish[],
-      values: BigNumberish[],
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    contractURI(overrides?: CallOverrides): Promise<[string]>;
-
-    getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<[string]>;
-
-    grantRole(
-      role: BytesLike,
-      account: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    hasRole(
-      role: BytesLike,
-      account: string,
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
-
-    initialize(
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    isApprovedForAll(
-      account: string,
-      operator: string,
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
-
-    isValidToken(
-      tokenId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
-
-    mint(
-      to: string,
-      tokenId: BigNumberish,
-      amount: BigNumberish,
-      data: BytesLike,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    mintBatch(
-      to: string,
-      tokenIds: BigNumberish[],
-      amounts: BigNumberish[],
-      data: BytesLike,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    proxiableUUID(overrides?: CallOverrides): Promise<[string]>;
-
-    renounceRole(
-      role: BytesLike,
-      account: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    revokeRole(
-      role: BytesLike,
-      account: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    safeBatchTransferFrom(
-      from: string,
-      to: string,
-      ids: BigNumberish[],
-      amounts: BigNumberish[],
-      data: BytesLike,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    safeTransferFrom(
-      from: string,
-      to: string,
-      id: BigNumberish,
-      amount: BigNumberish,
-      data: BytesLike,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    setApprovalForAll(
-      operator: string,
-      approved: boolean,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    setContractDescription(
-      _description: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    setContractExternalUrl(
-      _externalUrl: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    setContractImageUrl(
-      _imageUrl: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    setTokenData(
-      tokenId: BigNumberish,
-      name: string,
-      asset: string,
-      tier: string,
-      tokenType: string,
-      description: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    setTokenDescription(
-      tokenId: BigNumberish,
-      _description: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    setTokenExternalUrl(
-      _externalUrl: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    setTokenImageBaseUrl(
-      _imageBaseUrl: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    supportsInterface(
-      interfaceId: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
-
-    tokenData(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<
-      [string, string, string, string, string] & {
-        name: string;
-        asset: string;
-        tier: string;
-        tokenType: string;
-        description: string;
-      }
-    >;
-
-    tokenURI(
-      tokenId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[string]>;
-
-    upgradeTo(
-      newImplementation: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    upgradeToAndCall(
-      newImplementation: string,
-      data: BytesLike,
-      overrides?: PayableOverrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    uri(arg0: BigNumberish, overrides?: CallOverrides): Promise<[string]>;
-  };
-
-  DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
-
-  MINTER_ROLE(overrides?: CallOverrides): Promise<string>;
-
-  UPGRADER_ROLE(overrides?: CallOverrides): Promise<string>;
-
-  balanceOf(
-    account: string,
-    id: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  balanceOfBatch(
-    accounts: string[],
-    ids: BigNumberish[],
-    overrides?: CallOverrides
-  ): Promise<BigNumber[]>;
-
-  burn(
-    account: string,
-    id: BigNumberish,
-    value: BigNumberish,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  burnBatch(
-    account: string,
-    ids: BigNumberish[],
-    values: BigNumberish[],
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  contractURI(overrides?: CallOverrides): Promise<string>;
-
-  getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<string>;
-
-  grantRole(
-    role: BytesLike,
-    account: string,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  hasRole(
-    role: BytesLike,
-    account: string,
-    overrides?: CallOverrides
-  ): Promise<boolean>;
-
-  initialize(
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  isApprovedForAll(
-    account: string,
-    operator: string,
-    overrides?: CallOverrides
-  ): Promise<boolean>;
-
-  isValidToken(
-    tokenId: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<boolean>;
-
-  mint(
-    to: string,
-    tokenId: BigNumberish,
-    amount: BigNumberish,
-    data: BytesLike,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  mintBatch(
-    to: string,
-    tokenIds: BigNumberish[],
-    amounts: BigNumberish[],
-    data: BytesLike,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  proxiableUUID(overrides?: CallOverrides): Promise<string>;
-
-  renounceRole(
-    role: BytesLike,
-    account: string,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  revokeRole(
-    role: BytesLike,
-    account: string,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  safeBatchTransferFrom(
-    from: string,
-    to: string,
-    ids: BigNumberish[],
-    amounts: BigNumberish[],
-    data: BytesLike,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  safeTransferFrom(
-    from: string,
-    to: string,
-    id: BigNumberish,
-    amount: BigNumberish,
-    data: BytesLike,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  setApprovalForAll(
-    operator: string,
-    approved: boolean,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  setContractDescription(
-    _description: string,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  setContractExternalUrl(
-    _externalUrl: string,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  setContractImageUrl(
-    _imageUrl: string,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  setTokenData(
-    tokenId: BigNumberish,
-    name: string,
-    asset: string,
-    tier: string,
-    tokenType: string,
-    description: string,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  setTokenDescription(
-    tokenId: BigNumberish,
-    _description: string,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  setTokenExternalUrl(
-    _externalUrl: string,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  setTokenImageBaseUrl(
-    _imageBaseUrl: string,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  supportsInterface(
-    interfaceId: BytesLike,
-    overrides?: CallOverrides
-  ): Promise<boolean>;
-
-  tokenData(
-    arg0: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<
-    [string, string, string, string, string] & {
-      name: string;
-      asset: string;
-      tier: string;
-      tokenType: string;
-      description: string;
-    }
+  ): Promise<Array<TypedEventLog<TCEvent>>>;
+  queryFilter<TCEvent extends TypedContractEvent>(
+    filter: TypedDeferredTopicFilter<TCEvent>,
+    fromBlockOrBlockhash?: string | number | undefined,
+    toBlock?: string | number | undefined
+  ): Promise<Array<TypedEventLog<TCEvent>>>;
+
+  on<TCEvent extends TypedContractEvent>(
+    event: TCEvent,
+    listener: TypedListener<TCEvent>
+  ): Promise<this>;
+  on<TCEvent extends TypedContractEvent>(
+    filter: TypedDeferredTopicFilter<TCEvent>,
+    listener: TypedListener<TCEvent>
+  ): Promise<this>;
+
+  once<TCEvent extends TypedContractEvent>(
+    event: TCEvent,
+    listener: TypedListener<TCEvent>
+  ): Promise<this>;
+  once<TCEvent extends TypedContractEvent>(
+    filter: TypedDeferredTopicFilter<TCEvent>,
+    listener: TypedListener<TCEvent>
+  ): Promise<this>;
+
+  listeners<TCEvent extends TypedContractEvent>(
+    event: TCEvent
+  ): Promise<Array<TypedListener<TCEvent>>>;
+  listeners(eventName?: string): Promise<Array<Listener>>;
+  removeAllListeners<TCEvent extends TypedContractEvent>(
+    event?: TCEvent
+  ): Promise<this>;
+
+  DEFAULT_ADMIN_ROLE: TypedContractMethod<[], [string], "view">;
+
+  MINTER_ROLE: TypedContractMethod<[], [string], "view">;
+
+  UPGRADER_ROLE: TypedContractMethod<[], [string], "view">;
+
+  balanceOf: TypedContractMethod<
+    [account: AddressLike, id: BigNumberish],
+    [bigint],
+    "view"
   >;
 
-  tokenURI(tokenId: BigNumberish, overrides?: CallOverrides): Promise<string>;
+  balanceOfBatch: TypedContractMethod<
+    [accounts: AddressLike[], ids: BigNumberish[]],
+    [bigint[]],
+    "view"
+  >;
 
-  upgradeTo(
-    newImplementation: string,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
+  burn: TypedContractMethod<
+    [account: AddressLike, id: BigNumberish, value: BigNumberish],
+    [void],
+    "nonpayable"
+  >;
 
-  upgradeToAndCall(
-    newImplementation: string,
-    data: BytesLike,
-    overrides?: PayableOverrides & { from?: string }
-  ): Promise<ContractTransaction>;
+  burnBatch: TypedContractMethod<
+    [account: AddressLike, ids: BigNumberish[], values: BigNumberish[]],
+    [void],
+    "nonpayable"
+  >;
 
-  uri(arg0: BigNumberish, overrides?: CallOverrides): Promise<string>;
+  contractURI: TypedContractMethod<[], [string], "view">;
 
-  callStatic: {
-    DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
+  getRoleAdmin: TypedContractMethod<[role: BytesLike], [string], "view">;
 
-    MINTER_ROLE(overrides?: CallOverrides): Promise<string>;
+  grantRole: TypedContractMethod<
+    [role: BytesLike, account: AddressLike],
+    [void],
+    "nonpayable"
+  >;
 
-    UPGRADER_ROLE(overrides?: CallOverrides): Promise<string>;
+  hasRole: TypedContractMethod<
+    [role: BytesLike, account: AddressLike],
+    [boolean],
+    "view"
+  >;
 
-    balanceOf(
-      account: string,
-      id: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+  initialize: TypedContractMethod<[], [void], "nonpayable">;
 
-    balanceOfBatch(
-      accounts: string[],
-      ids: BigNumberish[],
-      overrides?: CallOverrides
-    ): Promise<BigNumber[]>;
+  isApprovedForAll: TypedContractMethod<
+    [account: AddressLike, operator: AddressLike],
+    [boolean],
+    "view"
+  >;
 
-    burn(
-      account: string,
-      id: BigNumberish,
-      value: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
+  isValidToken: TypedContractMethod<[tokenId: BigNumberish], [boolean], "view">;
 
-    burnBatch(
-      account: string,
-      ids: BigNumberish[],
-      values: BigNumberish[],
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    contractURI(overrides?: CallOverrides): Promise<string>;
-
-    getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<string>;
-
-    grantRole(
-      role: BytesLike,
-      account: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    hasRole(
-      role: BytesLike,
-      account: string,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
-
-    initialize(overrides?: CallOverrides): Promise<void>;
-
-    isApprovedForAll(
-      account: string,
-      operator: string,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
-
-    isValidToken(
-      tokenId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
-
-    mint(
-      to: string,
+  mint: TypedContractMethod<
+    [
+      to: AddressLike,
       tokenId: BigNumberish,
       amount: BigNumberish,
-      data: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<void>;
+      data: BytesLike
+    ],
+    [void],
+    "nonpayable"
+  >;
 
-    mintBatch(
-      to: string,
+  mintBatch: TypedContractMethod<
+    [
+      to: AddressLike,
       tokenIds: BigNumberish[],
       amounts: BigNumberish[],
-      data: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<void>;
+      data: BytesLike
+    ],
+    [void],
+    "nonpayable"
+  >;
 
-    proxiableUUID(overrides?: CallOverrides): Promise<string>;
+  proxiableUUID: TypedContractMethod<[], [string], "view">;
 
-    renounceRole(
-      role: BytesLike,
-      account: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
+  renounceRole: TypedContractMethod<
+    [role: BytesLike, account: AddressLike],
+    [void],
+    "nonpayable"
+  >;
 
-    revokeRole(
-      role: BytesLike,
-      account: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
+  revokeRole: TypedContractMethod<
+    [role: BytesLike, account: AddressLike],
+    [void],
+    "nonpayable"
+  >;
 
-    safeBatchTransferFrom(
-      from: string,
-      to: string,
+  safeBatchTransferFrom: TypedContractMethod<
+    [
+      from: AddressLike,
+      to: AddressLike,
       ids: BigNumberish[],
       amounts: BigNumberish[],
-      data: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<void>;
+      data: BytesLike
+    ],
+    [void],
+    "nonpayable"
+  >;
 
-    safeTransferFrom(
-      from: string,
-      to: string,
+  safeTransferFrom: TypedContractMethod<
+    [
+      from: AddressLike,
+      to: AddressLike,
       id: BigNumberish,
       amount: BigNumberish,
-      data: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<void>;
+      data: BytesLike
+    ],
+    [void],
+    "nonpayable"
+  >;
 
-    setApprovalForAll(
-      operator: string,
-      approved: boolean,
-      overrides?: CallOverrides
-    ): Promise<void>;
+  setApprovalForAll: TypedContractMethod<
+    [operator: AddressLike, approved: boolean],
+    [void],
+    "nonpayable"
+  >;
 
-    setContractDescription(
-      _description: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
+  setContractDescription: TypedContractMethod<
+    [_description: string],
+    [void],
+    "nonpayable"
+  >;
 
-    setContractExternalUrl(
-      _externalUrl: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
+  setContractExternalUrl: TypedContractMethod<
+    [_externalUrl: string],
+    [void],
+    "nonpayable"
+  >;
 
-    setContractImageUrl(
-      _imageUrl: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
+  setContractImageUrl: TypedContractMethod<
+    [_imageUrl: string],
+    [void],
+    "nonpayable"
+  >;
 
-    setTokenData(
+  setTokenData: TypedContractMethod<
+    [
       tokenId: BigNumberish,
       name: string,
       asset: string,
       tier: string,
       tokenType: string,
-      description: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
+      description: string
+    ],
+    [void],
+    "nonpayable"
+  >;
 
-    setTokenDescription(
-      tokenId: BigNumberish,
-      _description: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
+  setTokenDescription: TypedContractMethod<
+    [tokenId: BigNumberish, _description: string],
+    [void],
+    "nonpayable"
+  >;
 
-    setTokenExternalUrl(
-      _externalUrl: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
+  setTokenExternalUrl: TypedContractMethod<
+    [_externalUrl: string],
+    [void],
+    "nonpayable"
+  >;
 
-    setTokenImageBaseUrl(
-      _imageBaseUrl: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
+  setTokenImageBaseUrl: TypedContractMethod<
+    [_imageBaseUrl: string],
+    [void],
+    "nonpayable"
+  >;
 
-    supportsInterface(
-      interfaceId: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
+  supportsInterface: TypedContractMethod<
+    [interfaceId: BytesLike],
+    [boolean],
+    "view"
+  >;
 
-    tokenData(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<
+  tokenData: TypedContractMethod<
+    [arg0: BigNumberish],
+    [
       [string, string, string, string, string] & {
         name: string;
         asset: string;
@@ -1075,508 +753,447 @@ export interface ISaverPowers extends BaseContract {
         tokenType: string;
         description: string;
       }
-    >;
+    ],
+    "view"
+  >;
 
-    tokenURI(tokenId: BigNumberish, overrides?: CallOverrides): Promise<string>;
+  tokenURI: TypedContractMethod<[tokenId: BigNumberish], [string], "view">;
 
-    upgradeTo(
-      newImplementation: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
+  upgradeTo: TypedContractMethod<
+    [newImplementation: AddressLike],
+    [void],
+    "nonpayable"
+  >;
 
-    upgradeToAndCall(
-      newImplementation: string,
-      data: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<void>;
+  upgradeToAndCall: TypedContractMethod<
+    [newImplementation: AddressLike, data: BytesLike],
+    [void],
+    "payable"
+  >;
 
-    uri(arg0: BigNumberish, overrides?: CallOverrides): Promise<string>;
-  };
+  uri: TypedContractMethod<[arg0: BigNumberish], [string], "view">;
+
+  getFunction<T extends ContractMethod = ContractMethod>(
+    key: string | FunctionFragment
+  ): T;
+
+  getFunction(
+    nameOrSignature: "DEFAULT_ADMIN_ROLE"
+  ): TypedContractMethod<[], [string], "view">;
+  getFunction(
+    nameOrSignature: "MINTER_ROLE"
+  ): TypedContractMethod<[], [string], "view">;
+  getFunction(
+    nameOrSignature: "UPGRADER_ROLE"
+  ): TypedContractMethod<[], [string], "view">;
+  getFunction(
+    nameOrSignature: "balanceOf"
+  ): TypedContractMethod<
+    [account: AddressLike, id: BigNumberish],
+    [bigint],
+    "view"
+  >;
+  getFunction(
+    nameOrSignature: "balanceOfBatch"
+  ): TypedContractMethod<
+    [accounts: AddressLike[], ids: BigNumberish[]],
+    [bigint[]],
+    "view"
+  >;
+  getFunction(
+    nameOrSignature: "burn"
+  ): TypedContractMethod<
+    [account: AddressLike, id: BigNumberish, value: BigNumberish],
+    [void],
+    "nonpayable"
+  >;
+  getFunction(
+    nameOrSignature: "burnBatch"
+  ): TypedContractMethod<
+    [account: AddressLike, ids: BigNumberish[], values: BigNumberish[]],
+    [void],
+    "nonpayable"
+  >;
+  getFunction(
+    nameOrSignature: "contractURI"
+  ): TypedContractMethod<[], [string], "view">;
+  getFunction(
+    nameOrSignature: "getRoleAdmin"
+  ): TypedContractMethod<[role: BytesLike], [string], "view">;
+  getFunction(
+    nameOrSignature: "grantRole"
+  ): TypedContractMethod<
+    [role: BytesLike, account: AddressLike],
+    [void],
+    "nonpayable"
+  >;
+  getFunction(
+    nameOrSignature: "hasRole"
+  ): TypedContractMethod<
+    [role: BytesLike, account: AddressLike],
+    [boolean],
+    "view"
+  >;
+  getFunction(
+    nameOrSignature: "initialize"
+  ): TypedContractMethod<[], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "isApprovedForAll"
+  ): TypedContractMethod<
+    [account: AddressLike, operator: AddressLike],
+    [boolean],
+    "view"
+  >;
+  getFunction(
+    nameOrSignature: "isValidToken"
+  ): TypedContractMethod<[tokenId: BigNumberish], [boolean], "view">;
+  getFunction(
+    nameOrSignature: "mint"
+  ): TypedContractMethod<
+    [
+      to: AddressLike,
+      tokenId: BigNumberish,
+      amount: BigNumberish,
+      data: BytesLike
+    ],
+    [void],
+    "nonpayable"
+  >;
+  getFunction(
+    nameOrSignature: "mintBatch"
+  ): TypedContractMethod<
+    [
+      to: AddressLike,
+      tokenIds: BigNumberish[],
+      amounts: BigNumberish[],
+      data: BytesLike
+    ],
+    [void],
+    "nonpayable"
+  >;
+  getFunction(
+    nameOrSignature: "proxiableUUID"
+  ): TypedContractMethod<[], [string], "view">;
+  getFunction(
+    nameOrSignature: "renounceRole"
+  ): TypedContractMethod<
+    [role: BytesLike, account: AddressLike],
+    [void],
+    "nonpayable"
+  >;
+  getFunction(
+    nameOrSignature: "revokeRole"
+  ): TypedContractMethod<
+    [role: BytesLike, account: AddressLike],
+    [void],
+    "nonpayable"
+  >;
+  getFunction(
+    nameOrSignature: "safeBatchTransferFrom"
+  ): TypedContractMethod<
+    [
+      from: AddressLike,
+      to: AddressLike,
+      ids: BigNumberish[],
+      amounts: BigNumberish[],
+      data: BytesLike
+    ],
+    [void],
+    "nonpayable"
+  >;
+  getFunction(
+    nameOrSignature: "safeTransferFrom"
+  ): TypedContractMethod<
+    [
+      from: AddressLike,
+      to: AddressLike,
+      id: BigNumberish,
+      amount: BigNumberish,
+      data: BytesLike
+    ],
+    [void],
+    "nonpayable"
+  >;
+  getFunction(
+    nameOrSignature: "setApprovalForAll"
+  ): TypedContractMethod<
+    [operator: AddressLike, approved: boolean],
+    [void],
+    "nonpayable"
+  >;
+  getFunction(
+    nameOrSignature: "setContractDescription"
+  ): TypedContractMethod<[_description: string], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "setContractExternalUrl"
+  ): TypedContractMethod<[_externalUrl: string], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "setContractImageUrl"
+  ): TypedContractMethod<[_imageUrl: string], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "setTokenData"
+  ): TypedContractMethod<
+    [
+      tokenId: BigNumberish,
+      name: string,
+      asset: string,
+      tier: string,
+      tokenType: string,
+      description: string
+    ],
+    [void],
+    "nonpayable"
+  >;
+  getFunction(
+    nameOrSignature: "setTokenDescription"
+  ): TypedContractMethod<
+    [tokenId: BigNumberish, _description: string],
+    [void],
+    "nonpayable"
+  >;
+  getFunction(
+    nameOrSignature: "setTokenExternalUrl"
+  ): TypedContractMethod<[_externalUrl: string], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "setTokenImageBaseUrl"
+  ): TypedContractMethod<[_imageBaseUrl: string], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "supportsInterface"
+  ): TypedContractMethod<[interfaceId: BytesLike], [boolean], "view">;
+  getFunction(
+    nameOrSignature: "tokenData"
+  ): TypedContractMethod<
+    [arg0: BigNumberish],
+    [
+      [string, string, string, string, string] & {
+        name: string;
+        asset: string;
+        tier: string;
+        tokenType: string;
+        description: string;
+      }
+    ],
+    "view"
+  >;
+  getFunction(
+    nameOrSignature: "tokenURI"
+  ): TypedContractMethod<[tokenId: BigNumberish], [string], "view">;
+  getFunction(
+    nameOrSignature: "upgradeTo"
+  ): TypedContractMethod<
+    [newImplementation: AddressLike],
+    [void],
+    "nonpayable"
+  >;
+  getFunction(
+    nameOrSignature: "upgradeToAndCall"
+  ): TypedContractMethod<
+    [newImplementation: AddressLike, data: BytesLike],
+    [void],
+    "payable"
+  >;
+  getFunction(
+    nameOrSignature: "uri"
+  ): TypedContractMethod<[arg0: BigNumberish], [string], "view">;
+
+  getEvent(
+    key: "AdminChanged"
+  ): TypedContractEvent<
+    AdminChangedEvent.InputTuple,
+    AdminChangedEvent.OutputTuple,
+    AdminChangedEvent.OutputObject
+  >;
+  getEvent(
+    key: "ApprovalForAll"
+  ): TypedContractEvent<
+    ApprovalForAllEvent.InputTuple,
+    ApprovalForAllEvent.OutputTuple,
+    ApprovalForAllEvent.OutputObject
+  >;
+  getEvent(
+    key: "BeaconUpgraded"
+  ): TypedContractEvent<
+    BeaconUpgradedEvent.InputTuple,
+    BeaconUpgradedEvent.OutputTuple,
+    BeaconUpgradedEvent.OutputObject
+  >;
+  getEvent(
+    key: "Initialized"
+  ): TypedContractEvent<
+    InitializedEvent.InputTuple,
+    InitializedEvent.OutputTuple,
+    InitializedEvent.OutputObject
+  >;
+  getEvent(
+    key: "RoleAdminChanged"
+  ): TypedContractEvent<
+    RoleAdminChangedEvent.InputTuple,
+    RoleAdminChangedEvent.OutputTuple,
+    RoleAdminChangedEvent.OutputObject
+  >;
+  getEvent(
+    key: "RoleGranted"
+  ): TypedContractEvent<
+    RoleGrantedEvent.InputTuple,
+    RoleGrantedEvent.OutputTuple,
+    RoleGrantedEvent.OutputObject
+  >;
+  getEvent(
+    key: "RoleRevoked"
+  ): TypedContractEvent<
+    RoleRevokedEvent.InputTuple,
+    RoleRevokedEvent.OutputTuple,
+    RoleRevokedEvent.OutputObject
+  >;
+  getEvent(
+    key: "TransferBatch"
+  ): TypedContractEvent<
+    TransferBatchEvent.InputTuple,
+    TransferBatchEvent.OutputTuple,
+    TransferBatchEvent.OutputObject
+  >;
+  getEvent(
+    key: "TransferSingle"
+  ): TypedContractEvent<
+    TransferSingleEvent.InputTuple,
+    TransferSingleEvent.OutputTuple,
+    TransferSingleEvent.OutputObject
+  >;
+  getEvent(
+    key: "URI"
+  ): TypedContractEvent<
+    URIEvent.InputTuple,
+    URIEvent.OutputTuple,
+    URIEvent.OutputObject
+  >;
+  getEvent(
+    key: "Upgraded"
+  ): TypedContractEvent<
+    UpgradedEvent.InputTuple,
+    UpgradedEvent.OutputTuple,
+    UpgradedEvent.OutputObject
+  >;
 
   filters: {
-    "AdminChanged(address,address)"(
-      previousAdmin?: null,
-      newAdmin?: null
-    ): AdminChangedEventFilter;
-    AdminChanged(
-      previousAdmin?: null,
-      newAdmin?: null
-    ): AdminChangedEventFilter;
-
-    "ApprovalForAll(address,address,bool)"(
-      account?: string | null,
-      operator?: string | null,
-      approved?: null
-    ): ApprovalForAllEventFilter;
-    ApprovalForAll(
-      account?: string | null,
-      operator?: string | null,
-      approved?: null
-    ): ApprovalForAllEventFilter;
-
-    "BeaconUpgraded(address)"(
-      beacon?: string | null
-    ): BeaconUpgradedEventFilter;
-    BeaconUpgraded(beacon?: string | null): BeaconUpgradedEventFilter;
-
-    "Initialized(uint8)"(version?: null): InitializedEventFilter;
-    Initialized(version?: null): InitializedEventFilter;
-
-    "RoleAdminChanged(bytes32,bytes32,bytes32)"(
-      role?: BytesLike | null,
-      previousAdminRole?: BytesLike | null,
-      newAdminRole?: BytesLike | null
-    ): RoleAdminChangedEventFilter;
-    RoleAdminChanged(
-      role?: BytesLike | null,
-      previousAdminRole?: BytesLike | null,
-      newAdminRole?: BytesLike | null
-    ): RoleAdminChangedEventFilter;
-
-    "RoleGranted(bytes32,address,address)"(
-      role?: BytesLike | null,
-      account?: string | null,
-      sender?: string | null
-    ): RoleGrantedEventFilter;
-    RoleGranted(
-      role?: BytesLike | null,
-      account?: string | null,
-      sender?: string | null
-    ): RoleGrantedEventFilter;
-
-    "RoleRevoked(bytes32,address,address)"(
-      role?: BytesLike | null,
-      account?: string | null,
-      sender?: string | null
-    ): RoleRevokedEventFilter;
-    RoleRevoked(
-      role?: BytesLike | null,
-      account?: string | null,
-      sender?: string | null
-    ): RoleRevokedEventFilter;
-
-    "TransferBatch(address,address,address,uint256[],uint256[])"(
-      operator?: string | null,
-      from?: string | null,
-      to?: string | null,
-      ids?: null,
-      values?: null
-    ): TransferBatchEventFilter;
-    TransferBatch(
-      operator?: string | null,
-      from?: string | null,
-      to?: string | null,
-      ids?: null,
-      values?: null
-    ): TransferBatchEventFilter;
-
-    "TransferSingle(address,address,address,uint256,uint256)"(
-      operator?: string | null,
-      from?: string | null,
-      to?: string | null,
-      id?: null,
-      value?: null
-    ): TransferSingleEventFilter;
-    TransferSingle(
-      operator?: string | null,
-      from?: string | null,
-      to?: string | null,
-      id?: null,
-      value?: null
-    ): TransferSingleEventFilter;
-
-    "URI(string,uint256)"(
-      value?: null,
-      id?: BigNumberish | null
-    ): URIEventFilter;
-    URI(value?: null, id?: BigNumberish | null): URIEventFilter;
-
-    "Upgraded(address)"(implementation?: string | null): UpgradedEventFilter;
-    Upgraded(implementation?: string | null): UpgradedEventFilter;
-  };
-
-  estimateGas: {
-    DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
-
-    MINTER_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
-
-    UPGRADER_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
-
-    balanceOf(
-      account: string,
-      id: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    balanceOfBatch(
-      accounts: string[],
-      ids: BigNumberish[],
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    burn(
-      account: string,
-      id: BigNumberish,
-      value: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    burnBatch(
-      account: string,
-      ids: BigNumberish[],
-      values: BigNumberish[],
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    contractURI(overrides?: CallOverrides): Promise<BigNumber>;
-
-    getRoleAdmin(
-      role: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    grantRole(
-      role: BytesLike,
-      account: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    hasRole(
-      role: BytesLike,
-      account: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    initialize(overrides?: Overrides & { from?: string }): Promise<BigNumber>;
-
-    isApprovedForAll(
-      account: string,
-      operator: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    isValidToken(
-      tokenId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    mint(
-      to: string,
-      tokenId: BigNumberish,
-      amount: BigNumberish,
-      data: BytesLike,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    mintBatch(
-      to: string,
-      tokenIds: BigNumberish[],
-      amounts: BigNumberish[],
-      data: BytesLike,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    proxiableUUID(overrides?: CallOverrides): Promise<BigNumber>;
-
-    renounceRole(
-      role: BytesLike,
-      account: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    revokeRole(
-      role: BytesLike,
-      account: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    safeBatchTransferFrom(
-      from: string,
-      to: string,
-      ids: BigNumberish[],
-      amounts: BigNumberish[],
-      data: BytesLike,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    safeTransferFrom(
-      from: string,
-      to: string,
-      id: BigNumberish,
-      amount: BigNumberish,
-      data: BytesLike,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    setApprovalForAll(
-      operator: string,
-      approved: boolean,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    setContractDescription(
-      _description: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    setContractExternalUrl(
-      _externalUrl: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    setContractImageUrl(
-      _imageUrl: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    setTokenData(
-      tokenId: BigNumberish,
-      name: string,
-      asset: string,
-      tier: string,
-      tokenType: string,
-      description: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    setTokenDescription(
-      tokenId: BigNumberish,
-      _description: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    setTokenExternalUrl(
-      _externalUrl: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    setTokenImageBaseUrl(
-      _imageBaseUrl: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    supportsInterface(
-      interfaceId: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    tokenData(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    tokenURI(
-      tokenId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    upgradeTo(
-      newImplementation: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    upgradeToAndCall(
-      newImplementation: string,
-      data: BytesLike,
-      overrides?: PayableOverrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    uri(arg0: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
-  };
-
-  populateTransaction: {
-    DEFAULT_ADMIN_ROLE(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    MINTER_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    UPGRADER_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    balanceOf(
-      account: string,
-      id: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    balanceOfBatch(
-      accounts: string[],
-      ids: BigNumberish[],
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    burn(
-      account: string,
-      id: BigNumberish,
-      value: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    burnBatch(
-      account: string,
-      ids: BigNumberish[],
-      values: BigNumberish[],
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    contractURI(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    getRoleAdmin(
-      role: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    grantRole(
-      role: BytesLike,
-      account: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    hasRole(
-      role: BytesLike,
-      account: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    initialize(
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    isApprovedForAll(
-      account: string,
-      operator: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    isValidToken(
-      tokenId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    mint(
-      to: string,
-      tokenId: BigNumberish,
-      amount: BigNumberish,
-      data: BytesLike,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    mintBatch(
-      to: string,
-      tokenIds: BigNumberish[],
-      amounts: BigNumberish[],
-      data: BytesLike,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    proxiableUUID(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    renounceRole(
-      role: BytesLike,
-      account: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    revokeRole(
-      role: BytesLike,
-      account: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    safeBatchTransferFrom(
-      from: string,
-      to: string,
-      ids: BigNumberish[],
-      amounts: BigNumberish[],
-      data: BytesLike,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    safeTransferFrom(
-      from: string,
-      to: string,
-      id: BigNumberish,
-      amount: BigNumberish,
-      data: BytesLike,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    setApprovalForAll(
-      operator: string,
-      approved: boolean,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    setContractDescription(
-      _description: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    setContractExternalUrl(
-      _externalUrl: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    setContractImageUrl(
-      _imageUrl: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    setTokenData(
-      tokenId: BigNumberish,
-      name: string,
-      asset: string,
-      tier: string,
-      tokenType: string,
-      description: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    setTokenDescription(
-      tokenId: BigNumberish,
-      _description: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    setTokenExternalUrl(
-      _externalUrl: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    setTokenImageBaseUrl(
-      _imageBaseUrl: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    supportsInterface(
-      interfaceId: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    tokenData(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    tokenURI(
-      tokenId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    upgradeTo(
-      newImplementation: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    upgradeToAndCall(
-      newImplementation: string,
-      data: BytesLike,
-      overrides?: PayableOverrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    uri(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
+    "AdminChanged(address,address)": TypedContractEvent<
+      AdminChangedEvent.InputTuple,
+      AdminChangedEvent.OutputTuple,
+      AdminChangedEvent.OutputObject
+    >;
+    AdminChanged: TypedContractEvent<
+      AdminChangedEvent.InputTuple,
+      AdminChangedEvent.OutputTuple,
+      AdminChangedEvent.OutputObject
+    >;
+
+    "ApprovalForAll(address,address,bool)": TypedContractEvent<
+      ApprovalForAllEvent.InputTuple,
+      ApprovalForAllEvent.OutputTuple,
+      ApprovalForAllEvent.OutputObject
+    >;
+    ApprovalForAll: TypedContractEvent<
+      ApprovalForAllEvent.InputTuple,
+      ApprovalForAllEvent.OutputTuple,
+      ApprovalForAllEvent.OutputObject
+    >;
+
+    "BeaconUpgraded(address)": TypedContractEvent<
+      BeaconUpgradedEvent.InputTuple,
+      BeaconUpgradedEvent.OutputTuple,
+      BeaconUpgradedEvent.OutputObject
+    >;
+    BeaconUpgraded: TypedContractEvent<
+      BeaconUpgradedEvent.InputTuple,
+      BeaconUpgradedEvent.OutputTuple,
+      BeaconUpgradedEvent.OutputObject
+    >;
+
+    "Initialized(uint8)": TypedContractEvent<
+      InitializedEvent.InputTuple,
+      InitializedEvent.OutputTuple,
+      InitializedEvent.OutputObject
+    >;
+    Initialized: TypedContractEvent<
+      InitializedEvent.InputTuple,
+      InitializedEvent.OutputTuple,
+      InitializedEvent.OutputObject
+    >;
+
+    "RoleAdminChanged(bytes32,bytes32,bytes32)": TypedContractEvent<
+      RoleAdminChangedEvent.InputTuple,
+      RoleAdminChangedEvent.OutputTuple,
+      RoleAdminChangedEvent.OutputObject
+    >;
+    RoleAdminChanged: TypedContractEvent<
+      RoleAdminChangedEvent.InputTuple,
+      RoleAdminChangedEvent.OutputTuple,
+      RoleAdminChangedEvent.OutputObject
+    >;
+
+    "RoleGranted(bytes32,address,address)": TypedContractEvent<
+      RoleGrantedEvent.InputTuple,
+      RoleGrantedEvent.OutputTuple,
+      RoleGrantedEvent.OutputObject
+    >;
+    RoleGranted: TypedContractEvent<
+      RoleGrantedEvent.InputTuple,
+      RoleGrantedEvent.OutputTuple,
+      RoleGrantedEvent.OutputObject
+    >;
+
+    "RoleRevoked(bytes32,address,address)": TypedContractEvent<
+      RoleRevokedEvent.InputTuple,
+      RoleRevokedEvent.OutputTuple,
+      RoleRevokedEvent.OutputObject
+    >;
+    RoleRevoked: TypedContractEvent<
+      RoleRevokedEvent.InputTuple,
+      RoleRevokedEvent.OutputTuple,
+      RoleRevokedEvent.OutputObject
+    >;
+
+    "TransferBatch(address,address,address,uint256[],uint256[])": TypedContractEvent<
+      TransferBatchEvent.InputTuple,
+      TransferBatchEvent.OutputTuple,
+      TransferBatchEvent.OutputObject
+    >;
+    TransferBatch: TypedContractEvent<
+      TransferBatchEvent.InputTuple,
+      TransferBatchEvent.OutputTuple,
+      TransferBatchEvent.OutputObject
+    >;
+
+    "TransferSingle(address,address,address,uint256,uint256)": TypedContractEvent<
+      TransferSingleEvent.InputTuple,
+      TransferSingleEvent.OutputTuple,
+      TransferSingleEvent.OutputObject
+    >;
+    TransferSingle: TypedContractEvent<
+      TransferSingleEvent.InputTuple,
+      TransferSingleEvent.OutputTuple,
+      TransferSingleEvent.OutputObject
+    >;
+
+    "URI(string,uint256)": TypedContractEvent<
+      URIEvent.InputTuple,
+      URIEvent.OutputTuple,
+      URIEvent.OutputObject
+    >;
+    URI: TypedContractEvent<
+      URIEvent.InputTuple,
+      URIEvent.OutputTuple,
+      URIEvent.OutputObject
+    >;
+
+    "Upgraded(address)": TypedContractEvent<
+      UpgradedEvent.InputTuple,
+      UpgradedEvent.OutputTuple,
+      UpgradedEvent.OutputObject
+    >;
+    Upgraded: TypedContractEvent<
+      UpgradedEvent.InputTuple,
+      UpgradedEvent.OutputTuple,
+      UpgradedEvent.OutputObject
+    >;
   };
 }

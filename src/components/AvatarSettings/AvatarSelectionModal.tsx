@@ -49,7 +49,9 @@ export const AvatarSelectionModal = ({ onClose, isOpen }: AvatarSelectionModalPr
         </ModalHeader>
         <ModalBody>
           <Box className="selectionModal_body">
-            {isLoading ? <CenteredSpinner background="transparent" /> : null}
+            {isLoading && nftsForOwner.length > 0 ? (
+              <CenteredSpinner background="transparent" />
+            ) : null}
 
             {nftsForOwner.length > 0 ? (
               <Box className="selectionModal_list">
@@ -69,7 +71,9 @@ export const AvatarSelectionModal = ({ onClose, isOpen }: AvatarSelectionModalPr
                   <br />
                   Retry again or return later
                 </Text>
-                <Button onClick={() => refetch()}>Reiterate</Button>
+                <Button onClick={() => refetch()} isLoading={isLoading}>
+                  Reiterate
+                </Button>
               </Flex>
             )}
           </Box>
