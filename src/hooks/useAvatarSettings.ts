@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { BigNumber, BigNumberish, ethers } from 'ethers';
 import {
   Address,
@@ -150,15 +150,36 @@ export const useAllEvents = () => {
   const { data, isLoading } = useQuery(
     [GET_ALL_EVENTS, { address }],
     async () => {
-      console.log('fetch all events');
       const res = address ? await getAllEvents(address) : null;
-      console.log(res);
       return res;
     },
     { staleTime: 0, cacheTime: 0, refetchInterval: 10_000 }
   );
 
   return { events: data || [], isLoading };
+};
+
+export const IS_BIRTHDAY_PRIZE_AVAILABLE = 'is-birthday-prize-available';
+export const useIsBirthdayPrizeAvailable = (tokenId?: BigNumberish) => {
+  const { isBirthdayPrizeAvailable } = useAvatarSettingsContract();
+
+  const queryResult = useQuery<Boolean>(
+    [GET_APPROVED_COLLECTIONS, { tokenId }],
+    async () => await isBirthdayPrizeAvailable(tokenId!),
+    {
+      enabled: Boolean(tokenId),
+      cacheTime: 0,
+      staleTime: 0,
+    }
+  );
+
+  useEffect(() => {
+    if (tokenId) {
+      queryResult.refetch();
+    }
+  }, [queryResult, tokenId]);
+
+  return queryResult;
 };
 
 export const ACTIVATE_POWER = 'activate-power';
@@ -447,6 +468,40 @@ export const useActivatePowerAccess = () => {
         setTimeout(() => {
           queryClient.invalidateQueries({ queryKey: [GET_ALL_EVENTS] });
         }, 60_000);
+      },
+      onError: (err) => {
+        handleError(err);
+      },
+    }
+  );
+};
+
+export const CLAIM_PRIZE = 'claim-prize';
+export const useClaimPrize = () => {
+  const { claimPrize } = useAvatarSettingsContract();
+  const { address: account } = useAccount();
+  const { connect } = useConnectWallet();
+  const { success, handleError } = useNotification();
+  const queryClient = useQueryClient();
+
+  return useMutation(
+    [CLAIM_PRIZE],
+    async () => {
+      if (!account) {
+        connect();
+        return;
+      }
+
+      const txHash = await claimPrize();
+      success({
+        title: 'Success',
+        description: 'You successfully claimed your birthday prize',
+        txHash,
+      });
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: [IS_BIRTHDAY_PRIZE_AVAILABLE] });
       },
       onError: (err) => {
         handleError(err);

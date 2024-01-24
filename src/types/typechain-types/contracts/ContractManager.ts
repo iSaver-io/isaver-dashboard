@@ -31,6 +31,7 @@ export interface ContractManagerInterface extends utils.Interface {
     "DEFAULT_ADMIN_ROLE()": FunctionFragment;
     "UPGRADER_ROLE()": FunctionFragment;
     "getAvatarsAddress()": FunctionFragment;
+    "getBirthdayPrizesPool()": FunctionFragment;
     "getPowersAddress()": FunctionFragment;
     "getRafflesAddress()": FunctionFragment;
     "getReferralManagerAddress()": FunctionFragment;
@@ -48,6 +49,7 @@ export interface ContractManagerInterface extends utils.Interface {
     "revokeRole(bytes32,address)": FunctionFragment;
     "supportsInterface(bytes4)": FunctionFragment;
     "updateAvatars(address)": FunctionFragment;
+    "updateBirthdayPrizesPool(address)": FunctionFragment;
     "updatePowers(address)": FunctionFragment;
     "updateRaffles(address)": FunctionFragment;
     "updateReferralManager(address)": FunctionFragment;
@@ -65,6 +67,7 @@ export interface ContractManagerInterface extends utils.Interface {
       | "DEFAULT_ADMIN_ROLE"
       | "UPGRADER_ROLE"
       | "getAvatarsAddress"
+      | "getBirthdayPrizesPool"
       | "getPowersAddress"
       | "getRafflesAddress"
       | "getReferralManagerAddress"
@@ -82,6 +85,7 @@ export interface ContractManagerInterface extends utils.Interface {
       | "revokeRole"
       | "supportsInterface"
       | "updateAvatars"
+      | "updateBirthdayPrizesPool"
       | "updatePowers"
       | "updateRaffles"
       | "updateReferralManager"
@@ -104,6 +108,10 @@ export interface ContractManagerInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "getAvatarsAddress",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getBirthdayPrizesPool",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -175,6 +183,10 @@ export interface ContractManagerInterface extends utils.Interface {
     values: [string]
   ): string;
   encodeFunctionData(
+    functionFragment: "updateBirthdayPrizesPool",
+    values: [string]
+  ): string;
+  encodeFunctionData(
     functionFragment: "updatePowers",
     values: [string]
   ): string;
@@ -219,6 +231,10 @@ export interface ContractManagerInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "getAvatarsAddress",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getBirthdayPrizesPool",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -275,6 +291,10 @@ export interface ContractManagerInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "updateAvatars",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "updateBirthdayPrizesPool",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -439,6 +459,8 @@ export interface ContractManager extends BaseContract {
 
     getAvatarsAddress(overrides?: CallOverrides): Promise<[string]>;
 
+    getBirthdayPrizesPool(overrides?: CallOverrides): Promise<[string]>;
+
     getPowersAddress(overrides?: CallOverrides): Promise<[string]>;
 
     getRafflesAddress(overrides?: CallOverrides): Promise<[string]>;
@@ -494,6 +516,11 @@ export interface ContractManager extends BaseContract {
 
     updateAvatars(
       _avatars: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
+
+    updateBirthdayPrizesPool(
+      _birthdayPrizesPool: string,
       overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
 
@@ -555,6 +582,8 @@ export interface ContractManager extends BaseContract {
 
   getAvatarsAddress(overrides?: CallOverrides): Promise<string>;
 
+  getBirthdayPrizesPool(overrides?: CallOverrides): Promise<string>;
+
   getPowersAddress(overrides?: CallOverrides): Promise<string>;
 
   getRafflesAddress(overrides?: CallOverrides): Promise<string>;
@@ -610,6 +639,11 @@ export interface ContractManager extends BaseContract {
 
   updateAvatars(
     _avatars: string,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  updateBirthdayPrizesPool(
+    _birthdayPrizesPool: string,
     overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
 
@@ -671,6 +705,8 @@ export interface ContractManager extends BaseContract {
 
     getAvatarsAddress(overrides?: CallOverrides): Promise<string>;
 
+    getBirthdayPrizesPool(overrides?: CallOverrides): Promise<string>;
+
     getPowersAddress(overrides?: CallOverrides): Promise<string>;
 
     getRafflesAddress(overrides?: CallOverrides): Promise<string>;
@@ -723,6 +759,11 @@ export interface ContractManager extends BaseContract {
     ): Promise<boolean>;
 
     updateAvatars(_avatars: string, overrides?: CallOverrides): Promise<void>;
+
+    updateBirthdayPrizesPool(
+      _birthdayPrizesPool: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     updatePowers(_powers: string, overrides?: CallOverrides): Promise<void>;
 
@@ -820,6 +861,8 @@ export interface ContractManager extends BaseContract {
 
     getAvatarsAddress(overrides?: CallOverrides): Promise<BigNumber>;
 
+    getBirthdayPrizesPool(overrides?: CallOverrides): Promise<BigNumber>;
+
     getPowersAddress(overrides?: CallOverrides): Promise<BigNumber>;
 
     getRafflesAddress(overrides?: CallOverrides): Promise<BigNumber>;
@@ -876,6 +919,11 @@ export interface ContractManager extends BaseContract {
 
     updateAvatars(
       _avatars: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+
+    updateBirthdayPrizesPool(
+      _birthdayPrizesPool: string,
       overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
 
@@ -939,6 +987,10 @@ export interface ContractManager extends BaseContract {
     UPGRADER_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getAvatarsAddress(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    getBirthdayPrizesPool(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     getPowersAddress(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
@@ -1004,6 +1056,11 @@ export interface ContractManager extends BaseContract {
 
     updateAvatars(
       _avatars: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    updateBirthdayPrizesPool(
+      _birthdayPrizesPool: string,
       overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 

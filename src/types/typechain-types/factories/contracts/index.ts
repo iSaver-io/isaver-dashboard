@@ -14,4 +14,5 @@ export { ReferralManager__factory } from "./ReferralManager__factory";
 export { Staking__factory } from "./Staking__factory";
 export { Teams__factory } from "./Teams__factory";
 export { TokenVesting__factory } from "./TokenVesting__factory";
+export { TokensPool__factory } from "./TokensPool__factory";
 export { VendorSell__factory } from "./VendorSell__factory";
