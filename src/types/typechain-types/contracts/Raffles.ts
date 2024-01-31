@@ -3,24 +3,28 @@
 /* eslint-disable */
 import type {
   BaseContract,
+  BigNumber,
   BigNumberish,
   BytesLike,
-  FunctionFragment,
-  Result,
-  Interface,
-  EventFragment,
-  AddressLike,
-  ContractRunner,
-  ContractMethod,
-  Listener,
+  CallOverrides,
+  ContractTransaction,
+  Overrides,
+  PayableOverrides,
+  PopulatedTransaction,
+  Signer,
+  utils,
 } from "ethers";
 import type {
-  TypedContractEvent,
-  TypedDeferredTopicFilter,
-  TypedEventLog,
-  TypedLogDescription,
+  FunctionFragment,
+  Result,
+  EventFragment,
+} from "@ethersproject/abi";
+import type { Listener, Provider } from "@ethersproject/providers";
+import type {
+  TypedEventFilter,
+  TypedEvent,
   TypedListener,
-  TypedContractMethod,
+  OnEvent,
 } from "../common";
 
 export declare namespace IRaffles {
@@ -38,51 +42,103 @@ export declare namespace IRaffles {
     winnersForLevel: BigNumberish[];
     prizeForLevel: BigNumberish[];
     totalTickets: BigNumberish;
-    members: AddressLike[];
+    members: string[];
     randomWord: BigNumberish;
-    winners: AddressLike[][];
+    winners: string[][];
   };
 
   export type RoundStructOutput = [
-    id: bigint,
-    startTime: bigint,
-    duration: bigint,
-    isClosed: boolean,
-    isOracleFulfilled: boolean,
-    isFinished: boolean,
-    initialPrize: bigint,
-    totalPrize: bigint,
-    maxTicketsFromOneMember: bigint,
-    tokensForOneTicket: bigint,
-    winnersForLevel: bigint[],
-    prizeForLevel: bigint[],
-    totalTickets: bigint,
-    members: string[],
-    randomWord: bigint,
-    winners: string[][]
+    BigNumber,
+    BigNumber,
+    BigNumber,
+    boolean,
+    boolean,
+    boolean,
+    BigNumber,
+    BigNumber,
+    BigNumber,
+    BigNumber,
+    BigNumber[],
+    BigNumber[],
+    BigNumber,
+    string[],
+    BigNumber,
+    string[][]
   ] & {
-    id: bigint;
-    startTime: bigint;
-    duration: bigint;
+    id: BigNumber;
+    startTime: BigNumber;
+    duration: BigNumber;
     isClosed: boolean;
     isOracleFulfilled: boolean;
     isFinished: boolean;
-    initialPrize: bigint;
-    totalPrize: bigint;
-    maxTicketsFromOneMember: bigint;
-    tokensForOneTicket: bigint;
-    winnersForLevel: bigint[];
-    prizeForLevel: bigint[];
-    totalTickets: bigint;
+    initialPrize: BigNumber;
+    totalPrize: BigNumber;
+    maxTicketsFromOneMember: BigNumber;
+    tokensForOneTicket: BigNumber;
+    winnersForLevel: BigNumber[];
+    prizeForLevel: BigNumber[];
+    totalTickets: BigNumber;
     members: string[];
-    randomWord: bigint;
+    randomWord: BigNumber;
     winners: string[][];
   };
 }
 
-export interface RafflesInterface extends Interface {
+export interface RafflesInterface extends utils.Interface {
+  functions: {
+    "CLAIM_PERIOD()": FunctionFragment;
+    "DAYS_STREAK_FOR_TICKET()": FunctionFragment;
+    "DEFAULT_ADMIN_ROLE()": FunctionFragment;
+    "OPERATOR_ROLE()": FunctionFragment;
+    "TICKET_ID()": FunctionFragment;
+    "TICKET_PRICE()": FunctionFragment;
+    "UPGRADER_ROLE()": FunctionFragment;
+    "buyTickets(uint256)": FunctionFragment;
+    "claimDay()": FunctionFragment;
+    "createRaffleRound(uint256,uint256,uint256,uint256,uint256,uint256[],uint256[])": FunctionFragment;
+    "entryRaffle(uint256,uint256)": FunctionFragment;
+    "finishRaffleRound(uint256)": FunctionFragment;
+    "getActiveRounds()": FunctionFragment;
+    "getClaimStreak(address)": FunctionFragment;
+    "getLastClaimTime(address)": FunctionFragment;
+    "getLastFinishedRounds(uint256,uint256)": FunctionFragment;
+    "getRoleAdmin(bytes32)": FunctionFragment;
+    "getRound(uint256)": FunctionFragment;
+    "getRounds()": FunctionFragment;
+    "getTotalRounds()": FunctionFragment;
+    "getUserRoundEntry(address,uint256)": FunctionFragment;
+    "getWinnerPrize(address)": FunctionFragment;
+    "getWinnersFromOracleRandom(uint256)": FunctionFragment;
+    "grantRole(bytes32,address)": FunctionFragment;
+    "hasRole(bytes32,address)": FunctionFragment;
+    "initialize(uint256,uint256,uint256,address,address,uint64,bytes32)": FunctionFragment;
+    "isClaimAvailable(address)": FunctionFragment;
+    "isMintAvailable(address)": FunctionFragment;
+    "mintMyTicket()": FunctionFragment;
+    "oracleRequests(uint256)": FunctionFragment;
+    "proxiableUUID()": FunctionFragment;
+    "rawFulfillRandomWords(uint256,uint256[])": FunctionFragment;
+    "renounceRole(bytes32,address)": FunctionFragment;
+    "revokeRole(bytes32,address)": FunctionFragment;
+    "rounds(uint256)": FunctionFragment;
+    "supportsInterface(bytes4)": FunctionFragment;
+    "updateCallbackGasLimit(uint32)": FunctionFragment;
+    "updateClaimPeriod(uint256)": FunctionFragment;
+    "updateCoordinator(address)": FunctionFragment;
+    "updateDaysStreakForTicket(uint256)": FunctionFragment;
+    "updateKeyHash(bytes32)": FunctionFragment;
+    "updateRequestConfirmations(uint16)": FunctionFragment;
+    "updateSubscriptionId(uint64)": FunctionFragment;
+    "updateTicketId(uint256)": FunctionFragment;
+    "updateTicketPrice(uint256)": FunctionFragment;
+    "updateWinnerCalculationInRequest(bool)": FunctionFragment;
+    "upgradeTo(address)": FunctionFragment;
+    "upgradeToAndCall(address,bytes)": FunctionFragment;
+    "withdrawLiquidity(address,uint256)": FunctionFragment;
+  };
+
   getFunction(
-    nameOrSignature:
+    nameOrSignatureOrTopic:
       | "CLAIM_PERIOD"
       | "DAYS_STREAK_FOR_TICKET"
       | "DEFAULT_ADMIN_ROLE"
@@ -133,23 +189,6 @@ export interface RafflesInterface extends Interface {
       | "upgradeToAndCall"
       | "withdrawLiquidity"
   ): FunctionFragment;
-
-  getEvent(
-    nameOrSignatureOrTopic:
-      | "AdminChanged"
-      | "BeaconUpgraded"
-      | "Initialized"
-      | "LiquidityWithdrawnByAdmin"
-      | "NewRoundCreated"
-      | "OracleRequestFulfilled"
-      | "OracleRequestSent"
-      | "RoleAdminChanged"
-      | "RoleGranted"
-      | "RoleRevoked"
-      | "RoundFinished"
-      | "TicketsCollected"
-      | "Upgraded"
-  ): EventFragment;
 
   encodeFunctionData(
     functionFragment: "CLAIM_PERIOD",
@@ -207,11 +246,11 @@ export interface RafflesInterface extends Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "getClaimStreak",
-    values: [AddressLike]
+    values: [string]
   ): string;
   encodeFunctionData(
     functionFragment: "getLastClaimTime",
-    values: [AddressLike]
+    values: [string]
   ): string;
   encodeFunctionData(
     functionFragment: "getLastFinishedRounds",
@@ -232,11 +271,11 @@ export interface RafflesInterface extends Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "getUserRoundEntry",
-    values: [AddressLike, BigNumberish]
+    values: [string, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "getWinnerPrize",
-    values: [AddressLike]
+    values: [string]
   ): string;
   encodeFunctionData(
     functionFragment: "getWinnersFromOracleRandom",
@@ -244,11 +283,11 @@ export interface RafflesInterface extends Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "grantRole",
-    values: [BytesLike, AddressLike]
+    values: [BytesLike, string]
   ): string;
   encodeFunctionData(
     functionFragment: "hasRole",
-    values: [BytesLike, AddressLike]
+    values: [BytesLike, string]
   ): string;
   encodeFunctionData(
     functionFragment: "initialize",
@@ -256,19 +295,19 @@ export interface RafflesInterface extends Interface {
       BigNumberish,
       BigNumberish,
       BigNumberish,
-      AddressLike,
-      AddressLike,
+      string,
+      string,
       BigNumberish,
       BytesLike
     ]
   ): string;
   encodeFunctionData(
     functionFragment: "isClaimAvailable",
-    values: [AddressLike]
+    values: [string]
   ): string;
   encodeFunctionData(
     functionFragment: "isMintAvailable",
-    values: [AddressLike]
+    values: [string]
   ): string;
   encodeFunctionData(
     functionFragment: "mintMyTicket",
@@ -288,11 +327,11 @@ export interface RafflesInterface extends Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "renounceRole",
-    values: [BytesLike, AddressLike]
+    values: [BytesLike, string]
   ): string;
   encodeFunctionData(
     functionFragment: "revokeRole",
-    values: [BytesLike, AddressLike]
+    values: [BytesLike, string]
   ): string;
   encodeFunctionData(
     functionFragment: "rounds",
@@ -312,7 +351,7 @@ export interface RafflesInterface extends Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "updateCoordinator",
-    values: [AddressLike]
+    values: [string]
   ): string;
   encodeFunctionData(
     functionFragment: "updateDaysStreakForTicket",
@@ -342,17 +381,14 @@ export interface RafflesInterface extends Interface {
     functionFragment: "updateWinnerCalculationInRequest",
     values: [boolean]
   ): string;
-  encodeFunctionData(
-    functionFragment: "upgradeTo",
-    values: [AddressLike]
-  ): string;
+  encodeFunctionData(functionFragment: "upgradeTo", values: [string]): string;
   encodeFunctionData(
     functionFragment: "upgradeToAndCall",
-    values: [AddressLike, BytesLike]
+    values: [string, BytesLike]
   ): string;
   encodeFunctionData(
     functionFragment: "withdrawLiquidity",
-    values: [AddressLike, BigNumberish]
+    values: [string, BigNumberish]
   ): string;
 
   decodeFunctionResult(
@@ -518,987 +554,1504 @@ export interface RafflesInterface extends Interface {
     functionFragment: "withdrawLiquidity",
     data: BytesLike
   ): Result;
+
+  events: {
+    "AdminChanged(address,address)": EventFragment;
+    "BeaconUpgraded(address)": EventFragment;
+    "Initialized(uint8)": EventFragment;
+    "LiquidityWithdrawnByAdmin(address,uint256)": EventFragment;
+    "NewRoundCreated(uint256)": EventFragment;
+    "OracleRequestFulfilled(uint256,uint256,uint256)": EventFragment;
+    "OracleRequestSent(uint256,uint256)": EventFragment;
+    "RoleAdminChanged(bytes32,bytes32,bytes32)": EventFragment;
+    "RoleGranted(bytes32,address,address)": EventFragment;
+    "RoleRevoked(bytes32,address,address)": EventFragment;
+    "RoundFinished(uint256)": EventFragment;
+    "TicketsCollected(address,uint256)": EventFragment;
+    "Upgraded(address)": EventFragment;
+  };
+
+  getEvent(nameOrSignatureOrTopic: "AdminChanged"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "BeaconUpgraded"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "LiquidityWithdrawnByAdmin"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "NewRoundCreated"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "OracleRequestFulfilled"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "OracleRequestSent"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "RoleAdminChanged"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "RoleGranted"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "RoleRevoked"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "RoundFinished"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "TicketsCollected"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Upgraded"): EventFragment;
 }
 
-export namespace AdminChangedEvent {
-  export type InputTuple = [previousAdmin: AddressLike, newAdmin: AddressLike];
-  export type OutputTuple = [previousAdmin: string, newAdmin: string];
-  export interface OutputObject {
-    previousAdmin: string;
-    newAdmin: string;
-  }
-  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
-  export type Filter = TypedDeferredTopicFilter<Event>;
-  export type Log = TypedEventLog<Event>;
-  export type LogDescription = TypedLogDescription<Event>;
+export interface AdminChangedEventObject {
+  previousAdmin: string;
+  newAdmin: string;
 }
+export type AdminChangedEvent = TypedEvent<
+  [string, string],
+  AdminChangedEventObject
+>;
 
-export namespace BeaconUpgradedEvent {
-  export type InputTuple = [beacon: AddressLike];
-  export type OutputTuple = [beacon: string];
-  export interface OutputObject {
-    beacon: string;
-  }
-  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
-  export type Filter = TypedDeferredTopicFilter<Event>;
-  export type Log = TypedEventLog<Event>;
-  export type LogDescription = TypedLogDescription<Event>;
-}
+export type AdminChangedEventFilter = TypedEventFilter<AdminChangedEvent>;
 
-export namespace InitializedEvent {
-  export type InputTuple = [version: BigNumberish];
-  export type OutputTuple = [version: bigint];
-  export interface OutputObject {
-    version: bigint;
-  }
-  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
-  export type Filter = TypedDeferredTopicFilter<Event>;
-  export type Log = TypedEventLog<Event>;
-  export type LogDescription = TypedLogDescription<Event>;
+export interface BeaconUpgradedEventObject {
+  beacon: string;
 }
+export type BeaconUpgradedEvent = TypedEvent<
+  [string],
+  BeaconUpgradedEventObject
+>;
 
-export namespace LiquidityWithdrawnByAdminEvent {
-  export type InputTuple = [recipient: AddressLike, amount: BigNumberish];
-  export type OutputTuple = [recipient: string, amount: bigint];
-  export interface OutputObject {
-    recipient: string;
-    amount: bigint;
-  }
-  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
-  export type Filter = TypedDeferredTopicFilter<Event>;
-  export type Log = TypedEventLog<Event>;
-  export type LogDescription = TypedLogDescription<Event>;
-}
+export type BeaconUpgradedEventFilter = TypedEventFilter<BeaconUpgradedEvent>;
 
-export namespace NewRoundCreatedEvent {
-  export type InputTuple = [roundId: BigNumberish];
-  export type OutputTuple = [roundId: bigint];
-  export interface OutputObject {
-    roundId: bigint;
-  }
-  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
-  export type Filter = TypedDeferredTopicFilter<Event>;
-  export type Log = TypedEventLog<Event>;
-  export type LogDescription = TypedLogDescription<Event>;
+export interface InitializedEventObject {
+  version: number;
 }
+export type InitializedEvent = TypedEvent<[number], InitializedEventObject>;
 
-export namespace OracleRequestFulfilledEvent {
-  export type InputTuple = [
-    roundId: BigNumberish,
-    requestId: BigNumberish,
-    randomWord: BigNumberish
-  ];
-  export type OutputTuple = [
-    roundId: bigint,
-    requestId: bigint,
-    randomWord: bigint
-  ];
-  export interface OutputObject {
-    roundId: bigint;
-    requestId: bigint;
-    randomWord: bigint;
-  }
-  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
-  export type Filter = TypedDeferredTopicFilter<Event>;
-  export type Log = TypedEventLog<Event>;
-  export type LogDescription = TypedLogDescription<Event>;
-}
+export type InitializedEventFilter = TypedEventFilter<InitializedEvent>;
 
-export namespace OracleRequestSentEvent {
-  export type InputTuple = [roundId: BigNumberish, requestId: BigNumberish];
-  export type OutputTuple = [roundId: bigint, requestId: bigint];
-  export interface OutputObject {
-    roundId: bigint;
-    requestId: bigint;
-  }
-  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
-  export type Filter = TypedDeferredTopicFilter<Event>;
-  export type Log = TypedEventLog<Event>;
-  export type LogDescription = TypedLogDescription<Event>;
+export interface LiquidityWithdrawnByAdminEventObject {
+  recipient: string;
+  amount: BigNumber;
 }
+export type LiquidityWithdrawnByAdminEvent = TypedEvent<
+  [string, BigNumber],
+  LiquidityWithdrawnByAdminEventObject
+>;
 
-export namespace RoleAdminChangedEvent {
-  export type InputTuple = [
-    role: BytesLike,
-    previousAdminRole: BytesLike,
-    newAdminRole: BytesLike
-  ];
-  export type OutputTuple = [
-    role: string,
-    previousAdminRole: string,
-    newAdminRole: string
-  ];
-  export interface OutputObject {
-    role: string;
-    previousAdminRole: string;
-    newAdminRole: string;
-  }
-  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
-  export type Filter = TypedDeferredTopicFilter<Event>;
-  export type Log = TypedEventLog<Event>;
-  export type LogDescription = TypedLogDescription<Event>;
-}
+export type LiquidityWithdrawnByAdminEventFilter =
+  TypedEventFilter<LiquidityWithdrawnByAdminEvent>;
 
-export namespace RoleGrantedEvent {
-  export type InputTuple = [
-    role: BytesLike,
-    account: AddressLike,
-    sender: AddressLike
-  ];
-  export type OutputTuple = [role: string, account: string, sender: string];
-  export interface OutputObject {
-    role: string;
-    account: string;
-    sender: string;
-  }
-  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
-  export type Filter = TypedDeferredTopicFilter<Event>;
-  export type Log = TypedEventLog<Event>;
-  export type LogDescription = TypedLogDescription<Event>;
+export interface NewRoundCreatedEventObject {
+  roundId: BigNumber;
 }
+export type NewRoundCreatedEvent = TypedEvent<
+  [BigNumber],
+  NewRoundCreatedEventObject
+>;
 
-export namespace RoleRevokedEvent {
-  export type InputTuple = [
-    role: BytesLike,
-    account: AddressLike,
-    sender: AddressLike
-  ];
-  export type OutputTuple = [role: string, account: string, sender: string];
-  export interface OutputObject {
-    role: string;
-    account: string;
-    sender: string;
-  }
-  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
-  export type Filter = TypedDeferredTopicFilter<Event>;
-  export type Log = TypedEventLog<Event>;
-  export type LogDescription = TypedLogDescription<Event>;
-}
+export type NewRoundCreatedEventFilter = TypedEventFilter<NewRoundCreatedEvent>;
 
-export namespace RoundFinishedEvent {
-  export type InputTuple = [roundId: BigNumberish];
-  export type OutputTuple = [roundId: bigint];
-  export interface OutputObject {
-    roundId: bigint;
-  }
-  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
-  export type Filter = TypedDeferredTopicFilter<Event>;
-  export type Log = TypedEventLog<Event>;
-  export type LogDescription = TypedLogDescription<Event>;
+export interface OracleRequestFulfilledEventObject {
+  roundId: BigNumber;
+  requestId: BigNumber;
+  randomWord: BigNumber;
 }
+export type OracleRequestFulfilledEvent = TypedEvent<
+  [BigNumber, BigNumber, BigNumber],
+  OracleRequestFulfilledEventObject
+>;
 
-export namespace TicketsCollectedEvent {
-  export type InputTuple = [member: AddressLike, amount: BigNumberish];
-  export type OutputTuple = [member: string, amount: bigint];
-  export interface OutputObject {
-    member: string;
-    amount: bigint;
-  }
-  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
-  export type Filter = TypedDeferredTopicFilter<Event>;
-  export type Log = TypedEventLog<Event>;
-  export type LogDescription = TypedLogDescription<Event>;
-}
+export type OracleRequestFulfilledEventFilter =
+  TypedEventFilter<OracleRequestFulfilledEvent>;
 
-export namespace UpgradedEvent {
-  export type InputTuple = [implementation: AddressLike];
-  export type OutputTuple = [implementation: string];
-  export interface OutputObject {
-    implementation: string;
-  }
-  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
-  export type Filter = TypedDeferredTopicFilter<Event>;
-  export type Log = TypedEventLog<Event>;
-  export type LogDescription = TypedLogDescription<Event>;
+export interface OracleRequestSentEventObject {
+  roundId: BigNumber;
+  requestId: BigNumber;
 }
+export type OracleRequestSentEvent = TypedEvent<
+  [BigNumber, BigNumber],
+  OracleRequestSentEventObject
+>;
+
+export type OracleRequestSentEventFilter =
+  TypedEventFilter<OracleRequestSentEvent>;
+
+export interface RoleAdminChangedEventObject {
+  role: string;
+  previousAdminRole: string;
+  newAdminRole: string;
+}
+export type RoleAdminChangedEvent = TypedEvent<
+  [string, string, string],
+  RoleAdminChangedEventObject
+>;
+
+export type RoleAdminChangedEventFilter =
+  TypedEventFilter<RoleAdminChangedEvent>;
+
+export interface RoleGrantedEventObject {
+  role: string;
+  account: string;
+  sender: string;
+}
+export type RoleGrantedEvent = TypedEvent<
+  [string, string, string],
+  RoleGrantedEventObject
+>;
+
+export type RoleGrantedEventFilter = TypedEventFilter<RoleGrantedEvent>;
+
+export interface RoleRevokedEventObject {
+  role: string;
+  account: string;
+  sender: string;
+}
+export type RoleRevokedEvent = TypedEvent<
+  [string, string, string],
+  RoleRevokedEventObject
+>;
+
+export type RoleRevokedEventFilter = TypedEventFilter<RoleRevokedEvent>;
+
+export interface RoundFinishedEventObject {
+  roundId: BigNumber;
+}
+export type RoundFinishedEvent = TypedEvent<
+  [BigNumber],
+  RoundFinishedEventObject
+>;
+
+export type RoundFinishedEventFilter = TypedEventFilter<RoundFinishedEvent>;
+
+export interface TicketsCollectedEventObject {
+  member: string;
+  amount: BigNumber;
+}
+export type TicketsCollectedEvent = TypedEvent<
+  [string, BigNumber],
+  TicketsCollectedEventObject
+>;
+
+export type TicketsCollectedEventFilter =
+  TypedEventFilter<TicketsCollectedEvent>;
+
+export interface UpgradedEventObject {
+  implementation: string;
+}
+export type UpgradedEvent = TypedEvent<[string], UpgradedEventObject>;
+
+export type UpgradedEventFilter = TypedEventFilter<UpgradedEvent>;
 
 export interface Raffles extends BaseContract {
-  connect(runner?: ContractRunner | null): Raffles;
-  waitForDeployment(): Promise<this>;
+  connect(signerOrProvider: Signer | Provider | string): this;
+  attach(addressOrName: string): this;
+  deployed(): Promise<this>;
 
   interface: RafflesInterface;
 
-  queryFilter<TCEvent extends TypedContractEvent>(
-    event: TCEvent,
+  queryFilter<TEvent extends TypedEvent>(
+    event: TypedEventFilter<TEvent>,
     fromBlockOrBlockhash?: string | number | undefined,
     toBlock?: string | number | undefined
-  ): Promise<Array<TypedEventLog<TCEvent>>>;
-  queryFilter<TCEvent extends TypedContractEvent>(
-    filter: TypedDeferredTopicFilter<TCEvent>,
-    fromBlockOrBlockhash?: string | number | undefined,
-    toBlock?: string | number | undefined
-  ): Promise<Array<TypedEventLog<TCEvent>>>;
+  ): Promise<Array<TEvent>>;
 
-  on<TCEvent extends TypedContractEvent>(
-    event: TCEvent,
-    listener: TypedListener<TCEvent>
-  ): Promise<this>;
-  on<TCEvent extends TypedContractEvent>(
-    filter: TypedDeferredTopicFilter<TCEvent>,
-    listener: TypedListener<TCEvent>
-  ): Promise<this>;
+  listeners<TEvent extends TypedEvent>(
+    eventFilter?: TypedEventFilter<TEvent>
+  ): Array<TypedListener<TEvent>>;
+  listeners(eventName?: string): Array<Listener>;
+  removeAllListeners<TEvent extends TypedEvent>(
+    eventFilter: TypedEventFilter<TEvent>
+  ): this;
+  removeAllListeners(eventName?: string): this;
+  off: OnEvent<this>;
+  on: OnEvent<this>;
+  once: OnEvent<this>;
+  removeListener: OnEvent<this>;
 
-  once<TCEvent extends TypedContractEvent>(
-    event: TCEvent,
-    listener: TypedListener<TCEvent>
-  ): Promise<this>;
-  once<TCEvent extends TypedContractEvent>(
-    filter: TypedDeferredTopicFilter<TCEvent>,
-    listener: TypedListener<TCEvent>
-  ): Promise<this>;
+  functions: {
+    CLAIM_PERIOD(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-  listeners<TCEvent extends TypedContractEvent>(
-    event: TCEvent
-  ): Promise<Array<TypedListener<TCEvent>>>;
-  listeners(eventName?: string): Promise<Array<Listener>>;
-  removeAllListeners<TCEvent extends TypedContractEvent>(
-    event?: TCEvent
-  ): Promise<this>;
+    DAYS_STREAK_FOR_TICKET(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-  CLAIM_PERIOD: TypedContractMethod<[], [bigint], "view">;
+    DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<[string]>;
 
-  DAYS_STREAK_FOR_TICKET: TypedContractMethod<[], [bigint], "view">;
+    OPERATOR_ROLE(overrides?: CallOverrides): Promise<[string]>;
 
-  DEFAULT_ADMIN_ROLE: TypedContractMethod<[], [string], "view">;
+    TICKET_ID(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-  OPERATOR_ROLE: TypedContractMethod<[], [string], "view">;
+    TICKET_PRICE(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-  TICKET_ID: TypedContractMethod<[], [bigint], "view">;
+    UPGRADER_ROLE(overrides?: CallOverrides): Promise<[string]>;
 
-  TICKET_PRICE: TypedContractMethod<[], [bigint], "view">;
+    buyTickets(
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
 
-  UPGRADER_ROLE: TypedContractMethod<[], [string], "view">;
+    claimDay(
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
 
-  buyTickets: TypedContractMethod<[amount: BigNumberish], [void], "nonpayable">;
-
-  claimDay: TypedContractMethod<[], [void], "nonpayable">;
-
-  createRaffleRound: TypedContractMethod<
-    [
+    createRaffleRound(
       startTime: BigNumberish,
       duration: BigNumberish,
       initialPrize: BigNumberish,
       tokensForOneTicket: BigNumberish,
       maxTicketsFromOneMember: BigNumberish,
       winnersForLevel: BigNumberish[],
-      prizeForLevel: BigNumberish[]
-    ],
-    [void],
-    "nonpayable"
-  >;
+      prizeForLevel: BigNumberish[],
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
 
-  entryRaffle: TypedContractMethod<
-    [roundId: BigNumberish, tickets: BigNumberish],
-    [void],
-    "nonpayable"
-  >;
+    entryRaffle(
+      roundId: BigNumberish,
+      tickets: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
 
-  finishRaffleRound: TypedContractMethod<
-    [roundId: BigNumberish],
-    [void],
-    "nonpayable"
-  >;
+    finishRaffleRound(
+      roundId: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
 
-  getActiveRounds: TypedContractMethod<
-    [],
-    [IRaffles.RoundStructOutput[]],
-    "view"
-  >;
+    getActiveRounds(
+      overrides?: CallOverrides
+    ): Promise<[IRaffles.RoundStructOutput[]]>;
 
-  getClaimStreak: TypedContractMethod<[user: AddressLike], [bigint], "view">;
+    getClaimStreak(
+      user: string,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
 
-  getLastClaimTime: TypedContractMethod<[user: AddressLike], [bigint], "view">;
+    getLastClaimTime(
+      user: string,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
 
-  getLastFinishedRounds: TypedContractMethod<
-    [length: BigNumberish, offset: BigNumberish],
-    [IRaffles.RoundStructOutput[]],
-    "view"
-  >;
+    getLastFinishedRounds(
+      length: BigNumberish,
+      offset: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[IRaffles.RoundStructOutput[]]>;
 
-  getRoleAdmin: TypedContractMethod<[role: BytesLike], [string], "view">;
+    getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<[string]>;
 
-  getRound: TypedContractMethod<
-    [id: BigNumberish],
-    [IRaffles.RoundStructOutput],
-    "view"
-  >;
+    getRound(
+      id: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[IRaffles.RoundStructOutput]>;
 
-  getRounds: TypedContractMethod<[], [IRaffles.RoundStructOutput[]], "view">;
+    getRounds(
+      overrides?: CallOverrides
+    ): Promise<[IRaffles.RoundStructOutput[]]>;
 
-  getTotalRounds: TypedContractMethod<[], [bigint], "view">;
+    getTotalRounds(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-  getUserRoundEntry: TypedContractMethod<
-    [user: AddressLike, roundId: BigNumberish],
-    [bigint],
-    "view"
-  >;
+    getUserRoundEntry(
+      user: string,
+      roundId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
 
-  getWinnerPrize: TypedContractMethod<[user: AddressLike], [bigint], "view">;
+    getWinnerPrize(
+      user: string,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
 
-  getWinnersFromOracleRandom: TypedContractMethod<
-    [roundId: BigNumberish],
-    [void],
-    "nonpayable"
-  >;
+    getWinnersFromOracleRandom(
+      roundId: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
 
-  grantRole: TypedContractMethod<
-    [role: BytesLike, account: AddressLike],
-    [void],
-    "nonpayable"
-  >;
+    grantRole(
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
 
-  hasRole: TypedContractMethod<
-    [role: BytesLike, account: AddressLike],
-    [boolean],
-    "view"
-  >;
+    hasRole(
+      role: BytesLike,
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
 
-  initialize: TypedContractMethod<
-    [
+    initialize(
       ticketPrice: BigNumberish,
       ticketId: BigNumberish,
       daysStreakForTicket: BigNumberish,
-      contractManagerAddress: AddressLike,
-      coordinator: AddressLike,
+      contractManagerAddress: string,
+      coordinator: string,
       subscriptionId: BigNumberish,
-      keyHash: BytesLike
-    ],
-    [void],
-    "nonpayable"
-  >;
+      keyHash: BytesLike,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
 
-  isClaimAvailable: TypedContractMethod<[user: AddressLike], [boolean], "view">;
+    isClaimAvailable(
+      user: string,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
 
-  isMintAvailable: TypedContractMethod<[user: AddressLike], [boolean], "view">;
+    isMintAvailable(
+      user: string,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
 
-  mintMyTicket: TypedContractMethod<[], [void], "nonpayable">;
+    mintMyTicket(
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
 
-  oracleRequests: TypedContractMethod<[arg0: BigNumberish], [bigint], "view">;
+    oracleRequests(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
 
-  proxiableUUID: TypedContractMethod<[], [string], "view">;
+    proxiableUUID(overrides?: CallOverrides): Promise<[string]>;
 
-  rawFulfillRandomWords: TypedContractMethod<
-    [requestId: BigNumberish, randomWords: BigNumberish[]],
-    [void],
-    "nonpayable"
-  >;
+    rawFulfillRandomWords(
+      requestId: BigNumberish,
+      randomWords: BigNumberish[],
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
 
-  renounceRole: TypedContractMethod<
-    [role: BytesLike, account: AddressLike],
-    [void],
-    "nonpayable"
-  >;
+    renounceRole(
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
 
-  revokeRole: TypedContractMethod<
-    [role: BytesLike, account: AddressLike],
-    [void],
-    "nonpayable"
-  >;
+    revokeRole(
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
 
-  rounds: TypedContractMethod<
-    [arg0: BigNumberish],
-    [
+    rounds(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<
       [
-        bigint,
-        bigint,
-        bigint,
+        BigNumber,
+        BigNumber,
+        BigNumber,
         boolean,
         boolean,
         boolean,
-        bigint,
-        bigint,
-        bigint,
-        bigint,
-        bigint,
-        bigint
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber
       ] & {
-        id: bigint;
-        startTime: bigint;
-        duration: bigint;
+        id: BigNumber;
+        startTime: BigNumber;
+        duration: BigNumber;
         isClosed: boolean;
         isOracleFulfilled: boolean;
         isFinished: boolean;
-        initialPrize: bigint;
-        totalPrize: bigint;
-        maxTicketsFromOneMember: bigint;
-        tokensForOneTicket: bigint;
-        totalTickets: bigint;
-        randomWord: bigint;
+        initialPrize: BigNumber;
+        totalPrize: BigNumber;
+        maxTicketsFromOneMember: BigNumber;
+        tokensForOneTicket: BigNumber;
+        totalTickets: BigNumber;
+        randomWord: BigNumber;
       }
-    ],
-    "view"
-  >;
+    >;
 
-  supportsInterface: TypedContractMethod<
-    [interfaceId: BytesLike],
-    [boolean],
-    "view"
-  >;
+    supportsInterface(
+      interfaceId: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
 
-  updateCallbackGasLimit: TypedContractMethod<
-    [gasLimit: BigNumberish],
-    [void],
-    "nonpayable"
-  >;
+    updateCallbackGasLimit(
+      gasLimit: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
 
-  updateClaimPeriod: TypedContractMethod<
-    [sec: BigNumberish],
-    [void],
-    "nonpayable"
-  >;
+    updateClaimPeriod(
+      sec: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
 
-  updateCoordinator: TypedContractMethod<
-    [coordinator: AddressLike],
-    [void],
-    "nonpayable"
-  >;
+    updateCoordinator(
+      coordinator: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
 
-  updateDaysStreakForTicket: TypedContractMethod<
-    [daysNum: BigNumberish],
-    [void],
-    "nonpayable"
-  >;
+    updateDaysStreakForTicket(
+      daysNum: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
 
-  updateKeyHash: TypedContractMethod<
-    [kayHash: BytesLike],
-    [void],
-    "nonpayable"
-  >;
+    updateKeyHash(
+      kayHash: BytesLike,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
 
-  updateRequestConfirmations: TypedContractMethod<
-    [confirmations: BigNumberish],
-    [void],
-    "nonpayable"
-  >;
+    updateRequestConfirmations(
+      confirmations: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
 
-  updateSubscriptionId: TypedContractMethod<
-    [id: BigNumberish],
-    [void],
-    "nonpayable"
-  >;
+    updateSubscriptionId(
+      id: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
 
-  updateTicketId: TypedContractMethod<[id: BigNumberish], [void], "nonpayable">;
+    updateTicketId(
+      id: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
 
-  updateTicketPrice: TypedContractMethod<
-    [price: BigNumberish],
-    [void],
-    "nonpayable"
-  >;
+    updateTicketPrice(
+      price: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
 
-  updateWinnerCalculationInRequest: TypedContractMethod<
-    [isEnabled: boolean],
-    [void],
-    "nonpayable"
-  >;
+    updateWinnerCalculationInRequest(
+      isEnabled: boolean,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
 
-  upgradeTo: TypedContractMethod<
-    [newImplementation: AddressLike],
-    [void],
-    "nonpayable"
-  >;
+    upgradeTo(
+      newImplementation: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
 
-  upgradeToAndCall: TypedContractMethod<
-    [newImplementation: AddressLike, data: BytesLike],
-    [void],
-    "payable"
-  >;
+    upgradeToAndCall(
+      newImplementation: string,
+      data: BytesLike,
+      overrides?: PayableOverrides & { from?: string }
+    ): Promise<ContractTransaction>;
 
-  withdrawLiquidity: TypedContractMethod<
-    [recipient: AddressLike, amount: BigNumberish],
-    [void],
-    "nonpayable"
-  >;
+    withdrawLiquidity(
+      recipient: string,
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
+  };
 
-  getFunction<T extends ContractMethod = ContractMethod>(
-    key: string | FunctionFragment
-  ): T;
+  CLAIM_PERIOD(overrides?: CallOverrides): Promise<BigNumber>;
 
-  getFunction(
-    nameOrSignature: "CLAIM_PERIOD"
-  ): TypedContractMethod<[], [bigint], "view">;
-  getFunction(
-    nameOrSignature: "DAYS_STREAK_FOR_TICKET"
-  ): TypedContractMethod<[], [bigint], "view">;
-  getFunction(
-    nameOrSignature: "DEFAULT_ADMIN_ROLE"
-  ): TypedContractMethod<[], [string], "view">;
-  getFunction(
-    nameOrSignature: "OPERATOR_ROLE"
-  ): TypedContractMethod<[], [string], "view">;
-  getFunction(
-    nameOrSignature: "TICKET_ID"
-  ): TypedContractMethod<[], [bigint], "view">;
-  getFunction(
-    nameOrSignature: "TICKET_PRICE"
-  ): TypedContractMethod<[], [bigint], "view">;
-  getFunction(
-    nameOrSignature: "UPGRADER_ROLE"
-  ): TypedContractMethod<[], [string], "view">;
-  getFunction(
-    nameOrSignature: "buyTickets"
-  ): TypedContractMethod<[amount: BigNumberish], [void], "nonpayable">;
-  getFunction(
-    nameOrSignature: "claimDay"
-  ): TypedContractMethod<[], [void], "nonpayable">;
-  getFunction(
-    nameOrSignature: "createRaffleRound"
-  ): TypedContractMethod<
+  DAYS_STREAK_FOR_TICKET(overrides?: CallOverrides): Promise<BigNumber>;
+
+  DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
+
+  OPERATOR_ROLE(overrides?: CallOverrides): Promise<string>;
+
+  TICKET_ID(overrides?: CallOverrides): Promise<BigNumber>;
+
+  TICKET_PRICE(overrides?: CallOverrides): Promise<BigNumber>;
+
+  UPGRADER_ROLE(overrides?: CallOverrides): Promise<string>;
+
+  buyTickets(
+    amount: BigNumberish,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  claimDay(
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  createRaffleRound(
+    startTime: BigNumberish,
+    duration: BigNumberish,
+    initialPrize: BigNumberish,
+    tokensForOneTicket: BigNumberish,
+    maxTicketsFromOneMember: BigNumberish,
+    winnersForLevel: BigNumberish[],
+    prizeForLevel: BigNumberish[],
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  entryRaffle(
+    roundId: BigNumberish,
+    tickets: BigNumberish,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  finishRaffleRound(
+    roundId: BigNumberish,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  getActiveRounds(
+    overrides?: CallOverrides
+  ): Promise<IRaffles.RoundStructOutput[]>;
+
+  getClaimStreak(user: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+  getLastClaimTime(user: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+  getLastFinishedRounds(
+    length: BigNumberish,
+    offset: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<IRaffles.RoundStructOutput[]>;
+
+  getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<string>;
+
+  getRound(
+    id: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<IRaffles.RoundStructOutput>;
+
+  getRounds(overrides?: CallOverrides): Promise<IRaffles.RoundStructOutput[]>;
+
+  getTotalRounds(overrides?: CallOverrides): Promise<BigNumber>;
+
+  getUserRoundEntry(
+    user: string,
+    roundId: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  getWinnerPrize(user: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+  getWinnersFromOracleRandom(
+    roundId: BigNumberish,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  grantRole(
+    role: BytesLike,
+    account: string,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  hasRole(
+    role: BytesLike,
+    account: string,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
+  initialize(
+    ticketPrice: BigNumberish,
+    ticketId: BigNumberish,
+    daysStreakForTicket: BigNumberish,
+    contractManagerAddress: string,
+    coordinator: string,
+    subscriptionId: BigNumberish,
+    keyHash: BytesLike,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  isClaimAvailable(user: string, overrides?: CallOverrides): Promise<boolean>;
+
+  isMintAvailable(user: string, overrides?: CallOverrides): Promise<boolean>;
+
+  mintMyTicket(
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  oracleRequests(
+    arg0: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  proxiableUUID(overrides?: CallOverrides): Promise<string>;
+
+  rawFulfillRandomWords(
+    requestId: BigNumberish,
+    randomWords: BigNumberish[],
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  renounceRole(
+    role: BytesLike,
+    account: string,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  revokeRole(
+    role: BytesLike,
+    account: string,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  rounds(
+    arg0: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<
     [
+      BigNumber,
+      BigNumber,
+      BigNumber,
+      boolean,
+      boolean,
+      boolean,
+      BigNumber,
+      BigNumber,
+      BigNumber,
+      BigNumber,
+      BigNumber,
+      BigNumber
+    ] & {
+      id: BigNumber;
+      startTime: BigNumber;
+      duration: BigNumber;
+      isClosed: boolean;
+      isOracleFulfilled: boolean;
+      isFinished: boolean;
+      initialPrize: BigNumber;
+      totalPrize: BigNumber;
+      maxTicketsFromOneMember: BigNumber;
+      tokensForOneTicket: BigNumber;
+      totalTickets: BigNumber;
+      randomWord: BigNumber;
+    }
+  >;
+
+  supportsInterface(
+    interfaceId: BytesLike,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
+  updateCallbackGasLimit(
+    gasLimit: BigNumberish,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  updateClaimPeriod(
+    sec: BigNumberish,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  updateCoordinator(
+    coordinator: string,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  updateDaysStreakForTicket(
+    daysNum: BigNumberish,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  updateKeyHash(
+    kayHash: BytesLike,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  updateRequestConfirmations(
+    confirmations: BigNumberish,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  updateSubscriptionId(
+    id: BigNumberish,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  updateTicketId(
+    id: BigNumberish,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  updateTicketPrice(
+    price: BigNumberish,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  updateWinnerCalculationInRequest(
+    isEnabled: boolean,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  upgradeTo(
+    newImplementation: string,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  upgradeToAndCall(
+    newImplementation: string,
+    data: BytesLike,
+    overrides?: PayableOverrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  withdrawLiquidity(
+    recipient: string,
+    amount: BigNumberish,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  callStatic: {
+    CLAIM_PERIOD(overrides?: CallOverrides): Promise<BigNumber>;
+
+    DAYS_STREAK_FOR_TICKET(overrides?: CallOverrides): Promise<BigNumber>;
+
+    DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
+
+    OPERATOR_ROLE(overrides?: CallOverrides): Promise<string>;
+
+    TICKET_ID(overrides?: CallOverrides): Promise<BigNumber>;
+
+    TICKET_PRICE(overrides?: CallOverrides): Promise<BigNumber>;
+
+    UPGRADER_ROLE(overrides?: CallOverrides): Promise<string>;
+
+    buyTickets(amount: BigNumberish, overrides?: CallOverrides): Promise<void>;
+
+    claimDay(overrides?: CallOverrides): Promise<void>;
+
+    createRaffleRound(
       startTime: BigNumberish,
       duration: BigNumberish,
       initialPrize: BigNumberish,
       tokensForOneTicket: BigNumberish,
       maxTicketsFromOneMember: BigNumberish,
       winnersForLevel: BigNumberish[],
-      prizeForLevel: BigNumberish[]
-    ],
-    [void],
-    "nonpayable"
-  >;
-  getFunction(
-    nameOrSignature: "entryRaffle"
-  ): TypedContractMethod<
-    [roundId: BigNumberish, tickets: BigNumberish],
-    [void],
-    "nonpayable"
-  >;
-  getFunction(
-    nameOrSignature: "finishRaffleRound"
-  ): TypedContractMethod<[roundId: BigNumberish], [void], "nonpayable">;
-  getFunction(
-    nameOrSignature: "getActiveRounds"
-  ): TypedContractMethod<[], [IRaffles.RoundStructOutput[]], "view">;
-  getFunction(
-    nameOrSignature: "getClaimStreak"
-  ): TypedContractMethod<[user: AddressLike], [bigint], "view">;
-  getFunction(
-    nameOrSignature: "getLastClaimTime"
-  ): TypedContractMethod<[user: AddressLike], [bigint], "view">;
-  getFunction(
-    nameOrSignature: "getLastFinishedRounds"
-  ): TypedContractMethod<
-    [length: BigNumberish, offset: BigNumberish],
-    [IRaffles.RoundStructOutput[]],
-    "view"
-  >;
-  getFunction(
-    nameOrSignature: "getRoleAdmin"
-  ): TypedContractMethod<[role: BytesLike], [string], "view">;
-  getFunction(
-    nameOrSignature: "getRound"
-  ): TypedContractMethod<
-    [id: BigNumberish],
-    [IRaffles.RoundStructOutput],
-    "view"
-  >;
-  getFunction(
-    nameOrSignature: "getRounds"
-  ): TypedContractMethod<[], [IRaffles.RoundStructOutput[]], "view">;
-  getFunction(
-    nameOrSignature: "getTotalRounds"
-  ): TypedContractMethod<[], [bigint], "view">;
-  getFunction(
-    nameOrSignature: "getUserRoundEntry"
-  ): TypedContractMethod<
-    [user: AddressLike, roundId: BigNumberish],
-    [bigint],
-    "view"
-  >;
-  getFunction(
-    nameOrSignature: "getWinnerPrize"
-  ): TypedContractMethod<[user: AddressLike], [bigint], "view">;
-  getFunction(
-    nameOrSignature: "getWinnersFromOracleRandom"
-  ): TypedContractMethod<[roundId: BigNumberish], [void], "nonpayable">;
-  getFunction(
-    nameOrSignature: "grantRole"
-  ): TypedContractMethod<
-    [role: BytesLike, account: AddressLike],
-    [void],
-    "nonpayable"
-  >;
-  getFunction(
-    nameOrSignature: "hasRole"
-  ): TypedContractMethod<
-    [role: BytesLike, account: AddressLike],
-    [boolean],
-    "view"
-  >;
-  getFunction(
-    nameOrSignature: "initialize"
-  ): TypedContractMethod<
-    [
+      prizeForLevel: BigNumberish[],
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    entryRaffle(
+      roundId: BigNumberish,
+      tickets: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    finishRaffleRound(
+      roundId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    getActiveRounds(
+      overrides?: CallOverrides
+    ): Promise<IRaffles.RoundStructOutput[]>;
+
+    getClaimStreak(user: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+    getLastClaimTime(
+      user: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getLastFinishedRounds(
+      length: BigNumberish,
+      offset: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<IRaffles.RoundStructOutput[]>;
+
+    getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<string>;
+
+    getRound(
+      id: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<IRaffles.RoundStructOutput>;
+
+    getRounds(overrides?: CallOverrides): Promise<IRaffles.RoundStructOutput[]>;
+
+    getTotalRounds(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getUserRoundEntry(
+      user: string,
+      roundId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getWinnerPrize(user: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+    getWinnersFromOracleRandom(
+      roundId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    grantRole(
+      role: BytesLike,
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    hasRole(
+      role: BytesLike,
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
+    initialize(
       ticketPrice: BigNumberish,
       ticketId: BigNumberish,
       daysStreakForTicket: BigNumberish,
-      contractManagerAddress: AddressLike,
-      coordinator: AddressLike,
+      contractManagerAddress: string,
+      coordinator: string,
       subscriptionId: BigNumberish,
-      keyHash: BytesLike
-    ],
-    [void],
-    "nonpayable"
-  >;
-  getFunction(
-    nameOrSignature: "isClaimAvailable"
-  ): TypedContractMethod<[user: AddressLike], [boolean], "view">;
-  getFunction(
-    nameOrSignature: "isMintAvailable"
-  ): TypedContractMethod<[user: AddressLike], [boolean], "view">;
-  getFunction(
-    nameOrSignature: "mintMyTicket"
-  ): TypedContractMethod<[], [void], "nonpayable">;
-  getFunction(
-    nameOrSignature: "oracleRequests"
-  ): TypedContractMethod<[arg0: BigNumberish], [bigint], "view">;
-  getFunction(
-    nameOrSignature: "proxiableUUID"
-  ): TypedContractMethod<[], [string], "view">;
-  getFunction(
-    nameOrSignature: "rawFulfillRandomWords"
-  ): TypedContractMethod<
-    [requestId: BigNumberish, randomWords: BigNumberish[]],
-    [void],
-    "nonpayable"
-  >;
-  getFunction(
-    nameOrSignature: "renounceRole"
-  ): TypedContractMethod<
-    [role: BytesLike, account: AddressLike],
-    [void],
-    "nonpayable"
-  >;
-  getFunction(
-    nameOrSignature: "revokeRole"
-  ): TypedContractMethod<
-    [role: BytesLike, account: AddressLike],
-    [void],
-    "nonpayable"
-  >;
-  getFunction(
-    nameOrSignature: "rounds"
-  ): TypedContractMethod<
-    [arg0: BigNumberish],
-    [
+      keyHash: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    isClaimAvailable(user: string, overrides?: CallOverrides): Promise<boolean>;
+
+    isMintAvailable(user: string, overrides?: CallOverrides): Promise<boolean>;
+
+    mintMyTicket(overrides?: CallOverrides): Promise<void>;
+
+    oracleRequests(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    proxiableUUID(overrides?: CallOverrides): Promise<string>;
+
+    rawFulfillRandomWords(
+      requestId: BigNumberish,
+      randomWords: BigNumberish[],
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    renounceRole(
+      role: BytesLike,
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    revokeRole(
+      role: BytesLike,
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    rounds(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<
       [
-        bigint,
-        bigint,
-        bigint,
+        BigNumber,
+        BigNumber,
+        BigNumber,
         boolean,
         boolean,
         boolean,
-        bigint,
-        bigint,
-        bigint,
-        bigint,
-        bigint,
-        bigint
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber
       ] & {
-        id: bigint;
-        startTime: bigint;
-        duration: bigint;
+        id: BigNumber;
+        startTime: BigNumber;
+        duration: BigNumber;
         isClosed: boolean;
         isOracleFulfilled: boolean;
         isFinished: boolean;
-        initialPrize: bigint;
-        totalPrize: bigint;
-        maxTicketsFromOneMember: bigint;
-        tokensForOneTicket: bigint;
-        totalTickets: bigint;
-        randomWord: bigint;
+        initialPrize: BigNumber;
+        totalPrize: BigNumber;
+        maxTicketsFromOneMember: BigNumber;
+        tokensForOneTicket: BigNumber;
+        totalTickets: BigNumber;
+        randomWord: BigNumber;
       }
-    ],
-    "view"
-  >;
-  getFunction(
-    nameOrSignature: "supportsInterface"
-  ): TypedContractMethod<[interfaceId: BytesLike], [boolean], "view">;
-  getFunction(
-    nameOrSignature: "updateCallbackGasLimit"
-  ): TypedContractMethod<[gasLimit: BigNumberish], [void], "nonpayable">;
-  getFunction(
-    nameOrSignature: "updateClaimPeriod"
-  ): TypedContractMethod<[sec: BigNumberish], [void], "nonpayable">;
-  getFunction(
-    nameOrSignature: "updateCoordinator"
-  ): TypedContractMethod<[coordinator: AddressLike], [void], "nonpayable">;
-  getFunction(
-    nameOrSignature: "updateDaysStreakForTicket"
-  ): TypedContractMethod<[daysNum: BigNumberish], [void], "nonpayable">;
-  getFunction(
-    nameOrSignature: "updateKeyHash"
-  ): TypedContractMethod<[kayHash: BytesLike], [void], "nonpayable">;
-  getFunction(
-    nameOrSignature: "updateRequestConfirmations"
-  ): TypedContractMethod<[confirmations: BigNumberish], [void], "nonpayable">;
-  getFunction(
-    nameOrSignature: "updateSubscriptionId"
-  ): TypedContractMethod<[id: BigNumberish], [void], "nonpayable">;
-  getFunction(
-    nameOrSignature: "updateTicketId"
-  ): TypedContractMethod<[id: BigNumberish], [void], "nonpayable">;
-  getFunction(
-    nameOrSignature: "updateTicketPrice"
-  ): TypedContractMethod<[price: BigNumberish], [void], "nonpayable">;
-  getFunction(
-    nameOrSignature: "updateWinnerCalculationInRequest"
-  ): TypedContractMethod<[isEnabled: boolean], [void], "nonpayable">;
-  getFunction(
-    nameOrSignature: "upgradeTo"
-  ): TypedContractMethod<
-    [newImplementation: AddressLike],
-    [void],
-    "nonpayable"
-  >;
-  getFunction(
-    nameOrSignature: "upgradeToAndCall"
-  ): TypedContractMethod<
-    [newImplementation: AddressLike, data: BytesLike],
-    [void],
-    "payable"
-  >;
-  getFunction(
-    nameOrSignature: "withdrawLiquidity"
-  ): TypedContractMethod<
-    [recipient: AddressLike, amount: BigNumberish],
-    [void],
-    "nonpayable"
-  >;
+    >;
 
-  getEvent(
-    key: "AdminChanged"
-  ): TypedContractEvent<
-    AdminChangedEvent.InputTuple,
-    AdminChangedEvent.OutputTuple,
-    AdminChangedEvent.OutputObject
-  >;
-  getEvent(
-    key: "BeaconUpgraded"
-  ): TypedContractEvent<
-    BeaconUpgradedEvent.InputTuple,
-    BeaconUpgradedEvent.OutputTuple,
-    BeaconUpgradedEvent.OutputObject
-  >;
-  getEvent(
-    key: "Initialized"
-  ): TypedContractEvent<
-    InitializedEvent.InputTuple,
-    InitializedEvent.OutputTuple,
-    InitializedEvent.OutputObject
-  >;
-  getEvent(
-    key: "LiquidityWithdrawnByAdmin"
-  ): TypedContractEvent<
-    LiquidityWithdrawnByAdminEvent.InputTuple,
-    LiquidityWithdrawnByAdminEvent.OutputTuple,
-    LiquidityWithdrawnByAdminEvent.OutputObject
-  >;
-  getEvent(
-    key: "NewRoundCreated"
-  ): TypedContractEvent<
-    NewRoundCreatedEvent.InputTuple,
-    NewRoundCreatedEvent.OutputTuple,
-    NewRoundCreatedEvent.OutputObject
-  >;
-  getEvent(
-    key: "OracleRequestFulfilled"
-  ): TypedContractEvent<
-    OracleRequestFulfilledEvent.InputTuple,
-    OracleRequestFulfilledEvent.OutputTuple,
-    OracleRequestFulfilledEvent.OutputObject
-  >;
-  getEvent(
-    key: "OracleRequestSent"
-  ): TypedContractEvent<
-    OracleRequestSentEvent.InputTuple,
-    OracleRequestSentEvent.OutputTuple,
-    OracleRequestSentEvent.OutputObject
-  >;
-  getEvent(
-    key: "RoleAdminChanged"
-  ): TypedContractEvent<
-    RoleAdminChangedEvent.InputTuple,
-    RoleAdminChangedEvent.OutputTuple,
-    RoleAdminChangedEvent.OutputObject
-  >;
-  getEvent(
-    key: "RoleGranted"
-  ): TypedContractEvent<
-    RoleGrantedEvent.InputTuple,
-    RoleGrantedEvent.OutputTuple,
-    RoleGrantedEvent.OutputObject
-  >;
-  getEvent(
-    key: "RoleRevoked"
-  ): TypedContractEvent<
-    RoleRevokedEvent.InputTuple,
-    RoleRevokedEvent.OutputTuple,
-    RoleRevokedEvent.OutputObject
-  >;
-  getEvent(
-    key: "RoundFinished"
-  ): TypedContractEvent<
-    RoundFinishedEvent.InputTuple,
-    RoundFinishedEvent.OutputTuple,
-    RoundFinishedEvent.OutputObject
-  >;
-  getEvent(
-    key: "TicketsCollected"
-  ): TypedContractEvent<
-    TicketsCollectedEvent.InputTuple,
-    TicketsCollectedEvent.OutputTuple,
-    TicketsCollectedEvent.OutputObject
-  >;
-  getEvent(
-    key: "Upgraded"
-  ): TypedContractEvent<
-    UpgradedEvent.InputTuple,
-    UpgradedEvent.OutputTuple,
-    UpgradedEvent.OutputObject
-  >;
+    supportsInterface(
+      interfaceId: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
+    updateCallbackGasLimit(
+      gasLimit: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    updateClaimPeriod(
+      sec: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    updateCoordinator(
+      coordinator: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    updateDaysStreakForTicket(
+      daysNum: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    updateKeyHash(kayHash: BytesLike, overrides?: CallOverrides): Promise<void>;
+
+    updateRequestConfirmations(
+      confirmations: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    updateSubscriptionId(
+      id: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    updateTicketId(id: BigNumberish, overrides?: CallOverrides): Promise<void>;
+
+    updateTicketPrice(
+      price: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    updateWinnerCalculationInRequest(
+      isEnabled: boolean,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    upgradeTo(
+      newImplementation: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    upgradeToAndCall(
+      newImplementation: string,
+      data: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    withdrawLiquidity(
+      recipient: string,
+      amount: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+  };
 
   filters: {
-    "AdminChanged(address,address)": TypedContractEvent<
-      AdminChangedEvent.InputTuple,
-      AdminChangedEvent.OutputTuple,
-      AdminChangedEvent.OutputObject
-    >;
-    AdminChanged: TypedContractEvent<
-      AdminChangedEvent.InputTuple,
-      AdminChangedEvent.OutputTuple,
-      AdminChangedEvent.OutputObject
-    >;
+    "AdminChanged(address,address)"(
+      previousAdmin?: null,
+      newAdmin?: null
+    ): AdminChangedEventFilter;
+    AdminChanged(
+      previousAdmin?: null,
+      newAdmin?: null
+    ): AdminChangedEventFilter;
 
-    "BeaconUpgraded(address)": TypedContractEvent<
-      BeaconUpgradedEvent.InputTuple,
-      BeaconUpgradedEvent.OutputTuple,
-      BeaconUpgradedEvent.OutputObject
-    >;
-    BeaconUpgraded: TypedContractEvent<
-      BeaconUpgradedEvent.InputTuple,
-      BeaconUpgradedEvent.OutputTuple,
-      BeaconUpgradedEvent.OutputObject
-    >;
+    "BeaconUpgraded(address)"(
+      beacon?: string | null
+    ): BeaconUpgradedEventFilter;
+    BeaconUpgraded(beacon?: string | null): BeaconUpgradedEventFilter;
 
-    "Initialized(uint8)": TypedContractEvent<
-      InitializedEvent.InputTuple,
-      InitializedEvent.OutputTuple,
-      InitializedEvent.OutputObject
-    >;
-    Initialized: TypedContractEvent<
-      InitializedEvent.InputTuple,
-      InitializedEvent.OutputTuple,
-      InitializedEvent.OutputObject
-    >;
+    "Initialized(uint8)"(version?: null): InitializedEventFilter;
+    Initialized(version?: null): InitializedEventFilter;
 
-    "LiquidityWithdrawnByAdmin(address,uint256)": TypedContractEvent<
-      LiquidityWithdrawnByAdminEvent.InputTuple,
-      LiquidityWithdrawnByAdminEvent.OutputTuple,
-      LiquidityWithdrawnByAdminEvent.OutputObject
-    >;
-    LiquidityWithdrawnByAdmin: TypedContractEvent<
-      LiquidityWithdrawnByAdminEvent.InputTuple,
-      LiquidityWithdrawnByAdminEvent.OutputTuple,
-      LiquidityWithdrawnByAdminEvent.OutputObject
-    >;
+    "LiquidityWithdrawnByAdmin(address,uint256)"(
+      recipient?: string | null,
+      amount?: null
+    ): LiquidityWithdrawnByAdminEventFilter;
+    LiquidityWithdrawnByAdmin(
+      recipient?: string | null,
+      amount?: null
+    ): LiquidityWithdrawnByAdminEventFilter;
 
-    "NewRoundCreated(uint256)": TypedContractEvent<
-      NewRoundCreatedEvent.InputTuple,
-      NewRoundCreatedEvent.OutputTuple,
-      NewRoundCreatedEvent.OutputObject
-    >;
-    NewRoundCreated: TypedContractEvent<
-      NewRoundCreatedEvent.InputTuple,
-      NewRoundCreatedEvent.OutputTuple,
-      NewRoundCreatedEvent.OutputObject
-    >;
+    "NewRoundCreated(uint256)"(
+      roundId?: BigNumberish | null
+    ): NewRoundCreatedEventFilter;
+    NewRoundCreated(roundId?: BigNumberish | null): NewRoundCreatedEventFilter;
 
-    "OracleRequestFulfilled(uint256,uint256,uint256)": TypedContractEvent<
-      OracleRequestFulfilledEvent.InputTuple,
-      OracleRequestFulfilledEvent.OutputTuple,
-      OracleRequestFulfilledEvent.OutputObject
-    >;
-    OracleRequestFulfilled: TypedContractEvent<
-      OracleRequestFulfilledEvent.InputTuple,
-      OracleRequestFulfilledEvent.OutputTuple,
-      OracleRequestFulfilledEvent.OutputObject
-    >;
+    "OracleRequestFulfilled(uint256,uint256,uint256)"(
+      roundId?: BigNumberish | null,
+      requestId?: BigNumberish | null,
+      randomWord?: null
+    ): OracleRequestFulfilledEventFilter;
+    OracleRequestFulfilled(
+      roundId?: BigNumberish | null,
+      requestId?: BigNumberish | null,
+      randomWord?: null
+    ): OracleRequestFulfilledEventFilter;
 
-    "OracleRequestSent(uint256,uint256)": TypedContractEvent<
-      OracleRequestSentEvent.InputTuple,
-      OracleRequestSentEvent.OutputTuple,
-      OracleRequestSentEvent.OutputObject
-    >;
-    OracleRequestSent: TypedContractEvent<
-      OracleRequestSentEvent.InputTuple,
-      OracleRequestSentEvent.OutputTuple,
-      OracleRequestSentEvent.OutputObject
-    >;
+    "OracleRequestSent(uint256,uint256)"(
+      roundId?: BigNumberish | null,
+      requestId?: BigNumberish | null
+    ): OracleRequestSentEventFilter;
+    OracleRequestSent(
+      roundId?: BigNumberish | null,
+      requestId?: BigNumberish | null
+    ): OracleRequestSentEventFilter;
 
-    "RoleAdminChanged(bytes32,bytes32,bytes32)": TypedContractEvent<
-      RoleAdminChangedEvent.InputTuple,
-      RoleAdminChangedEvent.OutputTuple,
-      RoleAdminChangedEvent.OutputObject
-    >;
-    RoleAdminChanged: TypedContractEvent<
-      RoleAdminChangedEvent.InputTuple,
-      RoleAdminChangedEvent.OutputTuple,
-      RoleAdminChangedEvent.OutputObject
-    >;
+    "RoleAdminChanged(bytes32,bytes32,bytes32)"(
+      role?: BytesLike | null,
+      previousAdminRole?: BytesLike | null,
+      newAdminRole?: BytesLike | null
+    ): RoleAdminChangedEventFilter;
+    RoleAdminChanged(
+      role?: BytesLike | null,
+      previousAdminRole?: BytesLike | null,
+      newAdminRole?: BytesLike | null
+    ): RoleAdminChangedEventFilter;
 
-    "RoleGranted(bytes32,address,address)": TypedContractEvent<
-      RoleGrantedEvent.InputTuple,
-      RoleGrantedEvent.OutputTuple,
-      RoleGrantedEvent.OutputObject
-    >;
-    RoleGranted: TypedContractEvent<
-      RoleGrantedEvent.InputTuple,
-      RoleGrantedEvent.OutputTuple,
-      RoleGrantedEvent.OutputObject
-    >;
+    "RoleGranted(bytes32,address,address)"(
+      role?: BytesLike | null,
+      account?: string | null,
+      sender?: string | null
+    ): RoleGrantedEventFilter;
+    RoleGranted(
+      role?: BytesLike | null,
+      account?: string | null,
+      sender?: string | null
+    ): RoleGrantedEventFilter;
 
-    "RoleRevoked(bytes32,address,address)": TypedContractEvent<
-      RoleRevokedEvent.InputTuple,
-      RoleRevokedEvent.OutputTuple,
-      RoleRevokedEvent.OutputObject
-    >;
-    RoleRevoked: TypedContractEvent<
-      RoleRevokedEvent.InputTuple,
-      RoleRevokedEvent.OutputTuple,
-      RoleRevokedEvent.OutputObject
-    >;
+    "RoleRevoked(bytes32,address,address)"(
+      role?: BytesLike | null,
+      account?: string | null,
+      sender?: string | null
+    ): RoleRevokedEventFilter;
+    RoleRevoked(
+      role?: BytesLike | null,
+      account?: string | null,
+      sender?: string | null
+    ): RoleRevokedEventFilter;
 
-    "RoundFinished(uint256)": TypedContractEvent<
-      RoundFinishedEvent.InputTuple,
-      RoundFinishedEvent.OutputTuple,
-      RoundFinishedEvent.OutputObject
-    >;
-    RoundFinished: TypedContractEvent<
-      RoundFinishedEvent.InputTuple,
-      RoundFinishedEvent.OutputTuple,
-      RoundFinishedEvent.OutputObject
-    >;
+    "RoundFinished(uint256)"(
+      roundId?: BigNumberish | null
+    ): RoundFinishedEventFilter;
+    RoundFinished(roundId?: BigNumberish | null): RoundFinishedEventFilter;
 
-    "TicketsCollected(address,uint256)": TypedContractEvent<
-      TicketsCollectedEvent.InputTuple,
-      TicketsCollectedEvent.OutputTuple,
-      TicketsCollectedEvent.OutputObject
-    >;
-    TicketsCollected: TypedContractEvent<
-      TicketsCollectedEvent.InputTuple,
-      TicketsCollectedEvent.OutputTuple,
-      TicketsCollectedEvent.OutputObject
-    >;
+    "TicketsCollected(address,uint256)"(
+      member?: string | null,
+      amount?: null
+    ): TicketsCollectedEventFilter;
+    TicketsCollected(
+      member?: string | null,
+      amount?: null
+    ): TicketsCollectedEventFilter;
 
-    "Upgraded(address)": TypedContractEvent<
-      UpgradedEvent.InputTuple,
-      UpgradedEvent.OutputTuple,
-      UpgradedEvent.OutputObject
-    >;
-    Upgraded: TypedContractEvent<
-      UpgradedEvent.InputTuple,
-      UpgradedEvent.OutputTuple,
-      UpgradedEvent.OutputObject
-    >;
+    "Upgraded(address)"(implementation?: string | null): UpgradedEventFilter;
+    Upgraded(implementation?: string | null): UpgradedEventFilter;
+  };
+
+  estimateGas: {
+    CLAIM_PERIOD(overrides?: CallOverrides): Promise<BigNumber>;
+
+    DAYS_STREAK_FOR_TICKET(overrides?: CallOverrides): Promise<BigNumber>;
+
+    DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
+
+    OPERATOR_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
+
+    TICKET_ID(overrides?: CallOverrides): Promise<BigNumber>;
+
+    TICKET_PRICE(overrides?: CallOverrides): Promise<BigNumber>;
+
+    UPGRADER_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
+
+    buyTickets(
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+
+    claimDay(overrides?: Overrides & { from?: string }): Promise<BigNumber>;
+
+    createRaffleRound(
+      startTime: BigNumberish,
+      duration: BigNumberish,
+      initialPrize: BigNumberish,
+      tokensForOneTicket: BigNumberish,
+      maxTicketsFromOneMember: BigNumberish,
+      winnersForLevel: BigNumberish[],
+      prizeForLevel: BigNumberish[],
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+
+    entryRaffle(
+      roundId: BigNumberish,
+      tickets: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+
+    finishRaffleRound(
+      roundId: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+
+    getActiveRounds(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getClaimStreak(user: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+    getLastClaimTime(
+      user: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getLastFinishedRounds(
+      length: BigNumberish,
+      offset: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getRoleAdmin(
+      role: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getRound(id: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
+
+    getRounds(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getTotalRounds(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getUserRoundEntry(
+      user: string,
+      roundId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getWinnerPrize(user: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+    getWinnersFromOracleRandom(
+      roundId: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+
+    grantRole(
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+
+    hasRole(
+      role: BytesLike,
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    initialize(
+      ticketPrice: BigNumberish,
+      ticketId: BigNumberish,
+      daysStreakForTicket: BigNumberish,
+      contractManagerAddress: string,
+      coordinator: string,
+      subscriptionId: BigNumberish,
+      keyHash: BytesLike,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+
+    isClaimAvailable(
+      user: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    isMintAvailable(
+      user: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    mintMyTicket(overrides?: Overrides & { from?: string }): Promise<BigNumber>;
+
+    oracleRequests(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    proxiableUUID(overrides?: CallOverrides): Promise<BigNumber>;
+
+    rawFulfillRandomWords(
+      requestId: BigNumberish,
+      randomWords: BigNumberish[],
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+
+    renounceRole(
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+
+    revokeRole(
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+
+    rounds(arg0: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
+
+    supportsInterface(
+      interfaceId: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    updateCallbackGasLimit(
+      gasLimit: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+
+    updateClaimPeriod(
+      sec: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+
+    updateCoordinator(
+      coordinator: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+
+    updateDaysStreakForTicket(
+      daysNum: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+
+    updateKeyHash(
+      kayHash: BytesLike,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+
+    updateRequestConfirmations(
+      confirmations: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+
+    updateSubscriptionId(
+      id: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+
+    updateTicketId(
+      id: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+
+    updateTicketPrice(
+      price: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+
+    updateWinnerCalculationInRequest(
+      isEnabled: boolean,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+
+    upgradeTo(
+      newImplementation: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+
+    upgradeToAndCall(
+      newImplementation: string,
+      data: BytesLike,
+      overrides?: PayableOverrides & { from?: string }
+    ): Promise<BigNumber>;
+
+    withdrawLiquidity(
+      recipient: string,
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+  };
+
+  populateTransaction: {
+    CLAIM_PERIOD(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    DAYS_STREAK_FOR_TICKET(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    DEFAULT_ADMIN_ROLE(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    OPERATOR_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    TICKET_ID(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    TICKET_PRICE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    UPGRADER_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    buyTickets(
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    claimDay(
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    createRaffleRound(
+      startTime: BigNumberish,
+      duration: BigNumberish,
+      initialPrize: BigNumberish,
+      tokensForOneTicket: BigNumberish,
+      maxTicketsFromOneMember: BigNumberish,
+      winnersForLevel: BigNumberish[],
+      prizeForLevel: BigNumberish[],
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    entryRaffle(
+      roundId: BigNumberish,
+      tickets: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    finishRaffleRound(
+      roundId: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    getActiveRounds(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    getClaimStreak(
+      user: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getLastClaimTime(
+      user: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getLastFinishedRounds(
+      length: BigNumberish,
+      offset: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getRoleAdmin(
+      role: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getRound(
+      id: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getRounds(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    getTotalRounds(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    getUserRoundEntry(
+      user: string,
+      roundId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getWinnerPrize(
+      user: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getWinnersFromOracleRandom(
+      roundId: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    grantRole(
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    hasRole(
+      role: BytesLike,
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    initialize(
+      ticketPrice: BigNumberish,
+      ticketId: BigNumberish,
+      daysStreakForTicket: BigNumberish,
+      contractManagerAddress: string,
+      coordinator: string,
+      subscriptionId: BigNumberish,
+      keyHash: BytesLike,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    isClaimAvailable(
+      user: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    isMintAvailable(
+      user: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    mintMyTicket(
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    oracleRequests(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    proxiableUUID(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    rawFulfillRandomWords(
+      requestId: BigNumberish,
+      randomWords: BigNumberish[],
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    renounceRole(
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    revokeRole(
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    rounds(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    supportsInterface(
+      interfaceId: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    updateCallbackGasLimit(
+      gasLimit: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    updateClaimPeriod(
+      sec: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    updateCoordinator(
+      coordinator: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    updateDaysStreakForTicket(
+      daysNum: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    updateKeyHash(
+      kayHash: BytesLike,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    updateRequestConfirmations(
+      confirmations: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    updateSubscriptionId(
+      id: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    updateTicketId(
+      id: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    updateTicketPrice(
+      price: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    updateWinnerCalculationInRequest(
+      isEnabled: boolean,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    upgradeTo(
+      newImplementation: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    upgradeToAndCall(
+      newImplementation: string,
+      data: BytesLike,
+      overrides?: PayableOverrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    withdrawLiquidity(
+      recipient: string,
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
   };
 }

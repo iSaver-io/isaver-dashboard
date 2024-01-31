@@ -3,41 +3,45 @@
 /* eslint-disable */
 import type {
   BaseContract,
+  BigNumber,
   BigNumberish,
   BytesLike,
-  FunctionFragment,
-  Result,
-  Interface,
-  EventFragment,
-  AddressLike,
-  ContractRunner,
-  ContractMethod,
-  Listener,
+  CallOverrides,
+  ContractTransaction,
+  Overrides,
+  PayableOverrides,
+  PopulatedTransaction,
+  Signer,
+  utils,
 } from "ethers";
 import type {
-  TypedContractEvent,
-  TypedDeferredTopicFilter,
-  TypedEventLog,
-  TypedLogDescription,
+  FunctionFragment,
+  Result,
+  EventFragment,
+} from "@ethersproject/abi";
+import type { Listener, Provider } from "@ethersproject/providers";
+import type {
+  TypedEventFilter,
+  TypedEvent,
   TypedListener,
-  TypedContractMethod,
+  OnEvent,
 } from "../common";
 
 export declare namespace Helper {
   export type RafflesWinnersWithTicketsStruct = {
     level: BigNumberish;
-    winnerAddress: AddressLike;
+    winnerAddress: string;
     enteredTickets: BigNumberish;
   };
 
   export type RafflesWinnersWithTicketsStructOutput = [
-    level: bigint,
-    winnerAddress: string,
-    enteredTickets: bigint
-  ] & { level: bigint; winnerAddress: string; enteredTickets: bigint };
+    BigNumber,
+    string,
+    BigNumber
+  ] & { level: BigNumber; winnerAddress: string; enteredTickets: BigNumber };
 
   export type ReferralFullInfoStruct = {
-    referralAddress: AddressLike;
+    referralAddress: string;
     level: BigNumberish;
     activationDate: BigNumberish;
     savTokenBalance: BigNumberish;
@@ -48,20 +52,20 @@ export declare namespace Helper {
   };
 
   export type ReferralFullInfoStructOutput = [
-    referralAddress: string,
-    level: bigint,
-    activationDate: bigint,
-    savTokenBalance: bigint,
-    savrTokenBalance: bigint,
-    isReferralSubscriptionActive: boolean,
-    isStakingSubscriptionActive: boolean,
-    isTeamSubscriptionActive: boolean
+    string,
+    BigNumber,
+    BigNumber,
+    BigNumber,
+    BigNumber,
+    boolean,
+    boolean,
+    boolean
   ] & {
     referralAddress: string;
-    level: bigint;
-    activationDate: bigint;
-    savTokenBalance: bigint;
-    savrTokenBalance: bigint;
+    level: BigNumber;
+    activationDate: BigNumber;
+    savTokenBalance: BigNumber;
+    savrTokenBalance: BigNumber;
     isReferralSubscriptionActive: boolean;
     isStakingSubscriptionActive: boolean;
     isTeamSubscriptionActive: boolean;
@@ -70,15 +74,15 @@ export declare namespace Helper {
   export type UserTeamInfoStruct = {
     teamStatus: ITeams.TeamStruct;
     plan: ITeams.TeamPlanStruct;
-    members: AddressLike[];
+    members: string[];
     userHasSufficientStaking: boolean;
   };
 
   export type UserTeamInfoStructOutput = [
-    teamStatus: ITeams.TeamStructOutput,
-    plan: ITeams.TeamPlanStructOutput,
-    members: string[],
-    userHasSufficientStaking: boolean
+    ITeams.TeamStructOutput,
+    ITeams.TeamPlanStructOutput,
+    string[],
+    boolean
   ] & {
     teamStatus: ITeams.TeamStructOutput;
     plan: ITeams.TeamPlanStructOutput;
@@ -99,20 +103,20 @@ export declare namespace ITeams {
   };
 
   export type TeamPlanStructOutput = [
-    teamPlanId: bigint,
-    subscriptionCost: bigint,
-    reward: bigint,
-    stakingThreshold: bigint,
-    teamSize: bigint,
-    stakingPlanId: bigint,
-    isActive: boolean
+    BigNumber,
+    BigNumber,
+    BigNumber,
+    BigNumber,
+    BigNumber,
+    BigNumber,
+    boolean
   ] & {
-    teamPlanId: bigint;
-    subscriptionCost: bigint;
-    reward: bigint;
-    stakingThreshold: bigint;
-    teamSize: bigint;
-    stakingPlanId: bigint;
+    teamPlanId: BigNumber;
+    subscriptionCost: BigNumber;
+    reward: BigNumber;
+    stakingThreshold: BigNumber;
+    teamSize: BigNumber;
+    stakingPlanId: BigNumber;
     isActive: boolean;
   };
 
@@ -121,15 +125,34 @@ export declare namespace ITeams {
     teamsFilled: BigNumberish;
   };
 
-  export type TeamStructOutput = [subscription: bigint, teamsFilled: bigint] & {
-    subscription: bigint;
-    teamsFilled: bigint;
+  export type TeamStructOutput = [BigNumber, BigNumber] & {
+    subscription: BigNumber;
+    teamsFilled: BigNumber;
   };
 }
 
-export interface HelperInterface extends Interface {
+export interface HelperInterface extends utils.Interface {
+  functions: {
+    "DEFAULT_ADMIN_ROLE()": FunctionFragment;
+    "UPGRADER_ROLE()": FunctionFragment;
+    "getRafflesRoundWinnersWithTickets(uint256)": FunctionFragment;
+    "getRoleAdmin(bytes32)": FunctionFragment;
+    "getUserReferralsFullInfoByLevel(address,uint256)": FunctionFragment;
+    "getUserTeamInfo((uint256,uint256,uint256,uint256,uint256,uint256,bool),address)": FunctionFragment;
+    "getUserTeamsInfo(address)": FunctionFragment;
+    "grantRole(bytes32,address)": FunctionFragment;
+    "hasRole(bytes32,address)": FunctionFragment;
+    "initialize(address)": FunctionFragment;
+    "proxiableUUID()": FunctionFragment;
+    "renounceRole(bytes32,address)": FunctionFragment;
+    "revokeRole(bytes32,address)": FunctionFragment;
+    "supportsInterface(bytes4)": FunctionFragment;
+    "upgradeTo(address)": FunctionFragment;
+    "upgradeToAndCall(address,bytes)": FunctionFragment;
+  };
+
   getFunction(
-    nameOrSignature:
+    nameOrSignatureOrTopic:
       | "DEFAULT_ADMIN_ROLE"
       | "UPGRADER_ROLE"
       | "getRafflesRoundWinnersWithTickets"
@@ -147,17 +170,6 @@ export interface HelperInterface extends Interface {
       | "upgradeTo"
       | "upgradeToAndCall"
   ): FunctionFragment;
-
-  getEvent(
-    nameOrSignatureOrTopic:
-      | "AdminChanged"
-      | "BeaconUpgraded"
-      | "Initialized"
-      | "RoleAdminChanged"
-      | "RoleGranted"
-      | "RoleRevoked"
-      | "Upgraded"
-  ): EventFragment;
 
   encodeFunctionData(
     functionFragment: "DEFAULT_ADMIN_ROLE",
@@ -177,51 +189,45 @@ export interface HelperInterface extends Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "getUserReferralsFullInfoByLevel",
-    values: [AddressLike, BigNumberish]
+    values: [string, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "getUserTeamInfo",
-    values: [ITeams.TeamPlanStruct, AddressLike]
+    values: [ITeams.TeamPlanStruct, string]
   ): string;
   encodeFunctionData(
     functionFragment: "getUserTeamsInfo",
-    values: [AddressLike]
+    values: [string]
   ): string;
   encodeFunctionData(
     functionFragment: "grantRole",
-    values: [BytesLike, AddressLike]
+    values: [BytesLike, string]
   ): string;
   encodeFunctionData(
     functionFragment: "hasRole",
-    values: [BytesLike, AddressLike]
+    values: [BytesLike, string]
   ): string;
-  encodeFunctionData(
-    functionFragment: "initialize",
-    values: [AddressLike]
-  ): string;
+  encodeFunctionData(functionFragment: "initialize", values: [string]): string;
   encodeFunctionData(
     functionFragment: "proxiableUUID",
     values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "renounceRole",
-    values: [BytesLike, AddressLike]
+    values: [BytesLike, string]
   ): string;
   encodeFunctionData(
     functionFragment: "revokeRole",
-    values: [BytesLike, AddressLike]
+    values: [BytesLike, string]
   ): string;
   encodeFunctionData(
     functionFragment: "supportsInterface",
     values: [BytesLike]
   ): string;
-  encodeFunctionData(
-    functionFragment: "upgradeTo",
-    values: [AddressLike]
-  ): string;
+  encodeFunctionData(functionFragment: "upgradeTo", values: [string]): string;
   encodeFunctionData(
     functionFragment: "upgradeToAndCall",
-    values: [AddressLike, BytesLike]
+    values: [string, BytesLike]
   ): string;
 
   decodeFunctionResult(
@@ -273,461 +279,567 @@ export interface HelperInterface extends Interface {
     functionFragment: "upgradeToAndCall",
     data: BytesLike
   ): Result;
+
+  events: {
+    "AdminChanged(address,address)": EventFragment;
+    "BeaconUpgraded(address)": EventFragment;
+    "Initialized(uint8)": EventFragment;
+    "RoleAdminChanged(bytes32,bytes32,bytes32)": EventFragment;
+    "RoleGranted(bytes32,address,address)": EventFragment;
+    "RoleRevoked(bytes32,address,address)": EventFragment;
+    "Upgraded(address)": EventFragment;
+  };
+
+  getEvent(nameOrSignatureOrTopic: "AdminChanged"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "BeaconUpgraded"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "RoleAdminChanged"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "RoleGranted"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "RoleRevoked"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Upgraded"): EventFragment;
 }
 
-export namespace AdminChangedEvent {
-  export type InputTuple = [previousAdmin: AddressLike, newAdmin: AddressLike];
-  export type OutputTuple = [previousAdmin: string, newAdmin: string];
-  export interface OutputObject {
-    previousAdmin: string;
-    newAdmin: string;
-  }
-  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
-  export type Filter = TypedDeferredTopicFilter<Event>;
-  export type Log = TypedEventLog<Event>;
-  export type LogDescription = TypedLogDescription<Event>;
+export interface AdminChangedEventObject {
+  previousAdmin: string;
+  newAdmin: string;
 }
+export type AdminChangedEvent = TypedEvent<
+  [string, string],
+  AdminChangedEventObject
+>;
 
-export namespace BeaconUpgradedEvent {
-  export type InputTuple = [beacon: AddressLike];
-  export type OutputTuple = [beacon: string];
-  export interface OutputObject {
-    beacon: string;
-  }
-  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
-  export type Filter = TypedDeferredTopicFilter<Event>;
-  export type Log = TypedEventLog<Event>;
-  export type LogDescription = TypedLogDescription<Event>;
-}
+export type AdminChangedEventFilter = TypedEventFilter<AdminChangedEvent>;
 
-export namespace InitializedEvent {
-  export type InputTuple = [version: BigNumberish];
-  export type OutputTuple = [version: bigint];
-  export interface OutputObject {
-    version: bigint;
-  }
-  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
-  export type Filter = TypedDeferredTopicFilter<Event>;
-  export type Log = TypedEventLog<Event>;
-  export type LogDescription = TypedLogDescription<Event>;
+export interface BeaconUpgradedEventObject {
+  beacon: string;
 }
+export type BeaconUpgradedEvent = TypedEvent<
+  [string],
+  BeaconUpgradedEventObject
+>;
 
-export namespace RoleAdminChangedEvent {
-  export type InputTuple = [
-    role: BytesLike,
-    previousAdminRole: BytesLike,
-    newAdminRole: BytesLike
-  ];
-  export type OutputTuple = [
-    role: string,
-    previousAdminRole: string,
-    newAdminRole: string
-  ];
-  export interface OutputObject {
-    role: string;
-    previousAdminRole: string;
-    newAdminRole: string;
-  }
-  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
-  export type Filter = TypedDeferredTopicFilter<Event>;
-  export type Log = TypedEventLog<Event>;
-  export type LogDescription = TypedLogDescription<Event>;
-}
+export type BeaconUpgradedEventFilter = TypedEventFilter<BeaconUpgradedEvent>;
 
-export namespace RoleGrantedEvent {
-  export type InputTuple = [
-    role: BytesLike,
-    account: AddressLike,
-    sender: AddressLike
-  ];
-  export type OutputTuple = [role: string, account: string, sender: string];
-  export interface OutputObject {
-    role: string;
-    account: string;
-    sender: string;
-  }
-  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
-  export type Filter = TypedDeferredTopicFilter<Event>;
-  export type Log = TypedEventLog<Event>;
-  export type LogDescription = TypedLogDescription<Event>;
+export interface InitializedEventObject {
+  version: number;
 }
+export type InitializedEvent = TypedEvent<[number], InitializedEventObject>;
 
-export namespace RoleRevokedEvent {
-  export type InputTuple = [
-    role: BytesLike,
-    account: AddressLike,
-    sender: AddressLike
-  ];
-  export type OutputTuple = [role: string, account: string, sender: string];
-  export interface OutputObject {
-    role: string;
-    account: string;
-    sender: string;
-  }
-  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
-  export type Filter = TypedDeferredTopicFilter<Event>;
-  export type Log = TypedEventLog<Event>;
-  export type LogDescription = TypedLogDescription<Event>;
-}
+export type InitializedEventFilter = TypedEventFilter<InitializedEvent>;
 
-export namespace UpgradedEvent {
-  export type InputTuple = [implementation: AddressLike];
-  export type OutputTuple = [implementation: string];
-  export interface OutputObject {
-    implementation: string;
-  }
-  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
-  export type Filter = TypedDeferredTopicFilter<Event>;
-  export type Log = TypedEventLog<Event>;
-  export type LogDescription = TypedLogDescription<Event>;
+export interface RoleAdminChangedEventObject {
+  role: string;
+  previousAdminRole: string;
+  newAdminRole: string;
 }
+export type RoleAdminChangedEvent = TypedEvent<
+  [string, string, string],
+  RoleAdminChangedEventObject
+>;
+
+export type RoleAdminChangedEventFilter =
+  TypedEventFilter<RoleAdminChangedEvent>;
+
+export interface RoleGrantedEventObject {
+  role: string;
+  account: string;
+  sender: string;
+}
+export type RoleGrantedEvent = TypedEvent<
+  [string, string, string],
+  RoleGrantedEventObject
+>;
+
+export type RoleGrantedEventFilter = TypedEventFilter<RoleGrantedEvent>;
+
+export interface RoleRevokedEventObject {
+  role: string;
+  account: string;
+  sender: string;
+}
+export type RoleRevokedEvent = TypedEvent<
+  [string, string, string],
+  RoleRevokedEventObject
+>;
+
+export type RoleRevokedEventFilter = TypedEventFilter<RoleRevokedEvent>;
+
+export interface UpgradedEventObject {
+  implementation: string;
+}
+export type UpgradedEvent = TypedEvent<[string], UpgradedEventObject>;
+
+export type UpgradedEventFilter = TypedEventFilter<UpgradedEvent>;
 
 export interface Helper extends BaseContract {
-  connect(runner?: ContractRunner | null): Helper;
-  waitForDeployment(): Promise<this>;
+  connect(signerOrProvider: Signer | Provider | string): this;
+  attach(addressOrName: string): this;
+  deployed(): Promise<this>;
 
   interface: HelperInterface;
 
-  queryFilter<TCEvent extends TypedContractEvent>(
-    event: TCEvent,
+  queryFilter<TEvent extends TypedEvent>(
+    event: TypedEventFilter<TEvent>,
     fromBlockOrBlockhash?: string | number | undefined,
     toBlock?: string | number | undefined
-  ): Promise<Array<TypedEventLog<TCEvent>>>;
-  queryFilter<TCEvent extends TypedContractEvent>(
-    filter: TypedDeferredTopicFilter<TCEvent>,
-    fromBlockOrBlockhash?: string | number | undefined,
-    toBlock?: string | number | undefined
-  ): Promise<Array<TypedEventLog<TCEvent>>>;
+  ): Promise<Array<TEvent>>;
 
-  on<TCEvent extends TypedContractEvent>(
-    event: TCEvent,
-    listener: TypedListener<TCEvent>
-  ): Promise<this>;
-  on<TCEvent extends TypedContractEvent>(
-    filter: TypedDeferredTopicFilter<TCEvent>,
-    listener: TypedListener<TCEvent>
-  ): Promise<this>;
+  listeners<TEvent extends TypedEvent>(
+    eventFilter?: TypedEventFilter<TEvent>
+  ): Array<TypedListener<TEvent>>;
+  listeners(eventName?: string): Array<Listener>;
+  removeAllListeners<TEvent extends TypedEvent>(
+    eventFilter: TypedEventFilter<TEvent>
+  ): this;
+  removeAllListeners(eventName?: string): this;
+  off: OnEvent<this>;
+  on: OnEvent<this>;
+  once: OnEvent<this>;
+  removeListener: OnEvent<this>;
 
-  once<TCEvent extends TypedContractEvent>(
-    event: TCEvent,
-    listener: TypedListener<TCEvent>
-  ): Promise<this>;
-  once<TCEvent extends TypedContractEvent>(
-    filter: TypedDeferredTopicFilter<TCEvent>,
-    listener: TypedListener<TCEvent>
-  ): Promise<this>;
+  functions: {
+    DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<[string]>;
 
-  listeners<TCEvent extends TypedContractEvent>(
-    event: TCEvent
-  ): Promise<Array<TypedListener<TCEvent>>>;
-  listeners(eventName?: string): Promise<Array<Listener>>;
-  removeAllListeners<TCEvent extends TypedContractEvent>(
-    event?: TCEvent
-  ): Promise<this>;
+    UPGRADER_ROLE(overrides?: CallOverrides): Promise<[string]>;
 
-  DEFAULT_ADMIN_ROLE: TypedContractMethod<[], [string], "view">;
+    getRafflesRoundWinnersWithTickets(
+      roundId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[Helper.RafflesWinnersWithTicketsStructOutput[]]>;
 
-  UPGRADER_ROLE: TypedContractMethod<[], [string], "view">;
+    getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<[string]>;
 
-  getRafflesRoundWinnersWithTickets: TypedContractMethod<
-    [roundId: BigNumberish],
-    [Helper.RafflesWinnersWithTicketsStructOutput[]],
-    "view"
-  >;
+    getUserReferralsFullInfoByLevel(
+      user: string,
+      level: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[Helper.ReferralFullInfoStructOutput[]]>;
 
-  getRoleAdmin: TypedContractMethod<[role: BytesLike], [string], "view">;
+    getUserTeamInfo(
+      plan: ITeams.TeamPlanStruct,
+      user: string,
+      overrides?: CallOverrides
+    ): Promise<[Helper.UserTeamInfoStructOutput]>;
 
-  getUserReferralsFullInfoByLevel: TypedContractMethod<
-    [user: AddressLike, level: BigNumberish],
-    [Helper.ReferralFullInfoStructOutput[]],
-    "view"
-  >;
+    getUserTeamsInfo(
+      user: string,
+      overrides?: CallOverrides
+    ): Promise<[Helper.UserTeamInfoStructOutput[]]>;
 
-  getUserTeamInfo: TypedContractMethod<
-    [plan: ITeams.TeamPlanStruct, user: AddressLike],
-    [Helper.UserTeamInfoStructOutput],
-    "view"
-  >;
+    grantRole(
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
 
-  getUserTeamsInfo: TypedContractMethod<
-    [user: AddressLike],
-    [Helper.UserTeamInfoStructOutput[]],
-    "view"
-  >;
+    hasRole(
+      role: BytesLike,
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
 
-  grantRole: TypedContractMethod<
-    [role: BytesLike, account: AddressLike],
-    [void],
-    "nonpayable"
-  >;
+    initialize(
+      contractManagerAddress: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
 
-  hasRole: TypedContractMethod<
-    [role: BytesLike, account: AddressLike],
-    [boolean],
-    "view"
-  >;
+    proxiableUUID(overrides?: CallOverrides): Promise<[string]>;
 
-  initialize: TypedContractMethod<
-    [contractManagerAddress: AddressLike],
-    [void],
-    "nonpayable"
-  >;
+    renounceRole(
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
 
-  proxiableUUID: TypedContractMethod<[], [string], "view">;
+    revokeRole(
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
 
-  renounceRole: TypedContractMethod<
-    [role: BytesLike, account: AddressLike],
-    [void],
-    "nonpayable"
-  >;
+    supportsInterface(
+      interfaceId: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
 
-  revokeRole: TypedContractMethod<
-    [role: BytesLike, account: AddressLike],
-    [void],
-    "nonpayable"
-  >;
+    upgradeTo(
+      newImplementation: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
 
-  supportsInterface: TypedContractMethod<
-    [interfaceId: BytesLike],
-    [boolean],
-    "view"
-  >;
+    upgradeToAndCall(
+      newImplementation: string,
+      data: BytesLike,
+      overrides?: PayableOverrides & { from?: string }
+    ): Promise<ContractTransaction>;
+  };
 
-  upgradeTo: TypedContractMethod<
-    [newImplementation: AddressLike],
-    [void],
-    "nonpayable"
-  >;
+  DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
 
-  upgradeToAndCall: TypedContractMethod<
-    [newImplementation: AddressLike, data: BytesLike],
-    [void],
-    "payable"
-  >;
+  UPGRADER_ROLE(overrides?: CallOverrides): Promise<string>;
 
-  getFunction<T extends ContractMethod = ContractMethod>(
-    key: string | FunctionFragment
-  ): T;
+  getRafflesRoundWinnersWithTickets(
+    roundId: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<Helper.RafflesWinnersWithTicketsStructOutput[]>;
 
-  getFunction(
-    nameOrSignature: "DEFAULT_ADMIN_ROLE"
-  ): TypedContractMethod<[], [string], "view">;
-  getFunction(
-    nameOrSignature: "UPGRADER_ROLE"
-  ): TypedContractMethod<[], [string], "view">;
-  getFunction(
-    nameOrSignature: "getRafflesRoundWinnersWithTickets"
-  ): TypedContractMethod<
-    [roundId: BigNumberish],
-    [Helper.RafflesWinnersWithTicketsStructOutput[]],
-    "view"
-  >;
-  getFunction(
-    nameOrSignature: "getRoleAdmin"
-  ): TypedContractMethod<[role: BytesLike], [string], "view">;
-  getFunction(
-    nameOrSignature: "getUserReferralsFullInfoByLevel"
-  ): TypedContractMethod<
-    [user: AddressLike, level: BigNumberish],
-    [Helper.ReferralFullInfoStructOutput[]],
-    "view"
-  >;
-  getFunction(
-    nameOrSignature: "getUserTeamInfo"
-  ): TypedContractMethod<
-    [plan: ITeams.TeamPlanStruct, user: AddressLike],
-    [Helper.UserTeamInfoStructOutput],
-    "view"
-  >;
-  getFunction(
-    nameOrSignature: "getUserTeamsInfo"
-  ): TypedContractMethod<
-    [user: AddressLike],
-    [Helper.UserTeamInfoStructOutput[]],
-    "view"
-  >;
-  getFunction(
-    nameOrSignature: "grantRole"
-  ): TypedContractMethod<
-    [role: BytesLike, account: AddressLike],
-    [void],
-    "nonpayable"
-  >;
-  getFunction(
-    nameOrSignature: "hasRole"
-  ): TypedContractMethod<
-    [role: BytesLike, account: AddressLike],
-    [boolean],
-    "view"
-  >;
-  getFunction(
-    nameOrSignature: "initialize"
-  ): TypedContractMethod<
-    [contractManagerAddress: AddressLike],
-    [void],
-    "nonpayable"
-  >;
-  getFunction(
-    nameOrSignature: "proxiableUUID"
-  ): TypedContractMethod<[], [string], "view">;
-  getFunction(
-    nameOrSignature: "renounceRole"
-  ): TypedContractMethod<
-    [role: BytesLike, account: AddressLike],
-    [void],
-    "nonpayable"
-  >;
-  getFunction(
-    nameOrSignature: "revokeRole"
-  ): TypedContractMethod<
-    [role: BytesLike, account: AddressLike],
-    [void],
-    "nonpayable"
-  >;
-  getFunction(
-    nameOrSignature: "supportsInterface"
-  ): TypedContractMethod<[interfaceId: BytesLike], [boolean], "view">;
-  getFunction(
-    nameOrSignature: "upgradeTo"
-  ): TypedContractMethod<
-    [newImplementation: AddressLike],
-    [void],
-    "nonpayable"
-  >;
-  getFunction(
-    nameOrSignature: "upgradeToAndCall"
-  ): TypedContractMethod<
-    [newImplementation: AddressLike, data: BytesLike],
-    [void],
-    "payable"
-  >;
+  getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<string>;
 
-  getEvent(
-    key: "AdminChanged"
-  ): TypedContractEvent<
-    AdminChangedEvent.InputTuple,
-    AdminChangedEvent.OutputTuple,
-    AdminChangedEvent.OutputObject
-  >;
-  getEvent(
-    key: "BeaconUpgraded"
-  ): TypedContractEvent<
-    BeaconUpgradedEvent.InputTuple,
-    BeaconUpgradedEvent.OutputTuple,
-    BeaconUpgradedEvent.OutputObject
-  >;
-  getEvent(
-    key: "Initialized"
-  ): TypedContractEvent<
-    InitializedEvent.InputTuple,
-    InitializedEvent.OutputTuple,
-    InitializedEvent.OutputObject
-  >;
-  getEvent(
-    key: "RoleAdminChanged"
-  ): TypedContractEvent<
-    RoleAdminChangedEvent.InputTuple,
-    RoleAdminChangedEvent.OutputTuple,
-    RoleAdminChangedEvent.OutputObject
-  >;
-  getEvent(
-    key: "RoleGranted"
-  ): TypedContractEvent<
-    RoleGrantedEvent.InputTuple,
-    RoleGrantedEvent.OutputTuple,
-    RoleGrantedEvent.OutputObject
-  >;
-  getEvent(
-    key: "RoleRevoked"
-  ): TypedContractEvent<
-    RoleRevokedEvent.InputTuple,
-    RoleRevokedEvent.OutputTuple,
-    RoleRevokedEvent.OutputObject
-  >;
-  getEvent(
-    key: "Upgraded"
-  ): TypedContractEvent<
-    UpgradedEvent.InputTuple,
-    UpgradedEvent.OutputTuple,
-    UpgradedEvent.OutputObject
-  >;
+  getUserReferralsFullInfoByLevel(
+    user: string,
+    level: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<Helper.ReferralFullInfoStructOutput[]>;
+
+  getUserTeamInfo(
+    plan: ITeams.TeamPlanStruct,
+    user: string,
+    overrides?: CallOverrides
+  ): Promise<Helper.UserTeamInfoStructOutput>;
+
+  getUserTeamsInfo(
+    user: string,
+    overrides?: CallOverrides
+  ): Promise<Helper.UserTeamInfoStructOutput[]>;
+
+  grantRole(
+    role: BytesLike,
+    account: string,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  hasRole(
+    role: BytesLike,
+    account: string,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
+  initialize(
+    contractManagerAddress: string,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  proxiableUUID(overrides?: CallOverrides): Promise<string>;
+
+  renounceRole(
+    role: BytesLike,
+    account: string,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  revokeRole(
+    role: BytesLike,
+    account: string,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  supportsInterface(
+    interfaceId: BytesLike,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
+  upgradeTo(
+    newImplementation: string,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  upgradeToAndCall(
+    newImplementation: string,
+    data: BytesLike,
+    overrides?: PayableOverrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  callStatic: {
+    DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
+
+    UPGRADER_ROLE(overrides?: CallOverrides): Promise<string>;
+
+    getRafflesRoundWinnersWithTickets(
+      roundId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<Helper.RafflesWinnersWithTicketsStructOutput[]>;
+
+    getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<string>;
+
+    getUserReferralsFullInfoByLevel(
+      user: string,
+      level: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<Helper.ReferralFullInfoStructOutput[]>;
+
+    getUserTeamInfo(
+      plan: ITeams.TeamPlanStruct,
+      user: string,
+      overrides?: CallOverrides
+    ): Promise<Helper.UserTeamInfoStructOutput>;
+
+    getUserTeamsInfo(
+      user: string,
+      overrides?: CallOverrides
+    ): Promise<Helper.UserTeamInfoStructOutput[]>;
+
+    grantRole(
+      role: BytesLike,
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    hasRole(
+      role: BytesLike,
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
+    initialize(
+      contractManagerAddress: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    proxiableUUID(overrides?: CallOverrides): Promise<string>;
+
+    renounceRole(
+      role: BytesLike,
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    revokeRole(
+      role: BytesLike,
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    supportsInterface(
+      interfaceId: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
+    upgradeTo(
+      newImplementation: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    upgradeToAndCall(
+      newImplementation: string,
+      data: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<void>;
+  };
 
   filters: {
-    "AdminChanged(address,address)": TypedContractEvent<
-      AdminChangedEvent.InputTuple,
-      AdminChangedEvent.OutputTuple,
-      AdminChangedEvent.OutputObject
-    >;
-    AdminChanged: TypedContractEvent<
-      AdminChangedEvent.InputTuple,
-      AdminChangedEvent.OutputTuple,
-      AdminChangedEvent.OutputObject
-    >;
+    "AdminChanged(address,address)"(
+      previousAdmin?: null,
+      newAdmin?: null
+    ): AdminChangedEventFilter;
+    AdminChanged(
+      previousAdmin?: null,
+      newAdmin?: null
+    ): AdminChangedEventFilter;
 
-    "BeaconUpgraded(address)": TypedContractEvent<
-      BeaconUpgradedEvent.InputTuple,
-      BeaconUpgradedEvent.OutputTuple,
-      BeaconUpgradedEvent.OutputObject
-    >;
-    BeaconUpgraded: TypedContractEvent<
-      BeaconUpgradedEvent.InputTuple,
-      BeaconUpgradedEvent.OutputTuple,
-      BeaconUpgradedEvent.OutputObject
-    >;
+    "BeaconUpgraded(address)"(
+      beacon?: string | null
+    ): BeaconUpgradedEventFilter;
+    BeaconUpgraded(beacon?: string | null): BeaconUpgradedEventFilter;
 
-    "Initialized(uint8)": TypedContractEvent<
-      InitializedEvent.InputTuple,
-      InitializedEvent.OutputTuple,
-      InitializedEvent.OutputObject
-    >;
-    Initialized: TypedContractEvent<
-      InitializedEvent.InputTuple,
-      InitializedEvent.OutputTuple,
-      InitializedEvent.OutputObject
-    >;
+    "Initialized(uint8)"(version?: null): InitializedEventFilter;
+    Initialized(version?: null): InitializedEventFilter;
 
-    "RoleAdminChanged(bytes32,bytes32,bytes32)": TypedContractEvent<
-      RoleAdminChangedEvent.InputTuple,
-      RoleAdminChangedEvent.OutputTuple,
-      RoleAdminChangedEvent.OutputObject
-    >;
-    RoleAdminChanged: TypedContractEvent<
-      RoleAdminChangedEvent.InputTuple,
-      RoleAdminChangedEvent.OutputTuple,
-      RoleAdminChangedEvent.OutputObject
-    >;
+    "RoleAdminChanged(bytes32,bytes32,bytes32)"(
+      role?: BytesLike | null,
+      previousAdminRole?: BytesLike | null,
+      newAdminRole?: BytesLike | null
+    ): RoleAdminChangedEventFilter;
+    RoleAdminChanged(
+      role?: BytesLike | null,
+      previousAdminRole?: BytesLike | null,
+      newAdminRole?: BytesLike | null
+    ): RoleAdminChangedEventFilter;
 
-    "RoleGranted(bytes32,address,address)": TypedContractEvent<
-      RoleGrantedEvent.InputTuple,
-      RoleGrantedEvent.OutputTuple,
-      RoleGrantedEvent.OutputObject
-    >;
-    RoleGranted: TypedContractEvent<
-      RoleGrantedEvent.InputTuple,
-      RoleGrantedEvent.OutputTuple,
-      RoleGrantedEvent.OutputObject
-    >;
+    "RoleGranted(bytes32,address,address)"(
+      role?: BytesLike | null,
+      account?: string | null,
+      sender?: string | null
+    ): RoleGrantedEventFilter;
+    RoleGranted(
+      role?: BytesLike | null,
+      account?: string | null,
+      sender?: string | null
+    ): RoleGrantedEventFilter;
 
-    "RoleRevoked(bytes32,address,address)": TypedContractEvent<
-      RoleRevokedEvent.InputTuple,
-      RoleRevokedEvent.OutputTuple,
-      RoleRevokedEvent.OutputObject
-    >;
-    RoleRevoked: TypedContractEvent<
-      RoleRevokedEvent.InputTuple,
-      RoleRevokedEvent.OutputTuple,
-      RoleRevokedEvent.OutputObject
-    >;
+    "RoleRevoked(bytes32,address,address)"(
+      role?: BytesLike | null,
+      account?: string | null,
+      sender?: string | null
+    ): RoleRevokedEventFilter;
+    RoleRevoked(
+      role?: BytesLike | null,
+      account?: string | null,
+      sender?: string | null
+    ): RoleRevokedEventFilter;
 
-    "Upgraded(address)": TypedContractEvent<
-      UpgradedEvent.InputTuple,
-      UpgradedEvent.OutputTuple,
-      UpgradedEvent.OutputObject
-    >;
-    Upgraded: TypedContractEvent<
-      UpgradedEvent.InputTuple,
-      UpgradedEvent.OutputTuple,
-      UpgradedEvent.OutputObject
-    >;
+    "Upgraded(address)"(implementation?: string | null): UpgradedEventFilter;
+    Upgraded(implementation?: string | null): UpgradedEventFilter;
+  };
+
+  estimateGas: {
+    DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
+
+    UPGRADER_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getRafflesRoundWinnersWithTickets(
+      roundId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getRoleAdmin(
+      role: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getUserReferralsFullInfoByLevel(
+      user: string,
+      level: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getUserTeamInfo(
+      plan: ITeams.TeamPlanStruct,
+      user: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getUserTeamsInfo(
+      user: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    grantRole(
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+
+    hasRole(
+      role: BytesLike,
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    initialize(
+      contractManagerAddress: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+
+    proxiableUUID(overrides?: CallOverrides): Promise<BigNumber>;
+
+    renounceRole(
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+
+    revokeRole(
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+
+    supportsInterface(
+      interfaceId: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    upgradeTo(
+      newImplementation: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+
+    upgradeToAndCall(
+      newImplementation: string,
+      data: BytesLike,
+      overrides?: PayableOverrides & { from?: string }
+    ): Promise<BigNumber>;
+  };
+
+  populateTransaction: {
+    DEFAULT_ADMIN_ROLE(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    UPGRADER_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    getRafflesRoundWinnersWithTickets(
+      roundId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getRoleAdmin(
+      role: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getUserReferralsFullInfoByLevel(
+      user: string,
+      level: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getUserTeamInfo(
+      plan: ITeams.TeamPlanStruct,
+      user: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getUserTeamsInfo(
+      user: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    grantRole(
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    hasRole(
+      role: BytesLike,
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    initialize(
+      contractManagerAddress: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    proxiableUUID(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    renounceRole(
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    revokeRole(
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    supportsInterface(
+      interfaceId: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    upgradeTo(
+      newImplementation: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    upgradeToAndCall(
+      newImplementation: string,
+      data: BytesLike,
+      overrides?: PayableOverrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
   };
 }

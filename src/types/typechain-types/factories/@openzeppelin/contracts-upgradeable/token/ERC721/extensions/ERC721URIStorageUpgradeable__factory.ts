@@ -2,7 +2,8 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import { Contract, Interface, type ContractRunner } from "ethers";
+import { Contract, Signer, utils } from "ethers";
+import type { Provider } from "@ethersproject/providers";
 import type {
   ERC721URIStorageUpgradeable,
   ERC721URIStorageUpgradeableInterface,
@@ -389,16 +390,16 @@ const _abi = [
 export class ERC721URIStorageUpgradeable__factory {
   static readonly abi = _abi;
   static createInterface(): ERC721URIStorageUpgradeableInterface {
-    return new Interface(_abi) as ERC721URIStorageUpgradeableInterface;
+    return new utils.Interface(_abi) as ERC721URIStorageUpgradeableInterface;
   }
   static connect(
     address: string,
-    runner?: ContractRunner | null
+    signerOrProvider: Signer | Provider
   ): ERC721URIStorageUpgradeable {
     return new Contract(
       address,
       _abi,
-      runner
-    ) as unknown as ERC721URIStorageUpgradeable;
+      signerOrProvider
+    ) as ERC721URIStorageUpgradeable;
   }
 }

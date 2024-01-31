@@ -2,7 +2,8 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import { Contract, Interface, type ContractRunner } from "ethers";
+import { Contract, Signer, utils } from "ethers";
+import type { Provider } from "@ethersproject/providers";
 import type {
   IAccessControl,
   IAccessControlInterface,
@@ -186,12 +187,12 @@ const _abi = [
 export class IAccessControl__factory {
   static readonly abi = _abi;
   static createInterface(): IAccessControlInterface {
-    return new Interface(_abi) as IAccessControlInterface;
+    return new utils.Interface(_abi) as IAccessControlInterface;
   }
   static connect(
     address: string,
-    runner?: ContractRunner | null
+    signerOrProvider: Signer | Provider
   ): IAccessControl {
-    return new Contract(address, _abi, runner) as unknown as IAccessControl;
+    return new Contract(address, _abi, signerOrProvider) as IAccessControl;
   }
 }

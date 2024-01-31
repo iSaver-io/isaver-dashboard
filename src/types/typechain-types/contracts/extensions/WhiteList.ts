@@ -3,162 +3,148 @@
 /* eslint-disable */
 import type {
   BaseContract,
+  BigNumber,
   BytesLike,
-  FunctionFragment,
-  Result,
-  Interface,
-  EventFragment,
-  AddressLike,
-  ContractRunner,
-  ContractMethod,
-  Listener,
+  CallOverrides,
+  PopulatedTransaction,
+  Signer,
+  utils,
 } from "ethers";
 import type {
-  TypedContractEvent,
-  TypedDeferredTopicFilter,
-  TypedEventLog,
-  TypedLogDescription,
+  FunctionFragment,
+  Result,
+  EventFragment,
+} from "@ethersproject/abi";
+import type { Listener, Provider } from "@ethersproject/providers";
+import type {
+  TypedEventFilter,
+  TypedEvent,
   TypedListener,
-  TypedContractMethod,
+  OnEvent,
 } from "../../common";
 
-export interface WhiteListInterface extends Interface {
-  getFunction(nameOrSignature: "isAddressInWhiteList"): FunctionFragment;
+export interface WhiteListInterface extends utils.Interface {
+  functions: {
+    "isAddressInWhiteList(address)": FunctionFragment;
+  };
 
-  getEvent(
-    nameOrSignatureOrTopic: "WhiteListAdded" | "WhiteListRemoved"
-  ): EventFragment;
+  getFunction(nameOrSignatureOrTopic: "isAddressInWhiteList"): FunctionFragment;
 
   encodeFunctionData(
     functionFragment: "isAddressInWhiteList",
-    values: [AddressLike]
+    values: [string]
   ): string;
 
   decodeFunctionResult(
     functionFragment: "isAddressInWhiteList",
     data: BytesLike
   ): Result;
+
+  events: {
+    "WhiteListAdded(address[],address)": EventFragment;
+    "WhiteListRemoved(address[],address)": EventFragment;
+  };
+
+  getEvent(nameOrSignatureOrTopic: "WhiteListAdded"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "WhiteListRemoved"): EventFragment;
 }
 
-export namespace WhiteListAddedEvent {
-  export type InputTuple = [_addresses: AddressLike[], admin: AddressLike];
-  export type OutputTuple = [_addresses: string[], admin: string];
-  export interface OutputObject {
-    _addresses: string[];
-    admin: string;
-  }
-  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
-  export type Filter = TypedDeferredTopicFilter<Event>;
-  export type Log = TypedEventLog<Event>;
-  export type LogDescription = TypedLogDescription<Event>;
+export interface WhiteListAddedEventObject {
+  _addresses: string[];
+  admin: string;
 }
+export type WhiteListAddedEvent = TypedEvent<
+  [string[], string],
+  WhiteListAddedEventObject
+>;
 
-export namespace WhiteListRemovedEvent {
-  export type InputTuple = [_addresses: AddressLike[], admin: AddressLike];
-  export type OutputTuple = [_addresses: string[], admin: string];
-  export interface OutputObject {
-    _addresses: string[];
-    admin: string;
-  }
-  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
-  export type Filter = TypedDeferredTopicFilter<Event>;
-  export type Log = TypedEventLog<Event>;
-  export type LogDescription = TypedLogDescription<Event>;
+export type WhiteListAddedEventFilter = TypedEventFilter<WhiteListAddedEvent>;
+
+export interface WhiteListRemovedEventObject {
+  _addresses: string[];
+  admin: string;
 }
+export type WhiteListRemovedEvent = TypedEvent<
+  [string[], string],
+  WhiteListRemovedEventObject
+>;
+
+export type WhiteListRemovedEventFilter =
+  TypedEventFilter<WhiteListRemovedEvent>;
 
 export interface WhiteList extends BaseContract {
-  connect(runner?: ContractRunner | null): WhiteList;
-  waitForDeployment(): Promise<this>;
+  connect(signerOrProvider: Signer | Provider | string): this;
+  attach(addressOrName: string): this;
+  deployed(): Promise<this>;
 
   interface: WhiteListInterface;
 
-  queryFilter<TCEvent extends TypedContractEvent>(
-    event: TCEvent,
+  queryFilter<TEvent extends TypedEvent>(
+    event: TypedEventFilter<TEvent>,
     fromBlockOrBlockhash?: string | number | undefined,
     toBlock?: string | number | undefined
-  ): Promise<Array<TypedEventLog<TCEvent>>>;
-  queryFilter<TCEvent extends TypedContractEvent>(
-    filter: TypedDeferredTopicFilter<TCEvent>,
-    fromBlockOrBlockhash?: string | number | undefined,
-    toBlock?: string | number | undefined
-  ): Promise<Array<TypedEventLog<TCEvent>>>;
+  ): Promise<Array<TEvent>>;
 
-  on<TCEvent extends TypedContractEvent>(
-    event: TCEvent,
-    listener: TypedListener<TCEvent>
-  ): Promise<this>;
-  on<TCEvent extends TypedContractEvent>(
-    filter: TypedDeferredTopicFilter<TCEvent>,
-    listener: TypedListener<TCEvent>
-  ): Promise<this>;
+  listeners<TEvent extends TypedEvent>(
+    eventFilter?: TypedEventFilter<TEvent>
+  ): Array<TypedListener<TEvent>>;
+  listeners(eventName?: string): Array<Listener>;
+  removeAllListeners<TEvent extends TypedEvent>(
+    eventFilter: TypedEventFilter<TEvent>
+  ): this;
+  removeAllListeners(eventName?: string): this;
+  off: OnEvent<this>;
+  on: OnEvent<this>;
+  once: OnEvent<this>;
+  removeListener: OnEvent<this>;
 
-  once<TCEvent extends TypedContractEvent>(
-    event: TCEvent,
-    listener: TypedListener<TCEvent>
-  ): Promise<this>;
-  once<TCEvent extends TypedContractEvent>(
-    filter: TypedDeferredTopicFilter<TCEvent>,
-    listener: TypedListener<TCEvent>
-  ): Promise<this>;
+  functions: {
+    isAddressInWhiteList(
+      _address: string,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
+  };
 
-  listeners<TCEvent extends TypedContractEvent>(
-    event: TCEvent
-  ): Promise<Array<TypedListener<TCEvent>>>;
-  listeners(eventName?: string): Promise<Array<Listener>>;
-  removeAllListeners<TCEvent extends TypedContractEvent>(
-    event?: TCEvent
-  ): Promise<this>;
+  isAddressInWhiteList(
+    _address: string,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
 
-  isAddressInWhiteList: TypedContractMethod<
-    [_address: AddressLike],
-    [boolean],
-    "view"
-  >;
-
-  getFunction<T extends ContractMethod = ContractMethod>(
-    key: string | FunctionFragment
-  ): T;
-
-  getFunction(
-    nameOrSignature: "isAddressInWhiteList"
-  ): TypedContractMethod<[_address: AddressLike], [boolean], "view">;
-
-  getEvent(
-    key: "WhiteListAdded"
-  ): TypedContractEvent<
-    WhiteListAddedEvent.InputTuple,
-    WhiteListAddedEvent.OutputTuple,
-    WhiteListAddedEvent.OutputObject
-  >;
-  getEvent(
-    key: "WhiteListRemoved"
-  ): TypedContractEvent<
-    WhiteListRemovedEvent.InputTuple,
-    WhiteListRemovedEvent.OutputTuple,
-    WhiteListRemovedEvent.OutputObject
-  >;
+  callStatic: {
+    isAddressInWhiteList(
+      _address: string,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+  };
 
   filters: {
-    "WhiteListAdded(address[],address)": TypedContractEvent<
-      WhiteListAddedEvent.InputTuple,
-      WhiteListAddedEvent.OutputTuple,
-      WhiteListAddedEvent.OutputObject
-    >;
-    WhiteListAdded: TypedContractEvent<
-      WhiteListAddedEvent.InputTuple,
-      WhiteListAddedEvent.OutputTuple,
-      WhiteListAddedEvent.OutputObject
-    >;
+    "WhiteListAdded(address[],address)"(
+      _addresses?: null,
+      admin?: null
+    ): WhiteListAddedEventFilter;
+    WhiteListAdded(_addresses?: null, admin?: null): WhiteListAddedEventFilter;
 
-    "WhiteListRemoved(address[],address)": TypedContractEvent<
-      WhiteListRemovedEvent.InputTuple,
-      WhiteListRemovedEvent.OutputTuple,
-      WhiteListRemovedEvent.OutputObject
-    >;
-    WhiteListRemoved: TypedContractEvent<
-      WhiteListRemovedEvent.InputTuple,
-      WhiteListRemovedEvent.OutputTuple,
-      WhiteListRemovedEvent.OutputObject
-    >;
+    "WhiteListRemoved(address[],address)"(
+      _addresses?: null,
+      admin?: null
+    ): WhiteListRemovedEventFilter;
+    WhiteListRemoved(
+      _addresses?: null,
+      admin?: null
+    ): WhiteListRemovedEventFilter;
+  };
+
+  estimateGas: {
+    isAddressInWhiteList(
+      _address: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+  };
+
+  populateTransaction: {
+    isAddressInWhiteList(
+      _address: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
   };
 }

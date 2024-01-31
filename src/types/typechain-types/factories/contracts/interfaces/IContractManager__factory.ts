@@ -2,7 +2,8 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import { Contract, Interface, type ContractRunner } from "ethers";
+import { Contract, Signer, utils } from "ethers";
+import type { Provider } from "@ethersproject/providers";
 import type {
   IContractManager,
   IContractManagerInterface,
@@ -144,12 +145,12 @@ const _abi = [
 export class IContractManager__factory {
   static readonly abi = _abi;
   static createInterface(): IContractManagerInterface {
-    return new Interface(_abi) as IContractManagerInterface;
+    return new utils.Interface(_abi) as IContractManagerInterface;
   }
   static connect(
     address: string,
-    runner?: ContractRunner | null
+    signerOrProvider: Signer | Provider
   ): IContractManager {
-    return new Contract(address, _abi, runner) as unknown as IContractManager;
+    return new Contract(address, _abi, signerOrProvider) as IContractManager;
   }
 }

@@ -2,18 +2,14 @@
 /* tslint:disable */
 /* eslint-disable */
 import {
+  Signer,
+  utils,
   Contract,
   ContractFactory,
-  ContractTransactionResponse,
-  Interface,
-} from "ethers";
-import type {
-  Signer,
   BigNumberish,
-  ContractDeployTransaction,
-  ContractRunner,
+  Overrides,
 } from "ethers";
-import type { NonPayableOverrides } from "../../../common";
+import type { Provider, TransactionRequest } from "@ethersproject/providers";
 import type {
   ERC20BurnableMock,
   ERC20BurnableMockInterface,
@@ -364,12 +360,25 @@ export class ERC20BurnableMock__factory extends ContractFactory {
     }
   }
 
+  override deploy(
+    name: string,
+    symbol: string,
+    initialSupply: BigNumberish,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ERC20BurnableMock> {
+    return super.deploy(
+      name,
+      symbol,
+      initialSupply,
+      overrides || {}
+    ) as Promise<ERC20BurnableMock>;
+  }
   override getDeployTransaction(
     name: string,
     symbol: string,
     initialSupply: BigNumberish,
-    overrides?: NonPayableOverrides & { from?: string }
-  ): Promise<ContractDeployTransaction> {
+    overrides?: Overrides & { from?: string }
+  ): TransactionRequest {
     return super.getDeployTransaction(
       name,
       symbol,
@@ -377,36 +386,22 @@ export class ERC20BurnableMock__factory extends ContractFactory {
       overrides || {}
     );
   }
-  override deploy(
-    name: string,
-    symbol: string,
-    initialSupply: BigNumberish,
-    overrides?: NonPayableOverrides & { from?: string }
-  ) {
-    return super.deploy(
-      name,
-      symbol,
-      initialSupply,
-      overrides || {}
-    ) as Promise<
-      ERC20BurnableMock & {
-        deploymentTransaction(): ContractTransactionResponse;
-      }
-    >;
+  override attach(address: string): ERC20BurnableMock {
+    return super.attach(address) as ERC20BurnableMock;
   }
-  override connect(runner: ContractRunner | null): ERC20BurnableMock__factory {
-    return super.connect(runner) as ERC20BurnableMock__factory;
+  override connect(signer: Signer): ERC20BurnableMock__factory {
+    return super.connect(signer) as ERC20BurnableMock__factory;
   }
 
   static readonly bytecode = _bytecode;
   static readonly abi = _abi;
   static createInterface(): ERC20BurnableMockInterface {
-    return new Interface(_abi) as ERC20BurnableMockInterface;
+    return new utils.Interface(_abi) as ERC20BurnableMockInterface;
   }
   static connect(
     address: string,
-    runner?: ContractRunner | null
+    signerOrProvider: Signer | Provider
   ): ERC20BurnableMock {
-    return new Contract(address, _abi, runner) as unknown as ERC20BurnableMock;
+    return new Contract(address, _abi, signerOrProvider) as ERC20BurnableMock;
   }
 }
