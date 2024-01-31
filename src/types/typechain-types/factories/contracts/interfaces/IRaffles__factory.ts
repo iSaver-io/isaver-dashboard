@@ -2,7 +2,8 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import { Contract, Interface, type ContractRunner } from "ethers";
+import { Contract, Signer, utils } from "ethers";
+import type { Provider } from "@ethersproject/providers";
 import type {
   IRaffles,
   IRafflesInterface,
@@ -139,9 +140,12 @@ const _abi = [
 export class IRaffles__factory {
   static readonly abi = _abi;
   static createInterface(): IRafflesInterface {
-    return new Interface(_abi) as IRafflesInterface;
+    return new utils.Interface(_abi) as IRafflesInterface;
   }
-  static connect(address: string, runner?: ContractRunner | null): IRaffles {
-    return new Contract(address, _abi, runner) as unknown as IRaffles;
+  static connect(
+    address: string,
+    signerOrProvider: Signer | Provider
+  ): IRaffles {
+    return new Contract(address, _abi, signerOrProvider) as IRaffles;
   }
 }

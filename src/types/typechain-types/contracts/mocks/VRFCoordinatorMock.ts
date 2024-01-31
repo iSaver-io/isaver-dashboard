@@ -3,26 +3,37 @@
 /* eslint-disable */
 import type {
   BaseContract,
+  BigNumber,
   BigNumberish,
   BytesLike,
-  FunctionFragment,
-  Result,
-  Interface,
-  ContractRunner,
-  ContractMethod,
-  Listener,
+  CallOverrides,
+  ContractTransaction,
+  Overrides,
+  PopulatedTransaction,
+  Signer,
+  utils,
 } from "ethers";
+import type { FunctionFragment, Result } from "@ethersproject/abi";
+import type { Listener, Provider } from "@ethersproject/providers";
 import type {
-  TypedContractEvent,
-  TypedDeferredTopicFilter,
-  TypedEventLog,
+  TypedEventFilter,
+  TypedEvent,
   TypedListener,
-  TypedContractMethod,
+  OnEvent,
 } from "../../common";
 
-export interface VRFCoordinatorMockInterface extends Interface {
+export interface VRFCoordinatorMockInterface extends utils.Interface {
+  functions: {
+    "fulfillRequest(uint256)": FunctionFragment;
+    "getRequestsLength()": FunctionFragment;
+    "randomWords(uint256)": FunctionFragment;
+    "requestRandomWords(bytes32,uint64,uint16,uint32,uint32)": FunctionFragment;
+    "requests(uint256)": FunctionFragment;
+    "setRandomWords(uint256[])": FunctionFragment;
+  };
+
   getFunction(
-    nameOrSignature:
+    nameOrSignatureOrTopic:
       | "fulfillRequest"
       | "getRequestsLength"
       | "randomWords"
@@ -77,113 +88,189 @@ export interface VRFCoordinatorMockInterface extends Interface {
     functionFragment: "setRandomWords",
     data: BytesLike
   ): Result;
+
+  events: {};
 }
 
 export interface VRFCoordinatorMock extends BaseContract {
-  connect(runner?: ContractRunner | null): VRFCoordinatorMock;
-  waitForDeployment(): Promise<this>;
+  connect(signerOrProvider: Signer | Provider | string): this;
+  attach(addressOrName: string): this;
+  deployed(): Promise<this>;
 
   interface: VRFCoordinatorMockInterface;
 
-  queryFilter<TCEvent extends TypedContractEvent>(
-    event: TCEvent,
+  queryFilter<TEvent extends TypedEvent>(
+    event: TypedEventFilter<TEvent>,
     fromBlockOrBlockhash?: string | number | undefined,
     toBlock?: string | number | undefined
-  ): Promise<Array<TypedEventLog<TCEvent>>>;
-  queryFilter<TCEvent extends TypedContractEvent>(
-    filter: TypedDeferredTopicFilter<TCEvent>,
-    fromBlockOrBlockhash?: string | number | undefined,
-    toBlock?: string | number | undefined
-  ): Promise<Array<TypedEventLog<TCEvent>>>;
+  ): Promise<Array<TEvent>>;
 
-  on<TCEvent extends TypedContractEvent>(
-    event: TCEvent,
-    listener: TypedListener<TCEvent>
-  ): Promise<this>;
-  on<TCEvent extends TypedContractEvent>(
-    filter: TypedDeferredTopicFilter<TCEvent>,
-    listener: TypedListener<TCEvent>
-  ): Promise<this>;
+  listeners<TEvent extends TypedEvent>(
+    eventFilter?: TypedEventFilter<TEvent>
+  ): Array<TypedListener<TEvent>>;
+  listeners(eventName?: string): Array<Listener>;
+  removeAllListeners<TEvent extends TypedEvent>(
+    eventFilter: TypedEventFilter<TEvent>
+  ): this;
+  removeAllListeners(eventName?: string): this;
+  off: OnEvent<this>;
+  on: OnEvent<this>;
+  once: OnEvent<this>;
+  removeListener: OnEvent<this>;
 
-  once<TCEvent extends TypedContractEvent>(
-    event: TCEvent,
-    listener: TypedListener<TCEvent>
-  ): Promise<this>;
-  once<TCEvent extends TypedContractEvent>(
-    filter: TypedDeferredTopicFilter<TCEvent>,
-    listener: TypedListener<TCEvent>
-  ): Promise<this>;
+  functions: {
+    fulfillRequest(
+      requestId: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
 
-  listeners<TCEvent extends TypedContractEvent>(
-    event: TCEvent
-  ): Promise<Array<TypedListener<TCEvent>>>;
-  listeners(eventName?: string): Promise<Array<Listener>>;
-  removeAllListeners<TCEvent extends TypedContractEvent>(
-    event?: TCEvent
-  ): Promise<this>;
+    getRequestsLength(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-  fulfillRequest: TypedContractMethod<
-    [requestId: BigNumberish],
-    [void],
-    "nonpayable"
-  >;
+    randomWords(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
 
-  getRequestsLength: TypedContractMethod<[], [bigint], "view">;
-
-  randomWords: TypedContractMethod<[arg0: BigNumberish], [bigint], "view">;
-
-  requestRandomWords: TypedContractMethod<
-    [
+    requestRandomWords(
       keyHash: BytesLike,
       subId: BigNumberish,
       minimumRequestConfirmations: BigNumberish,
       callbackGasLimit: BigNumberish,
-      numWords: BigNumberish
-    ],
-    [bigint],
-    "nonpayable"
-  >;
+      numWords: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
 
-  requests: TypedContractMethod<[arg0: BigNumberish], [string], "view">;
+    requests(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[string] & { sender: string }>;
 
-  setRandomWords: TypedContractMethod<
-    [_randomWords: BigNumberish[]],
-    [void],
-    "nonpayable"
-  >;
+    setRandomWords(
+      _randomWords: BigNumberish[],
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
+  };
 
-  getFunction<T extends ContractMethod = ContractMethod>(
-    key: string | FunctionFragment
-  ): T;
+  fulfillRequest(
+    requestId: BigNumberish,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
 
-  getFunction(
-    nameOrSignature: "fulfillRequest"
-  ): TypedContractMethod<[requestId: BigNumberish], [void], "nonpayable">;
-  getFunction(
-    nameOrSignature: "getRequestsLength"
-  ): TypedContractMethod<[], [bigint], "view">;
-  getFunction(
-    nameOrSignature: "randomWords"
-  ): TypedContractMethod<[arg0: BigNumberish], [bigint], "view">;
-  getFunction(
-    nameOrSignature: "requestRandomWords"
-  ): TypedContractMethod<
-    [
+  getRequestsLength(overrides?: CallOverrides): Promise<BigNumber>;
+
+  randomWords(
+    arg0: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  requestRandomWords(
+    keyHash: BytesLike,
+    subId: BigNumberish,
+    minimumRequestConfirmations: BigNumberish,
+    callbackGasLimit: BigNumberish,
+    numWords: BigNumberish,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  requests(arg0: BigNumberish, overrides?: CallOverrides): Promise<string>;
+
+  setRandomWords(
+    _randomWords: BigNumberish[],
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  callStatic: {
+    fulfillRequest(
+      requestId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    getRequestsLength(overrides?: CallOverrides): Promise<BigNumber>;
+
+    randomWords(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    requestRandomWords(
       keyHash: BytesLike,
       subId: BigNumberish,
       minimumRequestConfirmations: BigNumberish,
       callbackGasLimit: BigNumberish,
-      numWords: BigNumberish
-    ],
-    [bigint],
-    "nonpayable"
-  >;
-  getFunction(
-    nameOrSignature: "requests"
-  ): TypedContractMethod<[arg0: BigNumberish], [string], "view">;
-  getFunction(
-    nameOrSignature: "setRandomWords"
-  ): TypedContractMethod<[_randomWords: BigNumberish[]], [void], "nonpayable">;
+      numWords: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    requests(arg0: BigNumberish, overrides?: CallOverrides): Promise<string>;
+
+    setRandomWords(
+      _randomWords: BigNumberish[],
+      overrides?: CallOverrides
+    ): Promise<void>;
+  };
 
   filters: {};
+
+  estimateGas: {
+    fulfillRequest(
+      requestId: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+
+    getRequestsLength(overrides?: CallOverrides): Promise<BigNumber>;
+
+    randomWords(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    requestRandomWords(
+      keyHash: BytesLike,
+      subId: BigNumberish,
+      minimumRequestConfirmations: BigNumberish,
+      callbackGasLimit: BigNumberish,
+      numWords: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+
+    requests(arg0: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
+
+    setRandomWords(
+      _randomWords: BigNumberish[],
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+  };
+
+  populateTransaction: {
+    fulfillRequest(
+      requestId: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    getRequestsLength(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    randomWords(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    requestRandomWords(
+      keyHash: BytesLike,
+      subId: BigNumberish,
+      minimumRequestConfirmations: BigNumberish,
+      callbackGasLimit: BigNumberish,
+      numWords: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    requests(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    setRandomWords(
+      _randomWords: BigNumberish[],
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+  };
 }

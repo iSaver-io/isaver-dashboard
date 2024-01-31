@@ -2,7 +2,8 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import { Contract, Interface, type ContractRunner } from "ethers";
+import { Contract, Signer, utils } from "ethers";
+import type { Provider } from "@ethersproject/providers";
 import type {
   VRFCoordinatorV2Interface,
   VRFCoordinatorV2InterfaceInterface,
@@ -227,16 +228,16 @@ const _abi = [
 export class VRFCoordinatorV2Interface__factory {
   static readonly abi = _abi;
   static createInterface(): VRFCoordinatorV2InterfaceInterface {
-    return new Interface(_abi) as VRFCoordinatorV2InterfaceInterface;
+    return new utils.Interface(_abi) as VRFCoordinatorV2InterfaceInterface;
   }
   static connect(
     address: string,
-    runner?: ContractRunner | null
+    signerOrProvider: Signer | Provider
   ): VRFCoordinatorV2Interface {
     return new Contract(
       address,
       _abi,
-      runner
-    ) as unknown as VRFCoordinatorV2Interface;
+      signerOrProvider
+    ) as VRFCoordinatorV2Interface;
   }
 }

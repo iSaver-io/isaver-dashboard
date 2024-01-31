@@ -3,162 +3,148 @@
 /* eslint-disable */
 import type {
   BaseContract,
+  BigNumber,
   BytesLike,
-  FunctionFragment,
-  Result,
-  Interface,
-  EventFragment,
-  AddressLike,
-  ContractRunner,
-  ContractMethod,
-  Listener,
+  CallOverrides,
+  PopulatedTransaction,
+  Signer,
+  utils,
 } from "ethers";
 import type {
-  TypedContractEvent,
-  TypedDeferredTopicFilter,
-  TypedEventLog,
-  TypedLogDescription,
+  FunctionFragment,
+  Result,
+  EventFragment,
+} from "@ethersproject/abi";
+import type { Listener, Provider } from "@ethersproject/providers";
+import type {
+  TypedEventFilter,
+  TypedEvent,
   TypedListener,
-  TypedContractMethod,
+  OnEvent,
 } from "../../common";
 
-export interface BlackListInterface extends Interface {
-  getFunction(nameOrSignature: "isAddressInBlackList"): FunctionFragment;
+export interface BlackListInterface extends utils.Interface {
+  functions: {
+    "isAddressInBlackList(address)": FunctionFragment;
+  };
 
-  getEvent(
-    nameOrSignatureOrTopic: "BlackListAdded" | "BlackListRemoved"
-  ): EventFragment;
+  getFunction(nameOrSignatureOrTopic: "isAddressInBlackList"): FunctionFragment;
 
   encodeFunctionData(
     functionFragment: "isAddressInBlackList",
-    values: [AddressLike]
+    values: [string]
   ): string;
 
   decodeFunctionResult(
     functionFragment: "isAddressInBlackList",
     data: BytesLike
   ): Result;
+
+  events: {
+    "BlackListAdded(address[],address)": EventFragment;
+    "BlackListRemoved(address[],address)": EventFragment;
+  };
+
+  getEvent(nameOrSignatureOrTopic: "BlackListAdded"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "BlackListRemoved"): EventFragment;
 }
 
-export namespace BlackListAddedEvent {
-  export type InputTuple = [_addresses: AddressLike[], admin: AddressLike];
-  export type OutputTuple = [_addresses: string[], admin: string];
-  export interface OutputObject {
-    _addresses: string[];
-    admin: string;
-  }
-  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
-  export type Filter = TypedDeferredTopicFilter<Event>;
-  export type Log = TypedEventLog<Event>;
-  export type LogDescription = TypedLogDescription<Event>;
+export interface BlackListAddedEventObject {
+  _addresses: string[];
+  admin: string;
 }
+export type BlackListAddedEvent = TypedEvent<
+  [string[], string],
+  BlackListAddedEventObject
+>;
 
-export namespace BlackListRemovedEvent {
-  export type InputTuple = [_addresses: AddressLike[], admin: AddressLike];
-  export type OutputTuple = [_addresses: string[], admin: string];
-  export interface OutputObject {
-    _addresses: string[];
-    admin: string;
-  }
-  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
-  export type Filter = TypedDeferredTopicFilter<Event>;
-  export type Log = TypedEventLog<Event>;
-  export type LogDescription = TypedLogDescription<Event>;
+export type BlackListAddedEventFilter = TypedEventFilter<BlackListAddedEvent>;
+
+export interface BlackListRemovedEventObject {
+  _addresses: string[];
+  admin: string;
 }
+export type BlackListRemovedEvent = TypedEvent<
+  [string[], string],
+  BlackListRemovedEventObject
+>;
+
+export type BlackListRemovedEventFilter =
+  TypedEventFilter<BlackListRemovedEvent>;
 
 export interface BlackList extends BaseContract {
-  connect(runner?: ContractRunner | null): BlackList;
-  waitForDeployment(): Promise<this>;
+  connect(signerOrProvider: Signer | Provider | string): this;
+  attach(addressOrName: string): this;
+  deployed(): Promise<this>;
 
   interface: BlackListInterface;
 
-  queryFilter<TCEvent extends TypedContractEvent>(
-    event: TCEvent,
+  queryFilter<TEvent extends TypedEvent>(
+    event: TypedEventFilter<TEvent>,
     fromBlockOrBlockhash?: string | number | undefined,
     toBlock?: string | number | undefined
-  ): Promise<Array<TypedEventLog<TCEvent>>>;
-  queryFilter<TCEvent extends TypedContractEvent>(
-    filter: TypedDeferredTopicFilter<TCEvent>,
-    fromBlockOrBlockhash?: string | number | undefined,
-    toBlock?: string | number | undefined
-  ): Promise<Array<TypedEventLog<TCEvent>>>;
+  ): Promise<Array<TEvent>>;
 
-  on<TCEvent extends TypedContractEvent>(
-    event: TCEvent,
-    listener: TypedListener<TCEvent>
-  ): Promise<this>;
-  on<TCEvent extends TypedContractEvent>(
-    filter: TypedDeferredTopicFilter<TCEvent>,
-    listener: TypedListener<TCEvent>
-  ): Promise<this>;
+  listeners<TEvent extends TypedEvent>(
+    eventFilter?: TypedEventFilter<TEvent>
+  ): Array<TypedListener<TEvent>>;
+  listeners(eventName?: string): Array<Listener>;
+  removeAllListeners<TEvent extends TypedEvent>(
+    eventFilter: TypedEventFilter<TEvent>
+  ): this;
+  removeAllListeners(eventName?: string): this;
+  off: OnEvent<this>;
+  on: OnEvent<this>;
+  once: OnEvent<this>;
+  removeListener: OnEvent<this>;
 
-  once<TCEvent extends TypedContractEvent>(
-    event: TCEvent,
-    listener: TypedListener<TCEvent>
-  ): Promise<this>;
-  once<TCEvent extends TypedContractEvent>(
-    filter: TypedDeferredTopicFilter<TCEvent>,
-    listener: TypedListener<TCEvent>
-  ): Promise<this>;
+  functions: {
+    isAddressInBlackList(
+      _address: string,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
+  };
 
-  listeners<TCEvent extends TypedContractEvent>(
-    event: TCEvent
-  ): Promise<Array<TypedListener<TCEvent>>>;
-  listeners(eventName?: string): Promise<Array<Listener>>;
-  removeAllListeners<TCEvent extends TypedContractEvent>(
-    event?: TCEvent
-  ): Promise<this>;
+  isAddressInBlackList(
+    _address: string,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
 
-  isAddressInBlackList: TypedContractMethod<
-    [_address: AddressLike],
-    [boolean],
-    "view"
-  >;
-
-  getFunction<T extends ContractMethod = ContractMethod>(
-    key: string | FunctionFragment
-  ): T;
-
-  getFunction(
-    nameOrSignature: "isAddressInBlackList"
-  ): TypedContractMethod<[_address: AddressLike], [boolean], "view">;
-
-  getEvent(
-    key: "BlackListAdded"
-  ): TypedContractEvent<
-    BlackListAddedEvent.InputTuple,
-    BlackListAddedEvent.OutputTuple,
-    BlackListAddedEvent.OutputObject
-  >;
-  getEvent(
-    key: "BlackListRemoved"
-  ): TypedContractEvent<
-    BlackListRemovedEvent.InputTuple,
-    BlackListRemovedEvent.OutputTuple,
-    BlackListRemovedEvent.OutputObject
-  >;
+  callStatic: {
+    isAddressInBlackList(
+      _address: string,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+  };
 
   filters: {
-    "BlackListAdded(address[],address)": TypedContractEvent<
-      BlackListAddedEvent.InputTuple,
-      BlackListAddedEvent.OutputTuple,
-      BlackListAddedEvent.OutputObject
-    >;
-    BlackListAdded: TypedContractEvent<
-      BlackListAddedEvent.InputTuple,
-      BlackListAddedEvent.OutputTuple,
-      BlackListAddedEvent.OutputObject
-    >;
+    "BlackListAdded(address[],address)"(
+      _addresses?: null,
+      admin?: null
+    ): BlackListAddedEventFilter;
+    BlackListAdded(_addresses?: null, admin?: null): BlackListAddedEventFilter;
 
-    "BlackListRemoved(address[],address)": TypedContractEvent<
-      BlackListRemovedEvent.InputTuple,
-      BlackListRemovedEvent.OutputTuple,
-      BlackListRemovedEvent.OutputObject
-    >;
-    BlackListRemoved: TypedContractEvent<
-      BlackListRemovedEvent.InputTuple,
-      BlackListRemovedEvent.OutputTuple,
-      BlackListRemovedEvent.OutputObject
-    >;
+    "BlackListRemoved(address[],address)"(
+      _addresses?: null,
+      admin?: null
+    ): BlackListRemovedEventFilter;
+    BlackListRemoved(
+      _addresses?: null,
+      admin?: null
+    ): BlackListRemovedEventFilter;
+  };
+
+  estimateGas: {
+    isAddressInBlackList(
+      _address: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+  };
+
+  populateTransaction: {
+    isAddressInBlackList(
+      _address: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
   };
 }

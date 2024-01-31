@@ -2,7 +2,8 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import { Contract, Interface, type ContractRunner } from "ethers";
+import { Contract, Signer, utils } from "ethers";
+import type { Provider } from "@ethersproject/providers";
 import type {
   IBeaconUpgradeable,
   IBeaconUpgradeableInterface,
@@ -27,12 +28,12 @@ const _abi = [
 export class IBeaconUpgradeable__factory {
   static readonly abi = _abi;
   static createInterface(): IBeaconUpgradeableInterface {
-    return new Interface(_abi) as IBeaconUpgradeableInterface;
+    return new utils.Interface(_abi) as IBeaconUpgradeableInterface;
   }
   static connect(
     address: string,
-    runner?: ContractRunner | null
+    signerOrProvider: Signer | Provider
   ): IBeaconUpgradeable {
-    return new Contract(address, _abi, runner) as unknown as IBeaconUpgradeable;
+    return new Contract(address, _abi, signerOrProvider) as IBeaconUpgradeable;
   }
 }

@@ -2,7 +2,8 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import { Contract, Interface, type ContractRunner } from "ethers";
+import { Contract, Signer, utils } from "ethers";
+import type { Provider } from "@ethersproject/providers";
 import type {
   WhiteList,
   WhiteListInterface,
@@ -71,9 +72,12 @@ const _abi = [
 export class WhiteList__factory {
   static readonly abi = _abi;
   static createInterface(): WhiteListInterface {
-    return new Interface(_abi) as WhiteListInterface;
+    return new utils.Interface(_abi) as WhiteListInterface;
   }
-  static connect(address: string, runner?: ContractRunner | null): WhiteList {
-    return new Contract(address, _abi, runner) as unknown as WhiteList;
+  static connect(
+    address: string,
+    signerOrProvider: Signer | Provider
+  ): WhiteList {
+    return new Contract(address, _abi, signerOrProvider) as WhiteList;
   }
 }

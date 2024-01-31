@@ -3,22 +3,23 @@
 /* eslint-disable */
 import type {
   BaseContract,
+  BigNumber,
   BigNumberish,
   BytesLike,
-  FunctionFragment,
-  Result,
-  Interface,
-  AddressLike,
-  ContractRunner,
-  ContractMethod,
-  Listener,
+  CallOverrides,
+  ContractTransaction,
+  Overrides,
+  PopulatedTransaction,
+  Signer,
+  utils,
 } from "ethers";
+import type { FunctionFragment, Result } from "@ethersproject/abi";
+import type { Listener, Provider } from "@ethersproject/providers";
 import type {
-  TypedContractEvent,
-  TypedDeferredTopicFilter,
-  TypedEventLog,
+  TypedEventFilter,
+  TypedEvent,
   TypedListener,
-  TypedContractMethod,
+  OnEvent,
 } from "../../common";
 
 export declare namespace IStaking {
@@ -31,17 +32,17 @@ export declare namespace IStaking {
   };
 
   export type UserStakingInfoStructOutput = [
-    totalClaimed: bigint,
-    currentSavTokenStaked: bigint,
-    currentSavrTokenStaked: bigint,
-    isSubscribed: boolean,
-    subscribedTill: bigint
+    BigNumber,
+    BigNumber,
+    BigNumber,
+    boolean,
+    BigNumber
   ] & {
-    totalClaimed: bigint;
-    currentSavTokenStaked: bigint;
-    currentSavrTokenStaked: bigint;
+    totalClaimed: BigNumber;
+    currentSavTokenStaked: BigNumber;
+    currentSavrTokenStaked: BigNumber;
     isSubscribed: boolean;
-    subscribedTill: bigint;
+    subscribedTill: BigNumber;
   };
 
   export type StakeStruct = {
@@ -55,27 +56,38 @@ export declare namespace IStaking {
   };
 
   export type StakeStructOutput = [
-    amount: bigint,
-    timeStart: bigint,
-    timeEnd: bigint,
-    apr: bigint,
-    profit: bigint,
-    isClaimed: boolean,
-    isSAVRToken: boolean
+    BigNumber,
+    BigNumber,
+    BigNumber,
+    BigNumber,
+    BigNumber,
+    boolean,
+    boolean
   ] & {
-    amount: bigint;
-    timeStart: bigint;
-    timeEnd: bigint;
-    apr: bigint;
-    profit: bigint;
+    amount: BigNumber;
+    timeStart: BigNumber;
+    timeEnd: BigNumber;
+    apr: BigNumber;
+    profit: BigNumber;
     isClaimed: boolean;
     isSAVRToken: boolean;
   };
 }
 
-export interface IStakingInterface extends Interface {
+export interface IStakingInterface extends utils.Interface {
+  functions: {
+    "deposit(uint256,uint256,bool,address)": FunctionFragment;
+    "getAvailableStakeReward(uint256,address,uint256)": FunctionFragment;
+    "getUserPlanInfo(uint256,address)": FunctionFragment;
+    "getUserStakes(uint256,address)": FunctionFragment;
+    "hasAnySubscription(address)": FunctionFragment;
+    "hasSubscription(uint256,address)": FunctionFragment;
+    "subscribe(uint256)": FunctionFragment;
+    "withdraw(uint256,uint256)": FunctionFragment;
+  };
+
   getFunction(
-    nameOrSignature:
+    nameOrSignatureOrTopic:
       | "deposit"
       | "getAvailableStakeReward"
       | "getUserPlanInfo"
@@ -88,27 +100,27 @@ export interface IStakingInterface extends Interface {
 
   encodeFunctionData(
     functionFragment: "deposit",
-    values: [BigNumberish, BigNumberish, boolean, AddressLike]
+    values: [BigNumberish, BigNumberish, boolean, string]
   ): string;
   encodeFunctionData(
     functionFragment: "getAvailableStakeReward",
-    values: [BigNumberish, AddressLike, BigNumberish]
+    values: [BigNumberish, string, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "getUserPlanInfo",
-    values: [BigNumberish, AddressLike]
+    values: [BigNumberish, string]
   ): string;
   encodeFunctionData(
     functionFragment: "getUserStakes",
-    values: [BigNumberish, AddressLike]
+    values: [BigNumberish, string]
   ): string;
   encodeFunctionData(
     functionFragment: "hasAnySubscription",
-    values: [AddressLike]
+    values: [string]
   ): string;
   encodeFunctionData(
     functionFragment: "hasSubscription",
-    values: [BigNumberish, AddressLike]
+    values: [BigNumberish, string]
   ): string;
   encodeFunctionData(
     functionFragment: "subscribe",
@@ -142,157 +154,284 @@ export interface IStakingInterface extends Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "subscribe", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "withdraw", data: BytesLike): Result;
+
+  events: {};
 }
 
 export interface IStaking extends BaseContract {
-  connect(runner?: ContractRunner | null): IStaking;
-  waitForDeployment(): Promise<this>;
+  connect(signerOrProvider: Signer | Provider | string): this;
+  attach(addressOrName: string): this;
+  deployed(): Promise<this>;
 
   interface: IStakingInterface;
 
-  queryFilter<TCEvent extends TypedContractEvent>(
-    event: TCEvent,
+  queryFilter<TEvent extends TypedEvent>(
+    event: TypedEventFilter<TEvent>,
     fromBlockOrBlockhash?: string | number | undefined,
     toBlock?: string | number | undefined
-  ): Promise<Array<TypedEventLog<TCEvent>>>;
-  queryFilter<TCEvent extends TypedContractEvent>(
-    filter: TypedDeferredTopicFilter<TCEvent>,
-    fromBlockOrBlockhash?: string | number | undefined,
-    toBlock?: string | number | undefined
-  ): Promise<Array<TypedEventLog<TCEvent>>>;
+  ): Promise<Array<TEvent>>;
 
-  on<TCEvent extends TypedContractEvent>(
-    event: TCEvent,
-    listener: TypedListener<TCEvent>
-  ): Promise<this>;
-  on<TCEvent extends TypedContractEvent>(
-    filter: TypedDeferredTopicFilter<TCEvent>,
-    listener: TypedListener<TCEvent>
-  ): Promise<this>;
+  listeners<TEvent extends TypedEvent>(
+    eventFilter?: TypedEventFilter<TEvent>
+  ): Array<TypedListener<TEvent>>;
+  listeners(eventName?: string): Array<Listener>;
+  removeAllListeners<TEvent extends TypedEvent>(
+    eventFilter: TypedEventFilter<TEvent>
+  ): this;
+  removeAllListeners(eventName?: string): this;
+  off: OnEvent<this>;
+  on: OnEvent<this>;
+  once: OnEvent<this>;
+  removeListener: OnEvent<this>;
 
-  once<TCEvent extends TypedContractEvent>(
-    event: TCEvent,
-    listener: TypedListener<TCEvent>
-  ): Promise<this>;
-  once<TCEvent extends TypedContractEvent>(
-    filter: TypedDeferredTopicFilter<TCEvent>,
-    listener: TypedListener<TCEvent>
-  ): Promise<this>;
-
-  listeners<TCEvent extends TypedContractEvent>(
-    event: TCEvent
-  ): Promise<Array<TypedListener<TCEvent>>>;
-  listeners(eventName?: string): Promise<Array<Listener>>;
-  removeAllListeners<TCEvent extends TypedContractEvent>(
-    event?: TCEvent
-  ): Promise<this>;
-
-  deposit: TypedContractMethod<
-    [
+  functions: {
+    deposit(
       planId: BigNumberish,
       depositAmount: BigNumberish,
       isSAVRToken: boolean,
-      referrer: AddressLike
-    ],
-    [void],
-    "nonpayable"
-  >;
+      referrer: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
 
-  getAvailableStakeReward: TypedContractMethod<
-    [planId: BigNumberish, userAddress: AddressLike, stakeId: BigNumberish],
-    [bigint],
-    "view"
-  >;
+    getAvailableStakeReward(
+      planId: BigNumberish,
+      userAddress: string,
+      stakeId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
 
-  getUserPlanInfo: TypedContractMethod<
-    [planId: BigNumberish, userAddress: AddressLike],
-    [IStaking.UserStakingInfoStructOutput],
-    "view"
-  >;
+    getUserPlanInfo(
+      planId: BigNumberish,
+      userAddress: string,
+      overrides?: CallOverrides
+    ): Promise<[IStaking.UserStakingInfoStructOutput]>;
 
-  getUserStakes: TypedContractMethod<
-    [planId: BigNumberish, userAddress: AddressLike],
-    [IStaking.StakeStructOutput[]],
-    "view"
-  >;
+    getUserStakes(
+      planId: BigNumberish,
+      userAddress: string,
+      overrides?: CallOverrides
+    ): Promise<
+      [IStaking.StakeStructOutput[]] & { stakes: IStaking.StakeStructOutput[] }
+    >;
 
-  hasAnySubscription: TypedContractMethod<
-    [user: AddressLike],
-    [boolean],
-    "view"
-  >;
+    hasAnySubscription(
+      user: string,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
 
-  hasSubscription: TypedContractMethod<
-    [planId: BigNumberish, user: AddressLike],
-    [boolean],
-    "view"
-  >;
+    hasSubscription(
+      planId: BigNumberish,
+      user: string,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
 
-  subscribe: TypedContractMethod<[planId: BigNumberish], [void], "nonpayable">;
+    subscribe(
+      planId: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
 
-  withdraw: TypedContractMethod<
-    [planId: BigNumberish, stakeId: BigNumberish],
-    [void],
-    "nonpayable"
-  >;
+    withdraw(
+      planId: BigNumberish,
+      stakeId: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
+  };
 
-  getFunction<T extends ContractMethod = ContractMethod>(
-    key: string | FunctionFragment
-  ): T;
+  deposit(
+    planId: BigNumberish,
+    depositAmount: BigNumberish,
+    isSAVRToken: boolean,
+    referrer: string,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
 
-  getFunction(
-    nameOrSignature: "deposit"
-  ): TypedContractMethod<
-    [
+  getAvailableStakeReward(
+    planId: BigNumberish,
+    userAddress: string,
+    stakeId: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  getUserPlanInfo(
+    planId: BigNumberish,
+    userAddress: string,
+    overrides?: CallOverrides
+  ): Promise<IStaking.UserStakingInfoStructOutput>;
+
+  getUserStakes(
+    planId: BigNumberish,
+    userAddress: string,
+    overrides?: CallOverrides
+  ): Promise<IStaking.StakeStructOutput[]>;
+
+  hasAnySubscription(user: string, overrides?: CallOverrides): Promise<boolean>;
+
+  hasSubscription(
+    planId: BigNumberish,
+    user: string,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
+  subscribe(
+    planId: BigNumberish,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  withdraw(
+    planId: BigNumberish,
+    stakeId: BigNumberish,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  callStatic: {
+    deposit(
       planId: BigNumberish,
       depositAmount: BigNumberish,
       isSAVRToken: boolean,
-      referrer: AddressLike
-    ],
-    [void],
-    "nonpayable"
-  >;
-  getFunction(
-    nameOrSignature: "getAvailableStakeReward"
-  ): TypedContractMethod<
-    [planId: BigNumberish, userAddress: AddressLike, stakeId: BigNumberish],
-    [bigint],
-    "view"
-  >;
-  getFunction(
-    nameOrSignature: "getUserPlanInfo"
-  ): TypedContractMethod<
-    [planId: BigNumberish, userAddress: AddressLike],
-    [IStaking.UserStakingInfoStructOutput],
-    "view"
-  >;
-  getFunction(
-    nameOrSignature: "getUserStakes"
-  ): TypedContractMethod<
-    [planId: BigNumberish, userAddress: AddressLike],
-    [IStaking.StakeStructOutput[]],
-    "view"
-  >;
-  getFunction(
-    nameOrSignature: "hasAnySubscription"
-  ): TypedContractMethod<[user: AddressLike], [boolean], "view">;
-  getFunction(
-    nameOrSignature: "hasSubscription"
-  ): TypedContractMethod<
-    [planId: BigNumberish, user: AddressLike],
-    [boolean],
-    "view"
-  >;
-  getFunction(
-    nameOrSignature: "subscribe"
-  ): TypedContractMethod<[planId: BigNumberish], [void], "nonpayable">;
-  getFunction(
-    nameOrSignature: "withdraw"
-  ): TypedContractMethod<
-    [planId: BigNumberish, stakeId: BigNumberish],
-    [void],
-    "nonpayable"
-  >;
+      referrer: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    getAvailableStakeReward(
+      planId: BigNumberish,
+      userAddress: string,
+      stakeId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getUserPlanInfo(
+      planId: BigNumberish,
+      userAddress: string,
+      overrides?: CallOverrides
+    ): Promise<IStaking.UserStakingInfoStructOutput>;
+
+    getUserStakes(
+      planId: BigNumberish,
+      userAddress: string,
+      overrides?: CallOverrides
+    ): Promise<IStaking.StakeStructOutput[]>;
+
+    hasAnySubscription(
+      user: string,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
+    hasSubscription(
+      planId: BigNumberish,
+      user: string,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
+    subscribe(planId: BigNumberish, overrides?: CallOverrides): Promise<void>;
+
+    withdraw(
+      planId: BigNumberish,
+      stakeId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+  };
 
   filters: {};
+
+  estimateGas: {
+    deposit(
+      planId: BigNumberish,
+      depositAmount: BigNumberish,
+      isSAVRToken: boolean,
+      referrer: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+
+    getAvailableStakeReward(
+      planId: BigNumberish,
+      userAddress: string,
+      stakeId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getUserPlanInfo(
+      planId: BigNumberish,
+      userAddress: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getUserStakes(
+      planId: BigNumberish,
+      userAddress: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    hasAnySubscription(
+      user: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    hasSubscription(
+      planId: BigNumberish,
+      user: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    subscribe(
+      planId: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+
+    withdraw(
+      planId: BigNumberish,
+      stakeId: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+  };
+
+  populateTransaction: {
+    deposit(
+      planId: BigNumberish,
+      depositAmount: BigNumberish,
+      isSAVRToken: boolean,
+      referrer: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    getAvailableStakeReward(
+      planId: BigNumberish,
+      userAddress: string,
+      stakeId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getUserPlanInfo(
+      planId: BigNumberish,
+      userAddress: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getUserStakes(
+      planId: BigNumberish,
+      userAddress: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    hasAnySubscription(
+      user: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    hasSubscription(
+      planId: BigNumberish,
+      user: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    subscribe(
+      planId: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    withdraw(
+      planId: BigNumberish,
+      stakeId: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+  };
 }

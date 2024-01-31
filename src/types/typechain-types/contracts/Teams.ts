@@ -3,24 +3,28 @@
 /* eslint-disable */
 import type {
   BaseContract,
+  BigNumber,
   BigNumberish,
   BytesLike,
-  FunctionFragment,
-  Result,
-  Interface,
-  EventFragment,
-  AddressLike,
-  ContractRunner,
-  ContractMethod,
-  Listener,
+  CallOverrides,
+  ContractTransaction,
+  Overrides,
+  PayableOverrides,
+  PopulatedTransaction,
+  Signer,
+  utils,
 } from "ethers";
 import type {
-  TypedContractEvent,
-  TypedDeferredTopicFilter,
-  TypedEventLog,
-  TypedLogDescription,
+  FunctionFragment,
+  Result,
+  EventFragment,
+} from "@ethersproject/abi";
+import type { Listener, Provider } from "@ethersproject/providers";
+import type {
+  TypedEventFilter,
+  TypedEvent,
   TypedListener,
-  TypedContractMethod,
+  OnEvent,
 } from "../common";
 
 export declare namespace ITeams {
@@ -35,20 +39,20 @@ export declare namespace ITeams {
   };
 
   export type TeamPlanStructOutput = [
-    teamPlanId: bigint,
-    subscriptionCost: bigint,
-    reward: bigint,
-    stakingThreshold: bigint,
-    teamSize: bigint,
-    stakingPlanId: bigint,
-    isActive: boolean
+    BigNumber,
+    BigNumber,
+    BigNumber,
+    BigNumber,
+    BigNumber,
+    BigNumber,
+    boolean
   ] & {
-    teamPlanId: bigint;
-    subscriptionCost: bigint;
-    reward: bigint;
-    stakingThreshold: bigint;
-    teamSize: bigint;
-    stakingPlanId: bigint;
+    teamPlanId: BigNumber;
+    subscriptionCost: BigNumber;
+    reward: BigNumber;
+    stakingThreshold: BigNumber;
+    teamSize: BigNumber;
+    stakingPlanId: BigNumber;
     isActive: boolean;
   };
 
@@ -57,15 +61,52 @@ export declare namespace ITeams {
     teamsFilled: BigNumberish;
   };
 
-  export type TeamStructOutput = [subscription: bigint, teamsFilled: bigint] & {
-    subscription: bigint;
-    teamsFilled: bigint;
+  export type TeamStructOutput = [BigNumber, BigNumber] & {
+    subscription: BigNumber;
+    teamsFilled: BigNumber;
   };
 }
 
-export interface TeamsInterface extends Interface {
+export interface TeamsInterface extends utils.Interface {
+  functions: {
+    "DEFAULT_ADMIN_ROLE()": FunctionFragment;
+    "SUBSCRIPTION_PERIOD_DAYS()": FunctionFragment;
+    "UPGRADER_ROLE()": FunctionFragment;
+    "addPlan(uint256,uint256,uint256,uint256,uint256)": FunctionFragment;
+    "getActivePlans()": FunctionFragment;
+    "getPlan(uint256)": FunctionFragment;
+    "getPlans()": FunctionFragment;
+    "getRoleAdmin(bytes32)": FunctionFragment;
+    "getSufficientPlanIdByStakingAmount(uint256,uint256)": FunctionFragment;
+    "getTimestamp()": FunctionFragment;
+    "getUserSubscription(address,uint256)": FunctionFragment;
+    "getUserTeamMembers(address,uint256)": FunctionFragment;
+    "grantRole(bytes32,address)": FunctionFragment;
+    "hasAnySubscription(address)": FunctionFragment;
+    "hasRole(bytes32,address)": FunctionFragment;
+    "initialize(address)": FunctionFragment;
+    "plans(uint256)": FunctionFragment;
+    "proxiableUUID()": FunctionFragment;
+    "renounceRole(bytes32,address)": FunctionFragment;
+    "revokeRole(bytes32,address)": FunctionFragment;
+    "subscribe(uint256)": FunctionFragment;
+    "supportsInterface(bytes4)": FunctionFragment;
+    "tryToAddMember(uint256,address,address,uint256)": FunctionFragment;
+    "updatePlanActivity(uint256,bool)": FunctionFragment;
+    "updatePlanReward(uint256,uint256)": FunctionFragment;
+    "updatePlanStakingId(uint256,uint256)": FunctionFragment;
+    "updatePlanStakingThreshold(uint256,uint256)": FunctionFragment;
+    "updatePlanSubscriptionCost(uint256,uint256)": FunctionFragment;
+    "updatePlanTeamSize(uint256,uint256)": FunctionFragment;
+    "updateSubscriptionPeriod(uint256)": FunctionFragment;
+    "upgradeTo(address)": FunctionFragment;
+    "upgradeToAndCall(address,bytes)": FunctionFragment;
+    "userHasPlanSubscription(address,uint256)": FunctionFragment;
+    "userHasSufficientStaking(address,uint256)": FunctionFragment;
+  };
+
   getFunction(
-    nameOrSignature:
+    nameOrSignatureOrTopic:
       | "DEFAULT_ADMIN_ROLE"
       | "SUBSCRIPTION_PERIOD_DAYS"
       | "UPGRADER_ROLE"
@@ -101,22 +142,6 @@ export interface TeamsInterface extends Interface {
       | "userHasPlanSubscription"
       | "userHasSufficientStaking"
   ): FunctionFragment;
-
-  getEvent(
-    nameOrSignatureOrTopic:
-      | "AdminChanged"
-      | "BeaconUpgraded"
-      | "Initialized"
-      | "MemberAdded"
-      | "RoleAdminChanged"
-      | "RoleGranted"
-      | "RoleRevoked"
-      | "Subscribed"
-      | "TeamFilled"
-      | "TeamPlanActivityChanged"
-      | "TeamPlanCreated"
-      | "Upgraded"
-  ): EventFragment;
 
   encodeFunctionData(
     functionFragment: "DEFAULT_ADMIN_ROLE",
@@ -163,28 +188,25 @@ export interface TeamsInterface extends Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "getUserSubscription",
-    values: [AddressLike, BigNumberish]
+    values: [string, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "getUserTeamMembers",
-    values: [AddressLike, BigNumberish]
+    values: [string, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "grantRole",
-    values: [BytesLike, AddressLike]
+    values: [BytesLike, string]
   ): string;
   encodeFunctionData(
     functionFragment: "hasAnySubscription",
-    values: [AddressLike]
+    values: [string]
   ): string;
   encodeFunctionData(
     functionFragment: "hasRole",
-    values: [BytesLike, AddressLike]
+    values: [BytesLike, string]
   ): string;
-  encodeFunctionData(
-    functionFragment: "initialize",
-    values: [AddressLike]
-  ): string;
+  encodeFunctionData(functionFragment: "initialize", values: [string]): string;
   encodeFunctionData(functionFragment: "plans", values: [BigNumberish]): string;
   encodeFunctionData(
     functionFragment: "proxiableUUID",
@@ -192,11 +214,11 @@ export interface TeamsInterface extends Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "renounceRole",
-    values: [BytesLike, AddressLike]
+    values: [BytesLike, string]
   ): string;
   encodeFunctionData(
     functionFragment: "revokeRole",
-    values: [BytesLike, AddressLike]
+    values: [BytesLike, string]
   ): string;
   encodeFunctionData(
     functionFragment: "subscribe",
@@ -208,7 +230,7 @@ export interface TeamsInterface extends Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "tryToAddMember",
-    values: [BigNumberish, AddressLike, AddressLike, BigNumberish]
+    values: [BigNumberish, string, string, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "updatePlanActivity",
@@ -238,21 +260,18 @@ export interface TeamsInterface extends Interface {
     functionFragment: "updateSubscriptionPeriod",
     values: [BigNumberish]
   ): string;
-  encodeFunctionData(
-    functionFragment: "upgradeTo",
-    values: [AddressLike]
-  ): string;
+  encodeFunctionData(functionFragment: "upgradeTo", values: [string]): string;
   encodeFunctionData(
     functionFragment: "upgradeToAndCall",
-    values: [AddressLike, BytesLike]
+    values: [string, BytesLike]
   ): string;
   encodeFunctionData(
     functionFragment: "userHasPlanSubscription",
-    values: [AddressLike, BigNumberish]
+    values: [string, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "userHasSufficientStaking",
-    values: [AddressLike, BigNumberish]
+    values: [string, BigNumberish]
   ): string;
 
   decodeFunctionResult(
@@ -361,896 +380,1227 @@ export interface TeamsInterface extends Interface {
     functionFragment: "userHasSufficientStaking",
     data: BytesLike
   ): Result;
+
+  events: {
+    "AdminChanged(address,address)": EventFragment;
+    "BeaconUpgraded(address)": EventFragment;
+    "Initialized(uint8)": EventFragment;
+    "MemberAdded(address,uint256,address,uint256)": EventFragment;
+    "RoleAdminChanged(bytes32,bytes32,bytes32)": EventFragment;
+    "RoleGranted(bytes32,address,address)": EventFragment;
+    "RoleRevoked(bytes32,address,address)": EventFragment;
+    "Subscribed(address,uint256,uint256)": EventFragment;
+    "TeamFilled(address,uint256,uint256)": EventFragment;
+    "TeamPlanActivityChanged(uint256,bool)": EventFragment;
+    "TeamPlanCreated(uint256,uint256,uint256,uint256,uint256,uint256)": EventFragment;
+    "Upgraded(address)": EventFragment;
+  };
+
+  getEvent(nameOrSignatureOrTopic: "AdminChanged"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "BeaconUpgraded"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "MemberAdded"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "RoleAdminChanged"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "RoleGranted"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "RoleRevoked"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Subscribed"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "TeamFilled"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "TeamPlanActivityChanged"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "TeamPlanCreated"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Upgraded"): EventFragment;
 }
 
-export namespace AdminChangedEvent {
-  export type InputTuple = [previousAdmin: AddressLike, newAdmin: AddressLike];
-  export type OutputTuple = [previousAdmin: string, newAdmin: string];
-  export interface OutputObject {
-    previousAdmin: string;
-    newAdmin: string;
-  }
-  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
-  export type Filter = TypedDeferredTopicFilter<Event>;
-  export type Log = TypedEventLog<Event>;
-  export type LogDescription = TypedLogDescription<Event>;
+export interface AdminChangedEventObject {
+  previousAdmin: string;
+  newAdmin: string;
 }
+export type AdminChangedEvent = TypedEvent<
+  [string, string],
+  AdminChangedEventObject
+>;
 
-export namespace BeaconUpgradedEvent {
-  export type InputTuple = [beacon: AddressLike];
-  export type OutputTuple = [beacon: string];
-  export interface OutputObject {
-    beacon: string;
-  }
-  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
-  export type Filter = TypedDeferredTopicFilter<Event>;
-  export type Log = TypedEventLog<Event>;
-  export type LogDescription = TypedLogDescription<Event>;
-}
+export type AdminChangedEventFilter = TypedEventFilter<AdminChangedEvent>;
 
-export namespace InitializedEvent {
-  export type InputTuple = [version: BigNumberish];
-  export type OutputTuple = [version: bigint];
-  export interface OutputObject {
-    version: bigint;
-  }
-  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
-  export type Filter = TypedDeferredTopicFilter<Event>;
-  export type Log = TypedEventLog<Event>;
-  export type LogDescription = TypedLogDescription<Event>;
+export interface BeaconUpgradedEventObject {
+  beacon: string;
 }
+export type BeaconUpgradedEvent = TypedEvent<
+  [string],
+  BeaconUpgradedEventObject
+>;
 
-export namespace MemberAddedEvent {
-  export type InputTuple = [
-    user: AddressLike,
-    teamPlanId: BigNumberish,
-    member: AddressLike,
-    teamMembers: BigNumberish
-  ];
-  export type OutputTuple = [
-    user: string,
-    teamPlanId: bigint,
-    member: string,
-    teamMembers: bigint
-  ];
-  export interface OutputObject {
-    user: string;
-    teamPlanId: bigint;
-    member: string;
-    teamMembers: bigint;
-  }
-  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
-  export type Filter = TypedDeferredTopicFilter<Event>;
-  export type Log = TypedEventLog<Event>;
-  export type LogDescription = TypedLogDescription<Event>;
-}
+export type BeaconUpgradedEventFilter = TypedEventFilter<BeaconUpgradedEvent>;
 
-export namespace RoleAdminChangedEvent {
-  export type InputTuple = [
-    role: BytesLike,
-    previousAdminRole: BytesLike,
-    newAdminRole: BytesLike
-  ];
-  export type OutputTuple = [
-    role: string,
-    previousAdminRole: string,
-    newAdminRole: string
-  ];
-  export interface OutputObject {
-    role: string;
-    previousAdminRole: string;
-    newAdminRole: string;
-  }
-  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
-  export type Filter = TypedDeferredTopicFilter<Event>;
-  export type Log = TypedEventLog<Event>;
-  export type LogDescription = TypedLogDescription<Event>;
+export interface InitializedEventObject {
+  version: number;
 }
+export type InitializedEvent = TypedEvent<[number], InitializedEventObject>;
 
-export namespace RoleGrantedEvent {
-  export type InputTuple = [
-    role: BytesLike,
-    account: AddressLike,
-    sender: AddressLike
-  ];
-  export type OutputTuple = [role: string, account: string, sender: string];
-  export interface OutputObject {
-    role: string;
-    account: string;
-    sender: string;
-  }
-  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
-  export type Filter = TypedDeferredTopicFilter<Event>;
-  export type Log = TypedEventLog<Event>;
-  export type LogDescription = TypedLogDescription<Event>;
-}
+export type InitializedEventFilter = TypedEventFilter<InitializedEvent>;
 
-export namespace RoleRevokedEvent {
-  export type InputTuple = [
-    role: BytesLike,
-    account: AddressLike,
-    sender: AddressLike
-  ];
-  export type OutputTuple = [role: string, account: string, sender: string];
-  export interface OutputObject {
-    role: string;
-    account: string;
-    sender: string;
-  }
-  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
-  export type Filter = TypedDeferredTopicFilter<Event>;
-  export type Log = TypedEventLog<Event>;
-  export type LogDescription = TypedLogDescription<Event>;
+export interface MemberAddedEventObject {
+  user: string;
+  teamPlanId: BigNumber;
+  member: string;
+  teamMembers: BigNumber;
 }
+export type MemberAddedEvent = TypedEvent<
+  [string, BigNumber, string, BigNumber],
+  MemberAddedEventObject
+>;
 
-export namespace SubscribedEvent {
-  export type InputTuple = [
-    subscriber: AddressLike,
-    teamPlanId: BigNumberish,
-    timestamp: BigNumberish
-  ];
-  export type OutputTuple = [
-    subscriber: string,
-    teamPlanId: bigint,
-    timestamp: bigint
-  ];
-  export interface OutputObject {
-    subscriber: string;
-    teamPlanId: bigint;
-    timestamp: bigint;
-  }
-  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
-  export type Filter = TypedDeferredTopicFilter<Event>;
-  export type Log = TypedEventLog<Event>;
-  export type LogDescription = TypedLogDescription<Event>;
-}
+export type MemberAddedEventFilter = TypedEventFilter<MemberAddedEvent>;
 
-export namespace TeamFilledEvent {
-  export type InputTuple = [
-    user: AddressLike,
-    teamPlanId: BigNumberish,
-    teamCount: BigNumberish
-  ];
-  export type OutputTuple = [
-    user: string,
-    teamPlanId: bigint,
-    teamCount: bigint
-  ];
-  export interface OutputObject {
-    user: string;
-    teamPlanId: bigint;
-    teamCount: bigint;
-  }
-  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
-  export type Filter = TypedDeferredTopicFilter<Event>;
-  export type Log = TypedEventLog<Event>;
-  export type LogDescription = TypedLogDescription<Event>;
+export interface RoleAdminChangedEventObject {
+  role: string;
+  previousAdminRole: string;
+  newAdminRole: string;
 }
+export type RoleAdminChangedEvent = TypedEvent<
+  [string, string, string],
+  RoleAdminChangedEventObject
+>;
 
-export namespace TeamPlanActivityChangedEvent {
-  export type InputTuple = [teamPlanId: BigNumberish, isActive: boolean];
-  export type OutputTuple = [teamPlanId: bigint, isActive: boolean];
-  export interface OutputObject {
-    teamPlanId: bigint;
-    isActive: boolean;
-  }
-  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
-  export type Filter = TypedDeferredTopicFilter<Event>;
-  export type Log = TypedEventLog<Event>;
-  export type LogDescription = TypedLogDescription<Event>;
-}
+export type RoleAdminChangedEventFilter =
+  TypedEventFilter<RoleAdminChangedEvent>;
 
-export namespace TeamPlanCreatedEvent {
-  export type InputTuple = [
-    teamPlanId: BigNumberish,
-    subscriptionCost: BigNumberish,
-    reward: BigNumberish,
-    stakingThreshold: BigNumberish,
-    teamSize: BigNumberish,
-    stakingPlanId: BigNumberish
-  ];
-  export type OutputTuple = [
-    teamPlanId: bigint,
-    subscriptionCost: bigint,
-    reward: bigint,
-    stakingThreshold: bigint,
-    teamSize: bigint,
-    stakingPlanId: bigint
-  ];
-  export interface OutputObject {
-    teamPlanId: bigint;
-    subscriptionCost: bigint;
-    reward: bigint;
-    stakingThreshold: bigint;
-    teamSize: bigint;
-    stakingPlanId: bigint;
-  }
-  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
-  export type Filter = TypedDeferredTopicFilter<Event>;
-  export type Log = TypedEventLog<Event>;
-  export type LogDescription = TypedLogDescription<Event>;
+export interface RoleGrantedEventObject {
+  role: string;
+  account: string;
+  sender: string;
 }
+export type RoleGrantedEvent = TypedEvent<
+  [string, string, string],
+  RoleGrantedEventObject
+>;
 
-export namespace UpgradedEvent {
-  export type InputTuple = [implementation: AddressLike];
-  export type OutputTuple = [implementation: string];
-  export interface OutputObject {
-    implementation: string;
-  }
-  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
-  export type Filter = TypedDeferredTopicFilter<Event>;
-  export type Log = TypedEventLog<Event>;
-  export type LogDescription = TypedLogDescription<Event>;
+export type RoleGrantedEventFilter = TypedEventFilter<RoleGrantedEvent>;
+
+export interface RoleRevokedEventObject {
+  role: string;
+  account: string;
+  sender: string;
 }
+export type RoleRevokedEvent = TypedEvent<
+  [string, string, string],
+  RoleRevokedEventObject
+>;
+
+export type RoleRevokedEventFilter = TypedEventFilter<RoleRevokedEvent>;
+
+export interface SubscribedEventObject {
+  subscriber: string;
+  teamPlanId: BigNumber;
+  timestamp: BigNumber;
+}
+export type SubscribedEvent = TypedEvent<
+  [string, BigNumber, BigNumber],
+  SubscribedEventObject
+>;
+
+export type SubscribedEventFilter = TypedEventFilter<SubscribedEvent>;
+
+export interface TeamFilledEventObject {
+  user: string;
+  teamPlanId: BigNumber;
+  teamCount: BigNumber;
+}
+export type TeamFilledEvent = TypedEvent<
+  [string, BigNumber, BigNumber],
+  TeamFilledEventObject
+>;
+
+export type TeamFilledEventFilter = TypedEventFilter<TeamFilledEvent>;
+
+export interface TeamPlanActivityChangedEventObject {
+  teamPlanId: BigNumber;
+  isActive: boolean;
+}
+export type TeamPlanActivityChangedEvent = TypedEvent<
+  [BigNumber, boolean],
+  TeamPlanActivityChangedEventObject
+>;
+
+export type TeamPlanActivityChangedEventFilter =
+  TypedEventFilter<TeamPlanActivityChangedEvent>;
+
+export interface TeamPlanCreatedEventObject {
+  teamPlanId: BigNumber;
+  subscriptionCost: BigNumber;
+  reward: BigNumber;
+  stakingThreshold: BigNumber;
+  teamSize: BigNumber;
+  stakingPlanId: BigNumber;
+}
+export type TeamPlanCreatedEvent = TypedEvent<
+  [BigNumber, BigNumber, BigNumber, BigNumber, BigNumber, BigNumber],
+  TeamPlanCreatedEventObject
+>;
+
+export type TeamPlanCreatedEventFilter = TypedEventFilter<TeamPlanCreatedEvent>;
+
+export interface UpgradedEventObject {
+  implementation: string;
+}
+export type UpgradedEvent = TypedEvent<[string], UpgradedEventObject>;
+
+export type UpgradedEventFilter = TypedEventFilter<UpgradedEvent>;
 
 export interface Teams extends BaseContract {
-  connect(runner?: ContractRunner | null): Teams;
-  waitForDeployment(): Promise<this>;
+  connect(signerOrProvider: Signer | Provider | string): this;
+  attach(addressOrName: string): this;
+  deployed(): Promise<this>;
 
   interface: TeamsInterface;
 
-  queryFilter<TCEvent extends TypedContractEvent>(
-    event: TCEvent,
+  queryFilter<TEvent extends TypedEvent>(
+    event: TypedEventFilter<TEvent>,
     fromBlockOrBlockhash?: string | number | undefined,
     toBlock?: string | number | undefined
-  ): Promise<Array<TypedEventLog<TCEvent>>>;
-  queryFilter<TCEvent extends TypedContractEvent>(
-    filter: TypedDeferredTopicFilter<TCEvent>,
-    fromBlockOrBlockhash?: string | number | undefined,
-    toBlock?: string | number | undefined
-  ): Promise<Array<TypedEventLog<TCEvent>>>;
+  ): Promise<Array<TEvent>>;
 
-  on<TCEvent extends TypedContractEvent>(
-    event: TCEvent,
-    listener: TypedListener<TCEvent>
-  ): Promise<this>;
-  on<TCEvent extends TypedContractEvent>(
-    filter: TypedDeferredTopicFilter<TCEvent>,
-    listener: TypedListener<TCEvent>
-  ): Promise<this>;
+  listeners<TEvent extends TypedEvent>(
+    eventFilter?: TypedEventFilter<TEvent>
+  ): Array<TypedListener<TEvent>>;
+  listeners(eventName?: string): Array<Listener>;
+  removeAllListeners<TEvent extends TypedEvent>(
+    eventFilter: TypedEventFilter<TEvent>
+  ): this;
+  removeAllListeners(eventName?: string): this;
+  off: OnEvent<this>;
+  on: OnEvent<this>;
+  once: OnEvent<this>;
+  removeListener: OnEvent<this>;
 
-  once<TCEvent extends TypedContractEvent>(
-    event: TCEvent,
-    listener: TypedListener<TCEvent>
-  ): Promise<this>;
-  once<TCEvent extends TypedContractEvent>(
-    filter: TypedDeferredTopicFilter<TCEvent>,
-    listener: TypedListener<TCEvent>
-  ): Promise<this>;
+  functions: {
+    DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<[string]>;
 
-  listeners<TCEvent extends TypedContractEvent>(
-    event: TCEvent
-  ): Promise<Array<TypedListener<TCEvent>>>;
-  listeners(eventName?: string): Promise<Array<Listener>>;
-  removeAllListeners<TCEvent extends TypedContractEvent>(
-    event?: TCEvent
-  ): Promise<this>;
+    SUBSCRIPTION_PERIOD_DAYS(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-  DEFAULT_ADMIN_ROLE: TypedContractMethod<[], [string], "view">;
+    UPGRADER_ROLE(overrides?: CallOverrides): Promise<[string]>;
 
-  SUBSCRIPTION_PERIOD_DAYS: TypedContractMethod<[], [bigint], "view">;
-
-  UPGRADER_ROLE: TypedContractMethod<[], [string], "view">;
-
-  addPlan: TypedContractMethod<
-    [
+    addPlan(
       subscriptionCost_: BigNumberish,
       reward_: BigNumberish,
       stakingThreshold_: BigNumberish,
       teamSize_: BigNumberish,
-      stakingPlanId_: BigNumberish
-    ],
-    [void],
-    "nonpayable"
-  >;
+      stakingPlanId_: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
 
-  getActivePlans: TypedContractMethod<
-    [],
-    [ITeams.TeamPlanStructOutput[]],
-    "view"
-  >;
+    getActivePlans(
+      overrides?: CallOverrides
+    ): Promise<[ITeams.TeamPlanStructOutput[]]>;
 
-  getPlan: TypedContractMethod<
-    [planId: BigNumberish],
-    [ITeams.TeamPlanStructOutput],
-    "view"
-  >;
+    getPlan(
+      planId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[ITeams.TeamPlanStructOutput]>;
 
-  getPlans: TypedContractMethod<[], [ITeams.TeamPlanStructOutput[]], "view">;
+    getPlans(
+      overrides?: CallOverrides
+    ): Promise<[ITeams.TeamPlanStructOutput[]]>;
 
-  getRoleAdmin: TypedContractMethod<[role: BytesLike], [string], "view">;
+    getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<[string]>;
 
-  getSufficientPlanIdByStakingAmount: TypedContractMethod<
-    [stakingPlanId: BigNumberish, amount: BigNumberish],
-    [bigint],
-    "view"
-  >;
+    getSufficientPlanIdByStakingAmount(
+      stakingPlanId: BigNumberish,
+      amount: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
 
-  getTimestamp: TypedContractMethod<[], [bigint], "view">;
+    getTimestamp(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-  getUserSubscription: TypedContractMethod<
-    [user: AddressLike, planId: BigNumberish],
-    [ITeams.TeamStructOutput],
-    "view"
-  >;
+    getUserSubscription(
+      user: string,
+      planId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[ITeams.TeamStructOutput]>;
 
-  getUserTeamMembers: TypedContractMethod<
-    [user: AddressLike, planId: BigNumberish],
-    [string[]],
-    "view"
-  >;
+    getUserTeamMembers(
+      user: string,
+      planId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[string[]]>;
 
-  grantRole: TypedContractMethod<
-    [role: BytesLike, account: AddressLike],
-    [void],
-    "nonpayable"
-  >;
+    grantRole(
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
 
-  hasAnySubscription: TypedContractMethod<
-    [user: AddressLike],
-    [boolean],
-    "view"
-  >;
+    hasAnySubscription(
+      user: string,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
 
-  hasRole: TypedContractMethod<
-    [role: BytesLike, account: AddressLike],
-    [boolean],
-    "view"
-  >;
+    hasRole(
+      role: BytesLike,
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
 
-  initialize: TypedContractMethod<
-    [contractManagerAddress: AddressLike],
-    [void],
-    "nonpayable"
-  >;
+    initialize(
+      contractManagerAddress: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
 
-  plans: TypedContractMethod<
-    [arg0: BigNumberish],
-    [
-      [bigint, bigint, bigint, bigint, bigint, bigint, boolean] & {
-        teamPlanId: bigint;
-        subscriptionCost: bigint;
-        reward: bigint;
-        stakingThreshold: bigint;
-        teamSize: bigint;
-        stakingPlanId: bigint;
+    plans(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<
+      [
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        boolean
+      ] & {
+        teamPlanId: BigNumber;
+        subscriptionCost: BigNumber;
+        reward: BigNumber;
+        stakingThreshold: BigNumber;
+        teamSize: BigNumber;
+        stakingPlanId: BigNumber;
         isActive: boolean;
       }
-    ],
-    "view"
-  >;
+    >;
 
-  proxiableUUID: TypedContractMethod<[], [string], "view">;
+    proxiableUUID(overrides?: CallOverrides): Promise<[string]>;
 
-  renounceRole: TypedContractMethod<
-    [role: BytesLike, account: AddressLike],
-    [void],
-    "nonpayable"
-  >;
+    renounceRole(
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
 
-  revokeRole: TypedContractMethod<
-    [role: BytesLike, account: AddressLike],
-    [void],
-    "nonpayable"
-  >;
+    revokeRole(
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
 
-  subscribe: TypedContractMethod<[planId: BigNumberish], [void], "nonpayable">;
+    subscribe(
+      planId: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
 
-  supportsInterface: TypedContractMethod<
-    [interfaceId: BytesLike],
-    [boolean],
-    "view"
-  >;
+    supportsInterface(
+      interfaceId: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
 
-  tryToAddMember: TypedContractMethod<
-    [
+    tryToAddMember(
       stakingPlanId: BigNumberish,
-      referrer: AddressLike,
-      member: AddressLike,
-      amount: BigNumberish
-    ],
-    [boolean],
-    "nonpayable"
-  >;
+      referrer: string,
+      member: string,
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
 
-  updatePlanActivity: TypedContractMethod<
-    [planId: BigNumberish, isActive: boolean],
-    [void],
-    "nonpayable"
-  >;
+    updatePlanActivity(
+      planId: BigNumberish,
+      isActive: boolean,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
 
-  updatePlanReward: TypedContractMethod<
-    [planId: BigNumberish, reward: BigNumberish],
-    [void],
-    "nonpayable"
-  >;
+    updatePlanReward(
+      planId: BigNumberish,
+      reward: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
 
-  updatePlanStakingId: TypedContractMethod<
-    [planId: BigNumberish, stakingPlanId: BigNumberish],
-    [void],
-    "nonpayable"
-  >;
+    updatePlanStakingId(
+      planId: BigNumberish,
+      stakingPlanId: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
 
-  updatePlanStakingThreshold: TypedContractMethod<
-    [planId: BigNumberish, threshold: BigNumberish],
-    [void],
-    "nonpayable"
-  >;
+    updatePlanStakingThreshold(
+      planId: BigNumberish,
+      threshold: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
 
-  updatePlanSubscriptionCost: TypedContractMethod<
-    [planId: BigNumberish, subscriptionCost: BigNumberish],
-    [void],
-    "nonpayable"
-  >;
+    updatePlanSubscriptionCost(
+      planId: BigNumberish,
+      subscriptionCost: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
 
-  updatePlanTeamSize: TypedContractMethod<
-    [planId: BigNumberish, size: BigNumberish],
-    [void],
-    "nonpayable"
-  >;
+    updatePlanTeamSize(
+      planId: BigNumberish,
+      size: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
 
-  updateSubscriptionPeriod: TypedContractMethod<
-    [numDays: BigNumberish],
-    [void],
-    "nonpayable"
-  >;
+    updateSubscriptionPeriod(
+      numDays: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
 
-  upgradeTo: TypedContractMethod<
-    [newImplementation: AddressLike],
-    [void],
-    "nonpayable"
-  >;
+    upgradeTo(
+      newImplementation: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
 
-  upgradeToAndCall: TypedContractMethod<
-    [newImplementation: AddressLike, data: BytesLike],
-    [void],
-    "payable"
-  >;
+    upgradeToAndCall(
+      newImplementation: string,
+      data: BytesLike,
+      overrides?: PayableOverrides & { from?: string }
+    ): Promise<ContractTransaction>;
 
-  userHasPlanSubscription: TypedContractMethod<
-    [user: AddressLike, planId: BigNumberish],
-    [boolean],
-    "view"
-  >;
+    userHasPlanSubscription(
+      user: string,
+      planId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
 
-  userHasSufficientStaking: TypedContractMethod<
-    [user: AddressLike, planId: BigNumberish],
-    [boolean],
-    "view"
-  >;
+    userHasSufficientStaking(
+      user: string,
+      planId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
+  };
 
-  getFunction<T extends ContractMethod = ContractMethod>(
-    key: string | FunctionFragment
-  ): T;
+  DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
 
-  getFunction(
-    nameOrSignature: "DEFAULT_ADMIN_ROLE"
-  ): TypedContractMethod<[], [string], "view">;
-  getFunction(
-    nameOrSignature: "SUBSCRIPTION_PERIOD_DAYS"
-  ): TypedContractMethod<[], [bigint], "view">;
-  getFunction(
-    nameOrSignature: "UPGRADER_ROLE"
-  ): TypedContractMethod<[], [string], "view">;
-  getFunction(
-    nameOrSignature: "addPlan"
-  ): TypedContractMethod<
+  SUBSCRIPTION_PERIOD_DAYS(overrides?: CallOverrides): Promise<BigNumber>;
+
+  UPGRADER_ROLE(overrides?: CallOverrides): Promise<string>;
+
+  addPlan(
+    subscriptionCost_: BigNumberish,
+    reward_: BigNumberish,
+    stakingThreshold_: BigNumberish,
+    teamSize_: BigNumberish,
+    stakingPlanId_: BigNumberish,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  getActivePlans(
+    overrides?: CallOverrides
+  ): Promise<ITeams.TeamPlanStructOutput[]>;
+
+  getPlan(
+    planId: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<ITeams.TeamPlanStructOutput>;
+
+  getPlans(overrides?: CallOverrides): Promise<ITeams.TeamPlanStructOutput[]>;
+
+  getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<string>;
+
+  getSufficientPlanIdByStakingAmount(
+    stakingPlanId: BigNumberish,
+    amount: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  getTimestamp(overrides?: CallOverrides): Promise<BigNumber>;
+
+  getUserSubscription(
+    user: string,
+    planId: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<ITeams.TeamStructOutput>;
+
+  getUserTeamMembers(
+    user: string,
+    planId: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<string[]>;
+
+  grantRole(
+    role: BytesLike,
+    account: string,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  hasAnySubscription(user: string, overrides?: CallOverrides): Promise<boolean>;
+
+  hasRole(
+    role: BytesLike,
+    account: string,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
+  initialize(
+    contractManagerAddress: string,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  plans(
+    arg0: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<
     [
+      BigNumber,
+      BigNumber,
+      BigNumber,
+      BigNumber,
+      BigNumber,
+      BigNumber,
+      boolean
+    ] & {
+      teamPlanId: BigNumber;
+      subscriptionCost: BigNumber;
+      reward: BigNumber;
+      stakingThreshold: BigNumber;
+      teamSize: BigNumber;
+      stakingPlanId: BigNumber;
+      isActive: boolean;
+    }
+  >;
+
+  proxiableUUID(overrides?: CallOverrides): Promise<string>;
+
+  renounceRole(
+    role: BytesLike,
+    account: string,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  revokeRole(
+    role: BytesLike,
+    account: string,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  subscribe(
+    planId: BigNumberish,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  supportsInterface(
+    interfaceId: BytesLike,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
+  tryToAddMember(
+    stakingPlanId: BigNumberish,
+    referrer: string,
+    member: string,
+    amount: BigNumberish,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  updatePlanActivity(
+    planId: BigNumberish,
+    isActive: boolean,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  updatePlanReward(
+    planId: BigNumberish,
+    reward: BigNumberish,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  updatePlanStakingId(
+    planId: BigNumberish,
+    stakingPlanId: BigNumberish,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  updatePlanStakingThreshold(
+    planId: BigNumberish,
+    threshold: BigNumberish,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  updatePlanSubscriptionCost(
+    planId: BigNumberish,
+    subscriptionCost: BigNumberish,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  updatePlanTeamSize(
+    planId: BigNumberish,
+    size: BigNumberish,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  updateSubscriptionPeriod(
+    numDays: BigNumberish,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  upgradeTo(
+    newImplementation: string,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  upgradeToAndCall(
+    newImplementation: string,
+    data: BytesLike,
+    overrides?: PayableOverrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  userHasPlanSubscription(
+    user: string,
+    planId: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
+  userHasSufficientStaking(
+    user: string,
+    planId: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
+  callStatic: {
+    DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
+
+    SUBSCRIPTION_PERIOD_DAYS(overrides?: CallOverrides): Promise<BigNumber>;
+
+    UPGRADER_ROLE(overrides?: CallOverrides): Promise<string>;
+
+    addPlan(
       subscriptionCost_: BigNumberish,
       reward_: BigNumberish,
       stakingThreshold_: BigNumberish,
       teamSize_: BigNumberish,
-      stakingPlanId_: BigNumberish
-    ],
-    [void],
-    "nonpayable"
-  >;
-  getFunction(
-    nameOrSignature: "getActivePlans"
-  ): TypedContractMethod<[], [ITeams.TeamPlanStructOutput[]], "view">;
-  getFunction(
-    nameOrSignature: "getPlan"
-  ): TypedContractMethod<
-    [planId: BigNumberish],
-    [ITeams.TeamPlanStructOutput],
-    "view"
-  >;
-  getFunction(
-    nameOrSignature: "getPlans"
-  ): TypedContractMethod<[], [ITeams.TeamPlanStructOutput[]], "view">;
-  getFunction(
-    nameOrSignature: "getRoleAdmin"
-  ): TypedContractMethod<[role: BytesLike], [string], "view">;
-  getFunction(
-    nameOrSignature: "getSufficientPlanIdByStakingAmount"
-  ): TypedContractMethod<
-    [stakingPlanId: BigNumberish, amount: BigNumberish],
-    [bigint],
-    "view"
-  >;
-  getFunction(
-    nameOrSignature: "getTimestamp"
-  ): TypedContractMethod<[], [bigint], "view">;
-  getFunction(
-    nameOrSignature: "getUserSubscription"
-  ): TypedContractMethod<
-    [user: AddressLike, planId: BigNumberish],
-    [ITeams.TeamStructOutput],
-    "view"
-  >;
-  getFunction(
-    nameOrSignature: "getUserTeamMembers"
-  ): TypedContractMethod<
-    [user: AddressLike, planId: BigNumberish],
-    [string[]],
-    "view"
-  >;
-  getFunction(
-    nameOrSignature: "grantRole"
-  ): TypedContractMethod<
-    [role: BytesLike, account: AddressLike],
-    [void],
-    "nonpayable"
-  >;
-  getFunction(
-    nameOrSignature: "hasAnySubscription"
-  ): TypedContractMethod<[user: AddressLike], [boolean], "view">;
-  getFunction(
-    nameOrSignature: "hasRole"
-  ): TypedContractMethod<
-    [role: BytesLike, account: AddressLike],
-    [boolean],
-    "view"
-  >;
-  getFunction(
-    nameOrSignature: "initialize"
-  ): TypedContractMethod<
-    [contractManagerAddress: AddressLike],
-    [void],
-    "nonpayable"
-  >;
-  getFunction(
-    nameOrSignature: "plans"
-  ): TypedContractMethod<
-    [arg0: BigNumberish],
-    [
-      [bigint, bigint, bigint, bigint, bigint, bigint, boolean] & {
-        teamPlanId: bigint;
-        subscriptionCost: bigint;
-        reward: bigint;
-        stakingThreshold: bigint;
-        teamSize: bigint;
-        stakingPlanId: bigint;
+      stakingPlanId_: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    getActivePlans(
+      overrides?: CallOverrides
+    ): Promise<ITeams.TeamPlanStructOutput[]>;
+
+    getPlan(
+      planId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<ITeams.TeamPlanStructOutput>;
+
+    getPlans(overrides?: CallOverrides): Promise<ITeams.TeamPlanStructOutput[]>;
+
+    getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<string>;
+
+    getSufficientPlanIdByStakingAmount(
+      stakingPlanId: BigNumberish,
+      amount: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getTimestamp(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getUserSubscription(
+      user: string,
+      planId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<ITeams.TeamStructOutput>;
+
+    getUserTeamMembers(
+      user: string,
+      planId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<string[]>;
+
+    grantRole(
+      role: BytesLike,
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    hasAnySubscription(
+      user: string,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
+    hasRole(
+      role: BytesLike,
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
+    initialize(
+      contractManagerAddress: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    plans(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<
+      [
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        boolean
+      ] & {
+        teamPlanId: BigNumber;
+        subscriptionCost: BigNumber;
+        reward: BigNumber;
+        stakingThreshold: BigNumber;
+        teamSize: BigNumber;
+        stakingPlanId: BigNumber;
         isActive: boolean;
       }
-    ],
-    "view"
-  >;
-  getFunction(
-    nameOrSignature: "proxiableUUID"
-  ): TypedContractMethod<[], [string], "view">;
-  getFunction(
-    nameOrSignature: "renounceRole"
-  ): TypedContractMethod<
-    [role: BytesLike, account: AddressLike],
-    [void],
-    "nonpayable"
-  >;
-  getFunction(
-    nameOrSignature: "revokeRole"
-  ): TypedContractMethod<
-    [role: BytesLike, account: AddressLike],
-    [void],
-    "nonpayable"
-  >;
-  getFunction(
-    nameOrSignature: "subscribe"
-  ): TypedContractMethod<[planId: BigNumberish], [void], "nonpayable">;
-  getFunction(
-    nameOrSignature: "supportsInterface"
-  ): TypedContractMethod<[interfaceId: BytesLike], [boolean], "view">;
-  getFunction(
-    nameOrSignature: "tryToAddMember"
-  ): TypedContractMethod<
-    [
-      stakingPlanId: BigNumberish,
-      referrer: AddressLike,
-      member: AddressLike,
-      amount: BigNumberish
-    ],
-    [boolean],
-    "nonpayable"
-  >;
-  getFunction(
-    nameOrSignature: "updatePlanActivity"
-  ): TypedContractMethod<
-    [planId: BigNumberish, isActive: boolean],
-    [void],
-    "nonpayable"
-  >;
-  getFunction(
-    nameOrSignature: "updatePlanReward"
-  ): TypedContractMethod<
-    [planId: BigNumberish, reward: BigNumberish],
-    [void],
-    "nonpayable"
-  >;
-  getFunction(
-    nameOrSignature: "updatePlanStakingId"
-  ): TypedContractMethod<
-    [planId: BigNumberish, stakingPlanId: BigNumberish],
-    [void],
-    "nonpayable"
-  >;
-  getFunction(
-    nameOrSignature: "updatePlanStakingThreshold"
-  ): TypedContractMethod<
-    [planId: BigNumberish, threshold: BigNumberish],
-    [void],
-    "nonpayable"
-  >;
-  getFunction(
-    nameOrSignature: "updatePlanSubscriptionCost"
-  ): TypedContractMethod<
-    [planId: BigNumberish, subscriptionCost: BigNumberish],
-    [void],
-    "nonpayable"
-  >;
-  getFunction(
-    nameOrSignature: "updatePlanTeamSize"
-  ): TypedContractMethod<
-    [planId: BigNumberish, size: BigNumberish],
-    [void],
-    "nonpayable"
-  >;
-  getFunction(
-    nameOrSignature: "updateSubscriptionPeriod"
-  ): TypedContractMethod<[numDays: BigNumberish], [void], "nonpayable">;
-  getFunction(
-    nameOrSignature: "upgradeTo"
-  ): TypedContractMethod<
-    [newImplementation: AddressLike],
-    [void],
-    "nonpayable"
-  >;
-  getFunction(
-    nameOrSignature: "upgradeToAndCall"
-  ): TypedContractMethod<
-    [newImplementation: AddressLike, data: BytesLike],
-    [void],
-    "payable"
-  >;
-  getFunction(
-    nameOrSignature: "userHasPlanSubscription"
-  ): TypedContractMethod<
-    [user: AddressLike, planId: BigNumberish],
-    [boolean],
-    "view"
-  >;
-  getFunction(
-    nameOrSignature: "userHasSufficientStaking"
-  ): TypedContractMethod<
-    [user: AddressLike, planId: BigNumberish],
-    [boolean],
-    "view"
-  >;
+    >;
 
-  getEvent(
-    key: "AdminChanged"
-  ): TypedContractEvent<
-    AdminChangedEvent.InputTuple,
-    AdminChangedEvent.OutputTuple,
-    AdminChangedEvent.OutputObject
-  >;
-  getEvent(
-    key: "BeaconUpgraded"
-  ): TypedContractEvent<
-    BeaconUpgradedEvent.InputTuple,
-    BeaconUpgradedEvent.OutputTuple,
-    BeaconUpgradedEvent.OutputObject
-  >;
-  getEvent(
-    key: "Initialized"
-  ): TypedContractEvent<
-    InitializedEvent.InputTuple,
-    InitializedEvent.OutputTuple,
-    InitializedEvent.OutputObject
-  >;
-  getEvent(
-    key: "MemberAdded"
-  ): TypedContractEvent<
-    MemberAddedEvent.InputTuple,
-    MemberAddedEvent.OutputTuple,
-    MemberAddedEvent.OutputObject
-  >;
-  getEvent(
-    key: "RoleAdminChanged"
-  ): TypedContractEvent<
-    RoleAdminChangedEvent.InputTuple,
-    RoleAdminChangedEvent.OutputTuple,
-    RoleAdminChangedEvent.OutputObject
-  >;
-  getEvent(
-    key: "RoleGranted"
-  ): TypedContractEvent<
-    RoleGrantedEvent.InputTuple,
-    RoleGrantedEvent.OutputTuple,
-    RoleGrantedEvent.OutputObject
-  >;
-  getEvent(
-    key: "RoleRevoked"
-  ): TypedContractEvent<
-    RoleRevokedEvent.InputTuple,
-    RoleRevokedEvent.OutputTuple,
-    RoleRevokedEvent.OutputObject
-  >;
-  getEvent(
-    key: "Subscribed"
-  ): TypedContractEvent<
-    SubscribedEvent.InputTuple,
-    SubscribedEvent.OutputTuple,
-    SubscribedEvent.OutputObject
-  >;
-  getEvent(
-    key: "TeamFilled"
-  ): TypedContractEvent<
-    TeamFilledEvent.InputTuple,
-    TeamFilledEvent.OutputTuple,
-    TeamFilledEvent.OutputObject
-  >;
-  getEvent(
-    key: "TeamPlanActivityChanged"
-  ): TypedContractEvent<
-    TeamPlanActivityChangedEvent.InputTuple,
-    TeamPlanActivityChangedEvent.OutputTuple,
-    TeamPlanActivityChangedEvent.OutputObject
-  >;
-  getEvent(
-    key: "TeamPlanCreated"
-  ): TypedContractEvent<
-    TeamPlanCreatedEvent.InputTuple,
-    TeamPlanCreatedEvent.OutputTuple,
-    TeamPlanCreatedEvent.OutputObject
-  >;
-  getEvent(
-    key: "Upgraded"
-  ): TypedContractEvent<
-    UpgradedEvent.InputTuple,
-    UpgradedEvent.OutputTuple,
-    UpgradedEvent.OutputObject
-  >;
+    proxiableUUID(overrides?: CallOverrides): Promise<string>;
+
+    renounceRole(
+      role: BytesLike,
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    revokeRole(
+      role: BytesLike,
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    subscribe(planId: BigNumberish, overrides?: CallOverrides): Promise<void>;
+
+    supportsInterface(
+      interfaceId: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
+    tryToAddMember(
+      stakingPlanId: BigNumberish,
+      referrer: string,
+      member: string,
+      amount: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
+    updatePlanActivity(
+      planId: BigNumberish,
+      isActive: boolean,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    updatePlanReward(
+      planId: BigNumberish,
+      reward: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    updatePlanStakingId(
+      planId: BigNumberish,
+      stakingPlanId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    updatePlanStakingThreshold(
+      planId: BigNumberish,
+      threshold: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    updatePlanSubscriptionCost(
+      planId: BigNumberish,
+      subscriptionCost: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    updatePlanTeamSize(
+      planId: BigNumberish,
+      size: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    updateSubscriptionPeriod(
+      numDays: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    upgradeTo(
+      newImplementation: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    upgradeToAndCall(
+      newImplementation: string,
+      data: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    userHasPlanSubscription(
+      user: string,
+      planId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
+    userHasSufficientStaking(
+      user: string,
+      planId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+  };
 
   filters: {
-    "AdminChanged(address,address)": TypedContractEvent<
-      AdminChangedEvent.InputTuple,
-      AdminChangedEvent.OutputTuple,
-      AdminChangedEvent.OutputObject
-    >;
-    AdminChanged: TypedContractEvent<
-      AdminChangedEvent.InputTuple,
-      AdminChangedEvent.OutputTuple,
-      AdminChangedEvent.OutputObject
-    >;
+    "AdminChanged(address,address)"(
+      previousAdmin?: null,
+      newAdmin?: null
+    ): AdminChangedEventFilter;
+    AdminChanged(
+      previousAdmin?: null,
+      newAdmin?: null
+    ): AdminChangedEventFilter;
 
-    "BeaconUpgraded(address)": TypedContractEvent<
-      BeaconUpgradedEvent.InputTuple,
-      BeaconUpgradedEvent.OutputTuple,
-      BeaconUpgradedEvent.OutputObject
-    >;
-    BeaconUpgraded: TypedContractEvent<
-      BeaconUpgradedEvent.InputTuple,
-      BeaconUpgradedEvent.OutputTuple,
-      BeaconUpgradedEvent.OutputObject
-    >;
+    "BeaconUpgraded(address)"(
+      beacon?: string | null
+    ): BeaconUpgradedEventFilter;
+    BeaconUpgraded(beacon?: string | null): BeaconUpgradedEventFilter;
 
-    "Initialized(uint8)": TypedContractEvent<
-      InitializedEvent.InputTuple,
-      InitializedEvent.OutputTuple,
-      InitializedEvent.OutputObject
-    >;
-    Initialized: TypedContractEvent<
-      InitializedEvent.InputTuple,
-      InitializedEvent.OutputTuple,
-      InitializedEvent.OutputObject
-    >;
+    "Initialized(uint8)"(version?: null): InitializedEventFilter;
+    Initialized(version?: null): InitializedEventFilter;
 
-    "MemberAdded(address,uint256,address,uint256)": TypedContractEvent<
-      MemberAddedEvent.InputTuple,
-      MemberAddedEvent.OutputTuple,
-      MemberAddedEvent.OutputObject
-    >;
-    MemberAdded: TypedContractEvent<
-      MemberAddedEvent.InputTuple,
-      MemberAddedEvent.OutputTuple,
-      MemberAddedEvent.OutputObject
-    >;
+    "MemberAdded(address,uint256,address,uint256)"(
+      user?: string | null,
+      teamPlanId?: BigNumberish | null,
+      member?: null,
+      teamMembers?: null
+    ): MemberAddedEventFilter;
+    MemberAdded(
+      user?: string | null,
+      teamPlanId?: BigNumberish | null,
+      member?: null,
+      teamMembers?: null
+    ): MemberAddedEventFilter;
 
-    "RoleAdminChanged(bytes32,bytes32,bytes32)": TypedContractEvent<
-      RoleAdminChangedEvent.InputTuple,
-      RoleAdminChangedEvent.OutputTuple,
-      RoleAdminChangedEvent.OutputObject
-    >;
-    RoleAdminChanged: TypedContractEvent<
-      RoleAdminChangedEvent.InputTuple,
-      RoleAdminChangedEvent.OutputTuple,
-      RoleAdminChangedEvent.OutputObject
-    >;
+    "RoleAdminChanged(bytes32,bytes32,bytes32)"(
+      role?: BytesLike | null,
+      previousAdminRole?: BytesLike | null,
+      newAdminRole?: BytesLike | null
+    ): RoleAdminChangedEventFilter;
+    RoleAdminChanged(
+      role?: BytesLike | null,
+      previousAdminRole?: BytesLike | null,
+      newAdminRole?: BytesLike | null
+    ): RoleAdminChangedEventFilter;
 
-    "RoleGranted(bytes32,address,address)": TypedContractEvent<
-      RoleGrantedEvent.InputTuple,
-      RoleGrantedEvent.OutputTuple,
-      RoleGrantedEvent.OutputObject
-    >;
-    RoleGranted: TypedContractEvent<
-      RoleGrantedEvent.InputTuple,
-      RoleGrantedEvent.OutputTuple,
-      RoleGrantedEvent.OutputObject
-    >;
+    "RoleGranted(bytes32,address,address)"(
+      role?: BytesLike | null,
+      account?: string | null,
+      sender?: string | null
+    ): RoleGrantedEventFilter;
+    RoleGranted(
+      role?: BytesLike | null,
+      account?: string | null,
+      sender?: string | null
+    ): RoleGrantedEventFilter;
 
-    "RoleRevoked(bytes32,address,address)": TypedContractEvent<
-      RoleRevokedEvent.InputTuple,
-      RoleRevokedEvent.OutputTuple,
-      RoleRevokedEvent.OutputObject
-    >;
-    RoleRevoked: TypedContractEvent<
-      RoleRevokedEvent.InputTuple,
-      RoleRevokedEvent.OutputTuple,
-      RoleRevokedEvent.OutputObject
-    >;
+    "RoleRevoked(bytes32,address,address)"(
+      role?: BytesLike | null,
+      account?: string | null,
+      sender?: string | null
+    ): RoleRevokedEventFilter;
+    RoleRevoked(
+      role?: BytesLike | null,
+      account?: string | null,
+      sender?: string | null
+    ): RoleRevokedEventFilter;
 
-    "Subscribed(address,uint256,uint256)": TypedContractEvent<
-      SubscribedEvent.InputTuple,
-      SubscribedEvent.OutputTuple,
-      SubscribedEvent.OutputObject
-    >;
-    Subscribed: TypedContractEvent<
-      SubscribedEvent.InputTuple,
-      SubscribedEvent.OutputTuple,
-      SubscribedEvent.OutputObject
-    >;
+    "Subscribed(address,uint256,uint256)"(
+      subscriber?: string | null,
+      teamPlanId?: BigNumberish | null,
+      timestamp?: BigNumberish | null
+    ): SubscribedEventFilter;
+    Subscribed(
+      subscriber?: string | null,
+      teamPlanId?: BigNumberish | null,
+      timestamp?: BigNumberish | null
+    ): SubscribedEventFilter;
 
-    "TeamFilled(address,uint256,uint256)": TypedContractEvent<
-      TeamFilledEvent.InputTuple,
-      TeamFilledEvent.OutputTuple,
-      TeamFilledEvent.OutputObject
-    >;
-    TeamFilled: TypedContractEvent<
-      TeamFilledEvent.InputTuple,
-      TeamFilledEvent.OutputTuple,
-      TeamFilledEvent.OutputObject
-    >;
+    "TeamFilled(address,uint256,uint256)"(
+      user?: string | null,
+      teamPlanId?: BigNumberish | null,
+      teamCount?: BigNumberish | null
+    ): TeamFilledEventFilter;
+    TeamFilled(
+      user?: string | null,
+      teamPlanId?: BigNumberish | null,
+      teamCount?: BigNumberish | null
+    ): TeamFilledEventFilter;
 
-    "TeamPlanActivityChanged(uint256,bool)": TypedContractEvent<
-      TeamPlanActivityChangedEvent.InputTuple,
-      TeamPlanActivityChangedEvent.OutputTuple,
-      TeamPlanActivityChangedEvent.OutputObject
-    >;
-    TeamPlanActivityChanged: TypedContractEvent<
-      TeamPlanActivityChangedEvent.InputTuple,
-      TeamPlanActivityChangedEvent.OutputTuple,
-      TeamPlanActivityChangedEvent.OutputObject
-    >;
+    "TeamPlanActivityChanged(uint256,bool)"(
+      teamPlanId?: BigNumberish | null,
+      isActive?: null
+    ): TeamPlanActivityChangedEventFilter;
+    TeamPlanActivityChanged(
+      teamPlanId?: BigNumberish | null,
+      isActive?: null
+    ): TeamPlanActivityChangedEventFilter;
 
-    "TeamPlanCreated(uint256,uint256,uint256,uint256,uint256,uint256)": TypedContractEvent<
-      TeamPlanCreatedEvent.InputTuple,
-      TeamPlanCreatedEvent.OutputTuple,
-      TeamPlanCreatedEvent.OutputObject
-    >;
-    TeamPlanCreated: TypedContractEvent<
-      TeamPlanCreatedEvent.InputTuple,
-      TeamPlanCreatedEvent.OutputTuple,
-      TeamPlanCreatedEvent.OutputObject
-    >;
+    "TeamPlanCreated(uint256,uint256,uint256,uint256,uint256,uint256)"(
+      teamPlanId?: BigNumberish | null,
+      subscriptionCost?: null,
+      reward?: null,
+      stakingThreshold?: null,
+      teamSize?: null,
+      stakingPlanId?: null
+    ): TeamPlanCreatedEventFilter;
+    TeamPlanCreated(
+      teamPlanId?: BigNumberish | null,
+      subscriptionCost?: null,
+      reward?: null,
+      stakingThreshold?: null,
+      teamSize?: null,
+      stakingPlanId?: null
+    ): TeamPlanCreatedEventFilter;
 
-    "Upgraded(address)": TypedContractEvent<
-      UpgradedEvent.InputTuple,
-      UpgradedEvent.OutputTuple,
-      UpgradedEvent.OutputObject
-    >;
-    Upgraded: TypedContractEvent<
-      UpgradedEvent.InputTuple,
-      UpgradedEvent.OutputTuple,
-      UpgradedEvent.OutputObject
-    >;
+    "Upgraded(address)"(implementation?: string | null): UpgradedEventFilter;
+    Upgraded(implementation?: string | null): UpgradedEventFilter;
+  };
+
+  estimateGas: {
+    DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
+
+    SUBSCRIPTION_PERIOD_DAYS(overrides?: CallOverrides): Promise<BigNumber>;
+
+    UPGRADER_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
+
+    addPlan(
+      subscriptionCost_: BigNumberish,
+      reward_: BigNumberish,
+      stakingThreshold_: BigNumberish,
+      teamSize_: BigNumberish,
+      stakingPlanId_: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+
+    getActivePlans(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getPlan(
+      planId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getPlans(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getRoleAdmin(
+      role: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getSufficientPlanIdByStakingAmount(
+      stakingPlanId: BigNumberish,
+      amount: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getTimestamp(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getUserSubscription(
+      user: string,
+      planId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getUserTeamMembers(
+      user: string,
+      planId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    grantRole(
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+
+    hasAnySubscription(
+      user: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    hasRole(
+      role: BytesLike,
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    initialize(
+      contractManagerAddress: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+
+    plans(arg0: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
+
+    proxiableUUID(overrides?: CallOverrides): Promise<BigNumber>;
+
+    renounceRole(
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+
+    revokeRole(
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+
+    subscribe(
+      planId: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+
+    supportsInterface(
+      interfaceId: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    tryToAddMember(
+      stakingPlanId: BigNumberish,
+      referrer: string,
+      member: string,
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+
+    updatePlanActivity(
+      planId: BigNumberish,
+      isActive: boolean,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+
+    updatePlanReward(
+      planId: BigNumberish,
+      reward: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+
+    updatePlanStakingId(
+      planId: BigNumberish,
+      stakingPlanId: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+
+    updatePlanStakingThreshold(
+      planId: BigNumberish,
+      threshold: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+
+    updatePlanSubscriptionCost(
+      planId: BigNumberish,
+      subscriptionCost: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+
+    updatePlanTeamSize(
+      planId: BigNumberish,
+      size: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+
+    updateSubscriptionPeriod(
+      numDays: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+
+    upgradeTo(
+      newImplementation: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+
+    upgradeToAndCall(
+      newImplementation: string,
+      data: BytesLike,
+      overrides?: PayableOverrides & { from?: string }
+    ): Promise<BigNumber>;
+
+    userHasPlanSubscription(
+      user: string,
+      planId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    userHasSufficientStaking(
+      user: string,
+      planId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+  };
+
+  populateTransaction: {
+    DEFAULT_ADMIN_ROLE(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    SUBSCRIPTION_PERIOD_DAYS(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    UPGRADER_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    addPlan(
+      subscriptionCost_: BigNumberish,
+      reward_: BigNumberish,
+      stakingThreshold_: BigNumberish,
+      teamSize_: BigNumberish,
+      stakingPlanId_: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    getActivePlans(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    getPlan(
+      planId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getPlans(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    getRoleAdmin(
+      role: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getSufficientPlanIdByStakingAmount(
+      stakingPlanId: BigNumberish,
+      amount: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getTimestamp(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    getUserSubscription(
+      user: string,
+      planId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getUserTeamMembers(
+      user: string,
+      planId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    grantRole(
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    hasAnySubscription(
+      user: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    hasRole(
+      role: BytesLike,
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    initialize(
+      contractManagerAddress: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    plans(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    proxiableUUID(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    renounceRole(
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    revokeRole(
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    subscribe(
+      planId: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    supportsInterface(
+      interfaceId: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    tryToAddMember(
+      stakingPlanId: BigNumberish,
+      referrer: string,
+      member: string,
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    updatePlanActivity(
+      planId: BigNumberish,
+      isActive: boolean,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    updatePlanReward(
+      planId: BigNumberish,
+      reward: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    updatePlanStakingId(
+      planId: BigNumberish,
+      stakingPlanId: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    updatePlanStakingThreshold(
+      planId: BigNumberish,
+      threshold: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    updatePlanSubscriptionCost(
+      planId: BigNumberish,
+      subscriptionCost: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    updatePlanTeamSize(
+      planId: BigNumberish,
+      size: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    updateSubscriptionPeriod(
+      numDays: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    upgradeTo(
+      newImplementation: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    upgradeToAndCall(
+      newImplementation: string,
+      data: BytesLike,
+      overrides?: PayableOverrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    userHasPlanSubscription(
+      user: string,
+      planId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    userHasSufficientStaking(
+      user: string,
+      planId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
   };
 }

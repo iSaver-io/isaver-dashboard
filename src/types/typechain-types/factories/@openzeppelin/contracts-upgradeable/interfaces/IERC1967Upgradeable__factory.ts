@@ -2,7 +2,8 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import { Contract, Interface, type ContractRunner } from "ethers";
+import { Contract, Signer, utils } from "ethers";
+import type { Provider } from "@ethersproject/providers";
 import type {
   IERC1967Upgradeable,
   IERC1967UpgradeableInterface,
@@ -59,16 +60,12 @@ const _abi = [
 export class IERC1967Upgradeable__factory {
   static readonly abi = _abi;
   static createInterface(): IERC1967UpgradeableInterface {
-    return new Interface(_abi) as IERC1967UpgradeableInterface;
+    return new utils.Interface(_abi) as IERC1967UpgradeableInterface;
   }
   static connect(
     address: string,
-    runner?: ContractRunner | null
+    signerOrProvider: Signer | Provider
   ): IERC1967Upgradeable {
-    return new Contract(
-      address,
-      _abi,
-      runner
-    ) as unknown as IERC1967Upgradeable;
+    return new Contract(address, _abi, signerOrProvider) as IERC1967Upgradeable;
   }
 }
