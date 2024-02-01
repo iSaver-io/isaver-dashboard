@@ -10,10 +10,12 @@ import {
   DrawerOverlay,
   Flex,
   IconButton,
+  Image,
   Link,
   Text,
 } from '@chakra-ui/react';
 
+import { ReactComponent as ActivateAvatarIcon } from '@/assets/images/icons/activate-avatar.svg';
 import { ReactComponent as CrossIcon } from '@/assets/images/icons/cross.svg';
 import { ReactComponent as GameboyIcon } from '@/assets/images/icons/gameboy.svg';
 import { ReactComponent as GraphIcon } from '@/assets/images/icons/graph.svg';
@@ -27,9 +29,11 @@ import { useStakingPlansUserInfo } from '@/hooks/staking/useStaking';
 import { useTeams } from '@/hooks/teams/useTeams';
 import { useLogger } from '@/hooks/useLogger';
 import { useNavigateByHash } from '@/hooks/useNavigateByHash';
+import { useActiveAvatarNFT } from '@/hooks/useNFTHolders';
 import { APP_URL, isDashboard, WHITEPAPER_URL } from '@/router';
 
 export const Menu = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) => {
+  const { avatarNFT } = useActiveAvatarNFT();
   const { hasEndingSubscription } = useStakingPlansUserInfo();
   const { hasEndingReferralSubscription } = useUserReferralInfo();
   const { hasEndingTeamsSubscription } = useTeams();
@@ -80,9 +84,28 @@ export const Menu = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void
           justifyContent="space-between"
           alignItems="center"
         >
-          <Text textStyle="h2" textTransform="uppercase">
-            Menu
-          </Text>
+          <Link
+            display="flex"
+            w="100%"
+            alignItems="center"
+            gap="20px"
+            onClick={() => handleNavigateWithLogger('/avatar-settings')}
+            _hover={{ color: 'green.400' }}
+          >
+            {avatarNFT?.image ? (
+              <Image
+                borderRadius="6"
+                w="58"
+                h="58"
+                src={avatarNFT?.image?.thumbnailUrl || avatarNFT?.image?.originalUrl}
+              />
+            ) : (
+              <ActivateAvatarIcon />
+            )}
+            <Text as="span" position="relative" textStyle="menuDefault">
+              Avatar settings
+            </Text>
+          </Link>
           <IconButton
             variant="secondary"
             aria-label="Close burger menu"
@@ -95,6 +118,7 @@ export const Menu = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void
         </DrawerHeader>
 
         <DrawerBody>
+          <Divider mb="30px" borderBottomWidth="2px" borderColor="white" />
           <NavMenuItem
             text="Dashboard"
             icon={<HouseIcon />}

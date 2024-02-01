@@ -124,6 +124,7 @@ export interface RafflesInterface extends utils.Interface {
     "supportsInterface(bytes4)": FunctionFragment;
     "updateCallbackGasLimit(uint32)": FunctionFragment;
     "updateClaimPeriod(uint256)": FunctionFragment;
+    "updateCoordinator(address)": FunctionFragment;
     "updateDaysStreakForTicket(uint256)": FunctionFragment;
     "updateKeyHash(bytes32)": FunctionFragment;
     "updateRequestConfirmations(uint16)": FunctionFragment;
@@ -176,6 +177,7 @@ export interface RafflesInterface extends utils.Interface {
       | "supportsInterface"
       | "updateCallbackGasLimit"
       | "updateClaimPeriod"
+      | "updateCoordinator"
       | "updateDaysStreakForTicket"
       | "updateKeyHash"
       | "updateRequestConfirmations"
@@ -348,6 +350,10 @@ export interface RafflesInterface extends utils.Interface {
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
+    functionFragment: "updateCoordinator",
+    values: [string]
+  ): string;
+  encodeFunctionData(
     functionFragment: "updateDaysStreakForTicket",
     values: [BigNumberish]
   ): string;
@@ -505,6 +511,10 @@ export interface RafflesInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "updateClaimPeriod",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "updateCoordinator",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -948,6 +958,11 @@ export interface Raffles extends BaseContract {
       overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
 
+    updateCoordinator(
+      coordinator: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
+
     updateDaysStreakForTicket(
       daysNum: BigNumberish,
       overrides?: Overrides & { from?: string }
@@ -1188,6 +1203,11 @@ export interface Raffles extends BaseContract {
     overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
 
+  updateCoordinator(
+    coordinator: string,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
   updateDaysStreakForTicket(
     daysNum: BigNumberish,
     overrides?: Overrides & { from?: string }
@@ -1421,6 +1441,11 @@ export interface Raffles extends BaseContract {
 
     updateClaimPeriod(
       sec: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    updateCoordinator(
+      coordinator: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1734,6 +1759,11 @@ export interface Raffles extends BaseContract {
       overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
 
+    updateCoordinator(
+      coordinator: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+
     updateDaysStreakForTicket(
       daysNum: BigNumberish,
       overrides?: Overrides & { from?: string }
@@ -1964,6 +1994,11 @@ export interface Raffles extends BaseContract {
 
     updateClaimPeriod(
       sec: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    updateCoordinator(
+      coordinator: string,
       overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 

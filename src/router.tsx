@@ -2,6 +2,7 @@ import React, { createRef } from 'react';
 import { createBrowserRouter, Navigate, useRouteError } from 'react-router-dom';
 
 import { AdminPanel } from './components/AdminPanel/AdminPanel';
+import { AvatarSettings } from './components/AvatarSettings/AvatarSettings';
 import { Dashboard } from './components/Dashboard/Dashboard';
 import { ExchangePage } from './components/Exchange/ExchangePage';
 import { Layout } from './components/Layout/Layout';
@@ -44,6 +45,12 @@ const appRoutes = [
   { path: '/vesting', name: 'Vesting', element: <MyVesting />, nodeRef: createRef() },
   { path: '/raffles/:id', name: 'Raffle', element: <RafflePage />, nodeRef: createRef() },
   { path: '/admin-panel', name: 'Admin panel', element: <AdminPanel />, nodeRef: createRef() },
+  {
+    path: '/avatar-settings',
+    name: 'Avatar settings',
+    element: <AvatarSettings />,
+    nodeRef: createRef(),
+  },
 ];
 
 export const routes = isLanding

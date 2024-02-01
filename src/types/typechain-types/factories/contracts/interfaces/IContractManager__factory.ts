@@ -25,6 +25,19 @@ const _abi = [
   },
   {
     inputs: [],
+    name: "getBirthdayPrizesPool",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
     name: "getPowersAddress",
     outputs: [
       {

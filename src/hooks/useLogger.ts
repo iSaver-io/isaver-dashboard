@@ -1,7 +1,14 @@
 import { useCallback } from 'react';
 import { useAccount } from 'wagmi';
 
-type EventName = 'cross' | 'dashboard' | 'landing' | 'staking' | 'team' | 'raffle';
+type EventName =
+  | 'cross'
+  | 'dashboard'
+  | 'landing'
+  | 'staking'
+  | 'team'
+  | 'raffle'
+  | 'avatarSettings';
 type EventCategory = 'elements' | 'forms' | 'blocks' | 'notifications';
 type EventAction =
   | 'element_click'
