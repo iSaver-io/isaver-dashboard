@@ -494,7 +494,7 @@ export const useClaimPrize = () => {
       const txHash = await claimPrize();
       success({
         title: 'Success',
-        description: 'You have claimed Avatar`s birthday present',
+        description: "You have claimed Avatar's birthday present", // eslint-disable-line
         txHash,
       });
     },
