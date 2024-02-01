@@ -1,9 +1,11 @@
 import { HistoryEvent } from '@/types';
 
+import { getLocalDateTimeString } from '../time';
+
 export const formatHistoryEventsToExport = (events: HistoryEvent[]) => {
   const headers = ['Date', 'Event', 'Transaction'];
   const data = events.map((event) => [
-    new Date(event.timestamp * 1000),
+    getLocalDateTimeString(event.timestamp),
     event.label,
     event.transactionHash,
   ]);

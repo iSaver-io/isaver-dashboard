@@ -17,7 +17,7 @@ const eventLabels: Record<string, string> = {
   ISaverAvatarDeactivated: 'iSaver Avatar deactivation',
   NameChanged: 'Name change',
   TelegramChanged: 'Telegram change',
-  BirthdayPrizeClaimed: 'Birthday prize claimed',
+  BirthdayPrizeClaimed: 'Birthday present claimed',
 };
 
 const powerActivationLabels: Record<number, string> = {
