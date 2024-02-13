@@ -22,6 +22,21 @@ const RAFFLE_TICKET_PRICE_REQUEST = 'raffle-ticket-price-request';
 const RAFFLE_WINNER_PRIZE_REQUEST = 'raffle-winner-prize-request';
 const BUY_TICKETS_MUTATION = 'buy-tickets-mutation';
 
+export const useTicketPrice = () => {
+  const raffleContract = useRaffleContract();
+
+  const ticketPriceRequest = useQuery([RAFFLE_TICKET_PRICE_REQUEST], async () => {
+    return await raffleContract.getTicketPrice();
+  });
+
+  const ticketPrice = useMemo(
+    () => ticketPriceRequest.data || BigNumber.from(0),
+    [ticketPriceRequest.data]
+  );
+
+  return { ticketPrice, ticketPriceRequest };
+};
+
 export type CreateRaffleWithTitleProps = CreateRaffleProps & {
   title: string;
   description?: string;
@@ -43,15 +58,6 @@ export const useRaffleControl = () => {
     }
     return undefined;
   }, [roundsRequest.data, raffleRoundDataMap]);
-
-  const ticketPriceRequest = useQuery([RAFFLE_TICKET_PRICE_REQUEST], async () => {
-    return await raffleContract.getTicketPrice();
-  });
-
-  const ticketPrice = useMemo(
-    () => ticketPriceRequest.data || BigNumber.from(0),
-    [ticketPriceRequest.data]
-  );
 
   const updateTicketPrice = useMutation(
     ['update-ticket-price'],
@@ -131,8 +137,6 @@ export const useRaffleControl = () => {
   );
 
   return {
-    ticketPriceRequest,
-    ticketPrice,
     roundsRequest,
     isRafflesDataLoading,
     raffleRounds,
@@ -148,7 +152,7 @@ export const useRaffle = () => {
 
   const queryClient = useQueryClient();
   const raffleContract = useRaffleContract();
-  const { ticketPrice } = useRaffleControl();
+  const { ticketPrice } = useTicketPrice();
   const ticketContract = useTicketContract();
   const { success, handleError } = useNotification();
   const tokens = useTokens();

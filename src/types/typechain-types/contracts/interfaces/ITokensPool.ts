@@ -4,7 +4,6 @@
 import type {
   BaseContract,
   BigNumber,
-  BigNumberish,
   BytesLike,
   CallOverrides,
   ContractTransaction,
@@ -12,34 +11,42 @@ import type {
   PopulatedTransaction,
   Signer,
   utils,
-} from 'ethers';
-import type { FunctionFragment, Result } from '@ethersproject/abi';
-import type { Listener, Provider } from '@ethersproject/providers';
-import type { TypedEventFilter, TypedEvent, TypedListener, OnEvent } from '../../../../common';
+} from "ethers";
+import type { FunctionFragment, Result } from "@ethersproject/abi";
+import type { Listener, Provider } from "@ethersproject/providers";
+import type {
+  TypedEventFilter,
+  TypedEvent,
+  TypedListener,
+  OnEvent,
+} from "../../common";
 
-export interface VRFConsumerBaseV2Interface extends utils.Interface {
+export interface ITokensPoolInterface extends utils.Interface {
   functions: {
-    'rawFulfillRandomWords(uint256,uint256[])': FunctionFragment;
+    "requestPrize(address)": FunctionFragment;
   };
 
-  getFunction(nameOrSignatureOrTopic: 'rawFulfillRandomWords'): FunctionFragment;
+  getFunction(nameOrSignatureOrTopic: "requestPrize"): FunctionFragment;
 
   encodeFunctionData(
-    functionFragment: 'rawFulfillRandomWords',
-    values: [BigNumberish, BigNumberish[]]
+    functionFragment: "requestPrize",
+    values: [string]
   ): string;
 
-  decodeFunctionResult(functionFragment: 'rawFulfillRandomWords', data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "requestPrize",
+    data: BytesLike
+  ): Result;
 
   events: {};
 }
 
-export interface VRFConsumerBaseV2 extends BaseContract {
+export interface ITokensPool extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: VRFConsumerBaseV2Interface;
+  interface: ITokensPoolInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,
@@ -51,7 +58,9 @@ export interface VRFConsumerBaseV2 extends BaseContract {
     eventFilter?: TypedEventFilter<TEvent>
   ): Array<TypedListener<TEvent>>;
   listeners(eventName?: string): Array<Listener>;
-  removeAllListeners<TEvent extends TypedEvent>(eventFilter: TypedEventFilter<TEvent>): this;
+  removeAllListeners<TEvent extends TypedEvent>(
+    eventFilter: TypedEventFilter<TEvent>
+  ): this;
   removeAllListeners(eventName?: string): this;
   off: OnEvent<this>;
   on: OnEvent<this>;
@@ -59,41 +68,33 @@ export interface VRFConsumerBaseV2 extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
-    rawFulfillRandomWords(
-      requestId: BigNumberish,
-      randomWords: BigNumberish[],
+    requestPrize(
+      arg0: string,
       overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
   };
 
-  rawFulfillRandomWords(
-    requestId: BigNumberish,
-    randomWords: BigNumberish[],
+  requestPrize(
+    arg0: string,
     overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
 
   callStatic: {
-    rawFulfillRandomWords(
-      requestId: BigNumberish,
-      randomWords: BigNumberish[],
-      overrides?: CallOverrides
-    ): Promise<void>;
+    requestPrize(arg0: string, overrides?: CallOverrides): Promise<void>;
   };
 
   filters: {};
 
   estimateGas: {
-    rawFulfillRandomWords(
-      requestId: BigNumberish,
-      randomWords: BigNumberish[],
+    requestPrize(
+      arg0: string,
       overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
   };
 
   populateTransaction: {
-    rawFulfillRandomWords(
-      requestId: BigNumberish,
-      randomWords: BigNumberish[],
+    requestPrize(
+      arg0: string,
       overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
   };

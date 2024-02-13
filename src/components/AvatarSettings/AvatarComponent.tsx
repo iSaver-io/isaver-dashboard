@@ -13,8 +13,8 @@ import {
 
 import {
   useAvatarMetadata,
-  useClaimPrize,
-  useIsBirthdayPrizeAvailable,
+  useClaimBirthdayPresent,
+  useIsBirthdayPresentAvailable,
   useTokenName,
   useTokenTelegram,
 } from '@/hooks/useAvatarSettings';
@@ -32,8 +32,9 @@ export const AvatarComponent = () => {
   const { metadata } = useAvatarMetadata();
   const { mutateAsync: setTokenName } = useTokenName();
   const { mutateAsync: setTokenTelegram } = useTokenTelegram();
-  const { mutateAsync: claimPrize, isLoading: isPrizeClaimLoading } = useClaimPrize();
-  const { data: hasBirthdayGift = null } = useIsBirthdayPrizeAvailable(activeAvatar?.tokenId);
+  const { mutateAsync: claimBirthdayPresent, isLoading: isPrizeClaimLoading } =
+    useClaimBirthdayPresent();
+  const { data: hasBirthdayGift = null } = useIsBirthdayPresentAvailable(activeAvatar?.tokenId);
 
   const handleNameSave = useCallback(
     (name: string) => {
@@ -97,7 +98,7 @@ export const AvatarComponent = () => {
                         size="sm"
                         variant="outlinedWhite"
                         isLoading={isPrizeClaimLoading}
-                        onClick={() => claimPrize()}
+                        onClick={() => claimBirthdayPresent()}
                       >
                         Claim
                       </Button>

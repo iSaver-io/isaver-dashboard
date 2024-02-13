@@ -7,7 +7,7 @@ import { useAccount } from 'wagmi';
 
 import { CenteredSpinner } from '@/components/ui/CenteredSpinner/CenteredSpinner';
 import { useBuyTicketsLogger } from '@/hooks/logger/useBuyTicketsLogger';
-import { useRaffle, useRaffleControl } from '@/hooks/raffle/useRaffle';
+import { useRaffle, useTicketPrice } from '@/hooks/raffle/useRaffle';
 import { useRaffleRoundById } from '@/hooks/raffle/useRaffleRoundById';
 import { useConnectWallet } from '@/hooks/useConnectWallet';
 import { useHelperRaffleRoundWinners } from '@/hooks/useHelper';
@@ -45,7 +45,7 @@ export const RafflePage = () => {
   const { isOpen, onOpen, onClose } = useDisclosure(); // Buy Ticket modal
   const navigate = useNavigateByHash();
   const { ticketBalanceRequest, buyTickets } = useRaffle();
-  const { ticketPrice } = useRaffleControl();
+  const { ticketPrice } = useTicketPrice();
   const logBuyTickets = useBuyTicketsLogger('raffle');
   const logger = useLogger({
     category: 'elements',

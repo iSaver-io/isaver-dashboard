@@ -160,12 +160,12 @@ export const useAllEvents = () => {
 };
 
 export const IS_BIRTHDAY_PRIZE_AVAILABLE = 'is-birthday-prize-available';
-export const useIsBirthdayPrizeAvailable = (tokenId?: BigNumberish) => {
-  const { isBirthdayPrizeAvailable } = useAvatarSettingsContract();
+export const useIsBirthdayPresentAvailable = (tokenId?: BigNumberish) => {
+  const { isBirthdayPresentAvailable } = useAvatarSettingsContract();
 
   const queryResult = useQuery<Boolean>(
     [GET_APPROVED_COLLECTIONS, { tokenId }],
-    async () => (tokenId !== undefined ? await isBirthdayPrizeAvailable(tokenId!) : false),
+    async () => (tokenId !== undefined ? await isBirthdayPresentAvailable(tokenId!) : false),
     {
       cacheTime: 0,
       staleTime: 0,
@@ -476,8 +476,8 @@ export const useActivatePowerAccess = () => {
 };
 
 export const CLAIM_PRIZE = 'claim-prize';
-export const useClaimPrize = () => {
-  const { claimPrize } = useAvatarSettingsContract();
+export const useClaimBirthdayPresent = () => {
+  const { claimBirthdayPresent } = useAvatarSettingsContract();
   const { address: account } = useAccount();
   const { connect } = useConnectWallet();
   const { success, handleError } = useNotification();
@@ -491,7 +491,7 @@ export const useClaimPrize = () => {
         return;
       }
 
-      const txHash = await claimPrize();
+      const txHash = await claimBirthdayPresent();
       success({
         title: 'Success',
         description: "You have claimed Avatar's birthday present", // eslint-disable-line

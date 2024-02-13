@@ -90,6 +90,10 @@ export const useRaffleContract = () => {
     return waitForTransaction(tx);
   };
 
+  const extraTicketsPowerD = async () => {
+    return await contract.extraTicketsPowerD();
+  };
+
   const claimDay = async () => {
     const tx = await contract.claimDay();
     return waitForTransaction(tx);
@@ -154,6 +158,7 @@ export const useRaffleContract = () => {
     getLastClaimTime,
     isMintAvailable,
 
+    extraTicketsPowerD,
     entryRaffle,
     buyTickets,
     claimDay,

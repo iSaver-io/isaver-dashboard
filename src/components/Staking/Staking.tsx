@@ -51,7 +51,7 @@ export const Staking: FC<StakingProps> = ({ isPageView }) => {
   const { stakingPlansRequest } = useStakingPlans();
   const { activeStakingPlansWithUserInfo } = useActiveStakingPlansWithUserInfo();
   const { hasEndingSubscription } = useStakingPlansUserInfo();
-  const { subscribe, deposit, withdrawAll } = useStakingActions();
+  const { subscribe, deposit, withdrawAllCompleted } = useStakingActions();
 
   const closeModal = useCallback(() => {
     setSelectedPlan(undefined);
@@ -162,9 +162,9 @@ export const Staking: FC<StakingProps> = ({ isPageView }) => {
         valueKey: 'totalReward',
       });
 
-      return withdrawAll.mutateAsync(planId);
+      return withdrawAllCompleted.mutateAsync(planId);
     },
-    [logAction, withdrawAll, isPageView]
+    [logAction, withdrawAllCompleted, isPageView]
   );
 
   return (

@@ -1,6 +1,7 @@
 import { FC, useCallback, useState } from 'react';
 import {
   Box,
+  Checkbox,
   CloseButton,
   Input,
   Modal,
@@ -22,22 +23,25 @@ type AddStakingModalProps = {
     subscriptionCost,
     stakingDuration,
     apr,
+    isSuperPowered,
   }: {
     subscriptionCost: BigNumber;
     stakingDuration: number;
     apr: number;
+    isSuperPowered: boolean;
   }) => Promise<void>;
 };
 export const AddStakingModal: FC<AddStakingModalProps> = ({ onClose, onSubmit }) => {
   const [subscriptionCost, setSubscriptionCost] = useState<string>();
   const [duration, setDuration] = useState<string>();
   const [apr, setApr] = useState<string>();
+  const [isSuperPowered, setIsSuperPowered] = useState<boolean>(false);
 
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = useCallback(() => {
     if (subscriptionCost && duration && apr) {
-      const subscriptionCostBN = parseEther(subscriptionCost);
+      const subscriptionCostBN = parseEther(subscriptionCost || '0');
       const durationDays = parseInt(duration);
       const formattedAPR = Math.floor(parseFloat(apr || '0') * 10);
 
@@ -46,11 +50,14 @@ export const AddStakingModal: FC<AddStakingModalProps> = ({ onClose, onSubmit })
         subscriptionCost: subscriptionCostBN,
         stakingDuration: durationDays,
         apr: formattedAPR,
+        isSuperPowered,
       }).finally(() => setIsLoading(false));
     }
-  }, [subscriptionCost, duration, apr, setIsLoading, onSubmit]);
+  }, [subscriptionCost, duration, apr, setIsLoading, onSubmit, isSuperPowered]);
 
-  const isDataValid = Boolean(subscriptionCost && duration && apr);
+  const isDataValid = Boolean(
+    (subscriptionCost && duration && apr) || (isSuperPowered && duration && apr)
+  );
 
   return (
     <Modal isCentered isOpen={true} onClose={onClose}>
@@ -63,12 +70,23 @@ export const AddStakingModal: FC<AddStakingModalProps> = ({ onClose, onSubmit })
 
         <ModalBody>
           <Box mb="20px">
+            <Checkbox
+              colorScheme="green"
+              isChecked={isSuperPowered}
+              onChange={(e) => setIsSuperPowered(e.target.checked)}
+            >
+              <Text textStyle="text1">Accessed only with power B?</Text>
+            </Checkbox>
+          </Box>
+
+          <Box mb="20px">
             <Text textStyle="text1" mb="4px">
               Subscription cost:
             </Text>
             <Input
               type="number"
               placeholder="SAV"
+              isDisabled={isSuperPowered}
               onChange={(e) => setSubscriptionCost(e.target.value)}
             />
           </Box>

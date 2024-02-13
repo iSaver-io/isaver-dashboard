@@ -11,7 +11,8 @@ export const Balances = () => {
   const { vestingPool } = useAccounts();
   const { Raffles, ReferralManager, VendorSell } = useContractsAddresses();
 
-  const stakingAvailableTokens = useStakingAvailableTokens();
+  const stakingAvailableTokensSAV = useStakingAvailableTokens(false);
+  const stakingAvailableTokensSAVR = useStakingAvailableTokens(true);
   const raffleBalance = useSavRBalance(Raffles);
   const referralBalance = useSavRBalance(ReferralManager);
   const vendorBalance = useSavBalance(VendorSell);
@@ -22,7 +23,8 @@ export const Balances = () => {
   const savrSupply = useTokenSupply(ContractsEnum.SAVR);
 
   const isLoading =
-    stakingAvailableTokens.isLoading ||
+    stakingAvailableTokensSAV.isLoading ||
+    stakingAvailableTokensSAVR.isLoading ||
     raffleBalance.isLoading ||
     referralBalance.isLoading ||
     vendorBalance.isLoading ||
@@ -64,7 +66,16 @@ export const Balances = () => {
         minLimit={0}
       />
 
-      <Balance label="Staking rewards balance" balance={stakingAvailableTokens.data} symbol="SAV" />
+      <Balance
+        label="Staking rewards balance (SAV)"
+        balance={stakingAvailableTokensSAV.data}
+        symbol="SAV"
+      />
+      <Balance
+        label="Staking rewards balance (SAVR)"
+        balance={stakingAvailableTokensSAVR.data}
+        symbol="SAVR"
+      />
       <Balance label="Staking TVL (SAV)" balance={tvlSav} symbol="SAV" minLimit={0} />
       <Balance label="Staking TVL (SAVR)" balance={tvlSavr} symbol="SAVR" minLimit={0} />
       <Balance label="Raffle rewards balance" balance={raffleBalance.data} symbol="SAVR" />

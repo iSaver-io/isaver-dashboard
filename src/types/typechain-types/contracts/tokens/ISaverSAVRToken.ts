@@ -30,9 +30,6 @@ export interface ISaverSAVRTokenInterface extends utils.Interface {
   functions: {
     "DEFAULT_ADMIN_ROLE()": FunctionFragment;
     "MINTER_ROLE()": FunctionFragment;
-    "PAUSER_ROLE()": FunctionFragment;
-    "SNAPSHOT_ROLE()": FunctionFragment;
-    "addToBlackList(address[])": FunctionFragment;
     "addToWhiteList(address[])": FunctionFragment;
     "allowance(address,address)": FunctionFragment;
     "approve(address,uint256)": FunctionFragment;
@@ -46,13 +43,9 @@ export interface ISaverSAVRTokenInterface extends utils.Interface {
     "grantRole(bytes32,address)": FunctionFragment;
     "hasRole(bytes32,address)": FunctionFragment;
     "increaseAllowance(address,uint256)": FunctionFragment;
-    "isAddressInBlackList(address)": FunctionFragment;
     "isAddressInWhiteList(address)": FunctionFragment;
     "mint(address,uint256)": FunctionFragment;
     "name()": FunctionFragment;
-    "pause()": FunctionFragment;
-    "paused()": FunctionFragment;
-    "removeFromBlackList(address[])": FunctionFragment;
     "removeFromWhiteList(address[])": FunctionFragment;
     "renounceRole(bytes32,address)": FunctionFragment;
     "revokeRole(bytes32,address)": FunctionFragment;
@@ -66,16 +59,12 @@ export interface ISaverSAVRTokenInterface extends utils.Interface {
     "totalSupplyAt(uint256)": FunctionFragment;
     "transfer(address,uint256)": FunctionFragment;
     "transferFrom(address,address,uint256)": FunctionFragment;
-    "unpause()": FunctionFragment;
   };
 
   getFunction(
     nameOrSignatureOrTopic:
       | "DEFAULT_ADMIN_ROLE"
       | "MINTER_ROLE"
-      | "PAUSER_ROLE"
-      | "SNAPSHOT_ROLE"
-      | "addToBlackList"
       | "addToWhiteList"
       | "allowance"
       | "approve"
@@ -89,13 +78,9 @@ export interface ISaverSAVRTokenInterface extends utils.Interface {
       | "grantRole"
       | "hasRole"
       | "increaseAllowance"
-      | "isAddressInBlackList"
       | "isAddressInWhiteList"
       | "mint"
       | "name"
-      | "pause"
-      | "paused"
-      | "removeFromBlackList"
       | "removeFromWhiteList"
       | "renounceRole"
       | "revokeRole"
@@ -109,7 +94,6 @@ export interface ISaverSAVRTokenInterface extends utils.Interface {
       | "totalSupplyAt"
       | "transfer"
       | "transferFrom"
-      | "unpause"
   ): FunctionFragment;
 
   encodeFunctionData(
@@ -119,18 +103,6 @@ export interface ISaverSAVRTokenInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "MINTER_ROLE",
     values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "PAUSER_ROLE",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "SNAPSHOT_ROLE",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "addToBlackList",
-    values: [string[]]
   ): string;
   encodeFunctionData(
     functionFragment: "addToWhiteList",
@@ -176,10 +148,6 @@ export interface ISaverSAVRTokenInterface extends utils.Interface {
     values: [string, BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "isAddressInBlackList",
-    values: [string]
-  ): string;
-  encodeFunctionData(
     functionFragment: "isAddressInWhiteList",
     values: [string]
   ): string;
@@ -188,12 +156,6 @@ export interface ISaverSAVRTokenInterface extends utils.Interface {
     values: [string, BigNumberish]
   ): string;
   encodeFunctionData(functionFragment: "name", values?: undefined): string;
-  encodeFunctionData(functionFragment: "pause", values?: undefined): string;
-  encodeFunctionData(functionFragment: "paused", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "removeFromBlackList",
-    values: [string[]]
-  ): string;
   encodeFunctionData(
     functionFragment: "removeFromWhiteList",
     values: [string[]]
@@ -237,7 +199,6 @@ export interface ISaverSAVRTokenInterface extends utils.Interface {
     functionFragment: "transferFrom",
     values: [string, string, BigNumberish]
   ): string;
-  encodeFunctionData(functionFragment: "unpause", values?: undefined): string;
 
   decodeFunctionResult(
     functionFragment: "DEFAULT_ADMIN_ROLE",
@@ -245,18 +206,6 @@ export interface ISaverSAVRTokenInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "MINTER_ROLE",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "PAUSER_ROLE",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "SNAPSHOT_ROLE",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "addToBlackList",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -288,21 +237,11 @@ export interface ISaverSAVRTokenInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "isAddressInBlackList",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "isAddressInWhiteList",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "mint", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "pause", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "paused", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "removeFromBlackList",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(
     functionFragment: "removeFromWhiteList",
     data: BytesLike
@@ -340,33 +279,24 @@ export interface ISaverSAVRTokenInterface extends utils.Interface {
     functionFragment: "transferFrom",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "unpause", data: BytesLike): Result;
 
   events: {
     "Approval(address,address,uint256)": EventFragment;
-    "BlackListAdded(address[],address)": EventFragment;
-    "BlackListRemoved(address[],address)": EventFragment;
-    "Paused(address)": EventFragment;
     "RoleAdminChanged(bytes32,bytes32,bytes32)": EventFragment;
     "RoleGranted(bytes32,address,address)": EventFragment;
     "RoleRevoked(bytes32,address,address)": EventFragment;
     "Snapshot(uint256)": EventFragment;
     "Transfer(address,address,uint256)": EventFragment;
-    "Unpaused(address)": EventFragment;
     "WhiteListAdded(address[],address)": EventFragment;
     "WhiteListRemoved(address[],address)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "Approval"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "BlackListAdded"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "BlackListRemoved"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Paused"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleAdminChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleGranted"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleRevoked"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Snapshot"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Transfer"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Unpaused"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "WhiteListAdded"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "WhiteListRemoved"): EventFragment;
 }
@@ -382,36 +312,6 @@ export type ApprovalEvent = TypedEvent<
 >;
 
 export type ApprovalEventFilter = TypedEventFilter<ApprovalEvent>;
-
-export interface BlackListAddedEventObject {
-  _addresses: string[];
-  admin: string;
-}
-export type BlackListAddedEvent = TypedEvent<
-  [string[], string],
-  BlackListAddedEventObject
->;
-
-export type BlackListAddedEventFilter = TypedEventFilter<BlackListAddedEvent>;
-
-export interface BlackListRemovedEventObject {
-  _addresses: string[];
-  admin: string;
-}
-export type BlackListRemovedEvent = TypedEvent<
-  [string[], string],
-  BlackListRemovedEventObject
->;
-
-export type BlackListRemovedEventFilter =
-  TypedEventFilter<BlackListRemovedEvent>;
-
-export interface PausedEventObject {
-  account: string;
-}
-export type PausedEvent = TypedEvent<[string], PausedEventObject>;
-
-export type PausedEventFilter = TypedEventFilter<PausedEvent>;
 
 export interface RoleAdminChangedEventObject {
   role: string;
@@ -469,13 +369,6 @@ export type TransferEvent = TypedEvent<
 
 export type TransferEventFilter = TypedEventFilter<TransferEvent>;
 
-export interface UnpausedEventObject {
-  account: string;
-}
-export type UnpausedEvent = TypedEvent<[string], UnpausedEventObject>;
-
-export type UnpausedEventFilter = TypedEventFilter<UnpausedEvent>;
-
 export interface WhiteListAddedEventObject {
   _addresses: string[];
   admin: string;
@@ -529,15 +422,6 @@ export interface ISaverSAVRToken extends BaseContract {
     DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<[string]>;
 
     MINTER_ROLE(overrides?: CallOverrides): Promise<[string]>;
-
-    PAUSER_ROLE(overrides?: CallOverrides): Promise<[string]>;
-
-    SNAPSHOT_ROLE(overrides?: CallOverrides): Promise<[string]>;
-
-    addToBlackList(
-      _addresses: string[],
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
 
     addToWhiteList(
       _addresses: string[],
@@ -603,11 +487,6 @@ export interface ISaverSAVRToken extends BaseContract {
       overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
 
-    isAddressInBlackList(
-      _address: string,
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
-
     isAddressInWhiteList(
       _address: string,
       overrides?: CallOverrides
@@ -620,17 +499,6 @@ export interface ISaverSAVRToken extends BaseContract {
     ): Promise<ContractTransaction>;
 
     name(overrides?: CallOverrides): Promise<[string]>;
-
-    pause(
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    paused(overrides?: CallOverrides): Promise<[boolean]>;
-
-    removeFromBlackList(
-      _addresses: string[],
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
 
     removeFromWhiteList(
       _addresses: string[],
@@ -685,24 +553,11 @@ export interface ISaverSAVRToken extends BaseContract {
       amount: BigNumberish,
       overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
-
-    unpause(
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
   };
 
   DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
 
   MINTER_ROLE(overrides?: CallOverrides): Promise<string>;
-
-  PAUSER_ROLE(overrides?: CallOverrides): Promise<string>;
-
-  SNAPSHOT_ROLE(overrides?: CallOverrides): Promise<string>;
-
-  addToBlackList(
-    _addresses: string[],
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
 
   addToWhiteList(
     _addresses: string[],
@@ -768,11 +623,6 @@ export interface ISaverSAVRToken extends BaseContract {
     overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
 
-  isAddressInBlackList(
-    _address: string,
-    overrides?: CallOverrides
-  ): Promise<boolean>;
-
   isAddressInWhiteList(
     _address: string,
     overrides?: CallOverrides
@@ -785,17 +635,6 @@ export interface ISaverSAVRToken extends BaseContract {
   ): Promise<ContractTransaction>;
 
   name(overrides?: CallOverrides): Promise<string>;
-
-  pause(
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  paused(overrides?: CallOverrides): Promise<boolean>;
-
-  removeFromBlackList(
-    _addresses: string[],
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
 
   removeFromWhiteList(
     _addresses: string[],
@@ -851,23 +690,10 @@ export interface ISaverSAVRToken extends BaseContract {
     overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
 
-  unpause(
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
   callStatic: {
     DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
 
     MINTER_ROLE(overrides?: CallOverrides): Promise<string>;
-
-    PAUSER_ROLE(overrides?: CallOverrides): Promise<string>;
-
-    SNAPSHOT_ROLE(overrides?: CallOverrides): Promise<string>;
-
-    addToBlackList(
-      _addresses: string[],
-      overrides?: CallOverrides
-    ): Promise<void>;
 
     addToWhiteList(
       _addresses: string[],
@@ -930,11 +756,6 @@ export interface ISaverSAVRToken extends BaseContract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
-    isAddressInBlackList(
-      _address: string,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
-
     isAddressInWhiteList(
       _address: string,
       overrides?: CallOverrides
@@ -947,15 +768,6 @@ export interface ISaverSAVRToken extends BaseContract {
     ): Promise<void>;
 
     name(overrides?: CallOverrides): Promise<string>;
-
-    pause(overrides?: CallOverrides): Promise<void>;
-
-    paused(overrides?: CallOverrides): Promise<boolean>;
-
-    removeFromBlackList(
-      _addresses: string[],
-      overrides?: CallOverrides
-    ): Promise<void>;
 
     removeFromWhiteList(
       _addresses: string[],
@@ -1008,8 +820,6 @@ export interface ISaverSAVRToken extends BaseContract {
       amount: BigNumberish,
       overrides?: CallOverrides
     ): Promise<boolean>;
-
-    unpause(overrides?: CallOverrides): Promise<void>;
   };
 
   filters: {
@@ -1023,24 +833,6 @@ export interface ISaverSAVRToken extends BaseContract {
       spender?: string | null,
       value?: null
     ): ApprovalEventFilter;
-
-    "BlackListAdded(address[],address)"(
-      _addresses?: null,
-      admin?: null
-    ): BlackListAddedEventFilter;
-    BlackListAdded(_addresses?: null, admin?: null): BlackListAddedEventFilter;
-
-    "BlackListRemoved(address[],address)"(
-      _addresses?: null,
-      admin?: null
-    ): BlackListRemovedEventFilter;
-    BlackListRemoved(
-      _addresses?: null,
-      admin?: null
-    ): BlackListRemovedEventFilter;
-
-    "Paused(address)"(account?: null): PausedEventFilter;
-    Paused(account?: null): PausedEventFilter;
 
     "RoleAdminChanged(bytes32,bytes32,bytes32)"(
       role?: BytesLike | null,
@@ -1089,9 +881,6 @@ export interface ISaverSAVRToken extends BaseContract {
       value?: null
     ): TransferEventFilter;
 
-    "Unpaused(address)"(account?: null): UnpausedEventFilter;
-    Unpaused(account?: null): UnpausedEventFilter;
-
     "WhiteListAdded(address[],address)"(
       _addresses?: null,
       admin?: null
@@ -1112,15 +901,6 @@ export interface ISaverSAVRToken extends BaseContract {
     DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
 
     MINTER_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
-
-    PAUSER_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
-
-    SNAPSHOT_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
-
-    addToBlackList(
-      _addresses: string[],
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
 
     addToWhiteList(
       _addresses: string[],
@@ -1189,11 +969,6 @@ export interface ISaverSAVRToken extends BaseContract {
       overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
 
-    isAddressInBlackList(
-      _address: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     isAddressInWhiteList(
       _address: string,
       overrides?: CallOverrides
@@ -1206,15 +981,6 @@ export interface ISaverSAVRToken extends BaseContract {
     ): Promise<BigNumber>;
 
     name(overrides?: CallOverrides): Promise<BigNumber>;
-
-    pause(overrides?: Overrides & { from?: string }): Promise<BigNumber>;
-
-    paused(overrides?: CallOverrides): Promise<BigNumber>;
-
-    removeFromBlackList(
-      _addresses: string[],
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
 
     removeFromWhiteList(
       _addresses: string[],
@@ -1267,8 +1033,6 @@ export interface ISaverSAVRToken extends BaseContract {
       amount: BigNumberish,
       overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
-
-    unpause(overrides?: Overrides & { from?: string }): Promise<BigNumber>;
   };
 
   populateTransaction: {
@@ -1277,15 +1041,6 @@ export interface ISaverSAVRToken extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     MINTER_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    PAUSER_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    SNAPSHOT_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    addToBlackList(
-      _addresses: string[],
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
 
     addToWhiteList(
       _addresses: string[],
@@ -1357,11 +1112,6 @@ export interface ISaverSAVRToken extends BaseContract {
       overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 
-    isAddressInBlackList(
-      _address: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     isAddressInWhiteList(
       _address: string,
       overrides?: CallOverrides
@@ -1374,17 +1124,6 @@ export interface ISaverSAVRToken extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     name(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    pause(
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    paused(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    removeFromBlackList(
-      _addresses: string[],
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
 
     removeFromWhiteList(
       _addresses: string[],
@@ -1437,10 +1176,6 @@ export interface ISaverSAVRToken extends BaseContract {
       from: string,
       to: string,
       amount: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    unpause(
       overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
   };

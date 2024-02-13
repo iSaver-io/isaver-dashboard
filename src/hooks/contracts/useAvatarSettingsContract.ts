@@ -17,7 +17,7 @@ const eventLabels: Record<string, string> = {
   ISaverAvatarDeactivated: 'iSaver Avatar deactivation',
   NameChanged: 'Name change',
   TelegramChanged: 'Telegram change',
-  BirthdayPrizeClaimed: 'Birthday present claimed',
+  BirthdayPresentClaimed: 'Birthday present claimed',
 };
 
 const powerActivationLabels: Record<number, string> = {
@@ -56,7 +56,7 @@ export const useAvatarSettingsContract = () => {
       avatarSettings.filters.PowerActivated(address),
       avatarSettings.filters.NameChanged(address),
       avatarSettings.filters.TelegramChanged(address),
-      avatarSettings.filters.BirthdayPrizeClaimed(null, address),
+      avatarSettings.filters.BirthdayPresentClaimed(null, address),
     ];
 
     let allEvents: Event[] = [];
@@ -120,8 +120,8 @@ export const useAvatarSettingsContract = () => {
     return await avatarSettings.userPowers(address, powerId);
   };
 
-  const isBirthdayPrizeAvailable = async (tokenId: BigNumberish) => {
-    return await avatarSettings.isBirthdayPrizeAvailable(tokenId);
+  const isBirthdayPresentAvailable = async (tokenId: BigNumberish) => {
+    return await avatarSettings.isBirthdayPresentAvailable(tokenId);
   };
 
   const activateAvatar = async (collectionAddress: Address, tokenId: BigNumberish) => {
@@ -154,9 +154,26 @@ export const useAvatarSettingsContract = () => {
     return waitForTransaction(tx);
   };
 
-  const claimPrize = async () => {
-    const tx = await avatarSettings.requestBirthdayPrize();
+  const claimBirthdayPresent = async () => {
+    const tx = await avatarSettings.claimBirthdayPresent();
     return waitForTransaction(tx);
+  };
+
+  const hasPowerA = async (user: Address) => {
+    return await avatarSettings.hasPowerA(user);
+  };
+  const hasPowerB = async (user: Address) => {
+    return await avatarSettings.hasPowerD(user);
+  };
+  const hasPowerC = async (user: Address) => {
+    return await avatarSettings.hasPowerC(user);
+  };
+  const hasPowerD = async (user: Address) => {
+    return await avatarSettings.hasPowerD(user);
+  };
+
+  const getPowerEndingTime = async (user: Address, powerId: number) => {
+    return await avatarSettings.getPowerEndingTime(user, powerId);
   };
 
   return {
@@ -173,7 +190,12 @@ export const useAvatarSettingsContract = () => {
     setTokenName,
     setTokenTelegram,
     getAllEvents,
-    isBirthdayPrizeAvailable,
-    claimPrize,
+    isBirthdayPresentAvailable,
+    claimBirthdayPresent,
+    hasPowerA,
+    hasPowerB,
+    hasPowerC,
+    hasPowerD,
+    getPowerEndingTime,
   };
 };

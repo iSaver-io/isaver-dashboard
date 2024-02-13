@@ -21,6 +21,7 @@ import type {
 
 export interface IContractManagerInterface extends utils.Interface {
   functions: {
+    "getAvatarSettings()": FunctionFragment;
     "getAvatarsAddress()": FunctionFragment;
     "getBirthdayPrizesPool()": FunctionFragment;
     "getPowersAddress()": FunctionFragment;
@@ -35,6 +36,7 @@ export interface IContractManagerInterface extends utils.Interface {
 
   getFunction(
     nameOrSignatureOrTopic:
+      | "getAvatarSettings"
       | "getAvatarsAddress"
       | "getBirthdayPrizesPool"
       | "getPowersAddress"
@@ -47,6 +49,10 @@ export interface IContractManagerInterface extends utils.Interface {
       | "getTicketAddress"
   ): FunctionFragment;
 
+  encodeFunctionData(
+    functionFragment: "getAvatarSettings",
+    values?: undefined
+  ): string;
   encodeFunctionData(
     functionFragment: "getAvatarsAddress",
     values?: undefined
@@ -88,6 +94,10 @@ export interface IContractManagerInterface extends utils.Interface {
     values?: undefined
   ): string;
 
+  decodeFunctionResult(
+    functionFragment: "getAvatarSettings",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "getAvatarsAddress",
     data: BytesLike
@@ -159,6 +169,8 @@ export interface IContractManager extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
+    getAvatarSettings(overrides?: CallOverrides): Promise<[string]>;
+
     getAvatarsAddress(overrides?: CallOverrides): Promise<[string]>;
 
     getBirthdayPrizesPool(overrides?: CallOverrides): Promise<[string]>;
@@ -179,6 +191,8 @@ export interface IContractManager extends BaseContract {
 
     getTicketAddress(overrides?: CallOverrides): Promise<[string]>;
   };
+
+  getAvatarSettings(overrides?: CallOverrides): Promise<string>;
 
   getAvatarsAddress(overrides?: CallOverrides): Promise<string>;
 
@@ -201,6 +215,8 @@ export interface IContractManager extends BaseContract {
   getTicketAddress(overrides?: CallOverrides): Promise<string>;
 
   callStatic: {
+    getAvatarSettings(overrides?: CallOverrides): Promise<string>;
+
     getAvatarsAddress(overrides?: CallOverrides): Promise<string>;
 
     getBirthdayPrizesPool(overrides?: CallOverrides): Promise<string>;
@@ -225,6 +241,8 @@ export interface IContractManager extends BaseContract {
   filters: {};
 
   estimateGas: {
+    getAvatarSettings(overrides?: CallOverrides): Promise<BigNumber>;
+
     getAvatarsAddress(overrides?: CallOverrides): Promise<BigNumber>;
 
     getBirthdayPrizesPool(overrides?: CallOverrides): Promise<BigNumber>;
@@ -247,6 +265,8 @@ export interface IContractManager extends BaseContract {
   };
 
   populateTransaction: {
+    getAvatarSettings(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     getAvatarsAddress(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getBirthdayPrizesPool(

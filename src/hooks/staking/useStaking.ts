@@ -356,10 +356,10 @@ export const useStakingActions = () => {
     }
   );
 
-  const withdrawAll = useMutation(
+  const withdrawAllCompleted = useMutation(
     [STAKING_CLAIM_ALL_MUTATION],
     async (planId: number) => {
-      const txHash = await stakingContract.withdrawAll(planId);
+      const txHash = await stakingContract.withdrawAllCompleted(planId);
       const stakingPlan = activeStakingPlansWithUserInfo.find(
         (plan) => plan.stakingPlanId === planId
       );
@@ -389,7 +389,7 @@ export const useStakingActions = () => {
     subscribe,
     deposit,
     withdraw,
-    withdrawAll,
+    withdrawAllCompleted,
     stakingContract,
   };
 };
@@ -423,17 +423,20 @@ export const useStakingAdminActions = () => {
       subscriptionCost,
       stakingDuration,
       apr,
+      isSuperPowered,
     }: {
       subscriptionCost: BigNumber;
       stakingDuration: number;
       apr: number;
+      isSuperPowered: boolean;
     }) => {
       const subscriptionDuration = 365;
       const txHash = await stakingContract.addStakingPlan(
         subscriptionCost,
         subscriptionDuration,
         stakingDuration,
-        apr
+        apr,
+        isSuperPowered
       );
       success({
         title: 'Success',
@@ -452,7 +455,9 @@ export const useStakingAdminActions = () => {
   return { updatePlanActivity, addStakingPlan };
 };
 
-export const useStakingAvailableTokens = () => {
+export const useStakingAvailableTokens = (isSAVRToken: boolean) => {
   const stakingContract = useStakingContract();
-  return useQuery([STAKING_AVAILABLE_TOKENS_REQUEST], () => stakingContract.getAvailableTokens());
+  return useQuery([STAKING_AVAILABLE_TOKENS_REQUEST, { isSAVRToken }], () =>
+    stakingContract.getAvailableTokens(isSAVRToken)
+  );
 };

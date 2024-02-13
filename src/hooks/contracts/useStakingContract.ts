@@ -30,8 +30,8 @@ export const useStakingContract = () => {
     signerOrProvider: signer || provider,
   }) as unknown as Staking;
 
-  const getAvailableTokens = async () => {
-    return contract.getAvailableTokens();
+  const getAvailableTokens = async (isSAVRToken: boolean) => {
+    return contract.getAvailableTokens(isSAVRToken);
   };
 
   const getStakingPlans = async () => {
@@ -60,8 +60,8 @@ export const useStakingContract = () => {
     return waitForTransaction(tx);
   };
 
-  const withdrawAll = async (planId: number): Promise<string> => {
-    const tx = await contract.withdrawAll(planId);
+  const withdrawAllCompleted = async (planId: number): Promise<string> => {
+    const tx = await contract.withdrawAllCompleted(planId);
     return waitForTransaction(tx);
   };
 
@@ -112,13 +112,15 @@ export const useStakingContract = () => {
     subscriptionCost: BigNumber,
     subscriptionDuration: number,
     stakingDuration: number,
-    apr: number
+    apr: number,
+    isSuperPowered: boolean
   ) => {
     const tx = await contract.addStakingPlan(
       subscriptionCost,
       subscriptionDuration,
       stakingDuration,
-      apr
+      apr,
+      isSuperPowered
     );
     return waitForTransaction(tx);
   };
@@ -128,7 +130,7 @@ export const useStakingContract = () => {
     address: contractAddress,
     deposit,
     withdraw,
-    withdrawAll,
+    withdrawAllCompleted,
     getAvailableTokens,
     getStakingPlans,
     getUserStakingInfo,

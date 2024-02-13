@@ -34,6 +34,8 @@ export interface VendorSellInterface extends utils.Interface {
     "buyTokens(uint256)": FunctionFragment;
     "changeToken()": FunctionFragment;
     "divider()": FunctionFragment;
+    "extract(address,uint256)": FunctionFragment;
+    "extractChange(address,uint256)": FunctionFragment;
     "getChangeTokenReserve()": FunctionFragment;
     "getEquivalentChangeTokenEstimate(uint256)": FunctionFragment;
     "getEquivalentTokenEstimate(uint256)": FunctionFragment;
@@ -58,8 +60,6 @@ export interface VendorSellInterface extends utils.Interface {
     "updateSwapRate(uint256)": FunctionFragment;
     "upgradeTo(address)": FunctionFragment;
     "upgradeToAndCall(address,bytes)": FunctionFragment;
-    "withdrawLiquidityChangeToken(address,uint256)": FunctionFragment;
-    "withdrawLiquidityToken(address,uint256)": FunctionFragment;
   };
 
   getFunction(
@@ -69,6 +69,8 @@ export interface VendorSellInterface extends utils.Interface {
       | "buyTokens"
       | "changeToken"
       | "divider"
+      | "extract"
+      | "extractChange"
       | "getChangeTokenReserve"
       | "getEquivalentChangeTokenEstimate"
       | "getEquivalentTokenEstimate"
@@ -93,8 +95,6 @@ export interface VendorSellInterface extends utils.Interface {
       | "updateSwapRate"
       | "upgradeTo"
       | "upgradeToAndCall"
-      | "withdrawLiquidityChangeToken"
-      | "withdrawLiquidityToken"
   ): FunctionFragment;
 
   encodeFunctionData(
@@ -114,6 +114,14 @@ export interface VendorSellInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "divider", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "extract",
+    values: [string, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "extractChange",
+    values: [string, BigNumberish]
+  ): string;
   encodeFunctionData(
     functionFragment: "getChangeTokenReserve",
     values?: undefined
@@ -195,14 +203,6 @@ export interface VendorSellInterface extends utils.Interface {
     functionFragment: "upgradeToAndCall",
     values: [string, BytesLike]
   ): string;
-  encodeFunctionData(
-    functionFragment: "withdrawLiquidityChangeToken",
-    values: [string, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "withdrawLiquidityToken",
-    values: [string, BigNumberish]
-  ): string;
 
   decodeFunctionResult(
     functionFragment: "DEFAULT_ADMIN_ROLE",
@@ -218,6 +218,11 @@ export interface VendorSellInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "divider", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "extract", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "extractChange",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "getChangeTokenReserve",
     data: BytesLike
@@ -284,20 +289,11 @@ export interface VendorSellInterface extends utils.Interface {
     functionFragment: "upgradeToAndCall",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(
-    functionFragment: "withdrawLiquidityChangeToken",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "withdrawLiquidityToken",
-    data: BytesLike
-  ): Result;
 
   events: {
     "AdminChanged(address,address)": EventFragment;
     "BeaconUpgraded(address)": EventFragment;
     "Initialized(uint8)": EventFragment;
-    "LiquidityWithdrawnByAdmin(address,address,uint256)": EventFragment;
     "Paused(address)": EventFragment;
     "RoleAdminChanged(bytes32,bytes32,bytes32)": EventFragment;
     "RoleGranted(bytes32,address,address)": EventFragment;
@@ -311,7 +307,6 @@ export interface VendorSellInterface extends utils.Interface {
   getEvent(nameOrSignatureOrTopic: "AdminChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "BeaconUpgraded"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "LiquidityWithdrawnByAdmin"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Paused"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleAdminChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleGranted"): EventFragment;
@@ -349,19 +344,6 @@ export interface InitializedEventObject {
 export type InitializedEvent = TypedEvent<[number], InitializedEventObject>;
 
 export type InitializedEventFilter = TypedEventFilter<InitializedEvent>;
-
-export interface LiquidityWithdrawnByAdminEventObject {
-  recipient: string;
-  token: string;
-  amount: BigNumber;
-}
-export type LiquidityWithdrawnByAdminEvent = TypedEvent<
-  [string, string, BigNumber],
-  LiquidityWithdrawnByAdminEventObject
->;
-
-export type LiquidityWithdrawnByAdminEventFilter =
-  TypedEventFilter<LiquidityWithdrawnByAdminEvent>;
 
 export interface PausedEventObject {
   account: string;
@@ -485,6 +467,18 @@ export interface VendorSell extends BaseContract {
 
     divider(overrides?: CallOverrides): Promise<[BigNumber]>;
 
+    extract(
+      recipient: string,
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
+
+    extractChange(
+      recipient: string,
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
+
     getChangeTokenReserve(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     getEquivalentChangeTokenEstimate(
@@ -588,18 +582,6 @@ export interface VendorSell extends BaseContract {
       data: BytesLike,
       overrides?: PayableOverrides & { from?: string }
     ): Promise<ContractTransaction>;
-
-    withdrawLiquidityChangeToken(
-      recipient: string,
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    withdrawLiquidityToken(
-      recipient: string,
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
   };
 
   DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
@@ -614,6 +596,18 @@ export interface VendorSell extends BaseContract {
   changeToken(overrides?: CallOverrides): Promise<string>;
 
   divider(overrides?: CallOverrides): Promise<BigNumber>;
+
+  extract(
+    recipient: string,
+    amount: BigNumberish,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  extractChange(
+    recipient: string,
+    amount: BigNumberish,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
 
   getChangeTokenReserve(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -719,18 +713,6 @@ export interface VendorSell extends BaseContract {
     overrides?: PayableOverrides & { from?: string }
   ): Promise<ContractTransaction>;
 
-  withdrawLiquidityChangeToken(
-    recipient: string,
-    amount: BigNumberish,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  withdrawLiquidityToken(
-    recipient: string,
-    amount: BigNumberish,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
   callStatic: {
     DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
 
@@ -744,6 +726,18 @@ export interface VendorSell extends BaseContract {
     changeToken(overrides?: CallOverrides): Promise<string>;
 
     divider(overrides?: CallOverrides): Promise<BigNumber>;
+
+    extract(
+      recipient: string,
+      amount: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    extractChange(
+      recipient: string,
+      amount: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     getChangeTokenReserve(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -841,18 +835,6 @@ export interface VendorSell extends BaseContract {
       data: BytesLike,
       overrides?: CallOverrides
     ): Promise<void>;
-
-    withdrawLiquidityChangeToken(
-      recipient: string,
-      amount: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    withdrawLiquidityToken(
-      recipient: string,
-      amount: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
   };
 
   filters: {
@@ -872,17 +854,6 @@ export interface VendorSell extends BaseContract {
 
     "Initialized(uint8)"(version?: null): InitializedEventFilter;
     Initialized(version?: null): InitializedEventFilter;
-
-    "LiquidityWithdrawnByAdmin(address,address,uint256)"(
-      recipient?: string | null,
-      token?: string | null,
-      amount?: null
-    ): LiquidityWithdrawnByAdminEventFilter;
-    LiquidityWithdrawnByAdmin(
-      recipient?: string | null,
-      token?: string | null,
-      amount?: null
-    ): LiquidityWithdrawnByAdminEventFilter;
 
     "Paused(address)"(account?: null): PausedEventFilter;
     Paused(account?: null): PausedEventFilter;
@@ -962,6 +933,18 @@ export interface VendorSell extends BaseContract {
     changeToken(overrides?: CallOverrides): Promise<BigNumber>;
 
     divider(overrides?: CallOverrides): Promise<BigNumber>;
+
+    extract(
+      recipient: string,
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+
+    extractChange(
+      recipient: string,
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
 
     getChangeTokenReserve(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1065,18 +1048,6 @@ export interface VendorSell extends BaseContract {
       data: BytesLike,
       overrides?: PayableOverrides & { from?: string }
     ): Promise<BigNumber>;
-
-    withdrawLiquidityChangeToken(
-      recipient: string,
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    withdrawLiquidityToken(
-      recipient: string,
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
   };
 
   populateTransaction: {
@@ -1094,6 +1065,18 @@ export interface VendorSell extends BaseContract {
     changeToken(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     divider(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    extract(
+      recipient: string,
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    extractChange(
+      recipient: string,
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
 
     getChangeTokenReserve(
       overrides?: CallOverrides
@@ -1202,18 +1185,6 @@ export interface VendorSell extends BaseContract {
       newImplementation: string,
       data: BytesLike,
       overrides?: PayableOverrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    withdrawLiquidityChangeToken(
-      recipient: string,
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    withdrawLiquidityToken(
-      recipient: string,
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
   };
 }
