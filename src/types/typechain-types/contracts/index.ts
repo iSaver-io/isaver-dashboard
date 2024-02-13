@@ -13,6 +13,7 @@ export type { AvatarSettings } from "./AvatarSettings";
 export type { AvatarsSell } from "./AvatarsSell";
 export type { ContractManager } from "./ContractManager";
 export type { Helper } from "./Helper";
+export type { Momento } from "./Momento";
 export type { Raffles } from "./Raffles";
 export type { ReferralManager } from "./ReferralManager";
 export type { Staking } from "./Staking";

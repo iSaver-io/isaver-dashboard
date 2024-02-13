@@ -170,6 +170,24 @@ const outlinedWhite = defineStyle({
   },
 });
 
+const outlinedGreen = defineStyle({
+  ...commonProps,
+  border: '1px solid',
+  bgColor: 'transparent',
+  borderRadius: 'md',
+  borderColor: 'green.100',
+  color: 'green.100',
+
+  _hover: {
+    bgColor: 'green.100',
+    borderColor: 'green.100',
+    color: 'white',
+    _disabled: {
+      background: 'gray.100',
+    },
+  },
+});
+
 const link = defineStyle({
   ...commonProps,
   border: 'none',
@@ -253,6 +271,7 @@ export const buttonTheme = defineStyleConfig({
     secondaryFilled,
     outlined,
     outlinedWhite,
+    outlinedGreen,
     filledRed,
     filledWhite,
     outlinedShadow,

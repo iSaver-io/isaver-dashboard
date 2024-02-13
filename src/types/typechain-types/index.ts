@@ -146,6 +146,8 @@ export type { ERC721Mock } from "./contracts/mocks/ERC721Mock";
 export { ERC721Mock__factory } from "./factories/contracts/mocks/ERC721Mock__factory";
 export type { VRFCoordinatorMock } from "./contracts/mocks/VRFCoordinatorMock";
 export { VRFCoordinatorMock__factory } from "./factories/contracts/mocks/VRFCoordinatorMock__factory";
+export type { Momento } from "./contracts/Momento";
+export { Momento__factory } from "./factories/contracts/Momento__factory";
 export type { Raffles } from "./contracts/Raffles";
 export { Raffles__factory } from "./factories/contracts/Raffles__factory";
 export type { ReferralManager } from "./contracts/ReferralManager";

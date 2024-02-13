@@ -9,6 +9,7 @@ export { AvatarSettings__factory } from "./AvatarSettings__factory";
 export { AvatarsSell__factory } from "./AvatarsSell__factory";
 export { ContractManager__factory } from "./ContractManager__factory";
 export { Helper__factory } from "./Helper__factory";
+export { Momento__factory } from "./Momento__factory";
 export { Raffles__factory } from "./Raffles__factory";
 export { ReferralManager__factory } from "./ReferralManager__factory";
 export { Staking__factory } from "./Staking__factory";

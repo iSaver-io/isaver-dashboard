@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import { useQueries, useQuery } from '@tanstack/react-query';
+import { useAccount } from 'wagmi';
 
 import { useAccounts } from './admin/useAccounts';
 import { useContractsAddresses } from './admin/useContractsAddresses';
@@ -33,6 +34,7 @@ export const useTicketSupply = () => {
   const ticketContract = useTicketContract();
   const tokenId = 0;
 
+  const { address } = useAccount();
   const accounts = useAccounts();
   const contracts = useContractsAddresses();
 
@@ -55,6 +57,16 @@ export const useTicketSupply = () => {
   const uniqueAddresses = useMemo(() => {
     return Array.from(new Set([...Object.values(accounts), ...Object.values(contracts)]));
   }, [accounts, contracts]);
+
+  const balance = useQuery(
+    ['ticket-circulating-supply', address],
+    async () => {
+      return address ? await ticketContract.balanceOf(address) : null;
+    },
+    {
+      select: (data) => data?.toNumber(),
+    }
+  );
 
   const balances = useQueries({
     queries: uniqueAddresses.map((address) => ({
@@ -82,5 +94,6 @@ export const useTicketSupply = () => {
     totalSupply: totalMinted.data,
     totalBurned,
     circulatingSupply,
+    balance,
   };
 };

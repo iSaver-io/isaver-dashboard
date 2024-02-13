@@ -23,6 +23,7 @@ export interface IContractManagerInterface extends utils.Interface {
   functions: {
     "getAvatarsAddress()": FunctionFragment;
     "getBirthdayPrizesPool()": FunctionFragment;
+    "getMomentoPrizesPool()": FunctionFragment;
     "getPowersAddress()": FunctionFragment;
     "getRafflesAddress()": FunctionFragment;
     "getReferralManagerAddress()": FunctionFragment;
@@ -37,6 +38,7 @@ export interface IContractManagerInterface extends utils.Interface {
     nameOrSignatureOrTopic:
       | "getAvatarsAddress"
       | "getBirthdayPrizesPool"
+      | "getMomentoPrizesPool"
       | "getPowersAddress"
       | "getRafflesAddress"
       | "getReferralManagerAddress"
@@ -53,6 +55,10 @@ export interface IContractManagerInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "getBirthdayPrizesPool",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getMomentoPrizesPool",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -94,6 +100,10 @@ export interface IContractManagerInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "getBirthdayPrizesPool",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getMomentoPrizesPool",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -163,6 +173,8 @@ export interface IContractManager extends BaseContract {
 
     getBirthdayPrizesPool(overrides?: CallOverrides): Promise<[string]>;
 
+    getMomentoPrizesPool(overrides?: CallOverrides): Promise<[string]>;
+
     getPowersAddress(overrides?: CallOverrides): Promise<[string]>;
 
     getRafflesAddress(overrides?: CallOverrides): Promise<[string]>;
@@ -184,6 +196,8 @@ export interface IContractManager extends BaseContract {
 
   getBirthdayPrizesPool(overrides?: CallOverrides): Promise<string>;
 
+  getMomentoPrizesPool(overrides?: CallOverrides): Promise<string>;
+
   getPowersAddress(overrides?: CallOverrides): Promise<string>;
 
   getRafflesAddress(overrides?: CallOverrides): Promise<string>;
@@ -204,6 +218,8 @@ export interface IContractManager extends BaseContract {
     getAvatarsAddress(overrides?: CallOverrides): Promise<string>;
 
     getBirthdayPrizesPool(overrides?: CallOverrides): Promise<string>;
+
+    getMomentoPrizesPool(overrides?: CallOverrides): Promise<string>;
 
     getPowersAddress(overrides?: CallOverrides): Promise<string>;
 
@@ -229,6 +245,8 @@ export interface IContractManager extends BaseContract {
 
     getBirthdayPrizesPool(overrides?: CallOverrides): Promise<BigNumber>;
 
+    getMomentoPrizesPool(overrides?: CallOverrides): Promise<BigNumber>;
+
     getPowersAddress(overrides?: CallOverrides): Promise<BigNumber>;
 
     getRafflesAddress(overrides?: CallOverrides): Promise<BigNumber>;
@@ -250,6 +268,10 @@ export interface IContractManager extends BaseContract {
     getAvatarsAddress(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getBirthdayPrizesPool(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getMomentoPrizesPool(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

@@ -152,3 +152,87 @@ wcm-modal {
   position: fixed;
   z-index: 50000;
 }
+
+
+.slick-slider {
+  .slider-image {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    object-fit: cover;
+    margin: 0 auto;
+    pointer-events: none;
+  }
+
+  .slick-list {
+    cursor: grab;
+    padding-bottom: 20px;
+
+    &:active {
+      cursor: grabbing;
+    }
+  }
+
+  .slick-dots {
+    margin-top: 10px;
+    li {
+      width: 15px;
+      height: 15px;
+
+      button::before {
+        width: 15px;
+        height: 15px;
+      }
+    }
+  }
+
+  .slick-next,
+  .slick-prev {
+    position: absolute;
+    top: 50%;
+    display: block;
+    width: 60px;
+    height: 60px;
+    padding: 0;
+    transform: translate(0, -50%);
+    cursor: pointer;
+    z-index: 10;
+  }
+
+  .slick-next:before,
+  .slick-prev:before {
+    content: '';
+  }
+
+  .slick-next {
+    right: 90px;
+    background-image: url(../images/arrow-right.svg) !important;
+  }
+
+  .slick-prev {
+    left: 90px;
+    background-image: url(../images/arrow-left.svg) !important;
+  }
+
+  .slick-dots {
+    position: static;
+    margin-top: 30px;
+
+    li {
+      button {
+        padding: 0;
+        width: 15px;
+        height: 15px;
+        background: $color-gray;
+        border-radius: 50%;
+
+        &::before {
+          content: '';
+        }
+      }
+
+      &.slick-active button {
+        background: $color-dark-green;
+      }
+    }
+  }
+}
