@@ -132,3 +132,5 @@ export const AdminPanel = () => {
     </Container>
   );
 };
+
+export default AdminPanel;
