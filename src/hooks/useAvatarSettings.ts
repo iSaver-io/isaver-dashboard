@@ -159,12 +159,12 @@ export const useAllEvents = () => {
   return { events: data || [], isLoading };
 };
 
-export const IS_BIRTHDAY_PRIZE_AVAILABLE = 'is-birthday-prize-available';
+export const IS_BIRTHDAY_PRESENT_AVAILABLE = 'is-birthday-present-available';
 export const useIsBirthdayPresentAvailable = (tokenId?: BigNumberish) => {
   const { isBirthdayPresentAvailable } = useAvatarSettingsContract();
 
   const queryResult = useQuery<Boolean>(
-    [GET_APPROVED_COLLECTIONS, { tokenId }],
+    [IS_BIRTHDAY_PRESENT_AVAILABLE, { tokenId }],
     async () => (tokenId !== undefined ? await isBirthdayPresentAvailable(tokenId!) : false),
     {
       cacheTime: 0,
@@ -475,7 +475,7 @@ export const useActivatePowerAccess = () => {
   );
 };
 
-export const CLAIM_PRIZE = 'claim-prize';
+export const CLAIM_PRESENT = 'claim-present';
 export const useClaimBirthdayPresent = () => {
   const { claimBirthdayPresent } = useAvatarSettingsContract();
   const { address: account } = useAccount();
@@ -484,7 +484,7 @@ export const useClaimBirthdayPresent = () => {
   const queryClient = useQueryClient();
 
   return useMutation(
-    [CLAIM_PRIZE],
+    [CLAIM_PRESENT],
     async () => {
       if (!account) {
         connect();
@@ -500,7 +500,7 @@ export const useClaimBirthdayPresent = () => {
     },
     {
       onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: [IS_BIRTHDAY_PRIZE_AVAILABLE] });
+        queryClient.invalidateQueries({ queryKey: [IS_BIRTHDAY_PRESENT_AVAILABLE] });
         setTimeout(() => {
           queryClient.invalidateQueries({ queryKey: [GET_ALL_EVENTS] });
         }, 60_000);
