@@ -1,19 +1,40 @@
-import { Box, Flex, Text, Tooltip } from '@chakra-ui/react';
+import { Box, Flex, Link, Text } from '@chakra-ui/react';
+
+import { Tip } from '@/components/ui/Tip/Tip';
+import { AVATAR_LANDING_POWERS_INFO_URL } from '@/router';
 
 import { ReactComponent as PowerIcon } from './power-icon.svg';
+
+interface ITextMap {
+  [index: number]: string;
+}
+
+const TIP_TEXTS: ITextMap = {
+  0: 'Unlocks access to an additional 5 Levels of the iSaver Referral Program for 365 days after activation. Each additional level will earn you 1% in SAVR from your friends` earnings.',
+  1: 'Unlocks access to the SAVR Staking Pool for 365 days after activation. Use this pool to maximize your income on the iSaver platform.',
+  2: 'Increases the APR/APY of all Staking Pools on the iSaver platform for 365 days after activation.',
+  3: 'Increases the number of iSaver Raffle Tickets minted for completing PUZZLES - mini free-to-play game on the iSaver platform.',
+};
 
 type PowerStatusProps = {
   powerId: number;
   isActive: boolean;
-  tip?: string;
 };
-export const PowerStatus = ({ powerId, isActive, tip }: PowerStatusProps) => {
+export const PowerStatus = ({ powerId, isActive }: PowerStatusProps) => {
   const letter = ['A', 'B', 'C', 'D'][powerId];
-  let color = ['red', 'green', 'white', 'savr'][powerId];
+  let color = ['white', 'sav', 'green.100', 'savr'][powerId];
 
   if (!isActive) {
     color = 'gray';
   }
+
+  const InfoLink = (
+    <Link href={AVATAR_LANDING_POWERS_INFO_URL} color="savr" target="_blank">
+      All about Powers
+    </Link>
+  );
+
+  const tipText = TIP_TEXTS[powerId];
 
   return (
     <Flex alignItems="center">
@@ -28,20 +49,7 @@ export const PowerStatus = ({ powerId, isActive, tip }: PowerStatusProps) => {
         {isActive ? 'active' : 'not active'}
       </Text>
 
-      <Tooltip label={tip} fontSize="md" placement="top">
-        <Flex
-          cursor="default"
-          w="17px"
-          h="17px"
-          borderRadius="50%"
-          bgColor="gray.200"
-          alignItems="center"
-          justifyContent="center"
-          fontSize="12px"
-        >
-          i
-        </Flex>
-      </Tooltip>
+      <Tip text={tipText} append={InfoLink} />
     </Flex>
   );
 };

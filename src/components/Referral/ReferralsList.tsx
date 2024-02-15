@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import {
   Box,
   Button,
@@ -15,16 +15,16 @@ import { useAccount } from 'wagmi';
 
 import { ReactComponent as ChevronDownIcon } from '@/assets/images/icons/chevron-down.svg';
 import { ReferralsTable } from '@/components/Referral/ReferralsTable';
+import { ExportButton } from '@/components/ui/ExportButton/ExportButton';
 import { SearchWallet } from '@/components/ui/SearchWallet/SearchWallet';
-import { useUserReferralInfo } from '@/hooks/referral/useReferralManager';
+import {
+  useUserReferralInfo,
+  useUserReferralSubscription,
+} from '@/hooks/referral/useReferralManager';
 import { useHelperReferralsFullInfoByLevel } from '@/hooks/useHelper';
 import { useLogger } from '@/hooks/useLogger';
 import { exportToExcel } from '@/utils/exportToExcel';
 import { formatReferralsToExport } from '@/utils/formatters/formatReferralsToExport';
-
-import { ExportButton } from '../ui/ExportButton/ExportButton';
-
-const TOTAL_LEVELS = 10;
 
 export const ReferralsList = () => {
   const { address } = useAccount();
@@ -32,6 +32,8 @@ export const ReferralsList = () => {
   const [search, setSearch] = useState<string>('');
   const referrals = useHelperReferralsFullInfoByLevel(address, levels);
   const { userReferralInfoRequest } = useUserReferralInfo();
+  const { hasActivatedPowerA } = useUserReferralSubscription();
+
   const logger = useLogger({
     event: 'team',
     category: 'elements',
@@ -40,6 +42,8 @@ export const ReferralsList = () => {
     buttonLocation: 'mid',
     actionGroup: 'interactions',
   });
+
+  const totalLevels = useMemo(() => (hasActivatedPowerA.data ? 15 : 10), [hasActivatedPowerA.data]);
 
   const logLevelSelect = useCallback(
     (level: string | number) => {
@@ -57,14 +61,14 @@ export const ReferralsList = () => {
   const toggleAllLevels = useCallback(
     (e: any) => {
       if (e.target.checked) {
-        const allLevels = Array.from({ length: TOTAL_LEVELS }).map((_, index) => index + 1);
+        const allLevels = Array.from({ length: totalLevels }).map((_, index) => index + 1);
         setLevels(allLevels);
       } else {
         setLevels([]);
       }
       logLevelSelect('all');
     },
-    [setLevels, logLevelSelect]
+    [setLevels, logLevelSelect, totalLevels]
   );
 
   const refCount = useMemo(
@@ -139,7 +143,7 @@ export const ReferralsList = () => {
                 overflow="auto"
                 className="with-custom-scroll"
               >
-                {Array.from({ length: TOTAL_LEVELS }).map((_, index) => (
+                {Array.from({ length: totalLevels }).map((_, index) => (
                   <Checkbox
                     key={index}
                     value={index + 1}

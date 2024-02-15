@@ -77,6 +77,76 @@ export declare namespace IStaking {
     totalClaimed: BigNumber;
   };
 
+  export type SuperStakingPlanStruct = {
+    stakingPlanId: BigNumberish;
+    isActive: boolean;
+    totalStakesNo: BigNumberish;
+    totalStaked: BigNumberish;
+    currentLocked: BigNumberish;
+    totalClaimed: BigNumberish;
+  };
+
+  export type SuperStakingPlanStructOutput = [
+    BigNumber,
+    boolean,
+    BigNumber,
+    BigNumber,
+    BigNumber,
+    BigNumber
+  ] & {
+    stakingPlanId: BigNumber;
+    isActive: boolean;
+    totalStakesNo: BigNumber;
+    totalStaked: BigNumber;
+    currentLocked: BigNumber;
+    totalClaimed: BigNumber;
+  };
+
+  export type AprChangeStruct = { time: BigNumberish; apr: BigNumberish };
+
+  export type AprChangeStructOutput = [BigNumber, BigNumber] & {
+    time: BigNumber;
+    apr: BigNumber;
+  };
+
+  export type SuperStakeStruct = {
+    profit: BigNumberish;
+    deposit: BigNumberish;
+    lastTimestamp: BigNumberish;
+    totalClaimed: BigNumberish;
+    totalDeposited: BigNumberish;
+  };
+
+  export type SuperStakeStructOutput = [
+    BigNumber,
+    BigNumber,
+    BigNumber,
+    BigNumber,
+    BigNumber
+  ] & {
+    profit: BigNumber;
+    deposit: BigNumber;
+    lastTimestamp: BigNumber;
+    totalClaimed: BigNumber;
+    totalDeposited: BigNumber;
+  };
+
+  export type SuperStakingPlanWithAprAndStakeStruct = {
+    plan: IStaking.SuperStakingPlanStruct;
+    apr: IStaking.AprChangeStruct;
+    stake: IStaking.SuperStakeStruct;
+  };
+
+  export type SuperStakingPlanWithAprAndStakeStructOutput = [
+    IStaking.SuperStakingPlanStructOutput,
+    IStaking.AprChangeStructOutput,
+    IStaking.SuperStakeStructOutput
+  ] & {
+    plan: IStaking.SuperStakingPlanStructOutput;
+    apr: IStaking.AprChangeStructOutput;
+    stake: IStaking.SuperStakeStructOutput;
+  };
+
   export type UserStakingInfoStruct = {
     totalClaimed: BigNumberish;
     currentSavTokenStaked: BigNumberish;
@@ -136,28 +206,6 @@ export declare namespace IStaking {
     IStaking.StakeStructOutput,
     BigNumber
   ] & { stake: IStaking.StakeStructOutput; reward: BigNumber };
-
-  export type SuperStakeStruct = {
-    profit: BigNumberish;
-    deposit: BigNumberish;
-    lastTimestamp: BigNumberish;
-    totalClaimed: BigNumberish;
-    totalDeposited: BigNumberish;
-  };
-
-  export type SuperStakeStructOutput = [
-    BigNumber,
-    BigNumber,
-    BigNumber,
-    BigNumber,
-    BigNumber
-  ] & {
-    profit: BigNumber;
-    deposit: BigNumber;
-    lastTimestamp: BigNumber;
-    totalClaimed: BigNumber;
-    totalDeposited: BigNumber;
-  };
 }
 
 export interface StakingInterface extends utils.Interface {
@@ -180,13 +228,13 @@ export interface StakingInterface extends utils.Interface {
     "getAvailableTokens(bool)": FunctionFragment;
     "getRoleAdmin(bytes32)": FunctionFragment;
     "getStakingPlans()": FunctionFragment;
+    "getSuperStakingPlansForUser(address)": FunctionFragment;
     "getTimestamp()": FunctionFragment;
     "getUserPlanInfo(uint256,address)": FunctionFragment;
     "getUserPlansInfo(address)": FunctionFragment;
     "getUserStakes(uint256,address)": FunctionFragment;
     "getUserStakesWithRewards(uint256,address)": FunctionFragment;
     "getUserSuperPlanInfo(uint256,address)": FunctionFragment;
-    "getUserSuperPlansInfo(address)": FunctionFragment;
     "grantRole(bytes32,address)": FunctionFragment;
     "hasAnySubscription(address)": FunctionFragment;
     "hasRole(bytes32,address)": FunctionFragment;
@@ -238,13 +286,13 @@ export interface StakingInterface extends utils.Interface {
       | "getAvailableTokens"
       | "getRoleAdmin"
       | "getStakingPlans"
+      | "getSuperStakingPlansForUser"
       | "getTimestamp"
       | "getUserPlanInfo"
       | "getUserPlansInfo"
       | "getUserStakes"
       | "getUserStakesWithRewards"
       | "getUserSuperPlanInfo"
-      | "getUserSuperPlansInfo"
       | "grantRole"
       | "hasAnySubscription"
       | "hasRole"
@@ -346,6 +394,10 @@ export interface StakingInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
+    functionFragment: "getSuperStakingPlansForUser",
+    values: [string]
+  ): string;
+  encodeFunctionData(
     functionFragment: "getTimestamp",
     values?: undefined
   ): string;
@@ -368,10 +420,6 @@ export interface StakingInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "getUserSuperPlanInfo",
     values: [BigNumberish, string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getUserSuperPlansInfo",
-    values: [string]
   ): string;
   encodeFunctionData(
     functionFragment: "grantRole",
@@ -548,6 +596,10 @@ export interface StakingInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "getSuperStakingPlansForUser",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "getTimestamp",
     data: BytesLike
   ): Result;
@@ -569,10 +621,6 @@ export interface StakingInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "getUserSuperPlanInfo",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "getUserSuperPlansInfo",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "grantRole", data: BytesLike): Result;
@@ -1034,6 +1082,11 @@ export interface Staking extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[IStaking.StakingPlanStructOutput[]]>;
 
+    getSuperStakingPlansForUser(
+      userAddress: string,
+      overrides?: CallOverrides
+    ): Promise<[IStaking.SuperStakingPlanWithAprAndStakeStructOutput[]]>;
+
     getTimestamp(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     getUserPlanInfo(
@@ -1064,11 +1117,6 @@ export interface Staking extends BaseContract {
       userAddress: string,
       overrides?: CallOverrides
     ): Promise<[IStaking.SuperStakeStructOutput]>;
-
-    getUserSuperPlansInfo(
-      userAddress: string,
-      overrides?: CallOverrides
-    ): Promise<[IStaking.SuperStakeStructOutput[]]>;
 
     grantRole(
       role: BytesLike,
@@ -1347,6 +1395,11 @@ export interface Staking extends BaseContract {
     overrides?: CallOverrides
   ): Promise<IStaking.StakingPlanStructOutput[]>;
 
+  getSuperStakingPlansForUser(
+    userAddress: string,
+    overrides?: CallOverrides
+  ): Promise<IStaking.SuperStakingPlanWithAprAndStakeStructOutput[]>;
+
   getTimestamp(overrides?: CallOverrides): Promise<BigNumber>;
 
   getUserPlanInfo(
@@ -1377,11 +1430,6 @@ export interface Staking extends BaseContract {
     userAddress: string,
     overrides?: CallOverrides
   ): Promise<IStaking.SuperStakeStructOutput>;
-
-  getUserSuperPlansInfo(
-    userAddress: string,
-    overrides?: CallOverrides
-  ): Promise<IStaking.SuperStakeStructOutput[]>;
 
   grantRole(
     role: BytesLike,
@@ -1657,6 +1705,11 @@ export interface Staking extends BaseContract {
       overrides?: CallOverrides
     ): Promise<IStaking.StakingPlanStructOutput[]>;
 
+    getSuperStakingPlansForUser(
+      userAddress: string,
+      overrides?: CallOverrides
+    ): Promise<IStaking.SuperStakingPlanWithAprAndStakeStructOutput[]>;
+
     getTimestamp(overrides?: CallOverrides): Promise<BigNumber>;
 
     getUserPlanInfo(
@@ -1687,11 +1740,6 @@ export interface Staking extends BaseContract {
       userAddress: string,
       overrides?: CallOverrides
     ): Promise<IStaking.SuperStakeStructOutput>;
-
-    getUserSuperPlansInfo(
-      userAddress: string,
-      overrides?: CallOverrides
-    ): Promise<IStaking.SuperStakeStructOutput[]>;
 
     grantRole(
       role: BytesLike,
@@ -2157,6 +2205,11 @@ export interface Staking extends BaseContract {
 
     getStakingPlans(overrides?: CallOverrides): Promise<BigNumber>;
 
+    getSuperStakingPlansForUser(
+      userAddress: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     getTimestamp(overrides?: CallOverrides): Promise<BigNumber>;
 
     getUserPlanInfo(
@@ -2184,11 +2237,6 @@ export interface Staking extends BaseContract {
 
     getUserSuperPlanInfo(
       superPlanId: BigNumberish,
-      userAddress: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    getUserSuperPlansInfo(
       userAddress: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -2435,6 +2483,11 @@ export interface Staking extends BaseContract {
 
     getStakingPlans(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    getSuperStakingPlansForUser(
+      userAddress: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     getTimestamp(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getUserPlanInfo(
@@ -2462,11 +2515,6 @@ export interface Staking extends BaseContract {
 
     getUserSuperPlanInfo(
       superPlanId: BigNumberish,
-      userAddress: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    getUserSuperPlansInfo(
       userAddress: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;

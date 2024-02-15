@@ -21,7 +21,7 @@ import { StakingControl } from './blocks/StakingControl';
 import { StakingTVL } from './blocks/StakingTVL';
 import { TeamsControl } from './blocks/TeamsControl';
 import { TicketControl } from './blocks/TicketControl';
-import { TokenControl } from './blocks/TokenControl';
+import { TokensControl } from './blocks/TokensControl';
 import { TopNotificationControl } from './blocks/TopNotificationControl';
 import { VestingControl } from './blocks/VestingControl';
 import { AdminSection } from './common/AdminSection';
@@ -104,8 +104,7 @@ export const AdminPanel = () => {
   return (
     <Container variant="dashboard" padding="40px 0 80px" minWidth="container.xl">
       <Balances />
-      {isSavAdmin ? <TokenControl token={ContractsEnum.SAV} /> : null}
-      {isSavRAdmin ? <TokenControl token={ContractsEnum.SAVR} /> : null}
+      {isSavAdmin || isSavRAdmin ? <TokensControl /> : null}
       {isStakingAdmin ? <StakingTVL /> : null}
       {isStakingAdmin ? <StakingControl /> : null}
       {isReferralAdmin ? <ReferralControl /> : null}

@@ -7,6 +7,7 @@ import { useAccount } from 'wagmi';
 import { useReferralContract } from '@/hooks/contracts/useReferralContract';
 import { TOKENS } from '@/hooks/contracts/useTokenContract';
 import { useStakingPlans } from '@/hooks/staking/useStaking';
+import { useUserPowers } from '@/hooks/useAvatarSettings';
 import { useConnectWallet } from '@/hooks/useConnectWallet';
 import { useNotification } from '@/hooks/useNotification';
 import { SAV_BALANCE_REQUEST, SAVR_BALANCE_REQUEST } from '@/hooks/useTokenBalance';
@@ -106,7 +107,11 @@ export const useUserReferralInfo = () => {
   return { userReferralInfoRequest, hasEndingReferralSubscription };
 };
 
+export const REFERRAL_HAS_ACTIVE_POWER_A = 'has-active-power-a';
+export const REFERRAL_HAS_ACTIVATED_POWER_A = 'has-activated-power-a';
+export const REFERRAL_HAS_FULL_SUBSCRIPTION = 'has-full-subscription';
 export const useUserReferralSubscription = () => {
+  const { address: account } = useAccount();
   const { levelSubscriptionCost, fullSubscriptionCost } = useReferralManagerSubscriptions();
   const queryClient = useQueryClient();
   const referralContract = useReferralContract();
@@ -128,6 +133,16 @@ export const useUserReferralSubscription = () => {
     [levelsSubscription]
   );
 
+  const hasActivePowerA = useQuery([REFERRAL_HAS_ACTIVE_POWER_A, { account }], async () =>
+    account ? referralContract.userHasActivePowerA(account) : false
+  );
+
+  const hasActivatedPowerA = useQuery([REFERRAL_HAS_ACTIVATED_POWER_A, { account }], async () =>
+    account ? referralContract.userHasActivatedPowerA(account) : false
+  );
+
+  const statusPowerA = useUserPowers(0);
+
   const subscribeToLevel = useMutation(
     [SUBSCRIBE_TO_REFERRAL_LEVEL_MUTATION],
     async (level: number) => {
@@ -147,6 +162,7 @@ export const useUserReferralSubscription = () => {
     {
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: [USER_REFERRAL_INFO_REQUEST] });
+        queryClient.invalidateQueries({ queryKey: [REFERRAL_HAS_ACTIVE_POWER_A] });
         queryClient.invalidateQueries({ queryKey: [SAV_BALANCE_REQUEST] });
       },
       onError: (err) => {
@@ -174,6 +190,7 @@ export const useUserReferralSubscription = () => {
     {
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: [USER_REFERRAL_INFO_REQUEST] });
+        queryClient.invalidateQueries({ queryKey: [REFERRAL_HAS_ACTIVE_POWER_A] });
         queryClient.invalidateQueries({ queryKey: [SAV_BALANCE_REQUEST] });
       },
       onError: (err) => {
@@ -187,6 +204,10 @@ export const useUserReferralSubscription = () => {
     fullSubscription,
     subscribeToLevel,
     subscribeToAllLevels,
+
+    hasActivePowerA,
+    hasActivatedPowerA,
+    statusPowerA,
   };
 };
 

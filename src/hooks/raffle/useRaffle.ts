@@ -14,6 +14,7 @@ import { useTokens } from '@/hooks/useTokens';
 import { parseRaffleFormat } from '@/utils/formatters/raffle';
 import { bigNumberToString } from '@/utils/number';
 
+import { EXTRA_TICKETS_POWER_D_REQUEST } from './useRaffleMiniGame';
 import { useRaffleRoundAdditionalData } from './useRaffleRoundAdditionalData';
 
 export const TICKET_BALANCE_REQUEST = 'ticket-balance-request';
@@ -74,6 +75,24 @@ export const useRaffleControl = () => {
     {
       onSuccess: () => {
         queryClient.invalidateQueries([RAFFLE_TICKET_PRICE_REQUEST]);
+      },
+      onError: handleError,
+    }
+  );
+
+  const updateExtraTicketsForPowerD = useMutation(
+    ['update-extra-tickets-power-d'],
+    async (amount: number) => {
+      const txHash = await raffleContract.updateExtraTicketsPowerD(amount);
+      success({
+        title: 'Success',
+        description: `Amount of extra tickets updated to ${amount}`,
+        txHash,
+      });
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries([EXTRA_TICKETS_POWER_D_REQUEST]);
       },
       onError: handleError,
     }
@@ -141,6 +160,7 @@ export const useRaffleControl = () => {
     isRafflesDataLoading,
     raffleRounds,
     updateTicketPrice,
+    updateExtraTicketsForPowerD,
     finishRaffleRound,
     getWinnersFromOracleRandom,
     createRaffleRound,

@@ -12,24 +12,34 @@ import type {
   PopulatedTransaction,
   Signer,
   utils,
-} from 'ethers';
-import type { FunctionFragment, Result } from '@ethersproject/abi';
-import type { Listener, Provider } from '@ethersproject/providers';
-import type { TypedEventFilter, TypedEvent, TypedListener, OnEvent } from '../../../../common';
+} from "ethers";
+import type { FunctionFragment, Result } from "@ethersproject/abi";
+import type { Listener, Provider } from "@ethersproject/providers";
+import type {
+  TypedEventFilter,
+  TypedEvent,
+  TypedListener,
+  OnEvent,
+} from "../../../../common";
 
 export interface VRFConsumerBaseV2Interface extends utils.Interface {
   functions: {
-    'rawFulfillRandomWords(uint256,uint256[])': FunctionFragment;
+    "rawFulfillRandomWords(uint256,uint256[])": FunctionFragment;
   };
 
-  getFunction(nameOrSignatureOrTopic: 'rawFulfillRandomWords'): FunctionFragment;
+  getFunction(
+    nameOrSignatureOrTopic: "rawFulfillRandomWords"
+  ): FunctionFragment;
 
   encodeFunctionData(
-    functionFragment: 'rawFulfillRandomWords',
+    functionFragment: "rawFulfillRandomWords",
     values: [BigNumberish, BigNumberish[]]
   ): string;
 
-  decodeFunctionResult(functionFragment: 'rawFulfillRandomWords', data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "rawFulfillRandomWords",
+    data: BytesLike
+  ): Result;
 
   events: {};
 }
@@ -51,7 +61,9 @@ export interface VRFConsumerBaseV2 extends BaseContract {
     eventFilter?: TypedEventFilter<TEvent>
   ): Array<TypedListener<TEvent>>;
   listeners(eventName?: string): Array<Listener>;
-  removeAllListeners<TEvent extends TypedEvent>(eventFilter: TypedEventFilter<TEvent>): this;
+  removeAllListeners<TEvent extends TypedEvent>(
+    eventFilter: TypedEventFilter<TEvent>
+  ): this;
   removeAllListeners(eventName?: string): this;
   off: OnEvent<this>;
   on: OnEvent<this>;

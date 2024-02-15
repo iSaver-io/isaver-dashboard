@@ -18,7 +18,7 @@ export const Balances = () => {
   const vendorBalance = useSavBalance(VendorSell);
   const vendorChangeBalance = useUsdtBalance(VendorSell);
   const vestingBalance = useSavBalance(vestingPool);
-  const { tvlSav, tvlSavr } = useStakingMetrics();
+  const { tvlSav, tvlSavr, superPlansMetrics } = useStakingMetrics();
   const savSupply = useTokenSupply(ContractsEnum.SAV);
   const savrSupply = useTokenSupply(ContractsEnum.SAVR);
 
@@ -78,6 +78,13 @@ export const Balances = () => {
       />
       <Balance label="Staking TVL (SAV)" balance={tvlSav} symbol="SAV" minLimit={0} />
       <Balance label="Staking TVL (SAVR)" balance={tvlSavr} symbol="SAVR" minLimit={0} />
+      <Balance
+        label="Staking super plans TVL (SAVR)"
+        balance={superPlansMetrics.tvl}
+        symbol="SAVR"
+        minLimit={0}
+      />
+
       <Balance label="Raffle rewards balance" balance={raffleBalance.data} symbol="SAVR" />
       <Balance label="Referral rewards balance" balance={referralBalance.data} symbol="SAVR" />
       <Balance label="Exchange balance (SAV)" balance={vendorBalance.data} symbol="SAV" />

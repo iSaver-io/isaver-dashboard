@@ -42,12 +42,20 @@ export const useStakingContract = () => {
     return contract.getUserPlansInfo(address);
   };
 
+  const getSuperStakingPlansWithStake = async (address: string) => {
+    return contract.getSuperStakingPlansForUser(address);
+  };
+
   const getUserStakesWithRewards = async (address: string, planId: number) => {
     return contract.getUserStakesWithRewards(planId, address);
   };
 
   const getUserStakes = async (address: string, planId: number) => {
     return contract.getUserStakes(planId, address);
+  };
+
+  const getExtraAprPowerC = async () => {
+    return contract.extraAprPowerC();
   };
 
   const subscribe = async (planId: number): Promise<string> => {
@@ -62,6 +70,27 @@ export const useStakingContract = () => {
 
   const withdrawAllCompleted = async (planId: number): Promise<string> => {
     const tx = await contract.withdrawAllCompleted(planId);
+    return waitForTransaction(tx);
+  };
+
+  const depositSuperPlan = async ({
+    superPlanId,
+    amount,
+  }: {
+    superPlanId: number;
+    amount: BigNumberish;
+  }) => {
+    const tx = await contract.depositSuperPlan(superPlanId, amount);
+    return waitForTransaction(tx);
+  };
+
+  const claimSuperPLan = async (superPlanId: number) => {
+    const tx = await contract.claimSuperPlan(superPlanId);
+    return waitForTransaction(tx);
+  };
+
+  const withdrawSuperPLan = async (superPlanId: number) => {
+    const tx = await contract.withdrawSuperPlan(superPlanId);
     return waitForTransaction(tx);
   };
 
@@ -94,6 +123,15 @@ export const useStakingContract = () => {
     return await queryThrowBlocks(fetchEvents, { fromBlock: FROM_BLOCK, toBlock });
   };
 
+  const getAllSuperStakes = async () => {
+    const { block: toBlock } = await dater.getDate(new Date());
+    const filter = contract.filters.StakedSuperPlan();
+
+    const fetchEvents = (from: number, to: number) => contract.queryFilter(filter, from, to);
+
+    return await queryThrowBlocks(fetchEvents, { fromBlock: FROM_BLOCK, toBlock });
+  };
+
   const getAllClaims = async () => {
     const { block: toBlock } = await dater.getDate(new Date());
     const filter = contract.filters.Claimed();
@@ -105,6 +143,21 @@ export const useStakingContract = () => {
 
   const updatePlanActivity = async (planId: number, isActive: boolean) => {
     const tx = await contract.updatePlanActivity(planId, isActive);
+    return waitForTransaction(tx);
+  };
+
+  const addSuperStakingPlan = async (apy: number) => {
+    const tx = await contract.addSuperStakingPlan(apy);
+    return waitForTransaction(tx);
+  };
+
+  const updateSuperPlanActivity = async (superPlanId: number, isActive: boolean) => {
+    const tx = await contract.updateSuperPlanActivity(superPlanId, isActive);
+    return waitForTransaction(tx);
+  };
+
+  const updateExtraAprPowerC = async (apr: number) => {
+    const tx = await contract.updateExtraAprPowerC(apr);
     return waitForTransaction(tx);
   };
 
@@ -141,5 +194,15 @@ export const useStakingContract = () => {
     getAllClaims,
     updatePlanActivity,
     addStakingPlan,
+    addSuperStakingPlan,
+    updateSuperPlanActivity,
+    updateExtraAprPowerC,
+    // Super power
+    getExtraAprPowerC,
+    getSuperStakingPlansWithStake,
+    getAllSuperStakes,
+    depositSuperPlan,
+    claimSuperPLan,
+    withdrawSuperPLan,
   };
 };

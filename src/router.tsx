@@ -23,6 +23,9 @@ export const isAvatarsLanding = Boolean(process.env.REACT_APP_IS_AVATARS_LANDING
 export const isDashboard = !isLanding && !isAvatarsLanding;
 export const isDevelopment = process.env.NODE_ENV === 'development';
 
+// Common links
+export const AVATAR_LANDING_POWERS_INFO_URL = `${AVATARS_URL}/#powers`;
+
 export const LANDING_PATH = '/';
 export const AVATARS_LANDING_PATH = '/';
 const landingRoute = {

@@ -48,7 +48,8 @@ const boxCommonStyles = {
 };
 
 type StakingModalProps = {
-  lockPeriodDays: BigNumberish;
+  tokens?: TOKENS[];
+  lockPeriodDays?: BigNumberish;
   apr: number | string;
   isLoading?: boolean;
   isPageView?: boolean;
@@ -56,6 +57,7 @@ type StakingModalProps = {
   onClose: () => void;
 };
 export const StakingModal: FC<StakingModalProps> = ({
+  tokens = [TOKENS.SAV, TOKENS.SAVR],
   lockPeriodDays,
   isLoading,
   isPageView,
@@ -63,7 +65,7 @@ export const StakingModal: FC<StakingModalProps> = ({
   onStake,
   onClose,
 }) => {
-  const [token, setToken] = useState<TOKENS>(TOKENS.SAV);
+  const [token, setToken] = useState<TOKENS>(tokens[0]);
   const [amount, setAmount] = useState<string>();
   const [isAgreed, setIsAgreed] = useState(false);
   const { address } = useAccount();
@@ -141,7 +143,7 @@ export const StakingModal: FC<StakingModalProps> = ({
       !isGreaterThanMax
         ? calculateStakeProfitByAPR({
             amount: amount || 0,
-            periodDays: lockPeriodDays,
+            periodDays: lockPeriodDays || 365,
             apr,
           })
         : 0,
@@ -170,18 +172,14 @@ export const StakingModal: FC<StakingModalProps> = ({
               </Flex>
             </MenuButton>
             <MenuList>
-              <MenuItem onClick={() => handleTokenChange(TOKENS.SAV)}>
-                <Box mr="4px">
-                  <SavIcon width="24px" />
-                </Box>
-                <span>Stake SAV</span>
-              </MenuItem>
-              <MenuItem onClick={() => handleTokenChange(TOKENS.SAVR)}>
-                <Box mr="4px">
-                  <SavrIcon width="24px" />
-                </Box>
-                <span>Stake SAVR</span>
-              </MenuItem>
+              {tokens.map((token) => (
+                <MenuItem onClick={() => handleTokenChange(token)} key={token}>
+                  <Box mr="4px">
+                    {token == TOKENS.SAV ? <SavIcon width="24px" /> : <SavrIcon width="24px" />}
+                  </Box>
+                  <span>Stake {token == TOKENS.SAV ? 'SAV' : 'SAVR'}</span>
+                </MenuItem>
+              ))}
             </MenuList>
           </Menu>
           <CloseButton onClick={onClose} size="lg" />
@@ -198,20 +196,24 @@ export const StakingModal: FC<StakingModalProps> = ({
             />
           </Box>
 
+          {lockPeriodDays ? (
+            <Box {...boxCommonStyles} mb={5}>
+              Locking period
+              <Spacer />
+              {getReadableDuration(lockPeriodDays)}
+            </Box>
+          ) : null}
           <Box {...boxCommonStyles} mb={5}>
-            Locking period
-            <Spacer />
-            {getReadableDuration(lockPeriodDays)}
-          </Box>
-          <Box {...boxCommonStyles} mb={5}>
-            APR
+            {lockPeriodDays ? 'APR' : 'APY'}
             <Spacer />
             {apr}%
           </Box>
           <Box {...boxCommonStyles} mb={10}>
-            Your rewards
+            Your rewards {!lockPeriodDays ? '(1 year)' : ''}
             <Spacer />
-            <>{bigNumberToString(rewards)} SAV</>
+            <>
+              {bigNumberToString(rewards)} {lockPeriodDays ? 'SAV' : 'SAVR'}
+            </>
           </Box>
 
           <Box {...boxCommonStyles} p={5}>

@@ -15,6 +15,7 @@ import { BigNumber } from 'ethers';
 import { useAccount } from 'wagmi';
 
 import { ConnectWalletButton } from '@/components/ui/ConnectWalletButton/ConnectWalletButton';
+import { PowerStatus } from '@/components/ui/PowerStatus/PowerStatus';
 import { StatBlock } from '@/components/ui/StatBlock/StatBlock';
 import { WarningTip } from '@/components/ui/WarningTip/WarningTip';
 import { TOKENS } from '@/hooks/contracts/useTokenContract';
@@ -23,6 +24,8 @@ import {
   useStakingActions,
   useStakingPlans,
   useStakingPlansUserInfo,
+  useStakingSuperPlans,
+  useStakingSuperPowers,
 } from '@/hooks/staking/useStaking';
 import { useConnectWallet } from '@/hooks/useConnectWallet';
 import { useLocalReferrer } from '@/hooks/useLocalReferrer';
@@ -31,6 +34,7 @@ import { bigNumberToString, getReadableAmount, makeBigNumber } from '@/utils/num
 
 import { StakingModal } from './StakingModal';
 import { StakingPlan } from './StakingPlan';
+import { SuperStakingPlan } from './SuperStakingPlan';
 
 type StakingProps = {
   isPageView?: boolean;
@@ -49,9 +53,20 @@ export const Staking: FC<StakingProps> = ({ isPageView }) => {
   });
 
   const { stakingPlansRequest } = useStakingPlans();
+  const { statusPowerB, statusPowerC } = useStakingSuperPowers();
+  const { superStakingPlansWithUserStake } = useStakingSuperPlans();
   const { activeStakingPlansWithUserInfo } = useActiveStakingPlansWithUserInfo();
   const { hasEndingSubscription } = useStakingPlansUserInfo();
   const { subscribe, deposit, withdrawAllCompleted } = useStakingActions();
+
+  const superStakingPlansToShow = useMemo(
+    () =>
+      superStakingPlansWithUserStake.filter(
+        (superPlan) =>
+          statusPowerB.isActive || superPlan.stake.profit.gt(0) || superPlan.stake.deposit.gt(0)
+      ),
+    [superStakingPlansWithUserStake, statusPowerB]
+  );
 
   const closeModal = useCallback(() => {
     setSelectedPlan(undefined);
@@ -175,6 +190,15 @@ export const Staking: FC<StakingProps> = ({ isPageView }) => {
             Earn by staking
           </Text>
 
+          <Flex
+            mb="20px"
+            flexDirection={{ sm: 'column', xl: 'row' }}
+            gap={{ sm: '20px', xl: '40px' }}
+          >
+            <PowerStatus powerId={1} isActive={statusPowerB.isActive} />
+            <PowerStatus powerId={2} isActive={statusPowerC.isActive} />
+          </Flex>
+
           <Text textStyle="text1">
             Stake your SAV or SAVR holdings to earn more SAV. The longer you stake, the more you
             yield. Accumulate more SAV, so you can increase your governance in the future iSaver
@@ -250,12 +274,13 @@ export const Staking: FC<StakingProps> = ({ isPageView }) => {
               isActive={planData.isActive}
               isSubscribed={planData.isSubscribed}
               isSubscriptionEnding={planData.isSubscriptionEnding}
+              isSuperPowered={planData.isSuperPowered}
               subscribedTill={planData.subscribedTill}
               subscriptionCost={planData.subscriptionCost}
               subscriptionDuration={planData.subscriptionDuration}
               stakingDuration={planData.stakingDuration}
               poolSize={planData.currentSavTokenLocked.add(planData.currentSavrTokenLocked)}
-              apr={planData.apr.toString()}
+              apr={planData.apr}
               userStakeSav={planData.currentSavTokenStaked || 0}
               userStakeSavR={planData.currentSavrTokenStaked || 0}
               userTotalReward={planData.totalReward}
@@ -263,6 +288,24 @@ export const Staking: FC<StakingProps> = ({ isPageView }) => {
               onSubscribe={() => handleSubscribe(planData.stakingPlanId)}
               onDeposit={() => handleDeposit(planData.stakingPlanId)}
               onClaim={() => handleClaim(planData.stakingPlanId)}
+            />
+          </GridItem>
+        ))}
+
+        {superStakingPlansToShow.map((superPlan) => (
+          <GridItem
+            colSpan={1}
+            rowSpan={1}
+            key={superPlan.stakingPlanId}
+            width={{ sm: '300px', md: '100%' }}
+          >
+            <SuperStakingPlan
+              superPlanId={superPlan.stakingPlanId}
+              isActive={superPlan.plan.isActive}
+              apy={superPlan.apr.apr}
+              userStakeSAVR={superPlan.stake.deposit}
+              userReward={superPlan.stake.profit}
+              isPageView={isPageView}
             />
           </GridItem>
         ))}

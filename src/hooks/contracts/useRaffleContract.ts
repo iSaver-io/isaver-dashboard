@@ -110,6 +110,11 @@ export const useRaffleContract = () => {
     return waitForTransaction(tx);
   };
 
+  const updateExtraTicketsPowerD = async (amount: number) => {
+    const tx = await contract.updateExtraTicketsPowerD(amount);
+    return waitForTransaction(tx);
+  };
+
   const finishRaffleRound = async (roundId: number) => {
     const tx = await contract.finishRaffleRound(roundId);
     return waitForTransaction(tx);
@@ -164,6 +169,7 @@ export const useRaffleContract = () => {
     claimDay,
     mintMyTicket,
 
+    updateExtraTicketsPowerD,
     updateTicketPrice,
     finishRaffleRound,
     getWinnersFromOracleRandom,

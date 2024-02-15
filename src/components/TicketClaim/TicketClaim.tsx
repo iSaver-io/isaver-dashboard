@@ -169,7 +169,7 @@ export const TicketClaim = () => {
           flexBasis={{ sm: '100%', xl: '60%', '2xl': '50%' }}
         >
           <Box mb="20px">
-            <PowerStatus powerId={3} isActive={isPowerDActive} tip="some test text" />
+            <PowerStatus powerId={3} isActive={isPowerDActive} />
           </Box>
 
           <Text textStyle="text1">

@@ -9608,7 +9608,7 @@
       "chainId": "31337",
       "contracts": {
         "AvatarSettings": {
-          "address": "0x162A433068F51e18b7d13932F27e66a3f99E6890",
+          "address": "0x51A1ceB83B83F1985a81C295d1fF28Afef186E02",
           "abi": [
             {
               "anonymous": false,
@@ -10630,7 +10630,7 @@
           ]
         },
         "AvatarsSell": {
-          "address": "0x2bdCC0de6bE1f7D2ee689a0342D76F52E8EFABa3",
+          "address": "0x1fA02b2d6A771842690194Cf62D91bdd92BfE28d",
           "abi": [
             {
               "inputs": [],
@@ -12285,7 +12285,7 @@
           ]
         },
         "Helper": {
-          "address": "0x9d4454B023096f34B160D6B654540c56A1F81688",
+          "address": "0x809d550fca64d94Bd9F66E60752A544199cfAC3D",
           "abi": [
             {
               "inputs": [],
@@ -12951,7 +12951,7 @@
           ]
         },
         "ISaverAvatars": {
-          "address": "0x36C02dA8a0983159322a80FFE9F24b1acfF8B570",
+          "address": "0x1291Be112d480055DaFd8a610b7d1e203891C274",
           "abi": [
             {
               "inputs": [],
@@ -14157,7 +14157,7 @@
           ]
         },
         "ISaverPowers": {
-          "address": "0xb7278A61aa25c888815aFC32Ad3cC52fF24fE575",
+          "address": "0xc351628EB244ec633d5f21fBD6621e1a683B1181",
           "abi": [
             {
               "inputs": [],
@@ -16330,7 +16330,7 @@
           ]
         },
         "Raffles": {
-          "address": "0x95401dc811bb5740090279Ba06cfA8fcF6113778",
+          "address": "0x4826533B4897376654Bb4d4AD88B7faFD0C98528",
           "abi": [
             {
               "inputs": [],
@@ -19744,6 +19744,113 @@
               "type": "function"
             },
             {
+              "inputs": [
+                {
+                  "internalType": "address",
+                  "name": "userAddress",
+                  "type": "address"
+                }
+              ],
+              "name": "getSuperStakingPlansForUser",
+              "outputs": [
+                {
+                  "components": [
+                    {
+                      "components": [
+                        {
+                          "internalType": "uint256",
+                          "name": "stakingPlanId",
+                          "type": "uint256"
+                        },
+                        {
+                          "internalType": "bool",
+                          "name": "isActive",
+                          "type": "bool"
+                        },
+                        {
+                          "internalType": "uint256",
+                          "name": "totalStakesNo",
+                          "type": "uint256"
+                        },
+                        {
+                          "internalType": "uint256",
+                          "name": "totalStaked",
+                          "type": "uint256"
+                        },
+                        {
+                          "internalType": "uint256",
+                          "name": "currentLocked",
+                          "type": "uint256"
+                        },
+                        {
+                          "internalType": "uint256",
+                          "name": "totalClaimed",
+                          "type": "uint256"
+                        }
+                      ],
+                      "internalType": "struct IStaking.SuperStakingPlan",
+                      "name": "plan",
+                      "type": "tuple"
+                    },
+                    {
+                      "components": [
+                        {
+                          "internalType": "uint256",
+                          "name": "time",
+                          "type": "uint256"
+                        },
+                        {
+                          "internalType": "uint256",
+                          "name": "apr",
+                          "type": "uint256"
+                        }
+                      ],
+                      "internalType": "struct IStaking.AprChange",
+                      "name": "apr",
+                      "type": "tuple"
+                    },
+                    {
+                      "components": [
+                        {
+                          "internalType": "uint256",
+                          "name": "profit",
+                          "type": "uint256"
+                        },
+                        {
+                          "internalType": "uint256",
+                          "name": "deposit",
+                          "type": "uint256"
+                        },
+                        {
+                          "internalType": "uint256",
+                          "name": "lastTimestamp",
+                          "type": "uint256"
+                        },
+                        {
+                          "internalType": "uint256",
+                          "name": "totalClaimed",
+                          "type": "uint256"
+                        },
+                        {
+                          "internalType": "uint256",
+                          "name": "totalDeposited",
+                          "type": "uint256"
+                        }
+                      ],
+                      "internalType": "struct IStaking.SuperStake",
+                      "name": "stake",
+                      "type": "tuple"
+                    }
+                  ],
+                  "internalType": "struct IStaking.SuperStakingPlanWithAprAndStake[]",
+                  "name": "",
+                  "type": "tuple[]"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
               "inputs": [],
               "name": "getTimestamp",
               "outputs": [
@@ -20033,52 +20140,6 @@
                   "internalType": "struct IStaking.SuperStake",
                   "name": "",
                   "type": "tuple"
-                }
-              ],
-              "stateMutability": "view",
-              "type": "function"
-            },
-            {
-              "inputs": [
-                {
-                  "internalType": "address",
-                  "name": "userAddress",
-                  "type": "address"
-                }
-              ],
-              "name": "getUserSuperPlansInfo",
-              "outputs": [
-                {
-                  "components": [
-                    {
-                      "internalType": "uint256",
-                      "name": "profit",
-                      "type": "uint256"
-                    },
-                    {
-                      "internalType": "uint256",
-                      "name": "deposit",
-                      "type": "uint256"
-                    },
-                    {
-                      "internalType": "uint256",
-                      "name": "lastTimestamp",
-                      "type": "uint256"
-                    },
-                    {
-                      "internalType": "uint256",
-                      "name": "totalClaimed",
-                      "type": "uint256"
-                    },
-                    {
-                      "internalType": "uint256",
-                      "name": "totalDeposited",
-                      "type": "uint256"
-                    }
-                  ],
-                  "internalType": "struct IStaking.SuperStake[]",
-                  "name": "",
-                  "type": "tuple[]"
                 }
               ],
               "stateMutability": "view",
@@ -20660,7 +20721,7 @@
           ]
         },
         "Teams": {
-          "address": "0x67d269191c92Caf3cD7723F116c85e6E9bf55933",
+          "address": "0x84eA74d481Ee0A5332c457a4d796187F6Ba67fEB",
           "abi": [
             {
               "inputs": [],
@@ -21728,7 +21789,7 @@
           ]
         },
         "Ticket": {
-          "address": "0xa82fF9aFd8f496c3d6ac40E2a0F282E47488CFc9",
+          "address": "0xf5059a5D33d5853360D16C683c16e67980206f36",
           "abi": [
             {
               "inputs": [],
@@ -23511,7 +23572,7 @@
           ]
         },
         "TokensPool": {
-          "address": "0xFD471836031dc5108809D173A067e8486B9047A3",
+          "address": "0x21dF544947ba3E8b3c32561399E88B52Dc8b2823",
           "abi": [
             {
               "inputs": [],
@@ -24833,7 +24894,7 @@
           ]
         },
         "VRFCoordinatorMock": {
-          "address": "0x851356ae760d987E095750cCeb3bC6014560891C",
+          "address": "0x998abeb3E57409262aE5b751f60747921B33613E",
           "abi": [
             {
               "inputs": [],

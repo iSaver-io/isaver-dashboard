@@ -12,7 +12,7 @@ const RAFFLE_IS_CLAIMED_TODAY_REQUEST = 'raffle-is-claimed-today-request';
 const RAFFLE_GET_LAST_CLAIM_REQUEST = 'raffle-get-last-claim-request';
 const RAFFLE_CLAIM_STREAK_REQUEST = 'raffle-claim-streak-request';
 const RAFFLE_IS_MINT_AVAILABLE_REQUEST = 'raffle-is-mint-available-request';
-const EXTRA_TICKETS_POWER_D_REQUEST = 'extra-tickets-power-d-request';
+export const EXTRA_TICKETS_POWER_D_REQUEST = 'extra-tickets-power-d-request';
 const CLAIM_DAY_MUTATION = 'claim-day-mutation';
 const MINT_TICKET_MUTATION = 'mint-ticket-mutation';
 
