@@ -135,7 +135,7 @@ export const TicketClaim = () => {
         justifyContent="space-between"
         gap={5}
         flexWrap="wrap"
-        paddingX={{ sm: '10px', md: 'unset' }}
+        paddingX={{ sm: '10px', lg: 'unset' }}
       >
         <Text textStyle="sectionHeading" width={{ sm: '100%', xl: '35%' }}>
           Play Everyday
@@ -184,7 +184,8 @@ export const TicketClaim = () => {
         className={`render-animation-with-border ${
           isPowerDActive ? 'render-animation-with-border--blue' : null
         }`}
-        m={{ sm: '50px 0 0', lg: '50px -15px 0', xl: '50px 0 0' }}
+        m={{ sm: '50px auto 0', lg: '50px -15px 0', xl: '50px 0 0' }}
+        maxWidth={{ sm: '300px', lg: 'unset' }}
         padding={{ sm: '24px 0', lg: '30px 15px 24px', '2xl': '40px 40px 48px 32px' }}
         background="rgba(38, 71, 55, 0.5)"
         border={isPowerDActive ? '2px solid #1ADCE2' : undefined}

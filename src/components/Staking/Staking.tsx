@@ -53,7 +53,7 @@ export const Staking: FC<StakingProps> = ({ isPageView }) => {
   });
 
   const { stakingPlansRequest } = useStakingPlans();
-  const { statusPowerB, statusPowerC } = useStakingSuperPowers();
+  const { statusPowerB, statusPowerC, extraAprPowerC } = useStakingSuperPowers();
   const { superStakingPlansWithUserStake } = useStakingSuperPlans();
   const { activeStakingPlansWithUserInfo } = useActiveStakingPlansWithUserInfo();
   const { hasEndingSubscription } = useStakingPlansUserInfo();
@@ -101,14 +101,18 @@ export const Staking: FC<StakingProps> = ({ isPageView }) => {
       ),
     [activeStakingPlansWithUserInfo]
   );
-  const totalStakeSavR = useMemo(
-    () =>
-      activeStakingPlansWithUserInfo.reduce(
-        (acc, plan) => acc.add(plan.currentSavrTokenStaked || 0),
-        BigNumber.from(0)
-      ),
-    [activeStakingPlansWithUserInfo]
-  );
+  const totalStakeSavR = useMemo(() => {
+    const plansStaked = activeStakingPlansWithUserInfo.reduce(
+      (acc, plan) => acc.add(plan.currentSavrTokenStaked || 0),
+      BigNumber.from(0)
+    );
+    const superPlansStaked = superStakingPlansToShow.reduce(
+      (acc, superPlan) => acc.add(superPlan.stake.deposit || 0),
+      BigNumber.from(0)
+    );
+
+    return plansStaked.add(superPlansStaked);
+  }, [activeStakingPlansWithUserInfo, superStakingPlansToShow]);
 
   const logAction = useCallback(
     (
@@ -184,7 +188,12 @@ export const Staking: FC<StakingProps> = ({ isPageView }) => {
 
   return (
     <Container variant="dashboard" paddingX={{ sm: '10px', md: 'unset' }}>
-      <Flex direction={{ sm: 'column', xl: 'row' }} justifyContent="space-between" gap={5}>
+      <Flex
+        direction={{ sm: 'column', xl: 'row' }}
+        justifyContent="space-between"
+        gap={5}
+        paddingX={{ md: '10px', lg: 'unset' }}
+      >
         <Box width={{ sm: '100%', xl: '55%' }}>
           <Text textStyle="sectionHeading" mb="20px">
             Earn by staking
@@ -192,7 +201,8 @@ export const Staking: FC<StakingProps> = ({ isPageView }) => {
 
           <Flex
             mb="20px"
-            flexDirection={{ sm: 'column', xl: 'row' }}
+            flexWrap="wrap"
+            flexDirection={{ sm: 'column', md: 'row' }}
             gap={{ sm: '20px', xl: '40px' }}
           >
             <PowerStatus powerId={1} isActive={statusPowerB.isActive} />
@@ -312,12 +322,16 @@ export const Staking: FC<StakingProps> = ({ isPageView }) => {
       </Grid>
       {isOpen && selectedPlan !== undefined ? (
         <StakingModal
-          apr={stakingPlansRequest.data?.[selectedPlan].apr.toString() || 0}
+          apr={
+            (stakingPlansRequest.data?.[selectedPlan].apr || 0) +
+            (statusPowerC.isActive ? extraAprPowerC : 0)
+          }
           lockPeriodDays={stakingPlansRequest.data?.[selectedPlan].stakingDuration || 0}
           isLoading={deposit.isLoading}
+          isPageView={isPageView}
+          highlightApr={statusPowerC.isActive}
           onClose={closeModal}
           onStake={onDeposit}
-          isPageView={isPageView}
         />
       ) : null}
     </Container>

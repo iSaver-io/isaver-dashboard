@@ -94,7 +94,12 @@ export const RaffleList = () => {
 
   return (
     <Container variant="dashboard" paddingX={{ sm: '10px', md: 'unset' }}>
-      <Flex direction={{ sm: 'column', xl: 'row' }} justifyContent="space-between" gap={5}>
+      <Flex
+        direction={{ sm: 'column', xl: 'row' }}
+        justifyContent="space-between"
+        gap={5}
+        paddingX={{ md: '10px', lg: 'unset' }}
+      >
         <Box>
           <Text textStyle="sectionHeading" mb="20px">
             Win big prizes

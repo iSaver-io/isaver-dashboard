@@ -1,4 +1,5 @@
-import { FC, useCallback, useState } from 'react';
+import { FC, useCallback, useEffect, useState } from 'react';
+import CountUp from 'react-countup';
 import { Box, Flex, Text, useBreakpoint, useDisclosure } from '@chakra-ui/react';
 import { BigNumber } from 'ethers';
 
@@ -6,7 +7,7 @@ import { Button } from '@/components/ui/Button/Button';
 import { TOKENS } from '@/hooks/contracts/useTokenContract';
 import { useStakingSuperPlans, useStakingSuperPowers } from '@/hooks/staking/useStaking';
 import { useNavigateByHash } from '@/hooks/useNavigateByHash';
-import { getReadableAmount, makeBigNumber } from '@/utils/number';
+import { bigNumberToNumber, getReadableAmount, makeBigNumber } from '@/utils/number';
 import { getLocalDateString } from '@/utils/time';
 
 import { StakingModal } from './StakingModal';
@@ -72,11 +73,21 @@ export const SuperStakingPlan: FC<SuperStakingPlanProps> = ({
   const isSm = ['sm'].includes(bp);
   const isMd = ['md', 'xl'].includes(bp);
   const isLg = ['lg', '2xl'].includes(bp);
+  const buttonWidth = ['2xl'].includes(bp) ? '140px' : '120px';
+  const buttonShadow = '0px 9px 18px rgba(107, 201, 91, 0.27)';
 
   const isClaimAvailable = userReward.gt(0);
   const isWithdrawAvailable = isClaimAvailable || userStakeSAVR.gt(0);
 
   const finalAPY = statusPowerC.isActive ? apy + extraAprPowerC : apy;
+
+  const [initialRewardValue, setInitialRewardValue] = useState<number>();
+
+  useEffect(() => {
+    if (!initialRewardValue) {
+      setInitialRewardValue(bigNumberToNumber(userReward, { precision: 6 }) * 0.95); // set initialValue less on 5% to real value, to start counter on mount
+    }
+  }, [userReward, initialRewardValue]);
 
   return (
     <>
@@ -91,7 +102,7 @@ export const SuperStakingPlan: FC<SuperStakingPlanProps> = ({
           bgColor={statusPowerB.isActive ? 'rgba(165, 237, 93, 0.5)' : 'gray.200'}
           p="10px 20px"
           justifyContent="flex-end"
-          height={{ md: '60px' }}
+          height="60px"
           alignItems="center"
           whiteSpace="nowrap"
         >
@@ -112,12 +123,13 @@ export const SuperStakingPlan: FC<SuperStakingPlanProps> = ({
                   onClick={handleSubscribe}
                   size="md"
                   ml={5}
-                  w="140px"
+                  borderRadius="md"
+                  w={buttonWidth}
                 >
                   Prolong
                 </Button>
               ) : (
-                <Text textStyle="textSansBold" mr="46px">
+                <Text textStyle="textSansBold" mr={{ sm: '10px', '2xl': '46px' }}>
                   Active
                 </Text>
               )}
@@ -131,39 +143,26 @@ export const SuperStakingPlan: FC<SuperStakingPlanProps> = ({
 
         <Flex
           padding={isLg ? '30px 20px' : '20px'}
-          gap={isSm ? '30px' : '15px'}
-          direction={isSm ? 'row' : 'column'}
+          gap={isSm ? '25px' : '15px'}
+          direction={isSm ? 'column' : 'row'}
+          justifyContent="space-between"
           flexGrow="1"
         >
           <Flex
-            direction={isSm ? 'column' : 'row'}
-            justifyContent="space-between"
-            flexGrow="1"
+            direction={isSm ? 'row' : 'column'}
+            justifyContent={isSm ? 'space-between' : 'center'}
+            gap={isSm ? '5px' : '15px'}
             alignItems="center"
           >
-            <Box flexBasis="30%">
-              <Parameter isLg={isLg} isSm={isSm} title="Your stake">
-                {getReadableAmount(userStakeSAVR)} SAVR
-              </Parameter>
-            </Box>
+            <Parameter isLg={isLg} isSm={isSm} title="Your stake">
+              {getReadableAmount(userStakeSAVR)} SAVR
+            </Parameter>
 
-            <Box flexBasis="30%">
-              <Parameter isLg={isLg} isSm={isSm} title="Your rewards">
-                {getReadableAmount(userReward)} SAVR
-              </Parameter>
-            </Box>
-
-            <Box flexBasis="30%">
-              <Parameter isLg={isLg} isSm={isSm} title="APY" isHighlighted={statusPowerC.isActive}>
-                {finalAPY}%
-              </Parameter>
-            </Box>
-          </Flex>
-
-          <Flex direction={isSm ? 'column' : 'row'} gap="15px">
             <Button
               size="md"
-              width="100%"
+              borderRadius="md"
+              w={buttonWidth}
+              boxShadow={buttonShadow}
               variant="outlined"
               isLoading={isWithdrawLoading}
               isDisabled={!isWithdrawAvailable}
@@ -171,9 +170,30 @@ export const SuperStakingPlan: FC<SuperStakingPlanProps> = ({
             >
               Withdraw
             </Button>
+          </Flex>
+
+          <Flex
+            direction={isSm ? 'row' : 'column'}
+            justifyContent={isSm ? 'space-between' : 'center'}
+            gap={isSm ? '5px' : '15px'}
+            alignItems="center"
+          >
+            <Parameter isLg={isLg} isSm={isSm} title="Your rewards">
+              <CountUp
+                duration={20}
+                start={initialRewardValue}
+                end={bigNumberToNumber(userReward, { precision: 6 })}
+                decimals={6}
+                preserveValue={true}
+                useEasing={false}
+              />{' '}
+              SAVR
+            </Parameter>
             <Button
               size="md"
-              width="100%"
+              borderRadius="md"
+              w={buttonWidth}
+              boxShadow={buttonShadow}
               variant="outlined"
               isLoading={isClaimLoading}
               isDisabled={!isClaimAvailable || isClaimLoading}
@@ -181,9 +201,23 @@ export const SuperStakingPlan: FC<SuperStakingPlanProps> = ({
             >
               Claim
             </Button>
+          </Flex>
+
+          <Flex
+            direction={isSm ? 'row' : 'column'}
+            justifyContent={isSm ? 'space-between' : 'center'}
+            gap={isSm ? '5px' : '15px'}
+            alignItems="center"
+          >
+            <Parameter isLg={isLg} isSm={isSm} title="APY" isHighlighted={statusPowerC.isActive}>
+              {finalAPY}%
+            </Parameter>
+
             <Button
               size="md"
-              width="100%"
+              borderRadius="md"
+              w={buttonWidth}
+              boxShadow={buttonShadow}
               variant="outlined"
               isDisabled={!isActive || !statusPowerB.isActive}
               onClick={onOpen}
@@ -196,11 +230,12 @@ export const SuperStakingPlan: FC<SuperStakingPlanProps> = ({
       {isOpen ? (
         <StakingModal
           apr={finalAPY}
-          isLoading={isDepositLoading}
-          onClose={onClose}
           tokens={[TOKENS.SAVR]}
-          onStake={handleDeposit}
+          isLoading={isDepositLoading}
+          highlightApr={statusPowerC.isActive}
           isPageView={isPageView}
+          onClose={onClose}
+          onStake={handleDeposit}
         />
       ) : null}
     </>
@@ -213,19 +248,22 @@ const Parameter = ({
   isHighlighted,
   isSm,
   isLg,
+  justifyContent,
 }: {
   title: string;
   children: any;
   isSm: boolean;
   isLg: boolean;
   isHighlighted?: boolean;
+  justifyContent?: any;
 }) => {
   return (
     <Flex
-      alignItems="center"
-      justifyContent={isSm ? 'flex-start' : 'center'}
+      alignItems={isSm ? 'flex-start' : 'center'}
+      justifyContent={justifyContent || isSm ? 'flex-start' : 'center'}
       direction={isLg ? 'row' : 'column'}
       color={isHighlighted ? 'green.100' : 'white'}
+      flexGrow={1}
     >
       <Box textStyle="textSansExtraSmall" mr="10px" whiteSpace="nowrap">
         {title}

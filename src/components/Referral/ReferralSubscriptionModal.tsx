@@ -143,20 +143,24 @@ export const ReferralSubscriptionModal: FC<ReferralSubscriptionModalProps> = ({
               ))}
             </Box>
 
-            <Box mt="30px">
-              <SubscriptionLevel
-                title="11-15 Levels"
-                priceString="Power A"
-                duration={subscriptionDuration}
-                subscriptionTill={statusPowerA.power}
-                isStatusActive={hasActivePowerA.data}
-                disabled={isFullLoading || isLevelLoading}
-                onSubscribe={openPowersInfo}
-                labelAppend={
-                  <Tip text="Your Levels 11-15 will become active once you activate Levels 1-10" />
-                }
-              />
-            </Box>
+            {statusPowerA.isActive ? (
+              <Box mt="30px">
+                <SubscriptionLevel
+                  title="11-15 Levels"
+                  priceString="Power A"
+                  duration={subscriptionDuration}
+                  subscriptionTill={statusPowerA.power}
+                  isStatusActive={hasActivePowerA.data}
+                  disabled={isFullLoading || isLevelLoading}
+                  onSubscribe={openPowersInfo}
+                  labelAppend={
+                    hasActivePowerA.data ? (
+                      <Tip text="Your Levels 11-15 will become active once you activate Levels 1-10" />
+                    ) : undefined
+                  }
+                />
+              </Box>
+            ) : null}
           </Box>
         </ModalBody>
       </ModalContent>

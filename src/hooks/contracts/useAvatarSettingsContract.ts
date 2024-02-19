@@ -1,24 +1,18 @@
+import { Interface } from '@ethersproject/abi';
+import { Log } from 'alchemy-sdk';
 import EthDater from 'ethereum-block-by-date';
 import { BigNumberish, Event } from 'ethers';
 import { Address, useContract, useProvider, useSigner } from 'wagmi';
 
-import { FROM_BLOCK } from '@/constants';
+import { FROM_BLOCK_EPISODE_2 } from '@/constants';
+import alchemy from '@/modules/alchemy';
 import { AvatarSettings } from '@/types.common';
 import { TypedEvent, TypedEventFilter } from '@/types/typechain-types/common';
 import { waitForTransaction } from '@/utils/waitForTransaction';
 
 import { ContractsEnum, useContractAbi } from './useContractAbi';
 
-const eventLabels: Record<string, string> = {
-  ExternalAvatarActivated: 'Avatar activation',
-  AvatarActivated: 'iSaver Avatar activation',
-  PowersAccessActivated: 'Powers Block activation',
-  AvatarDeactivated: 'Avatar deactivation',
-  ISaverAvatarDeactivated: 'iSaver Avatar deactivation',
-  NameChanged: 'Name change',
-  TelegramChanged: 'Telegram change',
-  BirthdayPresentClaimed: 'Birthday present claimed',
-};
+type LogWithEventName = Log & { eventName: string };
 
 const powerActivationLabels: Record<number, string> = {
   0: 'Power A activation',
@@ -43,50 +37,79 @@ export const useAvatarSettingsContract = () => {
   }) as unknown as AvatarSettings;
 
   const getAllEvents = async (address: Address) => {
-    const { block: toBlock } = await dater.getDate(new Date());
-
     const fetchEvents = async (filter: TypedEventFilter<TypedEvent<Event[]>>) =>
-      avatarSettings.queryFilter(filter, FROM_BLOCK, toBlock);
+      alchemy.core.getLogs({ ...filter, fromBlock: FROM_BLOCK_EPISODE_2, toBlock: 'latest' });
 
-    const filters = [
-      avatarSettings.filters.ExternalAvatarActivated(address),
-      avatarSettings.filters.AvatarActivated(address),
-      avatarSettings.filters.PowersAccessActivated(address),
-      avatarSettings.filters.AvatarDeactivated(address),
-      avatarSettings.filters.PowerActivated(address),
-      avatarSettings.filters.NameChanged(address),
-      avatarSettings.filters.TelegramChanged(address),
-      avatarSettings.filters.BirthdayPresentClaimed(null, address),
-    ];
+    const filters: Record<string, { filter: any; label?: string }> = {
+      ExternalAvatarActivated: {
+        filter: avatarSettings.filters.ExternalAvatarActivated(address),
+        label: 'Avatar activation',
+      },
+      AvatarActivated: {
+        filter: avatarSettings.filters.AvatarActivated(address),
+        label: 'iSaver Avatar activation',
+      },
+      PowersAccessActivated: {
+        filter: avatarSettings.filters.PowersAccessActivated(address),
+        label: 'Powers Block activation',
+      },
+      AvatarDeactivated: {
+        filter: avatarSettings.filters.AvatarDeactivated(address),
+        label: 'Avatar deactivation',
+      },
+      PowerActivated: {
+        filter: avatarSettings.filters.PowerActivated(address),
+        // label: 'Power activated',
+      },
+      NameChanged: {
+        filter: avatarSettings.filters.NameChanged(address),
+        label: 'Name change',
+      },
+      TelegramChanged: {
+        filter: avatarSettings.filters.TelegramChanged(address),
+        label: 'Telegram change',
+      },
+      BirthdayPresentClaimed: {
+        filter: avatarSettings.filters.BirthdayPresentClaimed(null, address),
+        label: 'Birthday present claimed',
+      },
+    };
 
-    let allEvents: Event[] = [];
-    for (const filter of filters) {
-      const events = await fetchEvents(filter);
-      allEvents = allEvents.concat(events);
+    const avatarSettingsIface = new Interface(abi);
+
+    let allEvents: LogWithEventName[] = [];
+    for (const [key, filter] of Object.entries(filters)) {
+      const events = await fetchEvents(filter.filter);
+      allEvents = allEvents.concat(events.map((event) => ({ ...event, eventName: key })));
     }
 
-    return await Promise.all(
-      allEvents.map(async ({ blockNumber, event, args, transactionHash }: Event) => {
-        const block = await provider.getBlock(blockNumber);
+    const events = await Promise.all(
+      allEvents.map(async ({ eventName, ...log }: LogWithEventName) => {
+        const logParsed = avatarSettingsIface.parseLog(log);
+        const block = await provider.getBlock(log.blockNumber);
 
         let label = '';
-        if (event === 'PowerActivated') {
-          const powerId: number = await args?.powerId.toNumber();
+        if (eventName === 'PowerActivated') {
+          const powerId: number = await logParsed.args.powerId.toNumber();
           label = powerActivationLabels[powerId];
-        } else if (event) {
-          label = eventLabels[event];
-          if (event === 'AvatarDeactivated' && args?.isAvatarCollection) {
-            label = eventLabels['ISaverAvatarDeactivated'];
+        } else {
+          label = filters[eventName].label || '';
+          if (eventName === 'AvatarDeactivated' && logParsed.args.isAvatarCollection) {
+            label = 'iSaver Avatar deactivation';
           }
         }
 
         return {
-          transactionHash,
+          transactionHash: log.transactionHash,
           label,
           timestamp: block.timestamp,
         };
       })
     );
+
+    const sortedEvents = events.sort((a, b) => a.timestamp - b.timestamp);
+
+    return sortedEvents;
   };
 
   const getApprovedCollections = async (): Promise<Address[]> => {

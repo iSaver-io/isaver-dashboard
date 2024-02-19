@@ -74,7 +74,11 @@ export const StakingPlan: FC<StakingPlanProps> = ({
   }, [setIsClaimLoading, onClaim]);
 
   const bp = useBreakpoint({ ssr: false });
-  const isSm = bp === 'sm';
+  const isSm = ['sm'].includes(bp);
+  const isMd = ['md', 'xl'].includes(bp);
+  const isLg = ['lg', '2xl'].includes(bp);
+  const buttonWidth = isSm ? '120px' : isMd ? '200px' : '140px';
+  const buttonShadow = '0px 9px 18px rgba(107, 201, 91, 0.27)';
 
   const headerBgColor = useMemo(() => {
     if (isActive) {
@@ -96,7 +100,7 @@ export const StakingPlan: FC<StakingPlanProps> = ({
         bgColor={headerBgColor}
         p="10px 20px"
         justifyContent="flex-end"
-        height={{ md: '60px' }}
+        height="60px"
         alignItems="center"
         whiteSpace="nowrap"
       >
@@ -127,20 +131,28 @@ export const StakingPlan: FC<StakingPlanProps> = ({
                 isLoading={isSubscribeLoading}
                 size="md"
                 ml={5}
-                w="140px"
+                width="140px"
+                borderRadius="md"
               >
                 Prolong
               </Button>
             ) : null}
 
             {!isSubscribedToPlan && !isSuperPowered ? (
-              <Button onClick={handleSubscribe} isLoading={isSubscribeLoading} size="md" ml={5}>
+              <Button
+                onClick={handleSubscribe}
+                isLoading={isSubscribeLoading}
+                size="md"
+                ml={5}
+                width="140px"
+                borderRadius="md"
+              >
                 Activate
               </Button>
             ) : null}
 
             {isSubscribedToPlan && !isEnding ? (
-              <Text textStyle="textSansBold" mr="46px">
+              <Text textStyle="textSansBold" mr={{ sm: '10px', '2xl': '46px' }}>
                 Active
               </Text>
             ) : null}
@@ -185,7 +197,7 @@ export const StakingPlan: FC<StakingPlanProps> = ({
             </Flex>
             <Flex justifyContent="space-between" direction={{ sm: 'column', md: 'row' }}>
               <Box mb={{ sm: '16px', md: 'unset' }}>
-                <StakingParameter title="Your Stake">
+                <StakingParameter title="Your stake">
                   <Flex flexWrap="wrap">
                     <Box as="span" ml={2} mr={2}>
                       <span>{getReadableAmount(userStakeSav, { shortify: true })}</span> SAV
@@ -204,14 +216,17 @@ export const StakingPlan: FC<StakingPlanProps> = ({
 
           <Flex
             direction={{ sm: 'row', lg: 'column', xl: 'row', '2xl': 'column' }}
+            justifyContent="space-between"
             width={{ sm: '100%', lg: 'unset', xl: '100%', '2xl': 'unset' }}
             flex={{ '2xl': '0 0 140px' }}
             gap="15px"
           >
             <Button
               size="md"
-              width="100%"
               variant="outlined"
+              borderRadius="md"
+              boxShadow={buttonShadow}
+              width={buttonWidth}
               isDisabled={!isSubscribedToPlan || !isActive}
               onClick={onDeposit}
             >
@@ -219,8 +234,10 @@ export const StakingPlan: FC<StakingPlanProps> = ({
             </Button>
             <Button
               size="md"
-              width="100%"
               variant="outlined"
+              borderRadius="md"
+              boxShadow={buttonShadow}
+              width={buttonWidth}
               isLoading={isClaimLoading}
               isDisabled={!isClaimAvailable || isClaimLoading}
               onClick={handleClaim}

@@ -18,7 +18,7 @@ export const RaffleHeading = ({
   title: string;
   totalTickets: number;
 }) => {
-  const bp = useBreakpoint();
+  const bp = useBreakpoint({ ssr: false });
   const isSmallStatus = ['sm', 'md', 'lg'].includes(bp);
   const bgImage = bp === 'sm' ? tokensSmImage : bp === 'md' ? tokensMdImage : tokensImage;
 

@@ -147,16 +147,13 @@ export const useAllEvents = () => {
   const { address } = useAccount();
   const { getAllEvents } = useAvatarSettingsContract();
 
-  const { data, isLoading } = useQuery(
+  const eventsRequest = useQuery(
     [GET_ALL_EVENTS, { address }],
-    async () => {
-      const res = address ? await getAllEvents(address) : null;
-      return res;
-    },
-    { staleTime: 0, cacheTime: 0, refetchInterval: 10_000 }
+    async () => (address ? await getAllEvents(address) : []),
+    { staleTime: 0, cacheTime: 0, refetchInterval: 60_000, initialData: [], placeholderData: [] }
   );
 
-  return { events: data || [], isLoading };
+  return eventsRequest;
 };
 
 export const IS_BIRTHDAY_PRESENT_AVAILABLE = 'is-birthday-present-available';
@@ -218,9 +215,7 @@ export const useActivatePower = (powerId: number) => {
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: [GET_USER_POWERS] });
         queryClient.invalidateQueries({ queryKey: [GET_POWER_BALANCE] });
-        setTimeout(() => {
-          queryClient.invalidateQueries({ queryKey: [GET_ALL_EVENTS] });
-        }, 60_000);
+        queryClient.invalidateQueries({ queryKey: [GET_ALL_EVENTS] });
       },
       onError: (err) => {
         handleError(err);
@@ -291,10 +286,7 @@ export const useActivateAvatar = () => {
         queryClient.invalidateQueries({ queryKey: [GET_ACTIVE_AVATAR] });
         queryClient.invalidateQueries({ queryKey: [GET_NFT] });
         queryClient.invalidateQueries({ queryKey: [GET_USER_POWERS] });
-
-        setTimeout(() => {
-          queryClient.invalidateQueries({ queryKey: [GET_ALL_EVENTS] });
-        }, 60_000);
+        queryClient.invalidateQueries({ queryKey: [GET_ALL_EVENTS] });
       },
       onError: (err) => {
         handleError(err);
@@ -334,12 +326,9 @@ export const useDeactivateAvatar = () => {
         queryClient.invalidateQueries({ queryKey: [GET_ACTIVE_AVATAR] });
         queryClient.invalidateQueries({ queryKey: [GET_NFT] });
         queryClient.invalidateQueries({ queryKey: [GET_USER_POWERS] });
+        queryClient.invalidateQueries({ queryKey: [GET_ALL_EVENTS] });
 
         refetchAllowedNfts();
-
-        setTimeout(() => {
-          queryClient.invalidateQueries({ queryKey: [GET_ALL_EVENTS] });
-        }, 60_000);
       },
       onError: (err) => {
         handleError(err);
@@ -375,9 +364,7 @@ export const useTokenName = () => {
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: [GET_ACTIVE_AVATAR] });
         queryClient.invalidateQueries({ queryKey: [GET_AVATAR_METADATA] });
-        setTimeout(() => {
-          queryClient.invalidateQueries({ queryKey: [GET_ALL_EVENTS] });
-        }, 60_000);
+        queryClient.invalidateQueries({ queryKey: [GET_ALL_EVENTS] });
       },
       onError: (err) => {
         handleError(err);
@@ -413,9 +400,7 @@ export const useTokenTelegram = () => {
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: [GET_ACTIVE_AVATAR] });
         queryClient.invalidateQueries({ queryKey: [GET_AVATAR_METADATA] });
-        setTimeout(() => {
-          queryClient.invalidateQueries({ queryKey: [GET_ALL_EVENTS] });
-        }, 60_000);
+        queryClient.invalidateQueries({ queryKey: [GET_ALL_EVENTS] });
       },
       onError: (err) => {
         handleError(err);
@@ -464,9 +449,7 @@ export const useActivatePowerAccess = () => {
     {
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: [GET_ACTIVE_AVATAR] });
-        setTimeout(() => {
-          queryClient.invalidateQueries({ queryKey: [GET_ALL_EVENTS] });
-        }, 60_000);
+        queryClient.invalidateQueries({ queryKey: [GET_ALL_EVENTS] });
       },
       onError: (err) => {
         handleError(err);
@@ -501,9 +484,7 @@ export const useClaimBirthdayPresent = () => {
     {
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: [IS_BIRTHDAY_PRESENT_AVAILABLE] });
-        setTimeout(() => {
-          queryClient.invalidateQueries({ queryKey: [GET_ALL_EVENTS] });
-        }, 60_000);
+        queryClient.invalidateQueries({ queryKey: [GET_ALL_EVENTS] });
       },
       onError: (err) => {
         handleError(err);

@@ -132,7 +132,12 @@ export const ReferralInfo: FC<ReferralInfoProps> = ({ isPageView }) => {
 
   return (
     <Container variant="dashboard" paddingX={{ sm: '10px', md: 'unset' }}>
-      <Flex direction={{ sm: 'column', xl: 'row' }} justifyContent="space-between" gap={5}>
+      <Flex
+        direction={{ sm: 'column', xl: 'row' }}
+        justifyContent="space-between"
+        gap={5}
+        paddingX={{ md: '10px', lg: 'unset' }}
+      >
         <Box width={{ sm: '100%', xl: '60%' }}>
           <Text textStyle="sectionHeading" mb="20px">
             Build a team

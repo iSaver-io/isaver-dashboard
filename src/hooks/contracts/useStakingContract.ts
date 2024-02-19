@@ -2,7 +2,7 @@ import EthDater from 'ethereum-block-by-date';
 import { BigNumber, BigNumberish, ethers } from 'ethers';
 import { useContract, useProvider, useSigner } from 'wagmi';
 
-import { FROM_BLOCK } from '@/constants';
+import { FROM_BLOCK, FROM_BLOCK_EPISODE_2 } from '@/constants';
 import { Staking } from '@/types.common';
 import { queryThrowBlocks } from '@/utils/queryThrowBlocks';
 import { waitForTransaction } from '@/utils/waitForTransaction';
@@ -129,7 +129,7 @@ export const useStakingContract = () => {
 
     const fetchEvents = (from: number, to: number) => contract.queryFilter(filter, from, to);
 
-    return await queryThrowBlocks(fetchEvents, { fromBlock: FROM_BLOCK, toBlock });
+    return await queryThrowBlocks(fetchEvents, { fromBlock: FROM_BLOCK_EPISODE_2, toBlock });
   };
 
   const getAllClaims = async () => {

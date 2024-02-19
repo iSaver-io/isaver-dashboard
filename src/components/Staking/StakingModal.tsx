@@ -51,6 +51,7 @@ type StakingModalProps = {
   tokens?: TOKENS[];
   lockPeriodDays?: BigNumberish;
   apr: number | string;
+  highlightApr?: boolean;
   isLoading?: boolean;
   isPageView?: boolean;
   onStake: (token: TOKENS, amount: number) => void;
@@ -61,6 +62,7 @@ export const StakingModal: FC<StakingModalProps> = ({
   lockPeriodDays,
   isLoading,
   isPageView,
+  highlightApr,
   apr,
   onStake,
   onClose,
@@ -140,10 +142,10 @@ export const StakingModal: FC<StakingModalProps> = ({
 
   const rewards = useMemo(
     () =>
-      !isGreaterThanMax
+      !isGreaterThanMax && lockPeriodDays
         ? calculateStakeProfitByAPR({
             amount: amount || 0,
-            periodDays: lockPeriodDays || 365,
+            periodDays: lockPeriodDays,
             apr,
           })
         : 0,
@@ -159,10 +161,11 @@ export const StakingModal: FC<StakingModalProps> = ({
             <MenuButton
               as={ChButton}
               variant="transparent"
-              rightIcon={<ChevronDownIcon />}
+              rightIcon={tokens.length > 1 ? <ChevronDownIcon /> : undefined}
               padding={0}
               textStyle="textBold"
               fontSize={26}
+              _hover={{ cursor: tokens.length < 2 ? 'default' : 'pointer' }}
             >
               <Flex alignItems="center">
                 <Box width="40px">{token === TOKENS.SAV ? <SavIcon /> : <SavrIcon />}</Box>
@@ -171,16 +174,18 @@ export const StakingModal: FC<StakingModalProps> = ({
                 </span>
               </Flex>
             </MenuButton>
-            <MenuList>
-              {tokens.map((token) => (
-                <MenuItem onClick={() => handleTokenChange(token)} key={token}>
-                  <Box mr="4px">
-                    {token == TOKENS.SAV ? <SavIcon width="24px" /> : <SavrIcon width="24px" />}
-                  </Box>
-                  <span>Stake {token == TOKENS.SAV ? 'SAV' : 'SAVR'}</span>
-                </MenuItem>
-              ))}
-            </MenuList>
+            {tokens.length > 1 ? (
+              <MenuList>
+                {tokens.map((token) => (
+                  <MenuItem onClick={() => handleTokenChange(token)} key={token}>
+                    <Box mr="4px">
+                      {token == TOKENS.SAV ? <SavIcon width="24px" /> : <SavrIcon width="24px" />}
+                    </Box>
+                    <span>Stake {token == TOKENS.SAV ? 'SAV' : 'SAVR'}</span>
+                  </MenuItem>
+                ))}
+              </MenuList>
+            ) : null}
           </Menu>
           <CloseButton onClick={onClose} size="lg" />
         </ModalHeader>
@@ -203,18 +208,20 @@ export const StakingModal: FC<StakingModalProps> = ({
               {getReadableDuration(lockPeriodDays)}
             </Box>
           ) : null}
-          <Box {...boxCommonStyles} mb={5}>
+          <Box {...boxCommonStyles} mb={5} color={highlightApr ? 'green.100' : 'white'}>
             {lockPeriodDays ? 'APR' : 'APY'}
             <Spacer />
             {apr}%
           </Box>
-          <Box {...boxCommonStyles} mb={10}>
-            Your rewards {!lockPeriodDays ? '(1 year)' : ''}
-            <Spacer />
-            <>
-              {bigNumberToString(rewards)} {lockPeriodDays ? 'SAV' : 'SAVR'}
-            </>
-          </Box>
+          {lockPeriodDays ? (
+            <Box {...boxCommonStyles} mb={10}>
+              Your rewards {!lockPeriodDays ? '(1 year)' : ''}
+              <Spacer />
+              <>
+                {bigNumberToString(rewards)} {lockPeriodDays ? 'SAV' : 'SAVR'}
+              </>
+            </Box>
+          ) : null}
 
           <Box {...boxCommonStyles} p={5}>
             <Checkbox

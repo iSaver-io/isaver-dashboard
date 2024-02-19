@@ -1,4 +1,12 @@
-import { Flex, Popover, PopoverBody, PopoverContent, PopoverTrigger } from '@chakra-ui/react';
+import {
+  Button,
+  Flex,
+  Popover,
+  PopoverBody,
+  PopoverContent,
+  PopoverTrigger,
+  useBreakpoint,
+} from '@chakra-ui/react';
 
 type TipProps = {
   text: string;
@@ -6,10 +14,15 @@ type TipProps = {
   append?: JSX.Element;
 };
 export const Tip = ({ text, width, append }: TipProps) => {
+  const bp = useBreakpoint({ ssr: false });
+  const isSm = ['sm', 'md'].includes(bp);
+
   return (
-    <Popover trigger="hover" placement="top">
+    <Popover trigger={isSm ? 'click' : 'hover'} placement="top">
       <PopoverTrigger>
-        <Flex
+        <Button
+          padding="0"
+          minW="unset"
           cursor="pointer"
           w="17px"
           h="17px"
@@ -18,11 +31,17 @@ export const Tip = ({ text, width, append }: TipProps) => {
           alignItems="center"
           justifyContent="center"
           fontSize="12px"
+          textTransform="lowercase"
         >
           i
-        </Flex>
+        </Button>
       </PopoverTrigger>
-      <PopoverContent bgColor="gray.200" padding="20px" width={width}>
+      <PopoverContent
+        bgColor="gray.200"
+        padding="20px"
+        width={width}
+        _focusVisible={{ outline: 'unset' }}
+      >
         <PopoverBody color="white" padding="0" fontSize="12px">
           {text}
 

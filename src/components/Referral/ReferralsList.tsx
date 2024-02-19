@@ -85,8 +85,11 @@ export const ReferralsList = () => {
     [levels, refCount]
   );
   const totalReferrals = useMemo(
-    () => refCount.reduce((acc, count) => acc + count.toNumber(), 0),
-    [refCount]
+    () =>
+      refCount
+        .slice(0, hasActivatedPowerA.data ? 15 : 10)
+        .reduce((acc, count) => acc + count.toNumber(), 0),
+    [refCount, hasActivatedPowerA.data]
   );
 
   const filteredReferrals = useMemo(
