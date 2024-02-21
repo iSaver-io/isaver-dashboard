@@ -154,7 +154,7 @@ export const ReferralSubscriptionModal: FC<ReferralSubscriptionModalProps> = ({
                   disabled={isFullLoading || isLevelLoading}
                   onSubscribe={openPowersInfo}
                   labelAppend={
-                    hasActivePowerA.data ? (
+                    !hasActivePowerA.data ? (
                       <Tip text="Your Levels 11-15 will become active once you activate Levels 1-10" />
                     ) : undefined
                   }
@@ -224,7 +224,7 @@ const SubscriptionLevel: FC<SubscriptionLevelProps> = ({
           alignItems="flex-start"
           justifyContent="space-between"
         >
-          <Text textStyle="textSansBold" textOverflow="ellipsis">
+          <Text textStyle="textSansBold" textOverflow="ellipsis" whiteSpace="nowrap">
             {price ? `${getReadableAmount(price, { precision: 0 })} SAV` : priceString} /{' '}
             {getReadableDuration(duration)}
           </Text>
@@ -239,17 +239,24 @@ const SubscriptionLevel: FC<SubscriptionLevelProps> = ({
           ) : null}
         </Flex>
         {!isActive && onSubscribe ? (
-          <Button onClick={onSubscribe} isLoading={isLoading} isDisabled={disabled || isLoading}>
+          <Button
+            size={{ sm: 'sm', md: 'unset' }}
+            height={{ sm: '100%', md: 'unset' }}
+            isLoading={isLoading}
+            isDisabled={disabled || isLoading}
+            onClick={onSubscribe}
+          >
             Activate
           </Button>
         ) : null}
         {isEnding && onSubscribe ? (
           <Button
             variant="outlinedWhite"
-            onClick={onSubscribe}
+            size={{ sm: 'sm', md: 'unset' }}
+            height={{ sm: '100%', md: 'unset' }}
             isLoading={isLoading}
-            size={{ sm: 'md', md: 'lg' }}
             isDisabled={disabled || isLoading}
+            onClick={onSubscribe}
           >
             Prolong
           </Button>

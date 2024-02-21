@@ -18,6 +18,7 @@ import {
   ModalOverlay,
   Spacer,
   Text,
+  useBreakpoint,
 } from '@chakra-ui/react';
 import { BigNumberish, ethers } from 'ethers';
 import { useAccount } from 'wagmi';
@@ -81,6 +82,7 @@ export const StakingModal: FC<StakingModalProps> = ({
     actionGroup: 'interactions',
   });
   const debouncedLogger = useDebounce(logger);
+  const bp = useBreakpoint({ ssr: false });
 
   const balance = token === TOKENS.SAV ? savBalance : savrBalance;
 
@@ -152,8 +154,10 @@ export const StakingModal: FC<StakingModalProps> = ({
     [isGreaterThanMax, amount, lockPeriodDays, apr]
   );
 
+  const isSm = ['sm', 'md'].includes(bp);
+
   return (
-    <Modal isCentered isOpen={true} onClose={onClose}>
+    <Modal isCentered={!isSm} isOpen={true} onClose={onClose}>
       <ModalOverlay />
       <ModalContent>
         <ModalHeader textStyle="textSansBold" fontSize={26}>
@@ -208,18 +212,18 @@ export const StakingModal: FC<StakingModalProps> = ({
               {getReadableDuration(lockPeriodDays)}
             </Box>
           ) : null}
-          <Box {...boxCommonStyles} mb={5} color={highlightApr ? 'green.100' : 'white'}>
+          <Box {...boxCommonStyles} mb={5}>
             {lockPeriodDays ? 'APR' : 'APY'}
             <Spacer />
-            {apr}%
+            <Box as="span" color={highlightApr ? 'green.100' : 'white'}>
+              {apr}%
+            </Box>
           </Box>
           {lockPeriodDays ? (
             <Box {...boxCommonStyles} mb={10}>
-              Your rewards {!lockPeriodDays ? '(1 year)' : ''}
+              Your rewards
               <Spacer />
-              <>
-                {bigNumberToString(rewards)} {lockPeriodDays ? 'SAV' : 'SAVR'}
-              </>
+              <>{bigNumberToString(rewards)} SAV</>
             </Box>
           ) : null}
 

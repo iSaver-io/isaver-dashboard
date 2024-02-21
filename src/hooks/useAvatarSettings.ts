@@ -71,15 +71,14 @@ export const usePowerActivationFee = () => {
 export const GET_ACTIVE_AVATAR = 'get-active-avatar';
 export const useActiveAvatar = () => {
   const { getActiveAvatar } = useAvatarSettingsContract();
-  const { address } = useAccount();
+  const { address, isConnected } = useAccount();
 
-  const { data, isLoading } = useQuery(
+  const { data, isLoading, isFetching } = useQuery(
     [GET_ACTIVE_AVATAR, { address }],
     async () => (address ? await getActiveAvatar(address) : null),
     {
-      cacheTime: 0,
-      staleTime: 0,
-      enabled: Boolean(address),
+      enabled: Boolean(isConnected),
+      retry: true,
     }
   );
 
@@ -92,6 +91,7 @@ export const useActiveAvatar = () => {
       isPowersAllowed: data?.isPowersAllowed || Boolean(data?.[3]),
     },
     isLoading,
+    isFetching,
     hasAvatar: Boolean(data) && data?.['0'] !== ethers.constants.AddressZero,
   };
 };
@@ -101,7 +101,7 @@ export const useAvatarMetadata = () => {
   const { data: signer } = useSigner();
   const provider = useProvider();
   const { activeAvatar, hasAvatar } = useActiveAvatar();
-  const { address } = useAccount();
+  const { address, isConnected } = useAccount();
 
   const { data, isLoading } = useQuery(
     [GET_AVATAR_METADATA, activeAvatar, { address }],
@@ -121,7 +121,7 @@ export const useAvatarMetadata = () => {
 
       return JSON.parse(atob(base64String));
     },
-    { enabled: hasAvatar, staleTime: 0, cacheTime: 0 }
+    { enabled: isConnected && hasAvatar, staleTime: 0, cacheTime: 0, retry: true }
   );
 
   const metadata = useMemo(() => {

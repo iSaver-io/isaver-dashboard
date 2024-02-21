@@ -39,7 +39,8 @@ export const Tip = ({ text, width, append }: TipProps) => {
       <PopoverContent
         bgColor="gray.200"
         padding="20px"
-        width={width}
+        margin="0 15px"
+        maxWidth="290px"
         _focusVisible={{ outline: 'unset' }}
       >
         <PopoverBody color="white" padding="0" fontSize="12px">
