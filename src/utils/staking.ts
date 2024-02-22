@@ -27,7 +27,10 @@ export const calculateStakeProfitByAPR = (stake: {
   periodDays: BigNumberish;
 }) => {
   const amountBN = makeBigNumber(stake.amount);
-  // Repeat the same logic as in contract (Staking -> calculateStakeProfit). For the same precision reason
-  const profit = amountBN.mul(stake.apr).div(365).mul(stake.periodDays).div(100);
+  // Outdated: Repeat the same logic as in contract (Staking -> calculateStakeProfit). For the same precision reason
+  // const profit = amountBN.mul(stake.apr).div(365).mul(stake.periodDays).div(100);
+
+  // Not the same logic as in contract, better precision
+  const profit = amountBN.mul(stake.apr).mul(stake.periodDays).div(365).div(100);
   return profit;
 };

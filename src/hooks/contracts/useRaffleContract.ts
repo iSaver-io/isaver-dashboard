@@ -90,6 +90,10 @@ export const useRaffleContract = () => {
     return waitForTransaction(tx);
   };
 
+  const extraTicketsPowerD = async () => {
+    return await contract.extraTicketsPowerD();
+  };
+
   const claimDay = async () => {
     const tx = await contract.claimDay();
     return waitForTransaction(tx);
@@ -103,6 +107,11 @@ export const useRaffleContract = () => {
   // Administration
   const updateTicketPrice = async (price: BigNumber) => {
     const tx = await contract.updateTicketPrice(price);
+    return waitForTransaction(tx);
+  };
+
+  const updateExtraTicketsPowerD = async (amount: number) => {
+    const tx = await contract.updateExtraTicketsPowerD(amount);
     return waitForTransaction(tx);
   };
 
@@ -154,11 +163,13 @@ export const useRaffleContract = () => {
     getLastClaimTime,
     isMintAvailable,
 
+    extraTicketsPowerD,
     entryRaffle,
     buyTickets,
     claimDay,
     mintMyTicket,
 
+    updateExtraTicketsPowerD,
     updateTicketPrice,
     finishRaffleRound,
     getWinnersFromOracleRandom,

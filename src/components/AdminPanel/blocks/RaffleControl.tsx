@@ -5,13 +5,12 @@ import { AddRaffleRound } from '@/components/AdminPanel/common/AddRaffleRound';
 import { AdminSection } from '@/components/AdminPanel/common/AdminSection';
 import { RaffleStatus } from '@/components/Raffle/RaffleStatus';
 import { Button } from '@/components/ui/Button/Button';
-import { useRaffleControl } from '@/hooks/raffle/useRaffle';
+import { useRaffleControl, useTicketPrice } from '@/hooks/raffle/useRaffle';
 import { RaffleStatusEnum } from '@/utils/formatters/raffle';
 import { getLocalDateTimeString, getStampsFromDuration } from '@/utils/time';
 
 export const RaffleControl = () => {
   const {
-    ticketPriceRequest,
     roundsRequest,
     isRafflesDataLoading,
     raffleRounds,
@@ -19,6 +18,7 @@ export const RaffleControl = () => {
     getWinnersFromOracleRandom,
     createRaffleRound,
   } = useRaffleControl();
+  const { ticketPriceRequest } = useTicketPrice();
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   return (

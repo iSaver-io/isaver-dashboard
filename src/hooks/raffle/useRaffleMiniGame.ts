@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useAccount } from 'wagmi';
 
 import { useRaffleContract } from '@/hooks/contracts/useRaffleContract';
+import { useUserPowers } from '@/hooks/useAvatarSettings';
 import { useNotification } from '@/hooks/useNotification';
 
 import { TICKET_BALANCE_REQUEST } from './useRaffle';
@@ -11,6 +12,7 @@ const RAFFLE_IS_CLAIMED_TODAY_REQUEST = 'raffle-is-claimed-today-request';
 const RAFFLE_GET_LAST_CLAIM_REQUEST = 'raffle-get-last-claim-request';
 const RAFFLE_CLAIM_STREAK_REQUEST = 'raffle-claim-streak-request';
 const RAFFLE_IS_MINT_AVAILABLE_REQUEST = 'raffle-is-mint-available-request';
+export const EXTRA_TICKETS_POWER_D_REQUEST = 'extra-tickets-power-d-request';
 const CLAIM_DAY_MUTATION = 'claim-day-mutation';
 const MINT_TICKET_MUTATION = 'mint-ticket-mutation';
 
@@ -20,6 +22,13 @@ export const useRaffleMiniGame = () => {
   const queryClient = useQueryClient();
   const raffleContract = useRaffleContract();
   const { success, handleError } = useNotification();
+  const { isActive: isPowerDActive } = useUserPowers(3); // power D
+
+  const extraTicketsPowerD = useQuery(
+    [EXTRA_TICKETS_POWER_D_REQUEST],
+    () => raffleContract.extraTicketsPowerD(),
+    { select: (data) => data.toNumber() }
+  );
 
   const claimPeriod = useQuery(
     [RAFFLE_CLAIM_PERIOD_REQUEST],
@@ -102,5 +111,8 @@ export const useRaffleMiniGame = () => {
 
     claimDay,
     mintMyTicket,
+
+    extraTicketsPowerD,
+    isPowerDActive,
   };
 };

@@ -16,8 +16,13 @@ import { BigNumberish } from 'ethers';
 import { ReactComponent as CheckIcon } from '@/assets/images/icons/check.svg';
 import { Button } from '@/components/ui/Button/Button';
 import { CenteredSpinner } from '@/components/ui/CenteredSpinner/CenteredSpinner';
-import { REFERRAL_SUBSCRIPTION_ENDING_NOTIFICATION } from '@/hooks/referral/useReferralManager';
+import { Tip } from '@/components/ui/Tip/Tip';
+import {
+  REFERRAL_SUBSCRIPTION_ENDING_NOTIFICATION,
+  useUserReferralSubscription,
+} from '@/hooks/referral/useReferralManager';
 import { useLogger } from '@/hooks/useLogger';
+import { useNavigateByHash } from '@/hooks/useNavigateByHash';
 import { bigNumberToString, getReadableAmount } from '@/utils/number';
 import { getLocalDateString, getReadableDuration } from '@/utils/time';
 
@@ -61,6 +66,8 @@ export const ReferralSubscriptionModal: FC<ReferralSubscriptionModalProps> = ({
     buttonLocation: 'popup',
     actionGroup: 'conversions',
   });
+  const navigate = useNavigateByHash();
+  const { statusPowerA, hasActivePowerA } = useUserReferralSubscription();
 
   const handleSubscribeToFull = useCallback(async () => {
     logger({ value: bigNumberToString(fullSubscriptionCost), content: 'all' });
@@ -81,6 +88,11 @@ export const ReferralSubscriptionModal: FC<ReferralSubscriptionModalProps> = ({
     [onLevelSubscribe, setLevelLoading, logger, levelSubscriptionCost]
   );
 
+  const openPowersInfo = useCallback(async () => {
+    onClose();
+    navigate('/avatar-settings#powers');
+  }, [onClose, navigate]);
+
   const isLevelLoading = levelLoading !== undefined;
 
   return (
@@ -88,7 +100,7 @@ export const ReferralSubscriptionModal: FC<ReferralSubscriptionModalProps> = ({
       <ModalOverlay />
       <ModalContent position="relative">
         <ModalHeader textStyle="textSansBold">
-          <Text textStyle="textSansBold" fontSize="26px">
+          <Text textStyle="textSansBold" fontSize={{ md: '26px' }}>
             Activation Build A Team
           </Text>
           <CloseButton onClick={onClose} size="lg" />
@@ -130,6 +142,25 @@ export const ReferralSubscriptionModal: FC<ReferralSubscriptionModalProps> = ({
                 </Box>
               ))}
             </Box>
+
+            {statusPowerA.isActive ? (
+              <Box mt="30px">
+                <SubscriptionLevel
+                  title="11-15 Levels"
+                  priceString="Power A"
+                  duration={subscriptionDuration}
+                  subscriptionTill={statusPowerA.power}
+                  isStatusActive={hasActivePowerA.data}
+                  disabled={isFullLoading || isLevelLoading}
+                  onSubscribe={openPowersInfo}
+                  labelAppend={
+                    !hasActivePowerA.data ? (
+                      <Tip text="Your Levels 11-15 will become active once you activate Levels 1-10" />
+                    ) : undefined
+                  }
+                />
+              </Box>
+            ) : null}
           </Box>
         </ModalBody>
       </ModalContent>
@@ -139,21 +170,27 @@ export const ReferralSubscriptionModal: FC<ReferralSubscriptionModalProps> = ({
 
 type SubscriptionLevelProps = {
   title: string;
-  price: BigNumberish;
+  price?: BigNumberish;
+  priceString?: string;
   duration: number;
   subscriptionTill: number;
-  isLoading: boolean;
+  isStatusActive?: boolean;
+  isLoading?: boolean;
   disabled: boolean;
-  onSubscribe: () => Promise<void>;
+  labelAppend?: JSX.Element;
+  onSubscribe?: () => Promise<void>;
 };
 const SubscriptionLevel: FC<SubscriptionLevelProps> = ({
   price,
+  priceString,
   duration,
   title,
   subscriptionTill,
   isLoading,
+  isStatusActive,
   disabled,
   onSubscribe,
+  labelAppend,
 }) => {
   const currentTime = Date.now() / 1000;
   const isActive = subscriptionTill > currentTime;
@@ -165,28 +202,35 @@ const SubscriptionLevel: FC<SubscriptionLevelProps> = ({
       <Flex alignItems="center" mb="10px">
         <Text textStyle="textSansBold">{title}</Text>
         {isActive ? (
-          <Box color="green.400" width="16px" ml="5px">
+          <Box
+            color={isStatusActive === undefined || isStatusActive ? 'green.400' : 'gray.200'}
+            width="16px"
+            ml="5px"
+          >
             <CheckIcon />
           </Box>
         ) : null}
+        {labelAppend ? <Box ml="5px">{labelAppend}</Box> : null}
       </Flex>
 
-      <Flex>
+      <Flex alignItems="center" justifyContent="space-between">
         <Flex
+          flexDir="column"
           bgColor="bgGreen.800"
-          p="13px 20px"
+          p={{ sm: '13px 16px', md: '13px 20px' }}
           borderRadius="sm"
-          mr={isActive ? '0px' : '10px'}
+          mr={isActive && !isEnding ? '0px' : '10px'}
           flexGrow="1"
-          alignItems="center"
+          alignItems="flex-start"
           justifyContent="space-between"
         >
-          <Text textStyle="textSansBold" textOverflow="ellipsis">
-            {getReadableAmount(price, { precision: 0 })} SAV / {getReadableDuration(duration)}
+          <Text textStyle="textSansBold" textOverflow="ellipsis" whiteSpace="nowrap">
+            {price ? `${getReadableAmount(price, { precision: 0 })} SAV` : priceString} /{' '}
+            {getReadableDuration(duration)}
           </Text>
           {isActive ? (
             <>
-              <Divider orientation="vertical" ml="auto" mr="15px" />
+              <Divider orientation="horizontal" ml="auto" mr="15px" my="10px" />
               <Text textStyle="textSansExtraSmall">
                 {isEnding ? '' : 'to '}
                 {getLocalDateString(subscriptionTill)}
@@ -194,17 +238,25 @@ const SubscriptionLevel: FC<SubscriptionLevelProps> = ({
             </>
           ) : null}
         </Flex>
-        {!isActive ? (
-          <Button onClick={onSubscribe} isLoading={isLoading} isDisabled={disabled || isLoading}>
+        {!isActive && onSubscribe ? (
+          <Button
+            size={{ sm: 'sm', md: 'unset' }}
+            height={{ sm: '100%', md: 'unset' }}
+            isLoading={isLoading}
+            isDisabled={disabled || isLoading}
+            onClick={onSubscribe}
+          >
             Activate
           </Button>
         ) : null}
-        {isEnding ? (
+        {isEnding && onSubscribe ? (
           <Button
             variant="outlinedWhite"
-            onClick={onSubscribe}
+            size={{ sm: 'sm', md: 'unset' }}
+            height={{ sm: '100%', md: 'unset' }}
             isLoading={isLoading}
             isDisabled={disabled || isLoading}
+            onClick={onSubscribe}
           >
             Prolong
           </Button>

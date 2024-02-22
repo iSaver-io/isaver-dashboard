@@ -71,15 +71,14 @@ export const usePowerActivationFee = () => {
 export const GET_ACTIVE_AVATAR = 'get-active-avatar';
 export const useActiveAvatar = () => {
   const { getActiveAvatar } = useAvatarSettingsContract();
-  const { address } = useAccount();
+  const { address, isConnected } = useAccount();
 
-  const { data, isLoading } = useQuery(
+  const { data, isLoading, isFetching } = useQuery(
     [GET_ACTIVE_AVATAR, { address }],
     async () => (address ? await getActiveAvatar(address) : null),
     {
-      cacheTime: 0,
-      staleTime: 0,
-      enabled: Boolean(address),
+      enabled: Boolean(isConnected),
+      retry: true,
     }
   );
 
@@ -92,6 +91,7 @@ export const useActiveAvatar = () => {
       isPowersAllowed: data?.isPowersAllowed || Boolean(data?.[3]),
     },
     isLoading,
+    isFetching,
     hasAvatar: Boolean(data) && data?.['0'] !== ethers.constants.AddressZero,
   };
 };
@@ -101,7 +101,7 @@ export const useAvatarMetadata = () => {
   const { data: signer } = useSigner();
   const provider = useProvider();
   const { activeAvatar, hasAvatar } = useActiveAvatar();
-  const { address } = useAccount();
+  const { address, isConnected } = useAccount();
 
   const { data, isLoading } = useQuery(
     [GET_AVATAR_METADATA, activeAvatar, { address }],
@@ -121,7 +121,7 @@ export const useAvatarMetadata = () => {
 
       return JSON.parse(atob(base64String));
     },
-    { enabled: hasAvatar, staleTime: 0, cacheTime: 0 }
+    { enabled: isConnected && hasAvatar, staleTime: 0, cacheTime: 0, retry: true }
   );
 
   const metadata = useMemo(() => {
@@ -147,25 +147,22 @@ export const useAllEvents = () => {
   const { address } = useAccount();
   const { getAllEvents } = useAvatarSettingsContract();
 
-  const { data, isLoading } = useQuery(
+  const eventsRequest = useQuery(
     [GET_ALL_EVENTS, { address }],
-    async () => {
-      const res = address ? await getAllEvents(address) : null;
-      return res;
-    },
-    { staleTime: 0, cacheTime: 0, refetchInterval: 10_000 }
+    async () => (address ? await getAllEvents(address) : []),
+    { staleTime: 0, cacheTime: 0, refetchInterval: 60_000, initialData: [], placeholderData: [] }
   );
 
-  return { events: data || [], isLoading };
+  return eventsRequest;
 };
 
-export const IS_BIRTHDAY_PRIZE_AVAILABLE = 'is-birthday-prize-available';
-export const useIsBirthdayPrizeAvailable = (tokenId?: BigNumberish) => {
-  const { isBirthdayPrizeAvailable } = useAvatarSettingsContract();
+export const IS_BIRTHDAY_PRESENT_AVAILABLE = 'is-birthday-present-available';
+export const useIsBirthdayPresentAvailable = (tokenId?: BigNumberish) => {
+  const { isBirthdayPresentAvailable } = useAvatarSettingsContract();
 
   const queryResult = useQuery<Boolean>(
-    [GET_APPROVED_COLLECTIONS, { tokenId }],
-    async () => (tokenId !== undefined ? await isBirthdayPrizeAvailable(tokenId!) : false),
+    [IS_BIRTHDAY_PRESENT_AVAILABLE, { tokenId }],
+    async () => (tokenId !== undefined ? await isBirthdayPresentAvailable(tokenId!) : false),
     {
       cacheTime: 0,
       staleTime: 0,
@@ -218,9 +215,7 @@ export const useActivatePower = (powerId: number) => {
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: [GET_USER_POWERS] });
         queryClient.invalidateQueries({ queryKey: [GET_POWER_BALANCE] });
-        setTimeout(() => {
-          queryClient.invalidateQueries({ queryKey: [GET_ALL_EVENTS] });
-        }, 60_000);
+        queryClient.invalidateQueries({ queryKey: [GET_ALL_EVENTS] });
       },
       onError: (err) => {
         handleError(err);
@@ -291,10 +286,7 @@ export const useActivateAvatar = () => {
         queryClient.invalidateQueries({ queryKey: [GET_ACTIVE_AVATAR] });
         queryClient.invalidateQueries({ queryKey: [GET_NFT] });
         queryClient.invalidateQueries({ queryKey: [GET_USER_POWERS] });
-
-        setTimeout(() => {
-          queryClient.invalidateQueries({ queryKey: [GET_ALL_EVENTS] });
-        }, 60_000);
+        queryClient.invalidateQueries({ queryKey: [GET_ALL_EVENTS] });
       },
       onError: (err) => {
         handleError(err);
@@ -334,12 +326,9 @@ export const useDeactivateAvatar = () => {
         queryClient.invalidateQueries({ queryKey: [GET_ACTIVE_AVATAR] });
         queryClient.invalidateQueries({ queryKey: [GET_NFT] });
         queryClient.invalidateQueries({ queryKey: [GET_USER_POWERS] });
+        queryClient.invalidateQueries({ queryKey: [GET_ALL_EVENTS] });
 
         refetchAllowedNfts();
-
-        setTimeout(() => {
-          queryClient.invalidateQueries({ queryKey: [GET_ALL_EVENTS] });
-        }, 60_000);
       },
       onError: (err) => {
         handleError(err);
@@ -375,9 +364,7 @@ export const useTokenName = () => {
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: [GET_ACTIVE_AVATAR] });
         queryClient.invalidateQueries({ queryKey: [GET_AVATAR_METADATA] });
-        setTimeout(() => {
-          queryClient.invalidateQueries({ queryKey: [GET_ALL_EVENTS] });
-        }, 60_000);
+        queryClient.invalidateQueries({ queryKey: [GET_ALL_EVENTS] });
       },
       onError: (err) => {
         handleError(err);
@@ -413,9 +400,7 @@ export const useTokenTelegram = () => {
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: [GET_ACTIVE_AVATAR] });
         queryClient.invalidateQueries({ queryKey: [GET_AVATAR_METADATA] });
-        setTimeout(() => {
-          queryClient.invalidateQueries({ queryKey: [GET_ALL_EVENTS] });
-        }, 60_000);
+        queryClient.invalidateQueries({ queryKey: [GET_ALL_EVENTS] });
       },
       onError: (err) => {
         handleError(err);
@@ -464,9 +449,7 @@ export const useActivatePowerAccess = () => {
     {
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: [GET_ACTIVE_AVATAR] });
-        setTimeout(() => {
-          queryClient.invalidateQueries({ queryKey: [GET_ALL_EVENTS] });
-        }, 60_000);
+        queryClient.invalidateQueries({ queryKey: [GET_ALL_EVENTS] });
       },
       onError: (err) => {
         handleError(err);
@@ -475,23 +458,23 @@ export const useActivatePowerAccess = () => {
   );
 };
 
-export const CLAIM_PRIZE = 'claim-prize';
-export const useClaimPrize = () => {
-  const { claimPrize } = useAvatarSettingsContract();
+export const CLAIM_PRESENT = 'claim-present';
+export const useClaimBirthdayPresent = () => {
+  const { claimBirthdayPresent } = useAvatarSettingsContract();
   const { address: account } = useAccount();
   const { connect } = useConnectWallet();
   const { success, handleError } = useNotification();
   const queryClient = useQueryClient();
 
   return useMutation(
-    [CLAIM_PRIZE],
+    [CLAIM_PRESENT],
     async () => {
       if (!account) {
         connect();
         return;
       }
 
-      const txHash = await claimPrize();
+      const txHash = await claimBirthdayPresent();
       success({
         title: 'Success',
         description: "You have claimed Avatar's birthday present", // eslint-disable-line
@@ -500,10 +483,8 @@ export const useClaimPrize = () => {
     },
     {
       onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: [IS_BIRTHDAY_PRIZE_AVAILABLE] });
-        setTimeout(() => {
-          queryClient.invalidateQueries({ queryKey: [GET_ALL_EVENTS] });
-        }, 60_000);
+        queryClient.invalidateQueries({ queryKey: [IS_BIRTHDAY_PRESENT_AVAILABLE] });
+        queryClient.invalidateQueries({ queryKey: [GET_ALL_EVENTS] });
       },
       onError: (err) => {
         handleError(err);

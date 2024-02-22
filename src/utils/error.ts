@@ -41,13 +41,13 @@ export function tryToGetErrorData(error: any):
     return { title: 'Failed', description: 'This address cannot be the leader' };
   }
 
-  if (message.includes('Not enough tokens in pool')) {
+  if (message.includes('Not enough tokens in contract')) {
     return {
       title: 'Failed',
       description: 'There are not enough funds in the pool',
     };
   }
-  if (message.includes('Not enough tokens in exchange pool')) {
+  if (message.includes('Not enough tokens in exchange contract')) {
     return {
       title: 'Failed',
       description: 'There are not enough funds in the pool for exchange',

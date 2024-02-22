@@ -31,9 +31,10 @@ const COLLAPSED_LIMIT = 6;
 
 export const HistoryTable = () => {
   const { hasAvatar } = useActiveAvatarNFT();
-  const { events, isLoading } = useAllEvents();
+  const { data: events, isFetching, isFetched } = useAllEvents();
   const { isOpen, onToggle } = useDisclosure();
   const { chain } = useNetwork();
+  const isLoading = isFetching && !isFetched;
 
   const { sortedData, currentSortField, currentSortType, onSort } = useDataSorting(
     events,

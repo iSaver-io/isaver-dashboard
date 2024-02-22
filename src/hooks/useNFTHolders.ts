@@ -75,7 +75,7 @@ export const useAllowedNFTsForOwner = () => {
 
 export const GET_NFT = 'get-nft';
 export const useActiveAvatarNFT = () => {
-  const { address } = useAccount();
+  const { address, isConnected } = useAccount();
   const { activeAvatar, hasAvatar } = useActiveAvatar();
 
   const tokenId = activeAvatar?.tokenId;
@@ -93,7 +93,7 @@ export const useActiveAvatarNFT = () => {
     {
       cacheTime: 0,
       staleTime: 0,
-      enabled: hasAvatar,
+      enabled: isConnected && hasAvatar,
     }
   );
 

@@ -21,9 +21,9 @@ import type {
 
 export interface IContractManagerInterface extends utils.Interface {
   functions: {
+    "getAvatarSettings()": FunctionFragment;
     "getAvatarsAddress()": FunctionFragment;
     "getBirthdayPrizesPool()": FunctionFragment;
-    "getMomentoPrizesPool()": FunctionFragment;
     "getPowersAddress()": FunctionFragment;
     "getRafflesAddress()": FunctionFragment;
     "getReferralManagerAddress()": FunctionFragment;
@@ -36,9 +36,9 @@ export interface IContractManagerInterface extends utils.Interface {
 
   getFunction(
     nameOrSignatureOrTopic:
+      | "getAvatarSettings"
       | "getAvatarsAddress"
       | "getBirthdayPrizesPool"
-      | "getMomentoPrizesPool"
       | "getPowersAddress"
       | "getRafflesAddress"
       | "getReferralManagerAddress"
@@ -50,15 +50,15 @@ export interface IContractManagerInterface extends utils.Interface {
   ): FunctionFragment;
 
   encodeFunctionData(
+    functionFragment: "getAvatarSettings",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "getAvatarsAddress",
     values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "getBirthdayPrizesPool",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getMomentoPrizesPool",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -95,15 +95,15 @@ export interface IContractManagerInterface extends utils.Interface {
   ): string;
 
   decodeFunctionResult(
+    functionFragment: "getAvatarSettings",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "getAvatarsAddress",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "getBirthdayPrizesPool",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "getMomentoPrizesPool",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -169,11 +169,11 @@ export interface IContractManager extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
+    getAvatarSettings(overrides?: CallOverrides): Promise<[string]>;
+
     getAvatarsAddress(overrides?: CallOverrides): Promise<[string]>;
 
     getBirthdayPrizesPool(overrides?: CallOverrides): Promise<[string]>;
-
-    getMomentoPrizesPool(overrides?: CallOverrides): Promise<[string]>;
 
     getPowersAddress(overrides?: CallOverrides): Promise<[string]>;
 
@@ -192,11 +192,11 @@ export interface IContractManager extends BaseContract {
     getTicketAddress(overrides?: CallOverrides): Promise<[string]>;
   };
 
+  getAvatarSettings(overrides?: CallOverrides): Promise<string>;
+
   getAvatarsAddress(overrides?: CallOverrides): Promise<string>;
 
   getBirthdayPrizesPool(overrides?: CallOverrides): Promise<string>;
-
-  getMomentoPrizesPool(overrides?: CallOverrides): Promise<string>;
 
   getPowersAddress(overrides?: CallOverrides): Promise<string>;
 
@@ -215,11 +215,11 @@ export interface IContractManager extends BaseContract {
   getTicketAddress(overrides?: CallOverrides): Promise<string>;
 
   callStatic: {
+    getAvatarSettings(overrides?: CallOverrides): Promise<string>;
+
     getAvatarsAddress(overrides?: CallOverrides): Promise<string>;
 
     getBirthdayPrizesPool(overrides?: CallOverrides): Promise<string>;
-
-    getMomentoPrizesPool(overrides?: CallOverrides): Promise<string>;
 
     getPowersAddress(overrides?: CallOverrides): Promise<string>;
 
@@ -241,11 +241,11 @@ export interface IContractManager extends BaseContract {
   filters: {};
 
   estimateGas: {
+    getAvatarSettings(overrides?: CallOverrides): Promise<BigNumber>;
+
     getAvatarsAddress(overrides?: CallOverrides): Promise<BigNumber>;
 
     getBirthdayPrizesPool(overrides?: CallOverrides): Promise<BigNumber>;
-
-    getMomentoPrizesPool(overrides?: CallOverrides): Promise<BigNumber>;
 
     getPowersAddress(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -265,13 +265,11 @@ export interface IContractManager extends BaseContract {
   };
 
   populateTransaction: {
+    getAvatarSettings(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     getAvatarsAddress(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getBirthdayPrizesPool(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    getMomentoPrizesPool(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

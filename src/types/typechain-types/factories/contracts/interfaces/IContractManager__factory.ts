@@ -12,6 +12,19 @@ import type {
 const _abi = [
   {
     inputs: [],
+    name: "getAvatarSettings",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
     name: "getAvatarsAddress",
     outputs: [
       {
@@ -26,19 +39,6 @@ const _abi = [
   {
     inputs: [],
     name: "getBirthdayPrizesPool",
-    outputs: [
-      {
-        internalType: "address",
-        name: "",
-        type: "address",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "getMomentoPrizesPool",
     outputs: [
       {
         internalType: "address",

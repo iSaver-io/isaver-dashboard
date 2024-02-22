@@ -149,6 +149,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IAccessControl__factory>;
     getContractFactory(
+      name: "Ownable",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.Ownable__factory>;
+    getContractFactory(
       name: "IERC2981",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IERC2981__factory>;
@@ -241,14 +245,6 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.ContractManager__factory>;
     getContractFactory(
-      name: "BlackList",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.BlackList__factory>;
-    getContractFactory(
-      name: "ERC20BlackList",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.ERC20BlackList__factory>;
-    getContractFactory(
       name: "WhiteList",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.WhiteList__factory>;
@@ -256,6 +252,10 @@ declare module "hardhat/types/runtime" {
       name: "Helper",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.Helper__factory>;
+    getContractFactory(
+      name: "IAvatarSettings",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IAvatarSettings__factory>;
     getContractFactory(
       name: "IContractManager",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -277,6 +277,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.ITeams__factory>;
     getContractFactory(
+      name: "ITokensPool",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ITokensPool__factory>;
+    getContractFactory(
       name: "ERC20BurnableMock",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.ERC20BurnableMock__factory>;
@@ -288,10 +292,6 @@ declare module "hardhat/types/runtime" {
       name: "VRFCoordinatorMock",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.VRFCoordinatorMock__factory>;
-    getContractFactory(
-      name: "Momento",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.Momento__factory>;
     getContractFactory(
       name: "Raffles",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -516,6 +516,11 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.IAccessControl>;
     getContractAt(
+      name: "Ownable",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.Ownable>;
+    getContractAt(
       name: "IERC2981",
       address: string,
       signer?: ethers.Signer
@@ -631,16 +636,6 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.ContractManager>;
     getContractAt(
-      name: "BlackList",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.BlackList>;
-    getContractAt(
-      name: "ERC20BlackList",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.ERC20BlackList>;
-    getContractAt(
       name: "WhiteList",
       address: string,
       signer?: ethers.Signer
@@ -650,6 +645,11 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.Helper>;
+    getContractAt(
+      name: "IAvatarSettings",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IAvatarSettings>;
     getContractAt(
       name: "IContractManager",
       address: string,
@@ -676,6 +676,11 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.ITeams>;
     getContractAt(
+      name: "ITokensPool",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ITokensPool>;
+    getContractAt(
       name: "ERC20BurnableMock",
       address: string,
       signer?: ethers.Signer
@@ -690,11 +695,6 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.VRFCoordinatorMock>;
-    getContractAt(
-      name: "Momento",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.Momento>;
     getContractAt(
       name: "Raffles",
       address: string,
