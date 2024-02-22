@@ -86,20 +86,6 @@ export const useTokenContract = (token: ContractsEnum.SAV | ContractsEnum.SAVR) 
   };
 
   // Administration
-  const paused = async () => {
-    return contract.paused();
-  };
-
-  const addToBlackList = async (addresses: string[]) => {
-    const tx = await contract.addToBlackList(addresses);
-    return waitForTransaction(tx);
-  };
-
-  const removeFromBlackList = async (addresses: string[]) => {
-    const tx = await contract.removeFromBlackList(addresses);
-    return waitForTransaction(tx);
-  };
-
   const addToWhiteList = async (addresses: string[]) => {
     const tx = await contract.addToWhiteList(addresses);
     return waitForTransaction(tx);
@@ -107,16 +93,6 @@ export const useTokenContract = (token: ContractsEnum.SAV | ContractsEnum.SAVR) 
 
   const removeFromWhiteList = async (addresses: string[]) => {
     const tx = await contract.removeFromWhiteList(addresses);
-    return waitForTransaction(tx);
-  };
-
-  const pause = async () => {
-    const tx = await contract.pause();
-    return waitForTransaction(tx);
-  };
-
-  const unpause = async () => {
-    const tx = await contract.unpause();
     return waitForTransaction(tx);
   };
 
@@ -131,12 +107,7 @@ export const useTokenContract = (token: ContractsEnum.SAV | ContractsEnum.SAVR) 
     totalBurned,
     totalSupply,
     // Administration
-    paused,
-    pause,
-    unpause,
-    addToBlackList,
     addToWhiteList,
-    removeFromBlackList,
     removeFromWhiteList,
   };
 };

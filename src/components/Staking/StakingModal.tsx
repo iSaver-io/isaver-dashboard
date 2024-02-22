@@ -18,6 +18,7 @@ import {
   ModalOverlay,
   Spacer,
   Text,
+  useBreakpoint,
 } from '@chakra-ui/react';
 import { BigNumberish, ethers } from 'ethers';
 import { useAccount } from 'wagmi';
@@ -48,22 +49,26 @@ const boxCommonStyles = {
 };
 
 type StakingModalProps = {
-  lockPeriodDays: BigNumberish;
+  tokens?: TOKENS[];
+  lockPeriodDays?: BigNumberish;
   apr: number | string;
+  highlightApr?: boolean;
   isLoading?: boolean;
   isPageView?: boolean;
   onStake: (token: TOKENS, amount: number) => void;
   onClose: () => void;
 };
 export const StakingModal: FC<StakingModalProps> = ({
+  tokens = [TOKENS.SAV, TOKENS.SAVR],
   lockPeriodDays,
   isLoading,
   isPageView,
+  highlightApr,
   apr,
   onStake,
   onClose,
 }) => {
-  const [token, setToken] = useState<TOKENS>(TOKENS.SAV);
+  const [token, setToken] = useState<TOKENS>(tokens[0]);
   const [amount, setAmount] = useState<string>();
   const [isAgreed, setIsAgreed] = useState(false);
   const { address } = useAccount();
@@ -77,6 +82,7 @@ export const StakingModal: FC<StakingModalProps> = ({
     actionGroup: 'interactions',
   });
   const debouncedLogger = useDebounce(logger);
+  const bp = useBreakpoint({ ssr: false });
 
   const balance = token === TOKENS.SAV ? savBalance : savrBalance;
 
@@ -138,7 +144,7 @@ export const StakingModal: FC<StakingModalProps> = ({
 
   const rewards = useMemo(
     () =>
-      !isGreaterThanMax
+      !isGreaterThanMax && lockPeriodDays
         ? calculateStakeProfitByAPR({
             amount: amount || 0,
             periodDays: lockPeriodDays,
@@ -148,8 +154,10 @@ export const StakingModal: FC<StakingModalProps> = ({
     [isGreaterThanMax, amount, lockPeriodDays, apr]
   );
 
+  const isSm = ['sm', 'md'].includes(bp);
+
   return (
-    <Modal isCentered isOpen={true} onClose={onClose}>
+    <Modal isCentered={!isSm} isOpen={true} onClose={onClose}>
       <ModalOverlay />
       <ModalContent>
         <ModalHeader textStyle="textSansBold" fontSize={26}>
@@ -157,10 +165,11 @@ export const StakingModal: FC<StakingModalProps> = ({
             <MenuButton
               as={ChButton}
               variant="transparent"
-              rightIcon={<ChevronDownIcon />}
+              rightIcon={tokens.length > 1 ? <ChevronDownIcon /> : undefined}
               padding={0}
               textStyle="textBold"
               fontSize={26}
+              _hover={{ cursor: tokens.length < 2 ? 'default' : 'pointer' }}
             >
               <Flex alignItems="center">
                 <Box width="40px">{token === TOKENS.SAV ? <SavIcon /> : <SavrIcon />}</Box>
@@ -169,20 +178,18 @@ export const StakingModal: FC<StakingModalProps> = ({
                 </span>
               </Flex>
             </MenuButton>
-            <MenuList>
-              <MenuItem onClick={() => handleTokenChange(TOKENS.SAV)}>
-                <Box mr="4px">
-                  <SavIcon width="24px" />
-                </Box>
-                <span>Stake SAV</span>
-              </MenuItem>
-              <MenuItem onClick={() => handleTokenChange(TOKENS.SAVR)}>
-                <Box mr="4px">
-                  <SavrIcon width="24px" />
-                </Box>
-                <span>Stake SAVR</span>
-              </MenuItem>
-            </MenuList>
+            {tokens.length > 1 ? (
+              <MenuList>
+                {tokens.map((token) => (
+                  <MenuItem onClick={() => handleTokenChange(token)} key={token}>
+                    <Box mr="4px">
+                      {token == TOKENS.SAV ? <SavIcon width="24px" /> : <SavrIcon width="24px" />}
+                    </Box>
+                    <span>Stake {token == TOKENS.SAV ? 'SAV' : 'SAVR'}</span>
+                  </MenuItem>
+                ))}
+              </MenuList>
+            ) : null}
           </Menu>
           <CloseButton onClick={onClose} size="lg" />
         </ModalHeader>
@@ -198,21 +205,27 @@ export const StakingModal: FC<StakingModalProps> = ({
             />
           </Box>
 
+          {lockPeriodDays ? (
+            <Box {...boxCommonStyles} mb={5}>
+              Locking period
+              <Spacer />
+              {getReadableDuration(lockPeriodDays)}
+            </Box>
+          ) : null}
           <Box {...boxCommonStyles} mb={5}>
-            Locking period
+            {lockPeriodDays ? 'APR' : 'APY'}
             <Spacer />
-            {getReadableDuration(lockPeriodDays)}
+            <Box as="span" color={highlightApr ? 'green.100' : 'white'}>
+              {apr}%
+            </Box>
           </Box>
-          <Box {...boxCommonStyles} mb={5}>
-            APR
-            <Spacer />
-            {apr}%
-          </Box>
-          <Box {...boxCommonStyles} mb={10}>
-            Your rewards
-            <Spacer />
-            <>{bigNumberToString(rewards)} SAV</>
-          </Box>
+          {lockPeriodDays ? (
+            <Box {...boxCommonStyles} mb={10}>
+              Your rewards
+              <Spacer />
+              <>{bigNumberToString(rewards)} SAV</>
+            </Box>
+          ) : null}
 
           <Box {...boxCommonStyles} p={5}>
             <Checkbox

@@ -97,6 +97,8 @@ export interface RafflesInterface extends utils.Interface {
     "claimDay()": FunctionFragment;
     "createRaffleRound(uint256,uint256,uint256,uint256,uint256,uint256[],uint256[])": FunctionFragment;
     "entryRaffle(uint256,uint256)": FunctionFragment;
+    "extraTicketsPowerD()": FunctionFragment;
+    "extract(address,uint256)": FunctionFragment;
     "finishRaffleRound(uint256)": FunctionFragment;
     "getActiveRounds()": FunctionFragment;
     "getClaimStreak(address)": FunctionFragment;
@@ -126,6 +128,7 @@ export interface RafflesInterface extends utils.Interface {
     "updateClaimPeriod(uint256)": FunctionFragment;
     "updateCoordinator(address)": FunctionFragment;
     "updateDaysStreakForTicket(uint256)": FunctionFragment;
+    "updateExtraTicketsPowerD(uint256)": FunctionFragment;
     "updateKeyHash(bytes32)": FunctionFragment;
     "updateRequestConfirmations(uint16)": FunctionFragment;
     "updateSubscriptionId(uint64)": FunctionFragment;
@@ -134,7 +137,6 @@ export interface RafflesInterface extends utils.Interface {
     "updateWinnerCalculationInRequest(bool)": FunctionFragment;
     "upgradeTo(address)": FunctionFragment;
     "upgradeToAndCall(address,bytes)": FunctionFragment;
-    "withdrawLiquidity(address,uint256)": FunctionFragment;
   };
 
   getFunction(
@@ -150,6 +152,8 @@ export interface RafflesInterface extends utils.Interface {
       | "claimDay"
       | "createRaffleRound"
       | "entryRaffle"
+      | "extraTicketsPowerD"
+      | "extract"
       | "finishRaffleRound"
       | "getActiveRounds"
       | "getClaimStreak"
@@ -179,6 +183,7 @@ export interface RafflesInterface extends utils.Interface {
       | "updateClaimPeriod"
       | "updateCoordinator"
       | "updateDaysStreakForTicket"
+      | "updateExtraTicketsPowerD"
       | "updateKeyHash"
       | "updateRequestConfirmations"
       | "updateSubscriptionId"
@@ -187,7 +192,6 @@ export interface RafflesInterface extends utils.Interface {
       | "updateWinnerCalculationInRequest"
       | "upgradeTo"
       | "upgradeToAndCall"
-      | "withdrawLiquidity"
   ): FunctionFragment;
 
   encodeFunctionData(
@@ -235,6 +239,14 @@ export interface RafflesInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "entryRaffle",
     values: [BigNumberish, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "extraTicketsPowerD",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "extract",
+    values: [string, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "finishRaffleRound",
@@ -358,6 +370,10 @@ export interface RafflesInterface extends utils.Interface {
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
+    functionFragment: "updateExtraTicketsPowerD",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
     functionFragment: "updateKeyHash",
     values: [BytesLike]
   ): string;
@@ -385,10 +401,6 @@ export interface RafflesInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "upgradeToAndCall",
     values: [string, BytesLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "withdrawLiquidity",
-    values: [string, BigNumberish]
   ): string;
 
   decodeFunctionResult(
@@ -426,6 +438,11 @@ export interface RafflesInterface extends utils.Interface {
     functionFragment: "entryRaffle",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "extraTicketsPowerD",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "extract", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "finishRaffleRound",
     data: BytesLike
@@ -522,6 +539,10 @@ export interface RafflesInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "updateExtraTicketsPowerD",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "updateKeyHash",
     data: BytesLike
   ): Result;
@@ -550,16 +571,11 @@ export interface RafflesInterface extends utils.Interface {
     functionFragment: "upgradeToAndCall",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(
-    functionFragment: "withdrawLiquidity",
-    data: BytesLike
-  ): Result;
 
   events: {
     "AdminChanged(address,address)": EventFragment;
     "BeaconUpgraded(address)": EventFragment;
     "Initialized(uint8)": EventFragment;
-    "LiquidityWithdrawnByAdmin(address,uint256)": EventFragment;
     "NewRoundCreated(uint256)": EventFragment;
     "OracleRequestFulfilled(uint256,uint256,uint256)": EventFragment;
     "OracleRequestSent(uint256,uint256)": EventFragment;
@@ -574,7 +590,6 @@ export interface RafflesInterface extends utils.Interface {
   getEvent(nameOrSignatureOrTopic: "AdminChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "BeaconUpgraded"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "LiquidityWithdrawnByAdmin"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "NewRoundCreated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OracleRequestFulfilled"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OracleRequestSent"): EventFragment;
@@ -613,18 +628,6 @@ export interface InitializedEventObject {
 export type InitializedEvent = TypedEvent<[number], InitializedEventObject>;
 
 export type InitializedEventFilter = TypedEventFilter<InitializedEvent>;
-
-export interface LiquidityWithdrawnByAdminEventObject {
-  recipient: string;
-  amount: BigNumber;
-}
-export type LiquidityWithdrawnByAdminEvent = TypedEvent<
-  [string, BigNumber],
-  LiquidityWithdrawnByAdminEventObject
->;
-
-export type LiquidityWithdrawnByAdminEventFilter =
-  TypedEventFilter<LiquidityWithdrawnByAdminEvent>;
 
 export interface NewRoundCreatedEventObject {
   roundId: BigNumber;
@@ -791,6 +794,14 @@ export interface Raffles extends BaseContract {
     entryRaffle(
       roundId: BigNumberish,
       tickets: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
+
+    extraTicketsPowerD(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    extract(
+      recipient: string,
+      amount: BigNumberish,
       overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
 
@@ -968,6 +979,11 @@ export interface Raffles extends BaseContract {
       overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
 
+    updateExtraTicketsPowerD(
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
+
     updateKeyHash(
       kayHash: BytesLike,
       overrides?: Overrides & { from?: string }
@@ -1008,12 +1024,6 @@ export interface Raffles extends BaseContract {
       data: BytesLike,
       overrides?: PayableOverrides & { from?: string }
     ): Promise<ContractTransaction>;
-
-    withdrawLiquidity(
-      recipient: string,
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
   };
 
   CLAIM_PERIOD(overrides?: CallOverrides): Promise<BigNumber>;
@@ -1053,6 +1063,14 @@ export interface Raffles extends BaseContract {
   entryRaffle(
     roundId: BigNumberish,
     tickets: BigNumberish,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  extraTicketsPowerD(overrides?: CallOverrides): Promise<BigNumber>;
+
+  extract(
+    recipient: string,
+    amount: BigNumberish,
     overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
 
@@ -1213,6 +1231,11 @@ export interface Raffles extends BaseContract {
     overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
 
+  updateExtraTicketsPowerD(
+    amount: BigNumberish,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
   updateKeyHash(
     kayHash: BytesLike,
     overrides?: Overrides & { from?: string }
@@ -1254,12 +1277,6 @@ export interface Raffles extends BaseContract {
     overrides?: PayableOverrides & { from?: string }
   ): Promise<ContractTransaction>;
 
-  withdrawLiquidity(
-    recipient: string,
-    amount: BigNumberish,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
   callStatic: {
     CLAIM_PERIOD(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1293,6 +1310,14 @@ export interface Raffles extends BaseContract {
     entryRaffle(
       roundId: BigNumberish,
       tickets: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    extraTicketsPowerD(overrides?: CallOverrides): Promise<BigNumber>;
+
+    extract(
+      recipient: string,
+      amount: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1454,6 +1479,11 @@ export interface Raffles extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    updateExtraTicketsPowerD(
+      amount: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     updateKeyHash(kayHash: BytesLike, overrides?: CallOverrides): Promise<void>;
 
     updateRequestConfirmations(
@@ -1488,12 +1518,6 @@ export interface Raffles extends BaseContract {
       data: BytesLike,
       overrides?: CallOverrides
     ): Promise<void>;
-
-    withdrawLiquidity(
-      recipient: string,
-      amount: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
   };
 
   filters: {
@@ -1513,15 +1537,6 @@ export interface Raffles extends BaseContract {
 
     "Initialized(uint8)"(version?: null): InitializedEventFilter;
     Initialized(version?: null): InitializedEventFilter;
-
-    "LiquidityWithdrawnByAdmin(address,uint256)"(
-      recipient?: string | null,
-      amount?: null
-    ): LiquidityWithdrawnByAdminEventFilter;
-    LiquidityWithdrawnByAdmin(
-      recipient?: string | null,
-      amount?: null
-    ): LiquidityWithdrawnByAdminEventFilter;
 
     "NewRoundCreated(uint256)"(
       roundId?: BigNumberish | null
@@ -1635,6 +1650,14 @@ export interface Raffles extends BaseContract {
     entryRaffle(
       roundId: BigNumberish,
       tickets: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+
+    extraTicketsPowerD(overrides?: CallOverrides): Promise<BigNumber>;
+
+    extract(
+      recipient: string,
+      amount: BigNumberish,
       overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
 
@@ -1769,6 +1792,11 @@ export interface Raffles extends BaseContract {
       overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
 
+    updateExtraTicketsPowerD(
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+
     updateKeyHash(
       kayHash: BytesLike,
       overrides?: Overrides & { from?: string }
@@ -1808,12 +1836,6 @@ export interface Raffles extends BaseContract {
       newImplementation: string,
       data: BytesLike,
       overrides?: PayableOverrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    withdrawLiquidity(
-      recipient: string,
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
   };
 
@@ -1859,6 +1881,16 @@ export interface Raffles extends BaseContract {
     entryRaffle(
       roundId: BigNumberish,
       tickets: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    extraTicketsPowerD(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    extract(
+      recipient: string,
+      amount: BigNumberish,
       overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 
@@ -2007,6 +2039,11 @@ export interface Raffles extends BaseContract {
       overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 
+    updateExtraTicketsPowerD(
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
     updateKeyHash(
       kayHash: BytesLike,
       overrides?: Overrides & { from?: string }
@@ -2046,12 +2083,6 @@ export interface Raffles extends BaseContract {
       newImplementation: string,
       data: BytesLike,
       overrides?: PayableOverrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    withdrawLiquidity(
-      recipient: string,
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
   };
 }

@@ -24,6 +24,18 @@ export const useReferralContract = () => {
     return contract.getUserInfo(address);
   };
 
+  const hasFullSubscription = async (address: string) => {
+    return contract.userHasFullSubscription(address);
+  };
+
+  const userHasActivePowerA = async (address: string) => {
+    return contract.userHasActivePowerA(address);
+  };
+
+  const userHasActivatedPowerA = async (address: string) => {
+    return contract.userHasActivatedPowerA(address);
+  };
+
   const subscribeToLevel = async (level: number): Promise<string> => {
     const tx = await contract.subscribeToLevel(level);
     return waitForTransaction(tx);
@@ -70,5 +82,9 @@ export const useReferralContract = () => {
     getRewards,
     updateLevelSubscriptionCost,
     updateFullSubscriptionCost,
+    // Super power
+    hasFullSubscription,
+    userHasActivePowerA,
+    userHasActivatedPowerA,
   };
 };

@@ -31,6 +31,7 @@ export declare namespace IStaking {
   export type StakingPlanStruct = {
     stakingPlanId: BigNumberish;
     isActive: boolean;
+    isSuperPowered: boolean;
     subscriptionCost: BigNumberish;
     subscriptionDuration: BigNumberish;
     stakingDuration: BigNumberish;
@@ -47,6 +48,7 @@ export declare namespace IStaking {
   export type StakingPlanStructOutput = [
     BigNumber,
     boolean,
+    boolean,
     BigNumber,
     BigNumber,
     BigNumber,
@@ -61,6 +63,7 @@ export declare namespace IStaking {
   ] & {
     stakingPlanId: BigNumber;
     isActive: boolean;
+    isSuperPowered: boolean;
     subscriptionCost: BigNumber;
     subscriptionDuration: BigNumber;
     stakingDuration: BigNumber;
@@ -72,6 +75,76 @@ export declare namespace IStaking {
     currentSavTokenLocked: BigNumber;
     currentSavrTokenLocked: BigNumber;
     totalClaimed: BigNumber;
+  };
+
+  export type SuperStakingPlanStruct = {
+    stakingPlanId: BigNumberish;
+    isActive: boolean;
+    totalStakesNo: BigNumberish;
+    totalStaked: BigNumberish;
+    currentLocked: BigNumberish;
+    totalClaimed: BigNumberish;
+  };
+
+  export type SuperStakingPlanStructOutput = [
+    BigNumber,
+    boolean,
+    BigNumber,
+    BigNumber,
+    BigNumber,
+    BigNumber
+  ] & {
+    stakingPlanId: BigNumber;
+    isActive: boolean;
+    totalStakesNo: BigNumber;
+    totalStaked: BigNumber;
+    currentLocked: BigNumber;
+    totalClaimed: BigNumber;
+  };
+
+  export type AprChangeStruct = { time: BigNumberish; apr: BigNumberish };
+
+  export type AprChangeStructOutput = [BigNumber, BigNumber] & {
+    time: BigNumber;
+    apr: BigNumber;
+  };
+
+  export type SuperStakeStruct = {
+    profit: BigNumberish;
+    deposit: BigNumberish;
+    lastTimestamp: BigNumberish;
+    totalClaimed: BigNumberish;
+    totalDeposited: BigNumberish;
+  };
+
+  export type SuperStakeStructOutput = [
+    BigNumber,
+    BigNumber,
+    BigNumber,
+    BigNumber,
+    BigNumber
+  ] & {
+    profit: BigNumber;
+    deposit: BigNumber;
+    lastTimestamp: BigNumber;
+    totalClaimed: BigNumber;
+    totalDeposited: BigNumber;
+  };
+
+  export type SuperStakingPlanWithAprAndStakeStruct = {
+    plan: IStaking.SuperStakingPlanStruct;
+    apr: IStaking.AprChangeStruct;
+    stake: IStaking.SuperStakeStruct;
+  };
+
+  export type SuperStakingPlanWithAprAndStakeStructOutput = [
+    IStaking.SuperStakingPlanStructOutput,
+    IStaking.AprChangeStructOutput,
+    IStaking.SuperStakeStructOutput
+  ] & {
+    plan: IStaking.SuperStakingPlanStructOutput;
+    apr: IStaking.AprChangeStructOutput;
+    stake: IStaking.SuperStakeStructOutput;
   };
 
   export type UserStakingInfoStruct = {
@@ -142,44 +215,55 @@ export interface StakingInterface extends utils.Interface {
     "MIN_STAKE_LIMIT()": FunctionFragment;
     "TIME_STEP()": FunctionFragment;
     "UPGRADER_ROLE()": FunctionFragment;
-    "addStakingPlan(uint256,uint256,uint256,uint256)": FunctionFragment;
+    "addStakingPlan(uint256,uint256,uint256,uint256,bool)": FunctionFragment;
+    "addSuperStakingPlan(uint256)": FunctionFragment;
     "calculateStakeProfit(uint256,uint256)": FunctionFragment;
+    "claimSuperPlan(uint256)": FunctionFragment;
     "deposit(uint256,uint256,bool,address)": FunctionFragment;
+    "depositSuperPlan(uint256,uint256)": FunctionFragment;
+    "extraAprPowerC()": FunctionFragment;
+    "extract(address,uint256,bool)": FunctionFragment;
     "getAvailableStakeReward(uint256,address,uint256)": FunctionFragment;
-    "getAvailableTokens()": FunctionFragment;
+    "getAvailableSuperStakeReward(uint256,address)": FunctionFragment;
+    "getAvailableTokens(bool)": FunctionFragment;
     "getRoleAdmin(bytes32)": FunctionFragment;
     "getStakingPlans()": FunctionFragment;
+    "getSuperStakingPlansForUser(address)": FunctionFragment;
     "getTimestamp()": FunctionFragment;
     "getUserPlanInfo(uint256,address)": FunctionFragment;
     "getUserPlansInfo(address)": FunctionFragment;
     "getUserStakes(uint256,address)": FunctionFragment;
     "getUserStakesWithRewards(uint256,address)": FunctionFragment;
+    "getUserSuperPlanInfo(uint256,address)": FunctionFragment;
     "grantRole(bytes32,address)": FunctionFragment;
     "hasAnySubscription(address)": FunctionFragment;
     "hasRole(bytes32,address)": FunctionFragment;
     "hasSubscription(uint256,address)": FunctionFragment;
     "initialize(address)": FunctionFragment;
     "proxiableUUID()": FunctionFragment;
+    "renewPowerSubscriptionB(address)": FunctionFragment;
     "renounceRole(bytes32,address)": FunctionFragment;
     "revokeRole(bytes32,address)": FunctionFragment;
-    "shouldAddReferrerOnSavrTokenStake()": FunctionFragment;
     "stakingPlans(uint256)": FunctionFragment;
     "subscribe(uint256)": FunctionFragment;
+    "superStakingPlans(uint256)": FunctionFragment;
     "supportsInterface(bytes4)": FunctionFragment;
     "totalLockedTokens()": FunctionFragment;
+    "updateExtraAprPowerC(uint256)": FunctionFragment;
     "updateMinStakeLimit(uint256)": FunctionFragment;
     "updatePlanAPR(uint256,uint256)": FunctionFragment;
     "updatePlanActivity(uint256,bool)": FunctionFragment;
     "updatePlanDurationDays(uint256,uint256)": FunctionFragment;
     "updatePlanSubscriptionCost(uint256,uint256)": FunctionFragment;
     "updatePlanSubscriptionPeriod(uint256,uint256)": FunctionFragment;
-    "updateShouldAddReferrerOnSavrTokenStake(bool)": FunctionFragment;
+    "updateSuperPlanAPR(uint256,uint256)": FunctionFragment;
+    "updateSuperPlanActivity(uint256,bool)": FunctionFragment;
     "updateTimeStep(uint256)": FunctionFragment;
     "upgradeTo(address)": FunctionFragment;
     "upgradeToAndCall(address,bytes)": FunctionFragment;
     "withdraw(uint256,uint256)": FunctionFragment;
-    "withdrawAll(uint256)": FunctionFragment;
-    "withdrawLiquidity(address,uint256)": FunctionFragment;
+    "withdrawAllCompleted(uint256)": FunctionFragment;
+    "withdrawSuperPlan(uint256)": FunctionFragment;
   };
 
   getFunction(
@@ -190,43 +274,54 @@ export interface StakingInterface extends utils.Interface {
       | "TIME_STEP"
       | "UPGRADER_ROLE"
       | "addStakingPlan"
+      | "addSuperStakingPlan"
       | "calculateStakeProfit"
+      | "claimSuperPlan"
       | "deposit"
+      | "depositSuperPlan"
+      | "extraAprPowerC"
+      | "extract"
       | "getAvailableStakeReward"
+      | "getAvailableSuperStakeReward"
       | "getAvailableTokens"
       | "getRoleAdmin"
       | "getStakingPlans"
+      | "getSuperStakingPlansForUser"
       | "getTimestamp"
       | "getUserPlanInfo"
       | "getUserPlansInfo"
       | "getUserStakes"
       | "getUserStakesWithRewards"
+      | "getUserSuperPlanInfo"
       | "grantRole"
       | "hasAnySubscription"
       | "hasRole"
       | "hasSubscription"
       | "initialize"
       | "proxiableUUID"
+      | "renewPowerSubscriptionB"
       | "renounceRole"
       | "revokeRole"
-      | "shouldAddReferrerOnSavrTokenStake"
       | "stakingPlans"
       | "subscribe"
+      | "superStakingPlans"
       | "supportsInterface"
       | "totalLockedTokens"
+      | "updateExtraAprPowerC"
       | "updateMinStakeLimit"
       | "updatePlanAPR"
       | "updatePlanActivity"
       | "updatePlanDurationDays"
       | "updatePlanSubscriptionCost"
       | "updatePlanSubscriptionPeriod"
-      | "updateShouldAddReferrerOnSavrTokenStake"
+      | "updateSuperPlanAPR"
+      | "updateSuperPlanActivity"
       | "updateTimeStep"
       | "upgradeTo"
       | "upgradeToAndCall"
       | "withdraw"
-      | "withdrawAll"
-      | "withdrawLiquidity"
+      | "withdrawAllCompleted"
+      | "withdrawSuperPlan"
   ): FunctionFragment;
 
   encodeFunctionData(
@@ -248,23 +343,47 @@ export interface StakingInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "addStakingPlan",
-    values: [BigNumberish, BigNumberish, BigNumberish, BigNumberish]
+    values: [BigNumberish, BigNumberish, BigNumberish, BigNumberish, boolean]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "addSuperStakingPlan",
+    values: [BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "calculateStakeProfit",
     values: [BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
+    functionFragment: "claimSuperPlan",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
     functionFragment: "deposit",
     values: [BigNumberish, BigNumberish, boolean, string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "depositSuperPlan",
+    values: [BigNumberish, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "extraAprPowerC",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "extract",
+    values: [string, BigNumberish, boolean]
   ): string;
   encodeFunctionData(
     functionFragment: "getAvailableStakeReward",
     values: [BigNumberish, string, BigNumberish]
   ): string;
   encodeFunctionData(
+    functionFragment: "getAvailableSuperStakeReward",
+    values: [BigNumberish, string]
+  ): string;
+  encodeFunctionData(
     functionFragment: "getAvailableTokens",
-    values?: undefined
+    values: [boolean]
   ): string;
   encodeFunctionData(
     functionFragment: "getRoleAdmin",
@@ -273,6 +392,10 @@ export interface StakingInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "getStakingPlans",
     values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getSuperStakingPlansForUser",
+    values: [string]
   ): string;
   encodeFunctionData(
     functionFragment: "getTimestamp",
@@ -292,6 +415,10 @@ export interface StakingInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "getUserStakesWithRewards",
+    values: [BigNumberish, string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getUserSuperPlanInfo",
     values: [BigNumberish, string]
   ): string;
   encodeFunctionData(
@@ -316,16 +443,16 @@ export interface StakingInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
+    functionFragment: "renewPowerSubscriptionB",
+    values: [string]
+  ): string;
+  encodeFunctionData(
     functionFragment: "renounceRole",
     values: [BytesLike, string]
   ): string;
   encodeFunctionData(
     functionFragment: "revokeRole",
     values: [BytesLike, string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "shouldAddReferrerOnSavrTokenStake",
-    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "stakingPlans",
@@ -336,12 +463,20 @@ export interface StakingInterface extends utils.Interface {
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
+    functionFragment: "superStakingPlans",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
     functionFragment: "supportsInterface",
     values: [BytesLike]
   ): string;
   encodeFunctionData(
     functionFragment: "totalLockedTokens",
     values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "updateExtraAprPowerC",
+    values: [BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "updateMinStakeLimit",
@@ -368,8 +503,12 @@ export interface StakingInterface extends utils.Interface {
     values: [BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "updateShouldAddReferrerOnSavrTokenStake",
-    values: [boolean]
+    functionFragment: "updateSuperPlanAPR",
+    values: [BigNumberish, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "updateSuperPlanActivity",
+    values: [BigNumberish, boolean]
   ): string;
   encodeFunctionData(
     functionFragment: "updateTimeStep",
@@ -385,12 +524,12 @@ export interface StakingInterface extends utils.Interface {
     values: [BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "withdrawAll",
+    functionFragment: "withdrawAllCompleted",
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "withdrawLiquidity",
-    values: [string, BigNumberish]
+    functionFragment: "withdrawSuperPlan",
+    values: [BigNumberish]
   ): string;
 
   decodeFunctionResult(
@@ -415,12 +554,33 @@ export interface StakingInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "addSuperStakingPlan",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "calculateStakeProfit",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "claimSuperPlan",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "deposit", data: BytesLike): Result;
   decodeFunctionResult(
+    functionFragment: "depositSuperPlan",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "extraAprPowerC",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "extract", data: BytesLike): Result;
+  decodeFunctionResult(
     functionFragment: "getAvailableStakeReward",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getAvailableSuperStakeReward",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -433,6 +593,10 @@ export interface StakingInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "getStakingPlans",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getSuperStakingPlansForUser",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -455,6 +619,10 @@ export interface StakingInterface extends utils.Interface {
     functionFragment: "getUserStakesWithRewards",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "getUserSuperPlanInfo",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "grantRole", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "hasAnySubscription",
@@ -471,25 +639,33 @@ export interface StakingInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "renewPowerSubscriptionB",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "renounceRole",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "revokeRole", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "shouldAddReferrerOnSavrTokenStake",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(
     functionFragment: "stakingPlans",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "subscribe", data: BytesLike): Result;
   decodeFunctionResult(
+    functionFragment: "superStakingPlans",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "supportsInterface",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "totalLockedTokens",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "updateExtraAprPowerC",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -517,7 +693,11 @@ export interface StakingInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "updateShouldAddReferrerOnSavrTokenStake",
+    functionFragment: "updateSuperPlanAPR",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "updateSuperPlanActivity",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -531,11 +711,11 @@ export interface StakingInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "withdraw", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "withdrawAll",
+    functionFragment: "withdrawAllCompleted",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "withdrawLiquidity",
+    functionFragment: "withdrawSuperPlan",
     data: BytesLike
   ): Result;
 
@@ -545,13 +725,18 @@ export interface StakingInterface extends utils.Interface {
     "BeaconUpgraded(address)": EventFragment;
     "Claimed(address,uint256,uint256,uint256,bool,uint256)": EventFragment;
     "Initialized(uint8)": EventFragment;
-    "LiquidityWithdrawnByAdmin(address,uint256)": EventFragment;
     "RoleAdminChanged(bytes32,bytes32,bytes32)": EventFragment;
     "RoleGranted(bytes32,address,address)": EventFragment;
     "RoleRevoked(bytes32,address,address)": EventFragment;
     "Staked(address,uint256,uint256,uint256,uint256,bool,uint256)": EventFragment;
+    "StakedSuperPlan(address,uint256,uint256,uint256)": EventFragment;
     "StakingPlanCreated(uint256,uint256,uint256)": EventFragment;
     "Subscribed(address,uint256)": EventFragment;
+    "SuperAprUpdated(uint256,uint256,uint256)": EventFragment;
+    "SuperClaimed(address,uint256,uint256,uint256)": EventFragment;
+    "SuperPlanActivityChanged(uint256,bool)": EventFragment;
+    "SuperStakingPlanCreated(uint256,uint256)": EventFragment;
+    "SuperWithdrawn(address,uint256,uint256,uint256)": EventFragment;
     "Upgraded(address)": EventFragment;
   };
 
@@ -560,13 +745,18 @@ export interface StakingInterface extends utils.Interface {
   getEvent(nameOrSignatureOrTopic: "BeaconUpgraded"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Claimed"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "LiquidityWithdrawnByAdmin"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleAdminChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleGranted"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleRevoked"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Staked"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "StakedSuperPlan"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "StakingPlanCreated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Subscribed"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "SuperAprUpdated"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "SuperClaimed"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "SuperPlanActivityChanged"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "SuperStakingPlanCreated"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "SuperWithdrawn"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Upgraded"): EventFragment;
 }
 
@@ -624,18 +814,6 @@ export type InitializedEvent = TypedEvent<[number], InitializedEventObject>;
 
 export type InitializedEventFilter = TypedEventFilter<InitializedEvent>;
 
-export interface LiquidityWithdrawnByAdminEventObject {
-  recipient: string;
-  amount: BigNumber;
-}
-export type LiquidityWithdrawnByAdminEvent = TypedEvent<
-  [string, BigNumber],
-  LiquidityWithdrawnByAdminEventObject
->;
-
-export type LiquidityWithdrawnByAdminEventFilter =
-  TypedEventFilter<LiquidityWithdrawnByAdminEvent>;
-
 export interface RoleAdminChangedEventObject {
   role: string;
   previousAdminRole: string;
@@ -689,6 +867,19 @@ export type StakedEvent = TypedEvent<
 
 export type StakedEventFilter = TypedEventFilter<StakedEvent>;
 
+export interface StakedSuperPlanEventObject {
+  user: string;
+  superStakingPlanId: BigNumber;
+  amount: BigNumber;
+  timestamp: BigNumber;
+}
+export type StakedSuperPlanEvent = TypedEvent<
+  [string, BigNumber, BigNumber, BigNumber],
+  StakedSuperPlanEventObject
+>;
+
+export type StakedSuperPlanEventFilter = TypedEventFilter<StakedSuperPlanEvent>;
+
 export interface StakingPlanCreatedEventObject {
   stakingPlanId: BigNumber;
   duration: BigNumber;
@@ -712,6 +903,68 @@ export type SubscribedEvent = TypedEvent<
 >;
 
 export type SubscribedEventFilter = TypedEventFilter<SubscribedEvent>;
+
+export interface SuperAprUpdatedEventObject {
+  superPlanId: BigNumber;
+  newApr: BigNumber;
+  timestamp: BigNumber;
+}
+export type SuperAprUpdatedEvent = TypedEvent<
+  [BigNumber, BigNumber, BigNumber],
+  SuperAprUpdatedEventObject
+>;
+
+export type SuperAprUpdatedEventFilter = TypedEventFilter<SuperAprUpdatedEvent>;
+
+export interface SuperClaimedEventObject {
+  user: string;
+  superStakingPlanId: BigNumber;
+  profit: BigNumber;
+  timestamp: BigNumber;
+}
+export type SuperClaimedEvent = TypedEvent<
+  [string, BigNumber, BigNumber, BigNumber],
+  SuperClaimedEventObject
+>;
+
+export type SuperClaimedEventFilter = TypedEventFilter<SuperClaimedEvent>;
+
+export interface SuperPlanActivityChangedEventObject {
+  superStakingPlanId: BigNumber;
+  isActive: boolean;
+}
+export type SuperPlanActivityChangedEvent = TypedEvent<
+  [BigNumber, boolean],
+  SuperPlanActivityChangedEventObject
+>;
+
+export type SuperPlanActivityChangedEventFilter =
+  TypedEventFilter<SuperPlanActivityChangedEvent>;
+
+export interface SuperStakingPlanCreatedEventObject {
+  superStakingPlanId: BigNumber;
+  apr: BigNumber;
+}
+export type SuperStakingPlanCreatedEvent = TypedEvent<
+  [BigNumber, BigNumber],
+  SuperStakingPlanCreatedEventObject
+>;
+
+export type SuperStakingPlanCreatedEventFilter =
+  TypedEventFilter<SuperStakingPlanCreatedEvent>;
+
+export interface SuperWithdrawnEventObject {
+  user: string;
+  superStakingPlanId: BigNumber;
+  amount: BigNumber;
+  timestamp: BigNumber;
+}
+export type SuperWithdrawnEvent = TypedEvent<
+  [string, BigNumber, BigNumber, BigNumber],
+  SuperWithdrawnEventObject
+>;
+
+export type SuperWithdrawnEventFilter = TypedEventFilter<SuperWithdrawnEvent>;
 
 export interface UpgradedEventObject {
   implementation: string;
@@ -762,6 +1015,12 @@ export interface Staking extends BaseContract {
       subscriptionDuration: BigNumberish,
       stakingDuration: BigNumberish,
       apr: BigNumberish,
+      isSuperPowered: boolean,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
+
+    addSuperStakingPlan(
+      apr: BigNumberish,
       overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
 
@@ -771,11 +1030,31 @@ export interface Staking extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
+    claimSuperPlan(
+      superPlanId: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
+
     deposit(
       planId: BigNumberish,
       depositAmount: BigNumberish,
       isSAVRToken: boolean,
       referrer: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
+
+    depositSuperPlan(
+      superPlanId: BigNumberish,
+      depositAmount: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
+
+    extraAprPowerC(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    extract(
+      recipient: string,
+      amount: BigNumberish,
+      isSAVRToken: boolean,
       overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
 
@@ -786,13 +1065,27 @@ export interface Staking extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
-    getAvailableTokens(overrides?: CallOverrides): Promise<[BigNumber]>;
+    getAvailableSuperStakeReward(
+      superPlanId: BigNumberish,
+      user: string,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    getAvailableTokens(
+      isSAVRToken: boolean,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
 
     getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<[string]>;
 
     getStakingPlans(
       overrides?: CallOverrides
     ): Promise<[IStaking.StakingPlanStructOutput[]]>;
+
+    getSuperStakingPlansForUser(
+      userAddress: string,
+      overrides?: CallOverrides
+    ): Promise<[IStaking.SuperStakingPlanWithAprAndStakeStructOutput[]]>;
 
     getTimestamp(overrides?: CallOverrides): Promise<[BigNumber]>;
 
@@ -818,6 +1111,12 @@ export interface Staking extends BaseContract {
       userAddress: string,
       overrides?: CallOverrides
     ): Promise<[IStaking.StakeWithRewardsInfoStructOutput[]]>;
+
+    getUserSuperPlanInfo(
+      superPlanId: BigNumberish,
+      userAddress: string,
+      overrides?: CallOverrides
+    ): Promise<[IStaking.SuperStakeStructOutput]>;
 
     grantRole(
       role: BytesLike,
@@ -849,6 +1148,11 @@ export interface Staking extends BaseContract {
 
     proxiableUUID(overrides?: CallOverrides): Promise<[string]>;
 
+    renewPowerSubscriptionB(
+      user: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
+
     renounceRole(
       role: BytesLike,
       account: string,
@@ -861,16 +1165,13 @@ export interface Staking extends BaseContract {
       overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
 
-    shouldAddReferrerOnSavrTokenStake(
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
-
     stakingPlans(
       arg0: BigNumberish,
       overrides?: CallOverrides
     ): Promise<
       [
         BigNumber,
+        boolean,
         boolean,
         BigNumber,
         BigNumber,
@@ -886,6 +1187,7 @@ export interface Staking extends BaseContract {
       ] & {
         stakingPlanId: BigNumber;
         isActive: boolean;
+        isSuperPowered: boolean;
         subscriptionCost: BigNumber;
         subscriptionDuration: BigNumber;
         stakingDuration: BigNumber;
@@ -905,12 +1207,31 @@ export interface Staking extends BaseContract {
       overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
 
+    superStakingPlans(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<
+      [BigNumber, boolean, BigNumber, BigNumber, BigNumber, BigNumber] & {
+        stakingPlanId: BigNumber;
+        isActive: boolean;
+        totalStakesNo: BigNumber;
+        totalStaked: BigNumber;
+        currentLocked: BigNumber;
+        totalClaimed: BigNumber;
+      }
+    >;
+
     supportsInterface(
       interfaceId: BytesLike,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
     totalLockedTokens(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    updateExtraAprPowerC(
+      _extraApr: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
 
     updateMinStakeLimit(
       minLimit_: BigNumberish,
@@ -947,8 +1268,15 @@ export interface Staking extends BaseContract {
       overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
 
-    updateShouldAddReferrerOnSavrTokenStake(
-      value: boolean,
+    updateSuperPlanAPR(
+      superPlanId: BigNumberish,
+      newApr: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
+
+    updateSuperPlanActivity(
+      superPlanId: BigNumberish,
+      isActive: boolean,
       overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
 
@@ -974,14 +1302,13 @@ export interface Staking extends BaseContract {
       overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
 
-    withdrawAll(
+    withdrawAllCompleted(
       planId: BigNumberish,
       overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
 
-    withdrawLiquidity(
-      recipient: string,
-      amount: BigNumberish,
+    withdrawSuperPlan(
+      superPlanId: BigNumberish,
       overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
   };
@@ -1001,6 +1328,12 @@ export interface Staking extends BaseContract {
     subscriptionDuration: BigNumberish,
     stakingDuration: BigNumberish,
     apr: BigNumberish,
+    isSuperPowered: boolean,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  addSuperStakingPlan(
+    apr: BigNumberish,
     overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
 
@@ -1010,11 +1343,31 @@ export interface Staking extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
+  claimSuperPlan(
+    superPlanId: BigNumberish,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
   deposit(
     planId: BigNumberish,
     depositAmount: BigNumberish,
     isSAVRToken: boolean,
     referrer: string,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  depositSuperPlan(
+    superPlanId: BigNumberish,
+    depositAmount: BigNumberish,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  extraAprPowerC(overrides?: CallOverrides): Promise<BigNumber>;
+
+  extract(
+    recipient: string,
+    amount: BigNumberish,
+    isSAVRToken: boolean,
     overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
 
@@ -1025,13 +1378,27 @@ export interface Staking extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
-  getAvailableTokens(overrides?: CallOverrides): Promise<BigNumber>;
+  getAvailableSuperStakeReward(
+    superPlanId: BigNumberish,
+    user: string,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  getAvailableTokens(
+    isSAVRToken: boolean,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
 
   getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<string>;
 
   getStakingPlans(
     overrides?: CallOverrides
   ): Promise<IStaking.StakingPlanStructOutput[]>;
+
+  getSuperStakingPlansForUser(
+    userAddress: string,
+    overrides?: CallOverrides
+  ): Promise<IStaking.SuperStakingPlanWithAprAndStakeStructOutput[]>;
 
   getTimestamp(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1057,6 +1424,12 @@ export interface Staking extends BaseContract {
     userAddress: string,
     overrides?: CallOverrides
   ): Promise<IStaking.StakeWithRewardsInfoStructOutput[]>;
+
+  getUserSuperPlanInfo(
+    superPlanId: BigNumberish,
+    userAddress: string,
+    overrides?: CallOverrides
+  ): Promise<IStaking.SuperStakeStructOutput>;
 
   grantRole(
     role: BytesLike,
@@ -1085,6 +1458,11 @@ export interface Staking extends BaseContract {
 
   proxiableUUID(overrides?: CallOverrides): Promise<string>;
 
+  renewPowerSubscriptionB(
+    user: string,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
   renounceRole(
     role: BytesLike,
     account: string,
@@ -1097,16 +1475,13 @@ export interface Staking extends BaseContract {
     overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
 
-  shouldAddReferrerOnSavrTokenStake(
-    overrides?: CallOverrides
-  ): Promise<boolean>;
-
   stakingPlans(
     arg0: BigNumberish,
     overrides?: CallOverrides
   ): Promise<
     [
       BigNumber,
+      boolean,
       boolean,
       BigNumber,
       BigNumber,
@@ -1122,6 +1497,7 @@ export interface Staking extends BaseContract {
     ] & {
       stakingPlanId: BigNumber;
       isActive: boolean;
+      isSuperPowered: boolean;
       subscriptionCost: BigNumber;
       subscriptionDuration: BigNumber;
       stakingDuration: BigNumber;
@@ -1141,12 +1517,31 @@ export interface Staking extends BaseContract {
     overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
 
+  superStakingPlans(
+    arg0: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<
+    [BigNumber, boolean, BigNumber, BigNumber, BigNumber, BigNumber] & {
+      stakingPlanId: BigNumber;
+      isActive: boolean;
+      totalStakesNo: BigNumber;
+      totalStaked: BigNumber;
+      currentLocked: BigNumber;
+      totalClaimed: BigNumber;
+    }
+  >;
+
   supportsInterface(
     interfaceId: BytesLike,
     overrides?: CallOverrides
   ): Promise<boolean>;
 
   totalLockedTokens(overrides?: CallOverrides): Promise<BigNumber>;
+
+  updateExtraAprPowerC(
+    _extraApr: BigNumberish,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
 
   updateMinStakeLimit(
     minLimit_: BigNumberish,
@@ -1183,8 +1578,15 @@ export interface Staking extends BaseContract {
     overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
 
-  updateShouldAddReferrerOnSavrTokenStake(
-    value: boolean,
+  updateSuperPlanAPR(
+    superPlanId: BigNumberish,
+    newApr: BigNumberish,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  updateSuperPlanActivity(
+    superPlanId: BigNumberish,
+    isActive: boolean,
     overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
 
@@ -1210,14 +1612,13 @@ export interface Staking extends BaseContract {
     overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
 
-  withdrawAll(
+  withdrawAllCompleted(
     planId: BigNumberish,
     overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
 
-  withdrawLiquidity(
-    recipient: string,
-    amount: BigNumberish,
+  withdrawSuperPlan(
+    superPlanId: BigNumberish,
     overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
 
@@ -1237,6 +1638,12 @@ export interface Staking extends BaseContract {
       subscriptionDuration: BigNumberish,
       stakingDuration: BigNumberish,
       apr: BigNumberish,
+      isSuperPowered: boolean,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    addSuperStakingPlan(
+      apr: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1246,11 +1653,31 @@ export interface Staking extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    claimSuperPlan(
+      superPlanId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     deposit(
       planId: BigNumberish,
       depositAmount: BigNumberish,
       isSAVRToken: boolean,
       referrer: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    depositSuperPlan(
+      superPlanId: BigNumberish,
+      depositAmount: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    extraAprPowerC(overrides?: CallOverrides): Promise<BigNumber>;
+
+    extract(
+      recipient: string,
+      amount: BigNumberish,
+      isSAVRToken: boolean,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1261,13 +1688,27 @@ export interface Staking extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    getAvailableTokens(overrides?: CallOverrides): Promise<BigNumber>;
+    getAvailableSuperStakeReward(
+      superPlanId: BigNumberish,
+      user: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getAvailableTokens(
+      isSAVRToken: boolean,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<string>;
 
     getStakingPlans(
       overrides?: CallOverrides
     ): Promise<IStaking.StakingPlanStructOutput[]>;
+
+    getSuperStakingPlansForUser(
+      userAddress: string,
+      overrides?: CallOverrides
+    ): Promise<IStaking.SuperStakingPlanWithAprAndStakeStructOutput[]>;
 
     getTimestamp(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1293,6 +1734,12 @@ export interface Staking extends BaseContract {
       userAddress: string,
       overrides?: CallOverrides
     ): Promise<IStaking.StakeWithRewardsInfoStructOutput[]>;
+
+    getUserSuperPlanInfo(
+      superPlanId: BigNumberish,
+      userAddress: string,
+      overrides?: CallOverrides
+    ): Promise<IStaking.SuperStakeStructOutput>;
 
     grantRole(
       role: BytesLike,
@@ -1324,6 +1771,11 @@ export interface Staking extends BaseContract {
 
     proxiableUUID(overrides?: CallOverrides): Promise<string>;
 
+    renewPowerSubscriptionB(
+      user: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     renounceRole(
       role: BytesLike,
       account: string,
@@ -1336,16 +1788,13 @@ export interface Staking extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    shouldAddReferrerOnSavrTokenStake(
-      overrides?: CallOverrides
-    ): Promise<boolean>;
-
     stakingPlans(
       arg0: BigNumberish,
       overrides?: CallOverrides
     ): Promise<
       [
         BigNumber,
+        boolean,
         boolean,
         BigNumber,
         BigNumber,
@@ -1361,6 +1810,7 @@ export interface Staking extends BaseContract {
       ] & {
         stakingPlanId: BigNumber;
         isActive: boolean;
+        isSuperPowered: boolean;
         subscriptionCost: BigNumber;
         subscriptionDuration: BigNumber;
         stakingDuration: BigNumber;
@@ -1377,12 +1827,31 @@ export interface Staking extends BaseContract {
 
     subscribe(planId: BigNumberish, overrides?: CallOverrides): Promise<void>;
 
+    superStakingPlans(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<
+      [BigNumber, boolean, BigNumber, BigNumber, BigNumber, BigNumber] & {
+        stakingPlanId: BigNumber;
+        isActive: boolean;
+        totalStakesNo: BigNumber;
+        totalStaked: BigNumber;
+        currentLocked: BigNumber;
+        totalClaimed: BigNumber;
+      }
+    >;
+
     supportsInterface(
       interfaceId: BytesLike,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
     totalLockedTokens(overrides?: CallOverrides): Promise<BigNumber>;
+
+    updateExtraAprPowerC(
+      _extraApr: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     updateMinStakeLimit(
       minLimit_: BigNumberish,
@@ -1419,8 +1888,15 @@ export interface Staking extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    updateShouldAddReferrerOnSavrTokenStake(
-      value: boolean,
+    updateSuperPlanAPR(
+      superPlanId: BigNumberish,
+      newApr: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    updateSuperPlanActivity(
+      superPlanId: BigNumberish,
+      isActive: boolean,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1446,11 +1922,13 @@ export interface Staking extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    withdrawAll(planId: BigNumberish, overrides?: CallOverrides): Promise<void>;
+    withdrawAllCompleted(
+      planId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
-    withdrawLiquidity(
-      recipient: string,
-      amount: BigNumberish,
+    withdrawSuperPlan(
+      superPlanId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
   };
@@ -1498,15 +1976,6 @@ export interface Staking extends BaseContract {
 
     "Initialized(uint8)"(version?: null): InitializedEventFilter;
     Initialized(version?: null): InitializedEventFilter;
-
-    "LiquidityWithdrawnByAdmin(address,uint256)"(
-      recipient?: string | null,
-      amount?: null
-    ): LiquidityWithdrawnByAdminEventFilter;
-    LiquidityWithdrawnByAdmin(
-      recipient?: string | null,
-      amount?: null
-    ): LiquidityWithdrawnByAdminEventFilter;
 
     "RoleAdminChanged(bytes32,bytes32,bytes32)"(
       role?: BytesLike | null,
@@ -1560,6 +2029,19 @@ export interface Staking extends BaseContract {
       timestamp?: null
     ): StakedEventFilter;
 
+    "StakedSuperPlan(address,uint256,uint256,uint256)"(
+      user?: string | null,
+      superStakingPlanId?: BigNumberish | null,
+      amount?: null,
+      timestamp?: null
+    ): StakedSuperPlanEventFilter;
+    StakedSuperPlan(
+      user?: string | null,
+      superStakingPlanId?: BigNumberish | null,
+      amount?: null,
+      timestamp?: null
+    ): StakedSuperPlanEventFilter;
+
     "StakingPlanCreated(uint256,uint256,uint256)"(
       stakingPlanId?: BigNumberish | null,
       duration?: null,
@@ -1579,6 +2061,61 @@ export interface Staking extends BaseContract {
       user?: string | null,
       stakingPlanId?: BigNumberish | null
     ): SubscribedEventFilter;
+
+    "SuperAprUpdated(uint256,uint256,uint256)"(
+      superPlanId?: BigNumberish | null,
+      newApr?: null,
+      timestamp?: null
+    ): SuperAprUpdatedEventFilter;
+    SuperAprUpdated(
+      superPlanId?: BigNumberish | null,
+      newApr?: null,
+      timestamp?: null
+    ): SuperAprUpdatedEventFilter;
+
+    "SuperClaimed(address,uint256,uint256,uint256)"(
+      user?: string | null,
+      superStakingPlanId?: BigNumberish | null,
+      profit?: null,
+      timestamp?: null
+    ): SuperClaimedEventFilter;
+    SuperClaimed(
+      user?: string | null,
+      superStakingPlanId?: BigNumberish | null,
+      profit?: null,
+      timestamp?: null
+    ): SuperClaimedEventFilter;
+
+    "SuperPlanActivityChanged(uint256,bool)"(
+      superStakingPlanId?: BigNumberish | null,
+      isActive?: null
+    ): SuperPlanActivityChangedEventFilter;
+    SuperPlanActivityChanged(
+      superStakingPlanId?: BigNumberish | null,
+      isActive?: null
+    ): SuperPlanActivityChangedEventFilter;
+
+    "SuperStakingPlanCreated(uint256,uint256)"(
+      superStakingPlanId?: BigNumberish | null,
+      apr?: null
+    ): SuperStakingPlanCreatedEventFilter;
+    SuperStakingPlanCreated(
+      superStakingPlanId?: BigNumberish | null,
+      apr?: null
+    ): SuperStakingPlanCreatedEventFilter;
+
+    "SuperWithdrawn(address,uint256,uint256,uint256)"(
+      user?: string | null,
+      superStakingPlanId?: BigNumberish | null,
+      amount?: null,
+      timestamp?: null
+    ): SuperWithdrawnEventFilter;
+    SuperWithdrawn(
+      user?: string | null,
+      superStakingPlanId?: BigNumberish | null,
+      amount?: null,
+      timestamp?: null
+    ): SuperWithdrawnEventFilter;
 
     "Upgraded(address)"(implementation?: string | null): UpgradedEventFilter;
     Upgraded(implementation?: string | null): UpgradedEventFilter;
@@ -1600,6 +2137,12 @@ export interface Staking extends BaseContract {
       subscriptionDuration: BigNumberish,
       stakingDuration: BigNumberish,
       apr: BigNumberish,
+      isSuperPowered: boolean,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+
+    addSuperStakingPlan(
+      apr: BigNumberish,
       overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
 
@@ -1607,6 +2150,11 @@ export interface Staking extends BaseContract {
       planId: BigNumberish,
       amount: BigNumberish,
       overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    claimSuperPlan(
+      superPlanId: BigNumberish,
+      overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
 
     deposit(
@@ -1617,6 +2165,21 @@ export interface Staking extends BaseContract {
       overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
 
+    depositSuperPlan(
+      superPlanId: BigNumberish,
+      depositAmount: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+
+    extraAprPowerC(overrides?: CallOverrides): Promise<BigNumber>;
+
+    extract(
+      recipient: string,
+      amount: BigNumberish,
+      isSAVRToken: boolean,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+
     getAvailableStakeReward(
       planId: BigNumberish,
       userAddress: string,
@@ -1624,7 +2187,16 @@ export interface Staking extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    getAvailableTokens(overrides?: CallOverrides): Promise<BigNumber>;
+    getAvailableSuperStakeReward(
+      superPlanId: BigNumberish,
+      user: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getAvailableTokens(
+      isSAVRToken: boolean,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     getRoleAdmin(
       role: BytesLike,
@@ -1632,6 +2204,11 @@ export interface Staking extends BaseContract {
     ): Promise<BigNumber>;
 
     getStakingPlans(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getSuperStakingPlansForUser(
+      userAddress: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     getTimestamp(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1654,6 +2231,12 @@ export interface Staking extends BaseContract {
 
     getUserStakesWithRewards(
       planId: BigNumberish,
+      userAddress: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getUserSuperPlanInfo(
+      superPlanId: BigNumberish,
       userAddress: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -1688,6 +2271,11 @@ export interface Staking extends BaseContract {
 
     proxiableUUID(overrides?: CallOverrides): Promise<BigNumber>;
 
+    renewPowerSubscriptionB(
+      user: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+
     renounceRole(
       role: BytesLike,
       account: string,
@@ -1700,10 +2288,6 @@ export interface Staking extends BaseContract {
       overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
 
-    shouldAddReferrerOnSavrTokenStake(
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     stakingPlans(
       arg0: BigNumberish,
       overrides?: CallOverrides
@@ -1714,12 +2298,22 @@ export interface Staking extends BaseContract {
       overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
 
+    superStakingPlans(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     supportsInterface(
       interfaceId: BytesLike,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     totalLockedTokens(overrides?: CallOverrides): Promise<BigNumber>;
+
+    updateExtraAprPowerC(
+      _extraApr: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
 
     updateMinStakeLimit(
       minLimit_: BigNumberish,
@@ -1756,8 +2350,15 @@ export interface Staking extends BaseContract {
       overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
 
-    updateShouldAddReferrerOnSavrTokenStake(
-      value: boolean,
+    updateSuperPlanAPR(
+      superPlanId: BigNumberish,
+      newApr: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+
+    updateSuperPlanActivity(
+      superPlanId: BigNumberish,
+      isActive: boolean,
       overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
 
@@ -1783,14 +2384,13 @@ export interface Staking extends BaseContract {
       overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
 
-    withdrawAll(
+    withdrawAllCompleted(
       planId: BigNumberish,
       overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
 
-    withdrawLiquidity(
-      recipient: string,
-      amount: BigNumberish,
+    withdrawSuperPlan(
+      superPlanId: BigNumberish,
       overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
   };
@@ -1815,6 +2415,12 @@ export interface Staking extends BaseContract {
       subscriptionDuration: BigNumberish,
       stakingDuration: BigNumberish,
       apr: BigNumberish,
+      isSuperPowered: boolean,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    addSuperStakingPlan(
+      apr: BigNumberish,
       overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 
@@ -1822,6 +2428,11 @@ export interface Staking extends BaseContract {
       planId: BigNumberish,
       amount: BigNumberish,
       overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    claimSuperPlan(
+      superPlanId: BigNumberish,
+      overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 
     deposit(
@@ -1832,6 +2443,21 @@ export interface Staking extends BaseContract {
       overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 
+    depositSuperPlan(
+      superPlanId: BigNumberish,
+      depositAmount: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    extraAprPowerC(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    extract(
+      recipient: string,
+      amount: BigNumberish,
+      isSAVRToken: boolean,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
     getAvailableStakeReward(
       planId: BigNumberish,
       userAddress: string,
@@ -1839,7 +2465,14 @@ export interface Staking extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    getAvailableSuperStakeReward(
+      superPlanId: BigNumberish,
+      user: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     getAvailableTokens(
+      isSAVRToken: boolean,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -1849,6 +2482,11 @@ export interface Staking extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     getStakingPlans(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    getSuperStakingPlansForUser(
+      userAddress: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     getTimestamp(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
@@ -1871,6 +2509,12 @@ export interface Staking extends BaseContract {
 
     getUserStakesWithRewards(
       planId: BigNumberish,
+      userAddress: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getUserSuperPlanInfo(
+      superPlanId: BigNumberish,
       userAddress: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
@@ -1905,6 +2549,11 @@ export interface Staking extends BaseContract {
 
     proxiableUUID(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    renewPowerSubscriptionB(
+      user: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
     renounceRole(
       role: BytesLike,
       account: string,
@@ -1917,10 +2566,6 @@ export interface Staking extends BaseContract {
       overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 
-    shouldAddReferrerOnSavrTokenStake(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     stakingPlans(
       arg0: BigNumberish,
       overrides?: CallOverrides
@@ -1931,12 +2576,22 @@ export interface Staking extends BaseContract {
       overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 
+    superStakingPlans(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     supportsInterface(
       interfaceId: BytesLike,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     totalLockedTokens(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    updateExtraAprPowerC(
+      _extraApr: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
 
     updateMinStakeLimit(
       minLimit_: BigNumberish,
@@ -1973,8 +2628,15 @@ export interface Staking extends BaseContract {
       overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 
-    updateShouldAddReferrerOnSavrTokenStake(
-      value: boolean,
+    updateSuperPlanAPR(
+      superPlanId: BigNumberish,
+      newApr: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    updateSuperPlanActivity(
+      superPlanId: BigNumberish,
+      isActive: boolean,
       overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 
@@ -2000,14 +2662,13 @@ export interface Staking extends BaseContract {
       overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 
-    withdrawAll(
+    withdrawAllCompleted(
       planId: BigNumberish,
       overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 
-    withdrawLiquidity(
-      recipient: string,
-      amount: BigNumberish,
+    withdrawSuperPlan(
+      superPlanId: BigNumberish,
       overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
   };

@@ -1,7 +1,6 @@
 import React, { createRef } from 'react';
 import { createBrowserRouter, Navigate, useRouteError } from 'react-router-dom';
 
-import { AdminPanel } from './components/AdminPanel/AdminPanel';
 import { AvatarSettings } from './components/AvatarSettings/AvatarSettings';
 import { Dashboard } from './components/Dashboard/Dashboard';
 import { ExchangePage } from './components/Exchange/ExchangePage';
@@ -13,6 +12,7 @@ import { TeamsPage } from './components/Teams/TeamsPage';
 
 const Landing = React.lazy(() => import('@/components/Landing/Landing'));
 const AvatarLanding = React.lazy(() => import('@/components/AvatarLanding/AvatarLanding'));
+const AdminPanel = React.lazy(() => import('@/components/AdminPanel/AdminPanel'));
 
 export const LANDING_URL = 'https://isaver.io';
 export const APP_URL = 'https://dashboard.isaver.io';
@@ -22,6 +22,9 @@ export const isLanding = Boolean(process.env.REACT_APP_IS_LANDING);
 export const isAvatarsLanding = Boolean(process.env.REACT_APP_IS_AVATARS_LANDING);
 export const isDashboard = !isLanding && !isAvatarsLanding;
 export const isDevelopment = process.env.NODE_ENV === 'development';
+
+// Common links
+export const AVATAR_LANDING_POWERS_INFO_URL = `${AVATARS_URL}/#powers`;
 
 export const LANDING_PATH = '/';
 export const AVATARS_LANDING_PATH = '/';

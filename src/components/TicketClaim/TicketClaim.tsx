@@ -15,8 +15,9 @@ import { ReactComponent as CheckIcon } from '@/assets/images/icons/check_ticket.
 import { BuyRaffleTicketsModal } from '@/components/Raffle/BuyRaffleTicketsModal';
 import { Button } from '@/components/ui/Button/Button';
 import { ConnectWalletButton } from '@/components/ui/ConnectWalletButton/ConnectWalletButton';
+import { PowerStatus } from '@/components/ui/PowerStatus/PowerStatus';
 import { useBuyTicketsLogger } from '@/hooks/logger/useBuyTicketsLogger';
-import { useRaffle, useRaffleControl } from '@/hooks/raffle/useRaffle';
+import { useRaffle, useTicketPrice } from '@/hooks/raffle/useRaffle';
 import { useRaffleMiniGame } from '@/hooks/raffle/useRaffleMiniGame';
 import { useCountdown } from '@/hooks/useCountdown';
 import { useLogger } from '@/hooks/useLogger';
@@ -45,7 +46,7 @@ export const TicketClaim = () => {
     actionGroup: 'conversions',
   });
 
-  const { ticketPrice } = useRaffleControl();
+  const { ticketPrice } = useTicketPrice();
   const { buyTickets } = useRaffle();
   const {
     claimPeriod,
@@ -56,6 +57,8 @@ export const TicketClaim = () => {
     isMintAvailable,
     claimDay,
     mintMyTicket,
+    isPowerDActive,
+    extraTicketsPowerD,
   } = useRaffleMiniGame();
 
   const [isLoading, setIsLoading] = useState(false);
@@ -132,7 +135,7 @@ export const TicketClaim = () => {
         justifyContent="space-between"
         gap={5}
         flexWrap="wrap"
-        paddingX={{ sm: '10px', md: 'unset' }}
+        paddingX={{ sm: '10px', lg: 'unset' }}
       >
         <Text textStyle="sectionHeading" width={{ sm: '100%', xl: '35%' }}>
           Play Everyday
@@ -159,25 +162,33 @@ export const TicketClaim = () => {
           )}
         </Flex>
 
-        <Text
+        <Box
           order={{ sm: 2, xl: 3 }}
-          textStyle="text1"
           flexGrow="0"
           flexShrink="0"
           flexBasis={{ sm: '100%', xl: '60%', '2xl': '50%' }}
         >
-          Claim puzzle every day to get a free Ticket to iSaver Raffles.
-          <br /> Just five days and you can mint a Ticket. Also, everyone can buy any number of
-          Tickets.
-        </Text>
+          <Box mb="20px">
+            <PowerStatus powerId={3} isActive={isPowerDActive} />
+          </Box>
+
+          <Text textStyle="text1">
+            Claim puzzle every day to get a free Ticket to iSaver Raffles.
+            <br /> Just five days and you can mint a Ticket. Also, everyone can buy any number of
+            Tickets.
+          </Text>
+        </Box>
       </Flex>
 
       <Box
-        className="render-animation-with-border"
-        m={{ sm: '50px 0 0', lg: '50px -15px 0', xl: '50px 0 0' }}
+        className={`render-animation-with-border ${
+          isPowerDActive ? 'render-animation-with-border--blue' : null
+        }`}
+        m={{ sm: '50px auto 0', lg: '50px -15px 0', xl: '50px 0 0' }}
+        maxWidth={{ sm: '300px', lg: 'unset' }}
         padding={{ sm: '24px 0', lg: '30px 15px 24px', '2xl': '40px 40px 48px 32px' }}
         background="rgba(38, 71, 55, 0.5)"
-        boxShadow="0 6px 11px rgba(0, 0, 0, 0.25)"
+        border={isPowerDActive ? '2px solid #1ADCE2' : undefined}
         borderRadius="md"
       >
         <Grid
@@ -224,6 +235,14 @@ export const TicketClaim = () => {
                   whiteSpace="nowrap"
                   textTransform="uppercase"
                 >
+                  {isPowerDActive ? (
+                    <>
+                      x{(extraTicketsPowerD.data || 0) + 1}
+                      <br />
+                    </>
+                  ) : (
+                    ''
+                  )}
                   Mint my
                   <br />
                   Ticket

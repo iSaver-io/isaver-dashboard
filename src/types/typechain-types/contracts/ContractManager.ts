@@ -30,6 +30,7 @@ export interface ContractManagerInterface extends utils.Interface {
   functions: {
     "DEFAULT_ADMIN_ROLE()": FunctionFragment;
     "UPGRADER_ROLE()": FunctionFragment;
+    "getAvatarSettings()": FunctionFragment;
     "getAvatarsAddress()": FunctionFragment;
     "getBirthdayPrizesPool()": FunctionFragment;
     "getPowersAddress()": FunctionFragment;
@@ -48,6 +49,7 @@ export interface ContractManagerInterface extends utils.Interface {
     "renounceRole(bytes32,address)": FunctionFragment;
     "revokeRole(bytes32,address)": FunctionFragment;
     "supportsInterface(bytes4)": FunctionFragment;
+    "updateAvatarSettings(address)": FunctionFragment;
     "updateAvatars(address)": FunctionFragment;
     "updateBirthdayPrizesPool(address)": FunctionFragment;
     "updatePowers(address)": FunctionFragment;
@@ -66,6 +68,7 @@ export interface ContractManagerInterface extends utils.Interface {
     nameOrSignatureOrTopic:
       | "DEFAULT_ADMIN_ROLE"
       | "UPGRADER_ROLE"
+      | "getAvatarSettings"
       | "getAvatarsAddress"
       | "getBirthdayPrizesPool"
       | "getPowersAddress"
@@ -84,6 +87,7 @@ export interface ContractManagerInterface extends utils.Interface {
       | "renounceRole"
       | "revokeRole"
       | "supportsInterface"
+      | "updateAvatarSettings"
       | "updateAvatars"
       | "updateBirthdayPrizesPool"
       | "updatePowers"
@@ -104,6 +108,10 @@ export interface ContractManagerInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "UPGRADER_ROLE",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getAvatarSettings",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -179,6 +187,10 @@ export interface ContractManagerInterface extends utils.Interface {
     values: [BytesLike]
   ): string;
   encodeFunctionData(
+    functionFragment: "updateAvatarSettings",
+    values: [string]
+  ): string;
+  encodeFunctionData(
     functionFragment: "updateAvatars",
     values: [string]
   ): string;
@@ -227,6 +239,10 @@ export interface ContractManagerInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "UPGRADER_ROLE",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getAvatarSettings",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -287,6 +303,10 @@ export interface ContractManagerInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "revokeRole", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "supportsInterface",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "updateAvatarSettings",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -457,6 +477,8 @@ export interface ContractManager extends BaseContract {
 
     UPGRADER_ROLE(overrides?: CallOverrides): Promise<[string]>;
 
+    getAvatarSettings(overrides?: CallOverrides): Promise<[string]>;
+
     getAvatarsAddress(overrides?: CallOverrides): Promise<[string]>;
 
     getBirthdayPrizesPool(overrides?: CallOverrides): Promise<[string]>;
@@ -513,6 +535,11 @@ export interface ContractManager extends BaseContract {
       interfaceId: BytesLike,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
+
+    updateAvatarSettings(
+      _avatarSettings: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
 
     updateAvatars(
       _avatars: string,
@@ -580,6 +607,8 @@ export interface ContractManager extends BaseContract {
 
   UPGRADER_ROLE(overrides?: CallOverrides): Promise<string>;
 
+  getAvatarSettings(overrides?: CallOverrides): Promise<string>;
+
   getAvatarsAddress(overrides?: CallOverrides): Promise<string>;
 
   getBirthdayPrizesPool(overrides?: CallOverrides): Promise<string>;
@@ -636,6 +665,11 @@ export interface ContractManager extends BaseContract {
     interfaceId: BytesLike,
     overrides?: CallOverrides
   ): Promise<boolean>;
+
+  updateAvatarSettings(
+    _avatarSettings: string,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
 
   updateAvatars(
     _avatars: string,
@@ -703,6 +737,8 @@ export interface ContractManager extends BaseContract {
 
     UPGRADER_ROLE(overrides?: CallOverrides): Promise<string>;
 
+    getAvatarSettings(overrides?: CallOverrides): Promise<string>;
+
     getAvatarsAddress(overrides?: CallOverrides): Promise<string>;
 
     getBirthdayPrizesPool(overrides?: CallOverrides): Promise<string>;
@@ -757,6 +793,11 @@ export interface ContractManager extends BaseContract {
       interfaceId: BytesLike,
       overrides?: CallOverrides
     ): Promise<boolean>;
+
+    updateAvatarSettings(
+      _avatarSettings: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     updateAvatars(_avatars: string, overrides?: CallOverrides): Promise<void>;
 
@@ -859,6 +900,8 @@ export interface ContractManager extends BaseContract {
 
     UPGRADER_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
 
+    getAvatarSettings(overrides?: CallOverrides): Promise<BigNumber>;
+
     getAvatarsAddress(overrides?: CallOverrides): Promise<BigNumber>;
 
     getBirthdayPrizesPool(overrides?: CallOverrides): Promise<BigNumber>;
@@ -915,6 +958,11 @@ export interface ContractManager extends BaseContract {
     supportsInterface(
       interfaceId: BytesLike,
       overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    updateAvatarSettings(
+      _avatarSettings: string,
+      overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
 
     updateAvatars(
@@ -986,6 +1034,8 @@ export interface ContractManager extends BaseContract {
 
     UPGRADER_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    getAvatarSettings(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     getAvatarsAddress(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getBirthdayPrizesPool(
@@ -1052,6 +1102,11 @@ export interface ContractManager extends BaseContract {
     supportsInterface(
       interfaceId: BytesLike,
       overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    updateAvatarSettings(
+      _avatarSettings: string,
+      overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 
     updateAvatars(

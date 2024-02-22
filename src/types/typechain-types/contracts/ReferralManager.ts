@@ -74,17 +74,20 @@ export declare namespace IReferralManager {
 export interface ReferralManagerInterface extends utils.Interface {
   functions: {
     "DEFAULT_ADMIN_ROLE()": FunctionFragment;
-    "LEVELS()": FunctionFragment;
     "REFERRAL_PERCENTS(uint256)": FunctionFragment;
+    "SUBSCRIPTION_LEVELS()": FunctionFragment;
     "SUBSCRIPTION_PERIOD_DAYS()": FunctionFragment;
+    "TOTAL_LEVELS()": FunctionFragment;
     "UPGRADER_ROLE()": FunctionFragment;
     "addUserDividends((address,uint256,address,uint256,uint256,uint256,uint256))": FunctionFragment;
     "calculateRefReward(uint256,uint256)": FunctionFragment;
     "claimDividends(uint256)": FunctionFragment;
+    "extract(address,uint256)": FunctionFragment;
     "fullSubscriptionCost()": FunctionFragment;
-    "getReferralLevels()": FunctionFragment;
     "getRoleAdmin(bytes32)": FunctionFragment;
+    "getSubscriptionReferralLevels()": FunctionFragment;
     "getTimestamp()": FunctionFragment;
+    "getTotalReferralLevels()": FunctionFragment;
     "getUser1LvlReferrals(address)": FunctionFragment;
     "getUserInfo(address)": FunctionFragment;
     "getUserReferralsByLevel(address,uint256)": FunctionFragment;
@@ -94,6 +97,7 @@ export interface ReferralManagerInterface extends utils.Interface {
     "initialize(address,uint256,uint256)": FunctionFragment;
     "levelSubscriptionCost()": FunctionFragment;
     "proxiableUUID()": FunctionFragment;
+    "renewPowerSubscriptionA(address)": FunctionFragment;
     "renounceRole(bytes32,address)": FunctionFragment;
     "revokeRole(bytes32,address)": FunctionFragment;
     "setMyReferrer(address)": FunctionFragment;
@@ -107,25 +111,30 @@ export interface ReferralManagerInterface extends utils.Interface {
     "updateSubscriptionPeriod(uint256)": FunctionFragment;
     "upgradeTo(address)": FunctionFragment;
     "upgradeToAndCall(address,bytes)": FunctionFragment;
+    "userHasActivatedPowerA(address)": FunctionFragment;
+    "userHasActivePowerA(address)": FunctionFragment;
     "userHasAnySubscription(address)": FunctionFragment;
+    "userHasFullSubscription(address)": FunctionFragment;
     "userHasSubscription(address,uint256)": FunctionFragment;
-    "withdrawLiquidity(address,uint256)": FunctionFragment;
   };
 
   getFunction(
     nameOrSignatureOrTopic:
       | "DEFAULT_ADMIN_ROLE"
-      | "LEVELS"
       | "REFERRAL_PERCENTS"
+      | "SUBSCRIPTION_LEVELS"
       | "SUBSCRIPTION_PERIOD_DAYS"
+      | "TOTAL_LEVELS"
       | "UPGRADER_ROLE"
       | "addUserDividends"
       | "calculateRefReward"
       | "claimDividends"
+      | "extract"
       | "fullSubscriptionCost"
-      | "getReferralLevels"
       | "getRoleAdmin"
+      | "getSubscriptionReferralLevels"
       | "getTimestamp"
+      | "getTotalReferralLevels"
       | "getUser1LvlReferrals"
       | "getUserInfo"
       | "getUserReferralsByLevel"
@@ -135,6 +144,7 @@ export interface ReferralManagerInterface extends utils.Interface {
       | "initialize"
       | "levelSubscriptionCost"
       | "proxiableUUID"
+      | "renewPowerSubscriptionA"
       | "renounceRole"
       | "revokeRole"
       | "setMyReferrer"
@@ -148,22 +158,31 @@ export interface ReferralManagerInterface extends utils.Interface {
       | "updateSubscriptionPeriod"
       | "upgradeTo"
       | "upgradeToAndCall"
+      | "userHasActivatedPowerA"
+      | "userHasActivePowerA"
       | "userHasAnySubscription"
+      | "userHasFullSubscription"
       | "userHasSubscription"
-      | "withdrawLiquidity"
   ): FunctionFragment;
 
   encodeFunctionData(
     functionFragment: "DEFAULT_ADMIN_ROLE",
     values?: undefined
   ): string;
-  encodeFunctionData(functionFragment: "LEVELS", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "REFERRAL_PERCENTS",
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
+    functionFragment: "SUBSCRIPTION_LEVELS",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "SUBSCRIPTION_PERIOD_DAYS",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "TOTAL_LEVELS",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -183,11 +202,11 @@ export interface ReferralManagerInterface extends utils.Interface {
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "fullSubscriptionCost",
-    values?: undefined
+    functionFragment: "extract",
+    values: [string, BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "getReferralLevels",
+    functionFragment: "fullSubscriptionCost",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -195,7 +214,15 @@ export interface ReferralManagerInterface extends utils.Interface {
     values: [BytesLike]
   ): string;
   encodeFunctionData(
+    functionFragment: "getSubscriptionReferralLevels",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "getTimestamp",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getTotalReferralLevels",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -230,6 +257,10 @@ export interface ReferralManagerInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "proxiableUUID",
     values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "renewPowerSubscriptionA",
+    values: [string]
   ): string;
   encodeFunctionData(
     functionFragment: "renounceRole",
@@ -281,15 +312,23 @@ export interface ReferralManagerInterface extends utils.Interface {
     values: [string, BytesLike]
   ): string;
   encodeFunctionData(
+    functionFragment: "userHasActivatedPowerA",
+    values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "userHasActivePowerA",
+    values: [string]
+  ): string;
+  encodeFunctionData(
     functionFragment: "userHasAnySubscription",
     values: [string]
   ): string;
   encodeFunctionData(
-    functionFragment: "userHasSubscription",
-    values: [string, BigNumberish]
+    functionFragment: "userHasFullSubscription",
+    values: [string]
   ): string;
   encodeFunctionData(
-    functionFragment: "withdrawLiquidity",
+    functionFragment: "userHasSubscription",
     values: [string, BigNumberish]
   ): string;
 
@@ -297,13 +336,20 @@ export interface ReferralManagerInterface extends utils.Interface {
     functionFragment: "DEFAULT_ADMIN_ROLE",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "LEVELS", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "REFERRAL_PERCENTS",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "SUBSCRIPTION_LEVELS",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "SUBSCRIPTION_PERIOD_DAYS",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "TOTAL_LEVELS",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -322,12 +368,9 @@ export interface ReferralManagerInterface extends utils.Interface {
     functionFragment: "claimDividends",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "extract", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "fullSubscriptionCost",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "getReferralLevels",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -335,7 +378,15 @@ export interface ReferralManagerInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "getSubscriptionReferralLevels",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "getTimestamp",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getTotalReferralLevels",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -363,6 +414,10 @@ export interface ReferralManagerInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "proxiableUUID",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "renewPowerSubscriptionA",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -412,15 +467,23 @@ export interface ReferralManagerInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "userHasActivatedPowerA",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "userHasActivePowerA",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "userHasAnySubscription",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "userHasSubscription",
+    functionFragment: "userHasFullSubscription",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "withdrawLiquidity",
+    functionFragment: "userHasSubscription",
     data: BytesLike
   ): Result;
 
@@ -428,9 +491,10 @@ export interface ReferralManagerInterface extends utils.Interface {
     "AdminChanged(address,address)": EventFragment;
     "BeaconUpgraded(address)": EventFragment;
     "DividendsAdded(address,address,uint256,uint256,uint256,uint256,uint256,uint256)": EventFragment;
+    "DividendsClaimed(address,uint256)": EventFragment;
     "Initialized(uint8)": EventFragment;
-    "LiquidityWithdrawnByAdmin(address,uint256)": EventFragment;
     "ReferralAdded(address,address)": EventFragment;
+    "ReferrerSet(address,address)": EventFragment;
     "RoleAdminChanged(bytes32,bytes32,bytes32)": EventFragment;
     "RoleGranted(bytes32,address,address)": EventFragment;
     "RoleRevoked(bytes32,address,address)": EventFragment;
@@ -441,9 +505,10 @@ export interface ReferralManagerInterface extends utils.Interface {
   getEvent(nameOrSignatureOrTopic: "AdminChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "BeaconUpgraded"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "DividendsAdded"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "DividendsClaimed"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "LiquidityWithdrawnByAdmin"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ReferralAdded"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "ReferrerSet"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleAdminChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleGranted"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleRevoked"): EventFragment;
@@ -498,24 +563,24 @@ export type DividendsAddedEvent = TypedEvent<
 
 export type DividendsAddedEventFilter = TypedEventFilter<DividendsAddedEvent>;
 
+export interface DividendsClaimedEventObject {
+  owner: string;
+  amount: BigNumber;
+}
+export type DividendsClaimedEvent = TypedEvent<
+  [string, BigNumber],
+  DividendsClaimedEventObject
+>;
+
+export type DividendsClaimedEventFilter =
+  TypedEventFilter<DividendsClaimedEvent>;
+
 export interface InitializedEventObject {
   version: number;
 }
 export type InitializedEvent = TypedEvent<[number], InitializedEventObject>;
 
 export type InitializedEventFilter = TypedEventFilter<InitializedEvent>;
-
-export interface LiquidityWithdrawnByAdminEventObject {
-  recipient: string;
-  amount: BigNumber;
-}
-export type LiquidityWithdrawnByAdminEvent = TypedEvent<
-  [string, BigNumber],
-  LiquidityWithdrawnByAdminEventObject
->;
-
-export type LiquidityWithdrawnByAdminEventFilter =
-  TypedEventFilter<LiquidityWithdrawnByAdminEvent>;
 
 export interface ReferralAddedEventObject {
   referrer: string;
@@ -527,6 +592,17 @@ export type ReferralAddedEvent = TypedEvent<
 >;
 
 export type ReferralAddedEventFilter = TypedEventFilter<ReferralAddedEvent>;
+
+export interface ReferrerSetEventObject {
+  referrer: string;
+  referral: string;
+}
+export type ReferrerSetEvent = TypedEvent<
+  [string, string],
+  ReferrerSetEventObject
+>;
+
+export type ReferrerSetEventFilter = TypedEventFilter<ReferrerSetEvent>;
 
 export interface RoleAdminChangedEventObject {
   role: string;
@@ -613,14 +689,16 @@ export interface ReferralManager extends BaseContract {
   functions: {
     DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<[string]>;
 
-    LEVELS(overrides?: CallOverrides): Promise<[BigNumber]>;
-
     REFERRAL_PERCENTS(
       arg0: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
+    SUBSCRIPTION_LEVELS(overrides?: CallOverrides): Promise<[BigNumber]>;
+
     SUBSCRIPTION_PERIOD_DAYS(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    TOTAL_LEVELS(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     UPGRADER_ROLE(overrides?: CallOverrides): Promise<[string]>;
 
@@ -640,13 +718,23 @@ export interface ReferralManager extends BaseContract {
       overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
 
-    fullSubscriptionCost(overrides?: CallOverrides): Promise<[BigNumber]>;
+    extract(
+      recipient: string,
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
 
-    getReferralLevels(overrides?: CallOverrides): Promise<[BigNumber]>;
+    fullSubscriptionCost(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<[string]>;
 
+    getSubscriptionReferralLevels(
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
     getTimestamp(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    getTotalReferralLevels(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     getUser1LvlReferrals(
       userAddress: string,
@@ -666,6 +754,7 @@ export interface ReferralManager extends BaseContract {
         BigNumber[],
         BigNumber,
         boolean,
+        boolean,
         BigNumber
       ] & {
         referrer: string;
@@ -676,6 +765,7 @@ export interface ReferralManager extends BaseContract {
         refCount: BigNumber[];
         totalReferrals: BigNumber;
         isActiveSubscriber: boolean;
+        hasActivatePowerA: boolean;
         activationDate: BigNumber;
       }
     >;
@@ -710,6 +800,11 @@ export interface ReferralManager extends BaseContract {
     levelSubscriptionCost(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     proxiableUUID(overrides?: CallOverrides): Promise<[string]>;
+
+    renewPowerSubscriptionA(
+      user: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
 
     renounceRole(
       role: BytesLike,
@@ -780,7 +875,22 @@ export interface ReferralManager extends BaseContract {
       overrides?: PayableOverrides & { from?: string }
     ): Promise<ContractTransaction>;
 
+    userHasActivatedPowerA(
+      user: string,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
+
+    userHasActivePowerA(
+      user: string,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
+
     userHasAnySubscription(
+      user: string,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
+
+    userHasFullSubscription(
       user: string,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
@@ -790,24 +900,20 @@ export interface ReferralManager extends BaseContract {
       level: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
-
-    withdrawLiquidity(
-      recipient: string,
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
   };
 
   DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
-
-  LEVELS(overrides?: CallOverrides): Promise<BigNumber>;
 
   REFERRAL_PERCENTS(
     arg0: BigNumberish,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
+  SUBSCRIPTION_LEVELS(overrides?: CallOverrides): Promise<BigNumber>;
+
   SUBSCRIPTION_PERIOD_DAYS(overrides?: CallOverrides): Promise<BigNumber>;
+
+  TOTAL_LEVELS(overrides?: CallOverrides): Promise<BigNumber>;
 
   UPGRADER_ROLE(overrides?: CallOverrides): Promise<string>;
 
@@ -827,13 +933,21 @@ export interface ReferralManager extends BaseContract {
     overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
 
-  fullSubscriptionCost(overrides?: CallOverrides): Promise<BigNumber>;
+  extract(
+    recipient: string,
+    amount: BigNumberish,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
 
-  getReferralLevels(overrides?: CallOverrides): Promise<BigNumber>;
+  fullSubscriptionCost(overrides?: CallOverrides): Promise<BigNumber>;
 
   getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<string>;
 
+  getSubscriptionReferralLevels(overrides?: CallOverrides): Promise<BigNumber>;
+
   getTimestamp(overrides?: CallOverrides): Promise<BigNumber>;
+
+  getTotalReferralLevels(overrides?: CallOverrides): Promise<BigNumber>;
 
   getUser1LvlReferrals(
     userAddress: string,
@@ -853,6 +967,7 @@ export interface ReferralManager extends BaseContract {
       BigNumber[],
       BigNumber,
       boolean,
+      boolean,
       BigNumber
     ] & {
       referrer: string;
@@ -863,6 +978,7 @@ export interface ReferralManager extends BaseContract {
       refCount: BigNumber[];
       totalReferrals: BigNumber;
       isActiveSubscriber: boolean;
+      hasActivatePowerA: boolean;
       activationDate: BigNumber;
     }
   >;
@@ -897,6 +1013,11 @@ export interface ReferralManager extends BaseContract {
   levelSubscriptionCost(overrides?: CallOverrides): Promise<BigNumber>;
 
   proxiableUUID(overrides?: CallOverrides): Promise<string>;
+
+  renewPowerSubscriptionA(
+    user: string,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
 
   renounceRole(
     role: BytesLike,
@@ -967,7 +1088,22 @@ export interface ReferralManager extends BaseContract {
     overrides?: PayableOverrides & { from?: string }
   ): Promise<ContractTransaction>;
 
+  userHasActivatedPowerA(
+    user: string,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
+  userHasActivePowerA(
+    user: string,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
   userHasAnySubscription(
+    user: string,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
+  userHasFullSubscription(
     user: string,
     overrides?: CallOverrides
   ): Promise<boolean>;
@@ -978,23 +1114,19 @@ export interface ReferralManager extends BaseContract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
-  withdrawLiquidity(
-    recipient: string,
-    amount: BigNumberish,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
   callStatic: {
     DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
-
-    LEVELS(overrides?: CallOverrides): Promise<BigNumber>;
 
     REFERRAL_PERCENTS(
       arg0: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    SUBSCRIPTION_LEVELS(overrides?: CallOverrides): Promise<BigNumber>;
+
     SUBSCRIPTION_PERIOD_DAYS(overrides?: CallOverrides): Promise<BigNumber>;
+
+    TOTAL_LEVELS(overrides?: CallOverrides): Promise<BigNumber>;
 
     UPGRADER_ROLE(overrides?: CallOverrides): Promise<string>;
 
@@ -1014,13 +1146,23 @@ export interface ReferralManager extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    fullSubscriptionCost(overrides?: CallOverrides): Promise<BigNumber>;
+    extract(
+      recipient: string,
+      amount: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
-    getReferralLevels(overrides?: CallOverrides): Promise<BigNumber>;
+    fullSubscriptionCost(overrides?: CallOverrides): Promise<BigNumber>;
 
     getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<string>;
 
+    getSubscriptionReferralLevels(
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     getTimestamp(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getTotalReferralLevels(overrides?: CallOverrides): Promise<BigNumber>;
 
     getUser1LvlReferrals(
       userAddress: string,
@@ -1040,6 +1182,7 @@ export interface ReferralManager extends BaseContract {
         BigNumber[],
         BigNumber,
         boolean,
+        boolean,
         BigNumber
       ] & {
         referrer: string;
@@ -1050,6 +1193,7 @@ export interface ReferralManager extends BaseContract {
         refCount: BigNumber[];
         totalReferrals: BigNumber;
         isActiveSubscriber: boolean;
+        hasActivatePowerA: boolean;
         activationDate: BigNumber;
       }
     >;
@@ -1084,6 +1228,11 @@ export interface ReferralManager extends BaseContract {
     levelSubscriptionCost(overrides?: CallOverrides): Promise<BigNumber>;
 
     proxiableUUID(overrides?: CallOverrides): Promise<string>;
+
+    renewPowerSubscriptionA(
+      user: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     renounceRole(
       role: BytesLike,
@@ -1149,7 +1298,22 @@ export interface ReferralManager extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    userHasActivatedPowerA(
+      user: string,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
+    userHasActivePowerA(
+      user: string,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
     userHasAnySubscription(
+      user: string,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
+    userHasFullSubscription(
       user: string,
       overrides?: CallOverrides
     ): Promise<boolean>;
@@ -1159,12 +1323,6 @@ export interface ReferralManager extends BaseContract {
       level: BigNumberish,
       overrides?: CallOverrides
     ): Promise<boolean>;
-
-    withdrawLiquidity(
-      recipient: string,
-      amount: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
   };
 
   filters: {
@@ -1203,17 +1361,17 @@ export interface ReferralManager extends BaseContract {
       timestamp?: null
     ): DividendsAddedEventFilter;
 
+    "DividendsClaimed(address,uint256)"(
+      owner?: string | null,
+      amount?: null
+    ): DividendsClaimedEventFilter;
+    DividendsClaimed(
+      owner?: string | null,
+      amount?: null
+    ): DividendsClaimedEventFilter;
+
     "Initialized(uint8)"(version?: null): InitializedEventFilter;
     Initialized(version?: null): InitializedEventFilter;
-
-    "LiquidityWithdrawnByAdmin(address,uint256)"(
-      recipient?: string | null,
-      amount?: null
-    ): LiquidityWithdrawnByAdminEventFilter;
-    LiquidityWithdrawnByAdmin(
-      recipient?: string | null,
-      amount?: null
-    ): LiquidityWithdrawnByAdminEventFilter;
 
     "ReferralAdded(address,address)"(
       referrer?: string | null,
@@ -1223,6 +1381,15 @@ export interface ReferralManager extends BaseContract {
       referrer?: string | null,
       referral?: string | null
     ): ReferralAddedEventFilter;
+
+    "ReferrerSet(address,address)"(
+      referrer?: string | null,
+      referral?: string | null
+    ): ReferrerSetEventFilter;
+    ReferrerSet(
+      referrer?: string | null,
+      referral?: string | null
+    ): ReferrerSetEventFilter;
 
     "RoleAdminChanged(bytes32,bytes32,bytes32)"(
       role?: BytesLike | null,
@@ -1275,14 +1442,16 @@ export interface ReferralManager extends BaseContract {
   estimateGas: {
     DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
 
-    LEVELS(overrides?: CallOverrides): Promise<BigNumber>;
-
     REFERRAL_PERCENTS(
       arg0: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    SUBSCRIPTION_LEVELS(overrides?: CallOverrides): Promise<BigNumber>;
+
     SUBSCRIPTION_PERIOD_DAYS(overrides?: CallOverrides): Promise<BigNumber>;
+
+    TOTAL_LEVELS(overrides?: CallOverrides): Promise<BigNumber>;
 
     UPGRADER_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1302,16 +1471,26 @@ export interface ReferralManager extends BaseContract {
       overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
 
-    fullSubscriptionCost(overrides?: CallOverrides): Promise<BigNumber>;
+    extract(
+      recipient: string,
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
 
-    getReferralLevels(overrides?: CallOverrides): Promise<BigNumber>;
+    fullSubscriptionCost(overrides?: CallOverrides): Promise<BigNumber>;
 
     getRoleAdmin(
       role: BytesLike,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    getSubscriptionReferralLevels(
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     getTimestamp(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getTotalReferralLevels(overrides?: CallOverrides): Promise<BigNumber>;
 
     getUser1LvlReferrals(
       userAddress: string,
@@ -1356,6 +1535,11 @@ export interface ReferralManager extends BaseContract {
     levelSubscriptionCost(overrides?: CallOverrides): Promise<BigNumber>;
 
     proxiableUUID(overrides?: CallOverrides): Promise<BigNumber>;
+
+    renewPowerSubscriptionA(
+      user: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
 
     renounceRole(
       role: BytesLike,
@@ -1426,7 +1610,22 @@ export interface ReferralManager extends BaseContract {
       overrides?: PayableOverrides & { from?: string }
     ): Promise<BigNumber>;
 
+    userHasActivatedPowerA(
+      user: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    userHasActivePowerA(
+      user: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     userHasAnySubscription(
+      user: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    userHasFullSubscription(
       user: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -1436,12 +1635,6 @@ export interface ReferralManager extends BaseContract {
       level: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
-
-    withdrawLiquidity(
-      recipient: string,
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
   };
 
   populateTransaction: {
@@ -1449,16 +1642,20 @@ export interface ReferralManager extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    LEVELS(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
     REFERRAL_PERCENTS(
       arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    SUBSCRIPTION_LEVELS(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     SUBSCRIPTION_PERIOD_DAYS(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
+
+    TOTAL_LEVELS(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     UPGRADER_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
@@ -1478,18 +1675,30 @@ export interface ReferralManager extends BaseContract {
       overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 
+    extract(
+      recipient: string,
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
     fullSubscriptionCost(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
-
-    getReferralLevels(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getRoleAdmin(
       role: BytesLike,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    getSubscriptionReferralLevels(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     getTimestamp(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    getTotalReferralLevels(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     getUser1LvlReferrals(
       userAddress: string,
@@ -1537,6 +1746,11 @@ export interface ReferralManager extends BaseContract {
 
     proxiableUUID(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    renewPowerSubscriptionA(
+      user: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
     renounceRole(
       role: BytesLike,
       account: string,
@@ -1606,7 +1820,22 @@ export interface ReferralManager extends BaseContract {
       overrides?: PayableOverrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 
+    userHasActivatedPowerA(
+      user: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    userHasActivePowerA(
+      user: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     userHasAnySubscription(
+      user: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    userHasFullSubscription(
       user: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
@@ -1615,12 +1844,6 @@ export interface ReferralManager extends BaseContract {
       user: string,
       level: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    withdrawLiquidity(
-      recipient: string,
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
   };
 }

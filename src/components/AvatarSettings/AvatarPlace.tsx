@@ -5,7 +5,12 @@ import { Box, IconButton, Link, Text } from '@chakra-ui/react';
 import { useAccount } from 'wagmi';
 
 import { Button } from '@/components/ui/Button/Button';
-import { useActiveAvatar, useAvatarMetadata, useDeactivateAvatar } from '@/hooks/useAvatarSettings';
+import {
+  useActivateAvatar,
+  useActiveAvatar,
+  useAvatarMetadata,
+  useDeactivateAvatar,
+} from '@/hooks/useAvatarSettings';
 import { useActiveAvatarNFT } from '@/hooks/useNFTHolders';
 import { AVATARS_URL } from '@/router';
 
@@ -17,14 +22,10 @@ import { AvatarDeletionModal } from './AvatarDeletionModal';
 import { AvatarSelectionModal } from './AvatarSelectionModal';
 
 export const AvatarPlace = () => {
-  const {
-    avatarNFT,
-    hasAvatar,
-    isLoading: isNFTMetadataLoading,
-    isFetching: isNFTMetadataFetching,
-  } = useActiveAvatarNFT();
-  const { activeAvatar } = useActiveAvatar();
-  const { mutateAsync, isLoading: isDeactivateLoading, isSuccess } = useDeactivateAvatar();
+  const { avatarNFT, isLoading: isNFTLoading } = useActiveAvatarNFT();
+  const { activeAvatar, hasAvatar, isFetching: isActiveAvatarFetching } = useActiveAvatar();
+  const { isLoading: isActivateLoading } = useActivateAvatar();
+  const { mutateAsync, isLoading: isDeactivateLoading } = useDeactivateAvatar();
   const { isConnected } = useAccount();
   const { isLoading: isMetadataLoading } = useAvatarMetadata();
 
@@ -36,7 +37,7 @@ export const AvatarPlace = () => {
     mutateAsync();
   }, [mutateAsync]);
 
-  if (!isSuccess && isNFTMetadataLoading && isNFTMetadataFetching) {
+  if (isActiveAvatarFetching || (hasAvatar && isNFTLoading) || isActivateLoading) {
     return (
       <Box className="avatarPlace">
         <CenteredSpinner />

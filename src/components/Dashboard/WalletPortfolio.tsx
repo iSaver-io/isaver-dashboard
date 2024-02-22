@@ -69,8 +69,12 @@ export const WalletPortfolio = () => {
   }, [logger, addSAVR]);
 
   return (
-    <Flex alignItems={{ sm: 'stretch', xl: 'center' }} direction={{ sm: 'column', xl: 'row' }}>
-      <Box flexGrow="1" mb={{ sm: '45px', xl: 'unset' }}>
+    <Flex
+      alignItems={{ sm: 'stretch', xl: 'center' }}
+      direction={{ sm: 'column', xl: 'row' }}
+      padding={{ md: '0 10px', lg: 'unset' }}
+    >
+      <Box flexGrow="1" mb={{ sm: '45px', xl: 'unset' }} padding={{ sm: '0 10px', md: 'unset' }}>
         <Text textStyle="h1" as="h1" fontSize={{ sm: '38px', xl: '52px', '2xl': '90px' }} my="0">
           DASHBOARD
         </Text>

@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { useQueries, useQuery } from '@tanstack/react-query';
-import { ethers } from 'ethers';
+import { BigNumber, ethers } from 'ethers';
 
 import { useHelperContract } from '@/hooks/contracts/useHelperContract';
 import { useRaffleRoundById } from '@/hooks/raffle/useRaffleRoundById';
@@ -11,10 +11,13 @@ import { RawReferral } from '@/types';
 import { formatReferrals } from '@/utils/formatters/formatReferrals';
 import { calculateRaffleWinnersPrize } from '@/utils/formatters/raffle';
 
+import { useUserPowers } from './useAvatarSettings';
+
 export const HELPER_REFERRALS_LIST_REQUEST = 'helper-referrals-list';
 export const useHelperReferralsFullInfoByLevel = (account?: string, levels?: number[]) => {
   const helperContract = useHelperContract();
   const { userReferralInfoRequest } = useUserReferralInfo();
+  const statusPowerA = useUserPowers(0);
 
   const referralsQueries = useQueries({
     queries: (levels || [])?.map((level) => ({
@@ -35,8 +38,16 @@ export const useHelperReferralsFullInfoByLevel = (account?: string, levels?: num
       return acc;
     }, [] as RawReferral[]);
 
-    return formatReferrals(referrals, userReferralInfoRequest.data?.activeLevels || []);
-  }, [referralsQueries, userReferralInfoRequest.data]);
+    const activeLevels = userReferralInfoRequest.data?.activeLevels || [];
+    const superLevels = Array.from({ length: 5 }).fill(
+      BigNumber.from(statusPowerA.power)
+    ) as BigNumber[];
+
+    return formatReferrals(
+      referrals,
+      statusPowerA.isActive ? [...activeLevels, ...superLevels] : activeLevels
+    );
+  }, [referralsQueries, userReferralInfoRequest.data, statusPowerA.isActive, statusPowerA.power]);
 
   return referralsFullInfoList;
 };

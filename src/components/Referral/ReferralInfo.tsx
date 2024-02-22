@@ -19,6 +19,7 @@ import { useAccount } from 'wagmi';
 import { ReactComponent as CopyIcon } from '@/assets/images/icons/copy.svg';
 import { ReactComponent as QRIcon } from '@/assets/images/icons/qr.svg';
 import { ConnectWalletButton } from '@/components/ui/ConnectWalletButton/ConnectWalletButton';
+import { PowerStatus } from '@/components/ui/PowerStatus/PowerStatus';
 import { StatBlock } from '@/components/ui/StatBlock/StatBlock';
 import { WarningTip } from '@/components/ui/WarningTip/WarningTip';
 import {
@@ -65,8 +66,13 @@ export const ReferralInfo: FC<ReferralInfoProps> = ({ isPageView }) => {
   const { localReferrer } = useLocalReferrer();
 
   const { userReferralInfoRequest, hasEndingReferralSubscription } = useUserReferralInfo();
-  const { fullSubscription, levelsSubscription, subscribeToAllLevels, subscribeToLevel } =
-    useUserReferralSubscription();
+  const {
+    fullSubscription,
+    levelsSubscription,
+    subscribeToAllLevels,
+    subscribeToLevel,
+    statusPowerA,
+  } = useUserReferralSubscription();
   const { referralLink, referrer, setMyReferrer } = useUserReferrer();
   const { levelSubscriptionCost, fullSubscriptionCost } = useReferralManagerSubscriptions();
 
@@ -126,11 +132,20 @@ export const ReferralInfo: FC<ReferralInfoProps> = ({ isPageView }) => {
 
   return (
     <Container variant="dashboard" paddingX={{ sm: '10px', md: 'unset' }}>
-      <Flex direction={{ sm: 'column', xl: 'row' }} justifyContent="space-between" gap={5}>
+      <Flex
+        direction={{ sm: 'column', xl: 'row' }}
+        justifyContent="space-between"
+        gap={5}
+        paddingX={{ md: '10px', lg: 'unset' }}
+      >
         <Box width={{ sm: '100%', xl: '60%' }}>
           <Text textStyle="sectionHeading" mb="20px">
             Build a team
           </Text>
+
+          <Box mb="20px">
+            <PowerStatus powerId={0} isActive={statusPowerA.isActive} />
+          </Box>
 
           <Text textStyle="text1">
             Invite your friends and maximize your iSaver Referral Rewards. Earn up to 100% in SAVR

@@ -86,7 +86,20 @@ const _abi = [
   },
   {
     inputs: [],
-    name: "getReferralLevels",
+    name: "getSubscriptionReferralLevels",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "pure",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "getTotalReferralLevels",
     outputs: [
       {
         internalType: "uint256",
@@ -169,6 +182,19 @@ const _abi = [
         name: "user",
         type: "address",
       },
+    ],
+    name: "renewPowerSubscriptionA",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "user",
+        type: "address",
+      },
       {
         internalType: "address",
         name: "referrer",
@@ -178,6 +204,44 @@ const _abi = [
     name: "setUserReferrer",
     outputs: [],
     stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "user",
+        type: "address",
+      },
+    ],
+    name: "userHasActivatedPowerA",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "user",
+        type: "address",
+      },
+    ],
+    name: "userHasActivePowerA",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool",
+      },
+    ],
+    stateMutability: "view",
     type: "function",
   },
   {

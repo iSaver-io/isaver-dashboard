@@ -5,7 +5,8 @@ import { ControlField } from '@/components/AdminPanel/common/ControlField';
 import { MintRaffleTicket } from '@/components/AdminPanel/common/MintRaffleTicket';
 import { Balance } from '@/components/Balance/Balance';
 import { Button } from '@/components/ui/Button/Button';
-import { useRaffleControl } from '@/hooks/raffle/useRaffle';
+import { useRaffleControl, useTicketPrice } from '@/hooks/raffle/useRaffle';
+import { useRaffleMiniGame } from '@/hooks/raffle/useRaffleMiniGame';
 import { useTickets, useTicketSupply } from '@/hooks/useTickets';
 import { bigNumberToString } from '@/utils/number';
 
@@ -13,7 +14,9 @@ export const TicketControl = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const { mintTickets } = useTickets();
-  const { ticketPriceRequest, updateTicketPrice } = useRaffleControl();
+  const { updateTicketPrice, updateExtraTicketsForPowerD } = useRaffleControl();
+  const { ticketPriceRequest } = useTicketPrice();
+  const { extraTicketsPowerD } = useRaffleMiniGame();
   const ticketSupply = useTicketSupply();
 
   return (
@@ -23,6 +26,12 @@ export const TicketControl = () => {
           label="Raffle Ticket price"
           value={ticketPriceRequest.data ? bigNumberToString(ticketPriceRequest.data) : null}
           onSubmit={updateTicketPrice.mutateAsync}
+        />
+
+        <ControlField
+          label="Extra tickets for Power D"
+          value={extraTicketsPowerD.data ? extraTicketsPowerD.data : 0}
+          onSubmit={updateExtraTicketsForPowerD.mutateAsync}
         />
 
         <Button size="sm" onClick={onOpen}>

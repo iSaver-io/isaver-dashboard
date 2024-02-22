@@ -5,6 +5,7 @@ import { useAccount } from 'wagmi';
 
 import { useStakingContract } from '@/hooks/contracts/useStakingContract';
 import { TOKENS } from '@/hooks/contracts/useTokenContract';
+import { useUserPowers } from '@/hooks/useAvatarSettings';
 import { HELPER_USER_TEAMS_INFO_REQUEST } from '@/hooks/useHelper';
 import { useNotification } from '@/hooks/useNotification';
 import { SAV_BALANCE_REQUEST, SAVR_BALANCE_REQUEST } from '@/hooks/useTokenBalance';
@@ -32,6 +33,164 @@ const getWithdrawMessage = (deposit?: BigNumberish, rewards?: BigNumberish) => {
   }
   message += `${bigNumberToString(rewards || 0)} SAV Rewards have been claimed`;
   return message;
+};
+
+export const STAKING_EXTRA_APR_REQUEST = 'staking-extra-apr-request';
+export const useStakingSuperPowers = () => {
+  const stakingContract = useStakingContract();
+
+  const statusPowerB = useUserPowers(1); // power B
+  const statusPowerC = useUserPowers(2); // power C
+
+  const extraAprRequest = useQuery([STAKING_EXTRA_APR_REQUEST], async () => {
+    return await stakingContract.getExtraAprPowerC();
+  });
+
+  const extraAprPowerC = useMemo(
+    () => (extraAprRequest.data?.toNumber() || 0) / 10,
+    [extraAprRequest.data]
+  );
+
+  return {
+    statusPowerB,
+    statusPowerC,
+    extraAprRequest,
+    extraAprPowerC,
+  };
+};
+
+export const USER_SUPER_STAKING_INFO_REQUEST = 'staking-super-user-stakes-request';
+export const STAKING_DEPOSIT_SUPER_PLAN_MUTATION = 'staking-deposit-super-mutation';
+export const STAKING_CLAIM_SUPER_PLAN_MUTATION = 'staking-claim-super-mutation';
+export const STAKING_WITHDRAW_SUPER_PLAN_MUTATION = 'staking-withdraw-super-mutation';
+export const useStakingSuperPlans = () => {
+  const stakingContract = useStakingContract();
+  const tokens = useTokens();
+  const queryClient = useQueryClient();
+  const { address: account } = useAccount();
+  const { success, handleError } = useNotification();
+
+  const superStakingPlansWithUserStakeRequest = useQuery(
+    [USER_SUPER_STAKING_INFO_REQUEST, { account }],
+    async () => (account ? stakingContract.getSuperStakingPlansWithStake(account) : null),
+    {
+      refetchInterval: 5000, // 5 sec
+      select: (data) =>
+        data
+          ? data.map((superPlan) => ({
+              ...superPlan,
+              apr: { ...superPlan.apr, apr: superPlan.apr.apr.toNumber() / 10 },
+              stakingPlanId: superPlan.plan.stakingPlanId.toNumber(),
+            }))
+          : [],
+    }
+  );
+
+  const superStakingPlansWithUserStake = useMemo(
+    () => superStakingPlansWithUserStakeRequest.data || [],
+    [superStakingPlansWithUserStakeRequest.data]
+  );
+
+  const depositSuperPlan = useMutation(
+    [STAKING_DEPOSIT_SUPER_PLAN_MUTATION],
+    async ({ superPlanId, amount }: { superPlanId: number; amount: BigNumberish }) => {
+      await tokens.increaseAllowanceIfRequired.mutateAsync({
+        token: TOKENS.SAVR,
+        spender: stakingContract.address,
+        requiredAmount: amount,
+      });
+
+      const superStakingPlan = superStakingPlansWithUserStake.find(
+        (superPlan) => superPlan.stakingPlanId === superPlanId
+      );
+
+      if (!superStakingPlan) throw new Error('Staking plan not found');
+
+      const txHash = await stakingContract.depositSuperPlan({ superPlanId, amount });
+      success({
+        title: 'Success',
+        description: `You have deposited ${bigNumberToString(amount)} SAVR in Staking pool with ${
+          superStakingPlan.apr.apr
+        }% APY`,
+        txHash,
+      });
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: [USER_SUPER_STAKING_INFO_REQUEST] });
+        queryClient.invalidateQueries({ queryKey: [SAVR_BALANCE_REQUEST] });
+      },
+      onError: (err) => {
+        handleError(err);
+      },
+    }
+  );
+
+  const claimSuperPlan = useMutation(
+    [STAKING_WITHDRAW_SUPER_PLAN_MUTATION],
+    async ({ superPlanId }: { superPlanId: number }) => {
+      const txHash = await stakingContract.claimSuperPLan(superPlanId);
+
+      const superStakingPlan = superStakingPlansWithUserStake.find(
+        (superPlan) => superPlan.stakingPlanId === superPlanId
+      );
+
+      success({
+        title: 'Success',
+        description: `You have claimed ${bigNumberToString(
+          superStakingPlan?.stake.profit || 0
+        )} SAVR rewards`,
+        txHash,
+      });
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: [USER_SUPER_STAKING_INFO_REQUEST] });
+        queryClient.invalidateQueries({ queryKey: [SAVR_BALANCE_REQUEST] });
+      },
+      onError: (err) => {
+        handleError(err);
+      },
+    }
+  );
+
+  const withdrawSuperPlan = useMutation(
+    [STAKING_CLAIM_SUPER_PLAN_MUTATION],
+    async ({ superPlanId }: { superPlanId: number }) => {
+      const txHash = await stakingContract.withdrawSuperPLan(superPlanId);
+
+      const superStakingPlan = superStakingPlansWithUserStake.find(
+        (superPlan) => superPlan.stakingPlanId === superPlanId
+      );
+
+      success({
+        title: 'Success',
+        description: `You have claimed ${bigNumberToString(
+          superStakingPlan?.stake.profit || 0
+        )} SAVR rewards and ${bigNumberToString(
+          superStakingPlan?.stake.deposit || 0
+        )} SAVR deposit`,
+        txHash,
+      });
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: [USER_SUPER_STAKING_INFO_REQUEST] });
+        queryClient.invalidateQueries({ queryKey: [SAVR_BALANCE_REQUEST] });
+      },
+      onError: (err) => {
+        handleError(err);
+      },
+    }
+  );
+
+  return {
+    superStakingPlansWithUserStakeRequest,
+    superStakingPlansWithUserStake,
+    depositSuperPlan,
+    claimSuperPlan,
+    withdrawSuperPlan,
+  };
 };
 
 export const useStakingPlans = () => {
@@ -134,6 +293,7 @@ export const useActiveStakingPlansWithUserInfo = () => {
   const { stakingPlansRequest } = useStakingPlans();
   const { userStakesRequest } = useStakingUserStakes();
   const { userPlansInfoRequest } = useStakingPlansUserInfo();
+  const { statusPowerB } = useStakingSuperPowers();
 
   const activeStakingPlansWithUserInfo = useMemo(() => {
     return stakingPlansRequest.data
@@ -199,8 +359,9 @@ export const useActiveStakingPlansWithUserInfo = () => {
               plan.currentSavTokenStaked?.gt(0) ||
               plan.currentSavrTokenStaked?.gt(0)
           )
+          .filter((plan) => (plan.isSuperPowered && statusPowerB.isActive) || !plan.isSuperPowered)
       : [];
-  }, [stakingPlansRequest.data, userPlansInfoRequest.data, userStakesRequest]);
+  }, [stakingPlansRequest.data, userPlansInfoRequest.data, userStakesRequest, statusPowerB]);
 
   return {
     activeStakingPlansWithUserInfo,
@@ -209,6 +370,7 @@ export const useActiveStakingPlansWithUserInfo = () => {
 
 export const useStakingMetrics = () => {
   const { stakingPlansRequest } = useStakingPlans();
+  const { superStakingPlansWithUserStake } = useStakingSuperPlans();
 
   const tvlSav = useMemo(() => {
     return stakingPlansRequest.data?.reduce(
@@ -235,11 +397,28 @@ export const useStakingMetrics = () => {
     );
   }, [stakingPlansRequest.data]);
 
+  const superPlansMetrics = useMemo(() => {
+    return superStakingPlansWithUserStake.reduce(
+      (acc, superPlan) => {
+        acc.tvl = acc.tvl.add(superPlan.plan.currentLocked);
+        acc.totalClaimed = acc.totalClaimed.add(superPlan.plan.totalClaimed);
+        acc.totalStaked = acc.totalStaked.add(superPlan.plan.totalStaked);
+        return acc;
+      },
+      {
+        tvl: BigNumber.from(0),
+        totalClaimed: BigNumber.from(0),
+        totalStaked: BigNumber.from(0),
+      }
+    );
+  }, [superStakingPlansWithUserStake]);
+
   return {
     tvlSav,
     tvlSavr,
     tvlSavSavr,
     totalClaimed,
+    superPlansMetrics,
   };
 };
 
@@ -356,10 +535,10 @@ export const useStakingActions = () => {
     }
   );
 
-  const withdrawAll = useMutation(
+  const withdrawAllCompleted = useMutation(
     [STAKING_CLAIM_ALL_MUTATION],
     async (planId: number) => {
-      const txHash = await stakingContract.withdrawAll(planId);
+      const txHash = await stakingContract.withdrawAllCompleted(planId);
       const stakingPlan = activeStakingPlansWithUserInfo.find(
         (plan) => plan.stakingPlanId === planId
       );
@@ -389,7 +568,7 @@ export const useStakingActions = () => {
     subscribe,
     deposit,
     withdraw,
-    withdrawAll,
+    withdrawAllCompleted,
     stakingContract,
   };
 };
@@ -423,17 +602,20 @@ export const useStakingAdminActions = () => {
       subscriptionCost,
       stakingDuration,
       apr,
+      isSuperPowered,
     }: {
       subscriptionCost: BigNumber;
       stakingDuration: number;
       apr: number;
+      isSuperPowered: boolean;
     }) => {
       const subscriptionDuration = 365;
       const txHash = await stakingContract.addStakingPlan(
         subscriptionCost,
         subscriptionDuration,
         stakingDuration,
-        apr
+        apr,
+        isSuperPowered
       );
       success({
         title: 'Success',
@@ -449,10 +631,72 @@ export const useStakingAdminActions = () => {
     }
   );
 
-  return { updatePlanActivity, addStakingPlan };
+  const addSuperStakingPlan = useMutation(
+    ['add-super-staking-plan'],
+    async ({ apr }: { apr: number }) => {
+      const txHash = await stakingContract.addSuperStakingPlan(apr);
+      success({
+        title: 'Success',
+        description: `${apr} APY super Staking plan created`,
+        txHash,
+      });
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries([USER_SUPER_STAKING_INFO_REQUEST]);
+      },
+      onError: handleError,
+    }
+  );
+
+  const updateSuperPlanActivity = useMutation(
+    ['update-super-plan-activity'],
+    async ({ superPlanId, isActive }: { superPlanId: number; isActive: boolean }) => {
+      const txHash = await stakingContract.updateSuperPlanActivity(superPlanId, isActive);
+      success({
+        title: 'Success',
+        description: `${superPlanId} super staking plan ${isActive ? 'enabled' : 'disabled'}`,
+        txHash,
+      });
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries([USER_SUPER_STAKING_INFO_REQUEST]);
+      },
+      onError: handleError,
+    }
+  );
+
+  const updateExtraAprPowerC = useMutation(
+    ['update-extra-apr-power-c'],
+    async ({ apr }: { apr: number }) => {
+      const txHash = await stakingContract.updateExtraAprPowerC(apr);
+      success({
+        title: 'Success',
+        description: `Extra APR for Power C set to ${apr}`,
+        txHash,
+      });
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries([USER_SUPER_STAKING_INFO_REQUEST]);
+      },
+      onError: handleError,
+    }
+  );
+
+  return {
+    updatePlanActivity,
+    addStakingPlan,
+    updateSuperPlanActivity,
+    addSuperStakingPlan,
+    updateExtraAprPowerC,
+  };
 };
 
-export const useStakingAvailableTokens = () => {
+export const useStakingAvailableTokens = (isSAVRToken: boolean) => {
   const stakingContract = useStakingContract();
-  return useQuery([STAKING_AVAILABLE_TOKENS_REQUEST], () => stakingContract.getAvailableTokens());
+  return useQuery([STAKING_AVAILABLE_TOKENS_REQUEST, { isSAVRToken }], () =>
+    stakingContract.getAvailableTokens(isSAVRToken)
+  );
 };

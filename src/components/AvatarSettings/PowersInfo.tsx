@@ -8,7 +8,7 @@ import {
   useUserPowers,
 } from '@/hooks/useAvatarSettings';
 import { useActiveAvatarNFT } from '@/hooks/useNFTHolders';
-import { AVATARS_URL } from '@/router';
+import { AVATAR_LANDING_POWERS_INFO_URL, AVATARS_URL } from '@/router';
 
 import { ReactComponent as PowerActiveA } from './images/a_active.svg';
 import { ReactComponent as PowerInactiveA } from './images/a_inactive.svg';
@@ -56,15 +56,13 @@ export const PowersInfo = () => {
 
   const isPowersAllowed = hasAvatar && activeAvatar?.isPowersAllowed;
 
-  const linkToPowers = `${AVATARS_URL}/#powers`;
-
   const { isActive: isActiveA } = useUserPowers(0);
   const { isActive: isActiveB } = useUserPowers(1);
   const { isActive: isActiveC } = useUserPowers(2);
   const { isActive: isActiveD } = useUserPowers(3);
 
   return (
-    <Box className="powersInfo">
+    <Box className="powersInfo" id="powers">
       <Box textAlign="center">
         <Text textStyle="h2" as="h2" textTransform="uppercase">
           Powers info
@@ -72,7 +70,7 @@ export const PowersInfo = () => {
         {isPowersAllowed || !hasAvatar || !avatarNFT ? (
           <Text textStyle="text2" mt="15px">
             All about Powers is{' '}
-            <Link as={RouterLink} to={linkToPowers} color="savr" target="_blank">
+            <Link as={RouterLink} to={AVATAR_LANDING_POWERS_INFO_URL} color="savr" target="_blank">
               here
             </Link>
           </Text>

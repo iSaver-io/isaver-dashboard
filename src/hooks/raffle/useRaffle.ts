@@ -14,6 +14,7 @@ import { useTokens } from '@/hooks/useTokens';
 import { parseRaffleFormat } from '@/utils/formatters/raffle';
 import { bigNumberToString } from '@/utils/number';
 
+import { EXTRA_TICKETS_POWER_D_REQUEST } from './useRaffleMiniGame';
 import { useRaffleRoundAdditionalData } from './useRaffleRoundAdditionalData';
 
 export const TICKET_BALANCE_REQUEST = 'ticket-balance-request';
@@ -21,6 +22,21 @@ const RAFFLE_ROUNDS_REQUEST = 'raffle-rounds-request';
 const RAFFLE_TICKET_PRICE_REQUEST = 'raffle-ticket-price-request';
 const RAFFLE_WINNER_PRIZE_REQUEST = 'raffle-winner-prize-request';
 const BUY_TICKETS_MUTATION = 'buy-tickets-mutation';
+
+export const useTicketPrice = () => {
+  const raffleContract = useRaffleContract();
+
+  const ticketPriceRequest = useQuery([RAFFLE_TICKET_PRICE_REQUEST], async () => {
+    return await raffleContract.getTicketPrice();
+  });
+
+  const ticketPrice = useMemo(
+    () => ticketPriceRequest.data || BigNumber.from(0),
+    [ticketPriceRequest.data]
+  );
+
+  return { ticketPrice, ticketPriceRequest };
+};
 
 export type CreateRaffleWithTitleProps = CreateRaffleProps & {
   title: string;
@@ -44,15 +60,6 @@ export const useRaffleControl = () => {
     return undefined;
   }, [roundsRequest.data, raffleRoundDataMap]);
 
-  const ticketPriceRequest = useQuery([RAFFLE_TICKET_PRICE_REQUEST], async () => {
-    return await raffleContract.getTicketPrice();
-  });
-
-  const ticketPrice = useMemo(
-    () => ticketPriceRequest.data || BigNumber.from(0),
-    [ticketPriceRequest.data]
-  );
-
   const updateTicketPrice = useMutation(
     ['update-ticket-price'],
     async (price: number) => {
@@ -68,6 +75,24 @@ export const useRaffleControl = () => {
     {
       onSuccess: () => {
         queryClient.invalidateQueries([RAFFLE_TICKET_PRICE_REQUEST]);
+      },
+      onError: handleError,
+    }
+  );
+
+  const updateExtraTicketsForPowerD = useMutation(
+    ['update-extra-tickets-power-d'],
+    async (amount: number) => {
+      const txHash = await raffleContract.updateExtraTicketsPowerD(amount);
+      success({
+        title: 'Success',
+        description: `Amount of extra tickets updated to ${amount}`,
+        txHash,
+      });
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries([EXTRA_TICKETS_POWER_D_REQUEST]);
       },
       onError: handleError,
     }
@@ -131,12 +156,11 @@ export const useRaffleControl = () => {
   );
 
   return {
-    ticketPriceRequest,
-    ticketPrice,
     roundsRequest,
     isRafflesDataLoading,
     raffleRounds,
     updateTicketPrice,
+    updateExtraTicketsForPowerD,
     finishRaffleRound,
     getWinnersFromOracleRandom,
     createRaffleRound,
@@ -148,7 +172,7 @@ export const useRaffle = () => {
 
   const queryClient = useQueryClient();
   const raffleContract = useRaffleContract();
-  const { ticketPrice } = useRaffleControl();
+  const { ticketPrice } = useTicketPrice();
   const ticketContract = useTicketContract();
   const { success, handleError } = useNotification();
   const tokens = useTokens();
