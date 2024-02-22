@@ -140,6 +140,19 @@ const filledRed = defineStyle({
     },
   },
 });
+const filledWhite = defineStyle({
+  ...commonProps,
+  bgColor: 'white',
+  color: 'black',
+
+  _hover: {
+    opacity: '.8',
+    _disabled: {
+      background: 'gray.200',
+      opacity: '1',
+    },
+  },
+});
 
 const outlinedWhite = defineStyle({
   ...commonProps,
@@ -197,6 +210,41 @@ const inactive = defineStyle({
   },
 });
 
+const iconButton = defineStyle({
+  ...commonProps,
+  border: 'none',
+  bgColor: 'transparent',
+  color: 'white',
+
+  _hover: {
+    color: 'green.400',
+    bgColor: 'transparent',
+    _disabled: {
+      color: '#9faca3',
+    },
+  },
+  _disabled: {
+    background: 'transparent',
+  },
+});
+
+const iconButtonRed = defineStyle({
+  ...iconButton,
+
+  color: 'red',
+
+  _hover: {
+    color: 'white',
+    bgColor: 'transparent',
+    _disabled: {
+      color: '#9faca3',
+    },
+  },
+  _disabled: {
+    background: 'transparent',
+  },
+});
+
 export const buttonTheme = defineStyleConfig({
   variants: {
     primary,
@@ -206,12 +254,15 @@ export const buttonTheme = defineStyleConfig({
     outlined,
     outlinedWhite,
     filledRed,
+    filledWhite,
     outlinedShadow,
     link,
     inputTransparent,
     inputTransparentWhite,
     active,
     inactive,
+    iconButton,
+    iconButtonRed,
   },
   sizes: {
     lg: {

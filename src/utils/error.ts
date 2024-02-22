@@ -41,13 +41,13 @@ export function tryToGetErrorData(error: any):
     return { title: 'Failed', description: 'This address cannot be the leader' };
   }
 
-  if (message.includes('Not enough tokens in pool')) {
+  if (message.includes('Not enough tokens in contract')) {
     return {
       title: 'Failed',
       description: 'There are not enough funds in the pool',
     };
   }
-  if (message.includes('Not enough tokens in exchange pool')) {
+  if (message.includes('Not enough tokens in exchange contract')) {
     return {
       title: 'Failed',
       description: 'There are not enough funds in the pool for exchange',
@@ -59,16 +59,16 @@ export function tryToGetErrorData(error: any):
       description: 'There are not enough funds in the pool to pay the rewards',
     };
   }
-  if (message.includes('Whitelist')) {
+  if (message.includes('WhiteList')) {
     return {
       title: 'Failed',
-      description: 'Token Whitelist restriction: sender or receiver address is not in whitelist',
+      description: 'Token WhiteList restriction: sender or receiver address is not in whitelist',
     };
   }
-  if (message.includes('Blacklist')) {
+  if (message.includes('BlackList')) {
     return {
       title: 'Failed',
-      description: 'Token Blacklist restriction: sender or receiver address is in blacklist',
+      description: 'Token BlackList restriction: sender or receiver address is in blacklist',
     };
   }
   if (message.includes('Pausable: paused')) {

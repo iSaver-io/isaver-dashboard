@@ -51,7 +51,7 @@ export const ControlField: FC<ControlFieldProps> = ({
         <Text textStyle="text1" lineHeight="30px">
           {label}:
         </Text>
-        <Text textStyle="textSansSmall" opacity={0.5} lineHeight="10px">
+        <Text textStyle="textSansExtraSmall" opacity={0.5} lineHeight="10px">
           {tip}
         </Text>
       </Box>

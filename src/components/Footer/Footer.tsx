@@ -5,11 +5,10 @@ import { useAccount } from 'wagmi';
 import { sendDataMessage } from '@/api/sendDataMessage';
 import { Logo } from '@/assets/images/icons-components/Logo';
 import { ReactComponent as ArrowIcon } from '@/components/Landing/images/arrow-right.svg';
-// import { ReactComponent as DiscordIcon } from '@/components/Landing/images/discord.svg';
 import { ReactComponent as GithubIcon } from '@/components/Landing/images/github.svg';
+import { ReactComponent as OpenseaIcon } from '@/components/Landing/images/opensea.svg';
 import { ReactComponent as SavIcon } from '@/components/Landing/images/sav.svg';
 import { ReactComponent as SavrIcon } from '@/components/Landing/images/savr.svg';
-// import { ReactComponent as TelegramIcon } from '@/components/Landing/images/tg.svg';
 import { ReactComponent as TwitterIcon } from '@/components/Landing/images/twitter.svg';
 import { useDebounce } from '@/hooks/useDebounce';
 import { useLogger } from '@/hooks/useLogger';
@@ -96,7 +95,10 @@ export const Footer = () => {
     <Box className="footer">
       <Flex className="footer-top">
         <Flex className="footer-top__left">
-          <Box height={{ sm: '44px', md: '86px' }} width={{ sm: '153px', md: '294px' }}>
+          <Box
+            height={{ sm: '40px', md: '66px', xl: '86px' }}
+            width={{ sm: '140px', md: '226px', xl: '294px' }}
+          >
             <Logo />
           </Box>
         </Flex>
@@ -137,11 +139,11 @@ export const Footer = () => {
             <Box>
               <Flex className="sav-container__item" alignItems="center">
                 <SavIcon />
-                <Text ml="12px">1 SAV = 1 USDT</Text>
+                <Text ml="5px">1 SAV = 1 USDT</Text>
               </Flex>
               <Flex className="sav-container__item" alignItems="center">
                 <SavrIcon />
-                <Text ml="12px">1 SAVR = 1 USDT</Text>
+                <Text ml="5px">1 SAVR = 1 USDT</Text>
               </Flex>
             </Box>
           </Flex>
@@ -152,11 +154,10 @@ export const Footer = () => {
           <Box className="footer-bottom__left">
             <Text className="footer-heading">Disclaimer</Text>
             <Text className="footer-text">
-              The contents and opinions of this website are those of iSaver.
-              <br />
-              iSaver is not responsible for any of your crypto losses. Please do not construe any of
-              the above statements as to financial advice. Cryptocurrency investment is subject to
-              high market risk!
+              The contents and opinions of this website are those of iSaver. iSaver&nbsp;is&nbsp;not
+              responsible for any of your crypto losses. Please do not construe any of the above
+              statements as to financial advice. Cryptocurrency investment is subject to high market
+              risk!
             </Text>
           </Box>
           <Flex
@@ -167,16 +168,13 @@ export const Footer = () => {
           >
             <Text className="contact-heading">Contact us</Text>
             <Flex className="contact-icons" justifyContent="center">
-              {/* <a href="#" target="_blank">
-                <TelegramIcon />
-              </a> */}
               <a
                 href="https://twitter.com/iSaver_official"
                 target="_blank"
                 rel="noreferrer"
                 onClick={() => handleSocialLinkClick('tw')}
               >
-                <TwitterIcon width="32px" height="32px" />
+                <TwitterIcon />
               </a>
               <a
                 href="https://github.com/iSaver-io"
@@ -184,7 +182,15 @@ export const Footer = () => {
                 rel="noreferrer"
                 onClick={() => handleSocialLinkClick('github')}
               >
-                <GithubIcon width="32px" height="32px" />
+                <GithubIcon />
+              </a>
+              <a
+                href="https://opensea.io/ISaverCreator"
+                target="_blank"
+                rel="noreferrer"
+                onClick={() => handleSocialLinkClick('opensea')}
+              >
+                <OpenseaIcon />
               </a>
             </Flex>
             <Link

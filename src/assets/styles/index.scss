@@ -94,8 +94,13 @@ body {
 // Fix of Firefox render artifact
 .render-animation-with-border {
   animation-name: simpleAnimWithBorder;
-  animation-duration: 4s;
+  animation-duration: 2s;
   animation-iteration-count: infinite;
+  animation-direction: alternate;
+
+  &--blue {
+    animation-name: simpleAnimWithBorderBlue;
+  }
 }
 
 @keyframes simpleAnimWithBorder {
@@ -104,6 +109,14 @@ body {
   }
   to {
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.25);
+  }
+}
+@keyframes simpleAnimWithBorderBlue {
+  from {
+    box-shadow: 0 2px 8px #1adce2;
+  }
+  to {
+    box-shadow: 0 2px 16px #1adce2;
   }
 }
 

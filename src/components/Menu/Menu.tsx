@@ -10,10 +10,12 @@ import {
   DrawerOverlay,
   Flex,
   IconButton,
+  Image,
   Link,
   Text,
 } from '@chakra-ui/react';
 
+import { ReactComponent as ActivateAvatarIcon } from '@/assets/images/icons/activate-avatar.svg';
 import { ReactComponent as CrossIcon } from '@/assets/images/icons/cross.svg';
 import { ReactComponent as GameboyIcon } from '@/assets/images/icons/gameboy.svg';
 import { ReactComponent as GraphIcon } from '@/assets/images/icons/graph.svg';
@@ -23,16 +25,18 @@ import { ReactComponent as StarsIcon } from '@/assets/images/icons/stars.svg';
 import { ReactComponent as TabletIcon } from '@/assets/images/icons/tablet.svg';
 import { ReactComponent as WalletIcon } from '@/assets/images/icons/wallet.svg';
 import { useUserReferralInfo } from '@/hooks/referral/useReferralManager';
-import { useSquads } from '@/hooks/squads/useSquads';
 import { useStakingPlansUserInfo } from '@/hooks/staking/useStaking';
+import { useTeams } from '@/hooks/teams/useTeams';
 import { useLogger } from '@/hooks/useLogger';
 import { useNavigateByHash } from '@/hooks/useNavigateByHash';
-import { APP_URL, isLanding, WHITEPAPER_URL } from '@/router';
+import { useActiveAvatarNFT } from '@/hooks/useNFTHolders';
+import { APP_URL, isDashboard, WHITEPAPER_URL } from '@/router';
 
 export const Menu = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) => {
+  const { avatarNFT } = useActiveAvatarNFT();
   const { hasEndingSubscription } = useStakingPlansUserInfo();
   const { hasEndingReferralSubscription } = useUserReferralInfo();
-  const { hasEndingSquadsSubscription } = useSquads();
+  const { hasEndingTeamsSubscription } = useTeams();
   const navigate = useNavigateByHash();
   const logger = useLogger({
     event: 'cross',
@@ -51,8 +55,13 @@ export const Menu = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void
     (to: string) => {
       const label = to.replace('/', '').replace('#', '');
       logger({ label });
-      navigate(to);
-      onClose();
+
+      if (isDashboard) {
+        navigate(to);
+        onClose();
+      } else {
+        window.open(APP_URL + to, '_self');
+      }
     },
     [navigate, onClose, logger]
   );
@@ -75,9 +84,28 @@ export const Menu = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void
           justifyContent="space-between"
           alignItems="center"
         >
-          <Text textStyle="h2" textTransform="uppercase">
-            Menu
-          </Text>
+          <Link
+            display="flex"
+            w="100%"
+            alignItems="center"
+            gap="20px"
+            onClick={() => handleNavigateWithLogger('/avatar-settings')}
+            _hover={{ color: 'green.400' }}
+          >
+            {avatarNFT?.image ? (
+              <Image
+                borderRadius="6"
+                w="58"
+                h="58"
+                src={avatarNFT?.image?.thumbnailUrl || avatarNFT?.image?.originalUrl}
+              />
+            ) : (
+              <ActivateAvatarIcon />
+            )}
+            <Text as="span" position="relative" textStyle="menuDefault">
+              Avatar settings
+            </Text>
+          </Link>
           <IconButton
             variant="secondary"
             aria-label="Close burger menu"
@@ -90,12 +118,11 @@ export const Menu = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void
         </DrawerHeader>
 
         <DrawerBody>
+          <Divider mb="30px" borderBottomWidth="2px" borderColor="white" />
           <NavMenuItem
             text="Dashboard"
             icon={<HouseIcon />}
-            onClick={() =>
-              isLanding ? window.open(APP_URL) : handleNavigateWithLogger('/#dashboard')
-            }
+            onClick={() => handleNavigateWithLogger('/#dashboard')}
           />
           <NavMenuItem
             text="Staking"
@@ -108,11 +135,11 @@ export const Menu = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void
             text="Team"
             icon={<StarsIcon />}
             onClick={() => handleNavigateWithLogger('/team')}
-            hasAlert={hasEndingReferralSubscription || hasEndingSquadsSubscription}
+            hasAlert={hasEndingReferralSubscription || hasEndingTeamsSubscription}
             textAlert={
               hasEndingReferralSubscription
                 ? 'Check your levels!'
-                : hasEndingSquadsSubscription
+                : hasEndingTeamsSubscription
                 ? 'Check your teams!'
                 : undefined
             }

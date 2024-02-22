@@ -7,8 +7,8 @@ import { chartDateTickFormatter } from '@/utils/chart';
 
 type StakesData = {
   balance: number;
-  changeToken1: number;
-  changeToken2: number;
+  changeSAVToken: number;
+  changeSAVRToken: number;
   day: number;
 };
 type StakeUnlockChartProps = {
@@ -22,7 +22,7 @@ export const StakeUnlockChart: FC<StakeUnlockChartProps> = ({ data, period }) =>
     <ResponsiveContainer width="100%" height="100%">
       <AreaChart width={300} height={100} data={data || []}>
         <defs>
-          <linearGradient id="colorToken1" x1="0" y1="0" x2="0" y2="1">
+          <linearGradient id="colorSAVToken" x1="0" y1="0" x2="0" y2="1">
             <stop offset="0%" stopColor="rgb(107, 201, 91)" stopOpacity={0.3186} />
             <stop offset="100%" stopColor="rgb(10, 147, 150)" stopOpacity={0} />
           </linearGradient>
@@ -54,7 +54,7 @@ export const StakeUnlockChart: FC<StakeUnlockChartProps> = ({ data, period }) =>
           strokeWidth={2}
           fillOpacity={1}
           dot={{ stroke: '#6BC95B', strokeWidth: 1 }}
-          fill="url(#colorToken1)"
+          fill="url(#colorSAVToken)"
           unit=" SAV"
         />
       </AreaChart>
@@ -75,9 +75,9 @@ const CustomTooltip = ({
   tickFormatter: (day: any) => string;
 }) => {
   if (label && active && payload && payload.length) {
-    const changeToken1 = payload[0]?.payload?.changeToken1;
-    const changeToken2 = payload[0]?.payload?.changeToken2;
-    const isGrow = changeToken1 > 0 || changeToken2 > 0;
+    const changeSAVToken = payload[0]?.payload?.changeSAVToken;
+    const changeSAVRToken = payload[0]?.payload?.changeSAVRToken;
+    const isGrow = changeSAVToken > 0 || changeSAVRToken > 0;
 
     return (
       <Box border="1px solid white" background="bgGreen.100" padding="4px 8px">
@@ -88,15 +88,15 @@ const CustomTooltip = ({
         {isGrow ? (
           <>
             <Text fontWeight="500" color="sav" whiteSpace="nowrap">
-              Deposit: {changeToken1} SAV
+              Deposit: {changeSAVToken} SAV
             </Text>
             <Text fontWeight="500" color="savr" whiteSpace="nowrap">
-              Deposit: {changeToken2} SAVR
+              Deposit: {changeSAVRToken} SAVR
             </Text>
           </>
         ) : (
           <Text fontWeight="600" color="red">
-            Unlock: {-changeToken1} SAV
+            Unlock: {-changeSAVToken} SAV
           </Text>
         )}
       </Box>

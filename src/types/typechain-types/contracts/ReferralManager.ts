@@ -9,6 +9,7 @@ import type {
   CallOverrides,
   ContractTransaction,
   Overrides,
+  PayableOverrides,
   PopulatedTransaction,
   Signer,
   utils,
@@ -24,18 +25,17 @@ import type {
   TypedEvent,
   TypedListener,
   OnEvent,
-  PromiseOrValue,
 } from "../common";
 
 export declare namespace IReferralManager {
   export type AddDividendsParamsStruct = {
-    user: PromiseOrValue<string>;
-    reward: PromiseOrValue<BigNumberish>;
-    referral: PromiseOrValue<string>;
-    level: PromiseOrValue<BigNumberish>;
-    depositAmount: PromiseOrValue<BigNumberish>;
-    stakingPlanId: PromiseOrValue<BigNumberish>;
-    reason: PromiseOrValue<BigNumberish>;
+    user: string;
+    reward: BigNumberish;
+    referral: string;
+    level: BigNumberish;
+    depositAmount: BigNumberish;
+    stakingPlanId: BigNumberish;
+    reason: BigNumberish;
   };
 
   export type AddDividendsParamsStructOutput = [
@@ -57,10 +57,10 @@ export declare namespace IReferralManager {
   };
 
   export type ReferralStruct = {
-    referralAddress: PromiseOrValue<string>;
-    level: PromiseOrValue<BigNumberish>;
-    activationDate: PromiseOrValue<BigNumberish>;
-    isReferralSubscriptionActive: PromiseOrValue<boolean>;
+    referralAddress: string;
+    level: BigNumberish;
+    activationDate: BigNumberish;
+    isReferralSubscriptionActive: boolean;
   };
 
   export type ReferralStructOutput = [string, BigNumber, BigNumber, boolean] & {
@@ -74,86 +74,94 @@ export declare namespace IReferralManager {
 export interface ReferralManagerInterface extends utils.Interface {
   functions: {
     "DEFAULT_ADMIN_ROLE()": FunctionFragment;
-    "LEVELS()": FunctionFragment;
     "REFERRAL_PERCENTS(uint256)": FunctionFragment;
+    "SUBSCRIPTION_LEVELS()": FunctionFragment;
     "SUBSCRIPTION_PERIOD_DAYS()": FunctionFragment;
+    "TOTAL_LEVELS()": FunctionFragment;
+    "UPGRADER_ROLE()": FunctionFragment;
     "addUserDividends((address,uint256,address,uint256,uint256,uint256,uint256))": FunctionFragment;
-    "authorizeContract(address)": FunctionFragment;
     "calculateRefReward(uint256,uint256)": FunctionFragment;
     "claimDividends(uint256)": FunctionFragment;
+    "extract(address,uint256)": FunctionFragment;
     "fullSubscriptionCost()": FunctionFragment;
-    "getReferralLevels()": FunctionFragment;
     "getRoleAdmin(bytes32)": FunctionFragment;
+    "getSubscriptionReferralLevels()": FunctionFragment;
     "getTimestamp()": FunctionFragment;
+    "getTotalReferralLevels()": FunctionFragment;
     "getUser1LvlReferrals(address)": FunctionFragment;
     "getUserInfo(address)": FunctionFragment;
     "getUserReferralsByLevel(address,uint256)": FunctionFragment;
     "getUserReferrer(address)": FunctionFragment;
     "grantRole(bytes32,address)": FunctionFragment;
     "hasRole(bytes32,address)": FunctionFragment;
-    "isAuthorized(address)": FunctionFragment;
+    "initialize(address,uint256,uint256)": FunctionFragment;
     "levelSubscriptionCost()": FunctionFragment;
-    "removeContractAuthorization(address)": FunctionFragment;
+    "proxiableUUID()": FunctionFragment;
+    "renewPowerSubscriptionA(address)": FunctionFragment;
     "renounceRole(bytes32,address)": FunctionFragment;
     "revokeRole(bytes32,address)": FunctionFragment;
-    "rewardToken()": FunctionFragment;
     "setMyReferrer(address)": FunctionFragment;
     "setUserReferrer(address,address)": FunctionFragment;
     "subscribeToAllLevels()": FunctionFragment;
     "subscribeToLevel(uint256)": FunctionFragment;
-    "subscriptionToken()": FunctionFragment;
     "supportsInterface(bytes4)": FunctionFragment;
     "updateFullSubscriptionCost(uint256)": FunctionFragment;
     "updateLevelSubscriptionCost(uint256)": FunctionFragment;
     "updateReferralPercent(uint256,uint256)": FunctionFragment;
-    "updateRewardPool(address)": FunctionFragment;
-    "updateRewardToken(address)": FunctionFragment;
     "updateSubscriptionPeriod(uint256)": FunctionFragment;
-    "updateSubscriptionToken(address)": FunctionFragment;
+    "upgradeTo(address)": FunctionFragment;
+    "upgradeToAndCall(address,bytes)": FunctionFragment;
+    "userHasActivatedPowerA(address)": FunctionFragment;
+    "userHasActivePowerA(address)": FunctionFragment;
     "userHasAnySubscription(address)": FunctionFragment;
+    "userHasFullSubscription(address)": FunctionFragment;
     "userHasSubscription(address,uint256)": FunctionFragment;
   };
 
   getFunction(
     nameOrSignatureOrTopic:
       | "DEFAULT_ADMIN_ROLE"
-      | "LEVELS"
       | "REFERRAL_PERCENTS"
+      | "SUBSCRIPTION_LEVELS"
       | "SUBSCRIPTION_PERIOD_DAYS"
+      | "TOTAL_LEVELS"
+      | "UPGRADER_ROLE"
       | "addUserDividends"
-      | "authorizeContract"
       | "calculateRefReward"
       | "claimDividends"
+      | "extract"
       | "fullSubscriptionCost"
-      | "getReferralLevels"
       | "getRoleAdmin"
+      | "getSubscriptionReferralLevels"
       | "getTimestamp"
+      | "getTotalReferralLevels"
       | "getUser1LvlReferrals"
       | "getUserInfo"
       | "getUserReferralsByLevel"
       | "getUserReferrer"
       | "grantRole"
       | "hasRole"
-      | "isAuthorized"
+      | "initialize"
       | "levelSubscriptionCost"
-      | "removeContractAuthorization"
+      | "proxiableUUID"
+      | "renewPowerSubscriptionA"
       | "renounceRole"
       | "revokeRole"
-      | "rewardToken"
       | "setMyReferrer"
       | "setUserReferrer"
       | "subscribeToAllLevels"
       | "subscribeToLevel"
-      | "subscriptionToken"
       | "supportsInterface"
       | "updateFullSubscriptionCost"
       | "updateLevelSubscriptionCost"
       | "updateReferralPercent"
-      | "updateRewardPool"
-      | "updateRewardToken"
       | "updateSubscriptionPeriod"
-      | "updateSubscriptionToken"
+      | "upgradeTo"
+      | "upgradeToAndCall"
+      | "userHasActivatedPowerA"
+      | "userHasActivePowerA"
       | "userHasAnySubscription"
+      | "userHasFullSubscription"
       | "userHasSubscription"
   ): FunctionFragment;
 
@@ -161,13 +169,24 @@ export interface ReferralManagerInterface extends utils.Interface {
     functionFragment: "DEFAULT_ADMIN_ROLE",
     values?: undefined
   ): string;
-  encodeFunctionData(functionFragment: "LEVELS", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "REFERRAL_PERCENTS",
-    values: [PromiseOrValue<BigNumberish>]
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "SUBSCRIPTION_LEVELS",
+    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "SUBSCRIPTION_PERIOD_DAYS",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "TOTAL_LEVELS",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "UPGRADER_ROLE",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -175,88 +194,89 @@ export interface ReferralManagerInterface extends utils.Interface {
     values: [IReferralManager.AddDividendsParamsStruct]
   ): string;
   encodeFunctionData(
-    functionFragment: "authorizeContract",
-    values: [PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
     functionFragment: "calculateRefReward",
-    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
+    values: [BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "claimDividends",
-    values: [PromiseOrValue<BigNumberish>]
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "extract",
+    values: [string, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "fullSubscriptionCost",
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "getReferralLevels",
-    values?: undefined
+    functionFragment: "getRoleAdmin",
+    values: [BytesLike]
   ): string;
   encodeFunctionData(
-    functionFragment: "getRoleAdmin",
-    values: [PromiseOrValue<BytesLike>]
+    functionFragment: "getSubscriptionReferralLevels",
+    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "getTimestamp",
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "getUser1LvlReferrals",
-    values: [PromiseOrValue<string>]
+    functionFragment: "getTotalReferralLevels",
+    values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "getUserInfo",
-    values: [PromiseOrValue<string>]
+    functionFragment: "getUser1LvlReferrals",
+    values: [string]
   ): string;
+  encodeFunctionData(functionFragment: "getUserInfo", values: [string]): string;
   encodeFunctionData(
     functionFragment: "getUserReferralsByLevel",
-    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
+    values: [string, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "getUserReferrer",
-    values: [PromiseOrValue<string>]
+    values: [string]
   ): string;
   encodeFunctionData(
     functionFragment: "grantRole",
-    values: [PromiseOrValue<BytesLike>, PromiseOrValue<string>]
+    values: [BytesLike, string]
   ): string;
   encodeFunctionData(
     functionFragment: "hasRole",
-    values: [PromiseOrValue<BytesLike>, PromiseOrValue<string>]
+    values: [BytesLike, string]
   ): string;
   encodeFunctionData(
-    functionFragment: "isAuthorized",
-    values: [PromiseOrValue<string>]
+    functionFragment: "initialize",
+    values: [string, BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "levelSubscriptionCost",
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "removeContractAuthorization",
-    values: [PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "renounceRole",
-    values: [PromiseOrValue<BytesLike>, PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "revokeRole",
-    values: [PromiseOrValue<BytesLike>, PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "rewardToken",
+    functionFragment: "proxiableUUID",
     values?: undefined
   ): string;
   encodeFunctionData(
+    functionFragment: "renewPowerSubscriptionA",
+    values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "renounceRole",
+    values: [BytesLike, string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "revokeRole",
+    values: [BytesLike, string]
+  ): string;
+  encodeFunctionData(
     functionFragment: "setMyReferrer",
-    values: [PromiseOrValue<string>]
+    values: [string]
   ): string;
   encodeFunctionData(
     functionFragment: "setUserReferrer",
-    values: [PromiseOrValue<string>, PromiseOrValue<string>]
+    values: [string, string]
   ): string;
   encodeFunctionData(
     functionFragment: "subscribeToAllLevels",
@@ -264,60 +284,64 @@ export interface ReferralManagerInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "subscribeToLevel",
-    values: [PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "subscriptionToken",
-    values?: undefined
+    values: [BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "supportsInterface",
-    values: [PromiseOrValue<BytesLike>]
+    values: [BytesLike]
   ): string;
   encodeFunctionData(
     functionFragment: "updateFullSubscriptionCost",
-    values: [PromiseOrValue<BigNumberish>]
+    values: [BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "updateLevelSubscriptionCost",
-    values: [PromiseOrValue<BigNumberish>]
+    values: [BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "updateReferralPercent",
-    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "updateRewardPool",
-    values: [PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "updateRewardToken",
-    values: [PromiseOrValue<string>]
+    values: [BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "updateSubscriptionPeriod",
-    values: [PromiseOrValue<BigNumberish>]
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(functionFragment: "upgradeTo", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "upgradeToAndCall",
+    values: [string, BytesLike]
   ): string;
   encodeFunctionData(
-    functionFragment: "updateSubscriptionToken",
-    values: [PromiseOrValue<string>]
+    functionFragment: "userHasActivatedPowerA",
+    values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "userHasActivePowerA",
+    values: [string]
   ): string;
   encodeFunctionData(
     functionFragment: "userHasAnySubscription",
-    values: [PromiseOrValue<string>]
+    values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "userHasFullSubscription",
+    values: [string]
   ): string;
   encodeFunctionData(
     functionFragment: "userHasSubscription",
-    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
+    values: [string, BigNumberish]
   ): string;
 
   decodeFunctionResult(
     functionFragment: "DEFAULT_ADMIN_ROLE",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "LEVELS", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "REFERRAL_PERCENTS",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "SUBSCRIPTION_LEVELS",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -325,11 +349,15 @@ export interface ReferralManagerInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "addUserDividends",
+    functionFragment: "TOTAL_LEVELS",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "authorizeContract",
+    functionFragment: "UPGRADER_ROLE",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "addUserDividends",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -340,12 +368,9 @@ export interface ReferralManagerInterface extends utils.Interface {
     functionFragment: "claimDividends",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "extract", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "fullSubscriptionCost",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "getReferralLevels",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -353,7 +378,15 @@ export interface ReferralManagerInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "getSubscriptionReferralLevels",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "getTimestamp",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getTotalReferralLevels",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -374,16 +407,17 @@ export interface ReferralManagerInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "grantRole", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "hasRole", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "isAuthorized",
-    data: BytesLike
-  ): Result;
+  decodeFunctionResult(functionFragment: "initialize", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "levelSubscriptionCost",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "removeContractAuthorization",
+    functionFragment: "proxiableUUID",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "renewPowerSubscriptionA",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -391,10 +425,6 @@ export interface ReferralManagerInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "revokeRole", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "rewardToken",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(
     functionFragment: "setMyReferrer",
     data: BytesLike
@@ -409,10 +439,6 @@ export interface ReferralManagerInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "subscribeToLevel",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "subscriptionToken",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -432,23 +458,28 @@ export interface ReferralManagerInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "updateRewardPool",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "updateRewardToken",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "updateSubscriptionPeriod",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "upgradeTo", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "updateSubscriptionToken",
+    functionFragment: "upgradeToAndCall",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "userHasActivatedPowerA",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "userHasActivePowerA",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "userHasAnySubscription",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "userHasFullSubscription",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -457,21 +488,54 @@ export interface ReferralManagerInterface extends utils.Interface {
   ): Result;
 
   events: {
+    "AdminChanged(address,address)": EventFragment;
+    "BeaconUpgraded(address)": EventFragment;
     "DividendsAdded(address,address,uint256,uint256,uint256,uint256,uint256,uint256)": EventFragment;
+    "DividendsClaimed(address,uint256)": EventFragment;
+    "Initialized(uint8)": EventFragment;
     "ReferralAdded(address,address)": EventFragment;
+    "ReferrerSet(address,address)": EventFragment;
     "RoleAdminChanged(bytes32,bytes32,bytes32)": EventFragment;
     "RoleGranted(bytes32,address,address)": EventFragment;
     "RoleRevoked(bytes32,address,address)": EventFragment;
     "Subscribed(address,uint256,uint256)": EventFragment;
+    "Upgraded(address)": EventFragment;
   };
 
+  getEvent(nameOrSignatureOrTopic: "AdminChanged"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "BeaconUpgraded"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "DividendsAdded"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "DividendsClaimed"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ReferralAdded"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "ReferrerSet"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleAdminChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleGranted"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleRevoked"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Subscribed"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Upgraded"): EventFragment;
 }
+
+export interface AdminChangedEventObject {
+  previousAdmin: string;
+  newAdmin: string;
+}
+export type AdminChangedEvent = TypedEvent<
+  [string, string],
+  AdminChangedEventObject
+>;
+
+export type AdminChangedEventFilter = TypedEventFilter<AdminChangedEvent>;
+
+export interface BeaconUpgradedEventObject {
+  beacon: string;
+}
+export type BeaconUpgradedEvent = TypedEvent<
+  [string],
+  BeaconUpgradedEventObject
+>;
+
+export type BeaconUpgradedEventFilter = TypedEventFilter<BeaconUpgradedEvent>;
 
 export interface DividendsAddedEventObject {
   referrer: string;
@@ -499,6 +563,25 @@ export type DividendsAddedEvent = TypedEvent<
 
 export type DividendsAddedEventFilter = TypedEventFilter<DividendsAddedEvent>;
 
+export interface DividendsClaimedEventObject {
+  owner: string;
+  amount: BigNumber;
+}
+export type DividendsClaimedEvent = TypedEvent<
+  [string, BigNumber],
+  DividendsClaimedEventObject
+>;
+
+export type DividendsClaimedEventFilter =
+  TypedEventFilter<DividendsClaimedEvent>;
+
+export interface InitializedEventObject {
+  version: number;
+}
+export type InitializedEvent = TypedEvent<[number], InitializedEventObject>;
+
+export type InitializedEventFilter = TypedEventFilter<InitializedEvent>;
+
 export interface ReferralAddedEventObject {
   referrer: string;
   referral: string;
@@ -509,6 +592,17 @@ export type ReferralAddedEvent = TypedEvent<
 >;
 
 export type ReferralAddedEventFilter = TypedEventFilter<ReferralAddedEvent>;
+
+export interface ReferrerSetEventObject {
+  referrer: string;
+  referral: string;
+}
+export type ReferrerSetEvent = TypedEvent<
+  [string, string],
+  ReferrerSetEventObject
+>;
+
+export type ReferrerSetEventFilter = TypedEventFilter<ReferrerSetEvent>;
 
 export interface RoleAdminChangedEventObject {
   role: string;
@@ -559,6 +653,13 @@ export type SubscribedEvent = TypedEvent<
 
 export type SubscribedEventFilter = TypedEventFilter<SubscribedEvent>;
 
+export interface UpgradedEventObject {
+  implementation: string;
+}
+export type UpgradedEvent = TypedEvent<[string], UpgradedEventObject>;
+
+export type UpgradedEventFilter = TypedEventFilter<UpgradedEvent>;
+
 export interface ReferralManager extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
@@ -588,54 +689,60 @@ export interface ReferralManager extends BaseContract {
   functions: {
     DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<[string]>;
 
-    LEVELS(overrides?: CallOverrides): Promise<[BigNumber]>;
-
     REFERRAL_PERCENTS(
-      arg0: PromiseOrValue<BigNumberish>,
+      arg0: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
+    SUBSCRIPTION_LEVELS(overrides?: CallOverrides): Promise<[BigNumber]>;
+
     SUBSCRIPTION_PERIOD_DAYS(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    TOTAL_LEVELS(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    UPGRADER_ROLE(overrides?: CallOverrides): Promise<[string]>;
 
     addUserDividends(
       params: IReferralManager.AddDividendsParamsStruct,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    authorizeContract(
-      contractAddress: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
 
     calculateRefReward(
-      amount: PromiseOrValue<BigNumberish>,
-      level: PromiseOrValue<BigNumberish>,
+      amount: BigNumberish,
+      level: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
     claimDividends(
-      amount: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
+
+    extract(
+      recipient: string,
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
 
     fullSubscriptionCost(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    getReferralLevels(overrides?: CallOverrides): Promise<[BigNumber]>;
+    getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<[string]>;
 
-    getRoleAdmin(
-      role: PromiseOrValue<BytesLike>,
+    getSubscriptionReferralLevels(
       overrides?: CallOverrides
-    ): Promise<[string]>;
+    ): Promise<[BigNumber]>;
 
     getTimestamp(overrides?: CallOverrides): Promise<[BigNumber]>;
 
+    getTotalReferralLevels(overrides?: CallOverrides): Promise<[BigNumber]>;
+
     getUser1LvlReferrals(
-      userAddress: PromiseOrValue<string>,
+      userAddress: string,
       overrides?: CallOverrides
     ): Promise<[string[]]>;
 
     getUserInfo(
-      userAddress: PromiseOrValue<string>,
+      userAddress: string,
       overrides?: CallOverrides
     ): Promise<
       [
@@ -647,6 +754,7 @@ export interface ReferralManager extends BaseContract {
         BigNumber[],
         BigNumber,
         boolean,
+        boolean,
         BigNumber
       ] & {
         referrer: string;
@@ -657,184 +765,197 @@ export interface ReferralManager extends BaseContract {
         refCount: BigNumber[];
         totalReferrals: BigNumber;
         isActiveSubscriber: boolean;
+        hasActivatePowerA: boolean;
         activationDate: BigNumber;
       }
     >;
 
     getUserReferralsByLevel(
-      userAddress: PromiseOrValue<string>,
-      level: PromiseOrValue<BigNumberish>,
+      userAddress: string,
+      level: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[IReferralManager.ReferralStructOutput[]]>;
 
-    getUserReferrer(
-      user: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<[string]>;
+    getUserReferrer(user: string, overrides?: CallOverrides): Promise<[string]>;
 
     grantRole(
-      role: PromiseOrValue<BytesLike>,
-      account: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
 
     hasRole(
-      role: PromiseOrValue<BytesLike>,
-      account: PromiseOrValue<string>,
+      role: BytesLike,
+      account: string,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
-    isAuthorized(
-      contractAddress: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
+    initialize(
+      contractManager_: string,
+      fullSubscriptionCost_: BigNumberish,
+      levelSubscriptionCost_: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
 
     levelSubscriptionCost(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    removeContractAuthorization(
-      contractAddress: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    proxiableUUID(overrides?: CallOverrides): Promise<[string]>;
+
+    renewPowerSubscriptionA(
+      user: string,
+      overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
 
     renounceRole(
-      role: PromiseOrValue<BytesLike>,
-      account: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
 
     revokeRole(
-      role: PromiseOrValue<BytesLike>,
-      account: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
 
-    rewardToken(overrides?: CallOverrides): Promise<[string]>;
-
     setMyReferrer(
-      referrer: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      referrer: string,
+      overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
 
     setUserReferrer(
-      user: PromiseOrValue<string>,
-      referrer: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      user: string,
+      referrer: string,
+      overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
 
     subscribeToAllLevels(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
 
     subscribeToLevel(
-      level: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      level: BigNumberish,
+      overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
 
-    subscriptionToken(overrides?: CallOverrides): Promise<[string]>;
-
     supportsInterface(
-      interfaceId: PromiseOrValue<BytesLike>,
+      interfaceId: BytesLike,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
     updateFullSubscriptionCost(
-      cost: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      cost: BigNumberish,
+      overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
 
     updateLevelSubscriptionCost(
-      cost: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      cost: BigNumberish,
+      overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
 
     updateReferralPercent(
-      level: PromiseOrValue<BigNumberish>,
-      percent: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    updateRewardPool(
-      poolAddress: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    updateRewardToken(
-      token: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      level: BigNumberish,
+      percent: BigNumberish,
+      overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
 
     updateSubscriptionPeriod(
-      durationDays: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      durationDays: BigNumberish,
+      overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
 
-    updateSubscriptionToken(
-      token: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    upgradeTo(
+      newImplementation: string,
+      overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
+
+    upgradeToAndCall(
+      newImplementation: string,
+      data: BytesLike,
+      overrides?: PayableOverrides & { from?: string }
+    ): Promise<ContractTransaction>;
+
+    userHasActivatedPowerA(
+      user: string,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
+
+    userHasActivePowerA(
+      user: string,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
 
     userHasAnySubscription(
-      user: PromiseOrValue<string>,
+      user: string,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
+
+    userHasFullSubscription(
+      user: string,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
     userHasSubscription(
-      user: PromiseOrValue<string>,
-      level: PromiseOrValue<BigNumberish>,
+      user: string,
+      level: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
   };
 
   DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
 
-  LEVELS(overrides?: CallOverrides): Promise<BigNumber>;
-
   REFERRAL_PERCENTS(
-    arg0: PromiseOrValue<BigNumberish>,
+    arg0: BigNumberish,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
+  SUBSCRIPTION_LEVELS(overrides?: CallOverrides): Promise<BigNumber>;
+
   SUBSCRIPTION_PERIOD_DAYS(overrides?: CallOverrides): Promise<BigNumber>;
+
+  TOTAL_LEVELS(overrides?: CallOverrides): Promise<BigNumber>;
+
+  UPGRADER_ROLE(overrides?: CallOverrides): Promise<string>;
 
   addUserDividends(
     params: IReferralManager.AddDividendsParamsStruct,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  authorizeContract(
-    contractAddress: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
+    overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
 
   calculateRefReward(
-    amount: PromiseOrValue<BigNumberish>,
-    level: PromiseOrValue<BigNumberish>,
+    amount: BigNumberish,
+    level: BigNumberish,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
   claimDividends(
-    amount: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
+    amount: BigNumberish,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  extract(
+    recipient: string,
+    amount: BigNumberish,
+    overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
 
   fullSubscriptionCost(overrides?: CallOverrides): Promise<BigNumber>;
 
-  getReferralLevels(overrides?: CallOverrides): Promise<BigNumber>;
+  getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<string>;
 
-  getRoleAdmin(
-    role: PromiseOrValue<BytesLike>,
-    overrides?: CallOverrides
-  ): Promise<string>;
+  getSubscriptionReferralLevels(overrides?: CallOverrides): Promise<BigNumber>;
 
   getTimestamp(overrides?: CallOverrides): Promise<BigNumber>;
 
+  getTotalReferralLevels(overrides?: CallOverrides): Promise<BigNumber>;
+
   getUser1LvlReferrals(
-    userAddress: PromiseOrValue<string>,
+    userAddress: string,
     overrides?: CallOverrides
   ): Promise<string[]>;
 
   getUserInfo(
-    userAddress: PromiseOrValue<string>,
+    userAddress: string,
     overrides?: CallOverrides
   ): Promise<
     [
@@ -846,6 +967,7 @@ export interface ReferralManager extends BaseContract {
       BigNumber[],
       BigNumber,
       boolean,
+      boolean,
       BigNumber
     ] & {
       referrer: string;
@@ -856,184 +978,199 @@ export interface ReferralManager extends BaseContract {
       refCount: BigNumber[];
       totalReferrals: BigNumber;
       isActiveSubscriber: boolean;
+      hasActivatePowerA: boolean;
       activationDate: BigNumber;
     }
   >;
 
   getUserReferralsByLevel(
-    userAddress: PromiseOrValue<string>,
-    level: PromiseOrValue<BigNumberish>,
+    userAddress: string,
+    level: BigNumberish,
     overrides?: CallOverrides
   ): Promise<IReferralManager.ReferralStructOutput[]>;
 
-  getUserReferrer(
-    user: PromiseOrValue<string>,
-    overrides?: CallOverrides
-  ): Promise<string>;
+  getUserReferrer(user: string, overrides?: CallOverrides): Promise<string>;
 
   grantRole(
-    role: PromiseOrValue<BytesLike>,
-    account: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
+    role: BytesLike,
+    account: string,
+    overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
 
   hasRole(
-    role: PromiseOrValue<BytesLike>,
-    account: PromiseOrValue<string>,
+    role: BytesLike,
+    account: string,
     overrides?: CallOverrides
   ): Promise<boolean>;
 
-  isAuthorized(
-    contractAddress: PromiseOrValue<string>,
-    overrides?: CallOverrides
-  ): Promise<boolean>;
+  initialize(
+    contractManager_: string,
+    fullSubscriptionCost_: BigNumberish,
+    levelSubscriptionCost_: BigNumberish,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
 
   levelSubscriptionCost(overrides?: CallOverrides): Promise<BigNumber>;
 
-  removeContractAuthorization(
-    contractAddress: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  proxiableUUID(overrides?: CallOverrides): Promise<string>;
+
+  renewPowerSubscriptionA(
+    user: string,
+    overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
 
   renounceRole(
-    role: PromiseOrValue<BytesLike>,
-    account: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
+    role: BytesLike,
+    account: string,
+    overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
 
   revokeRole(
-    role: PromiseOrValue<BytesLike>,
-    account: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
+    role: BytesLike,
+    account: string,
+    overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
 
-  rewardToken(overrides?: CallOverrides): Promise<string>;
-
   setMyReferrer(
-    referrer: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
+    referrer: string,
+    overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
 
   setUserReferrer(
-    user: PromiseOrValue<string>,
-    referrer: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
+    user: string,
+    referrer: string,
+    overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
 
   subscribeToAllLevels(
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
+    overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
 
   subscribeToLevel(
-    level: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
+    level: BigNumberish,
+    overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
 
-  subscriptionToken(overrides?: CallOverrides): Promise<string>;
-
   supportsInterface(
-    interfaceId: PromiseOrValue<BytesLike>,
+    interfaceId: BytesLike,
     overrides?: CallOverrides
   ): Promise<boolean>;
 
   updateFullSubscriptionCost(
-    cost: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
+    cost: BigNumberish,
+    overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
 
   updateLevelSubscriptionCost(
-    cost: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
+    cost: BigNumberish,
+    overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
 
   updateReferralPercent(
-    level: PromiseOrValue<BigNumberish>,
-    percent: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  updateRewardPool(
-    poolAddress: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  updateRewardToken(
-    token: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
+    level: BigNumberish,
+    percent: BigNumberish,
+    overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
 
   updateSubscriptionPeriod(
-    durationDays: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
+    durationDays: BigNumberish,
+    overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
 
-  updateSubscriptionToken(
-    token: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  upgradeTo(
+    newImplementation: string,
+    overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
+
+  upgradeToAndCall(
+    newImplementation: string,
+    data: BytesLike,
+    overrides?: PayableOverrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  userHasActivatedPowerA(
+    user: string,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
+  userHasActivePowerA(
+    user: string,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
 
   userHasAnySubscription(
-    user: PromiseOrValue<string>,
+    user: string,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
+  userHasFullSubscription(
+    user: string,
     overrides?: CallOverrides
   ): Promise<boolean>;
 
   userHasSubscription(
-    user: PromiseOrValue<string>,
-    level: PromiseOrValue<BigNumberish>,
+    user: string,
+    level: BigNumberish,
     overrides?: CallOverrides
   ): Promise<boolean>;
 
   callStatic: {
     DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
 
-    LEVELS(overrides?: CallOverrides): Promise<BigNumber>;
-
     REFERRAL_PERCENTS(
-      arg0: PromiseOrValue<BigNumberish>,
+      arg0: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    SUBSCRIPTION_LEVELS(overrides?: CallOverrides): Promise<BigNumber>;
+
     SUBSCRIPTION_PERIOD_DAYS(overrides?: CallOverrides): Promise<BigNumber>;
+
+    TOTAL_LEVELS(overrides?: CallOverrides): Promise<BigNumber>;
+
+    UPGRADER_ROLE(overrides?: CallOverrides): Promise<string>;
 
     addUserDividends(
       params: IReferralManager.AddDividendsParamsStruct,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    authorizeContract(
-      contractAddress: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
     calculateRefReward(
-      amount: PromiseOrValue<BigNumberish>,
-      level: PromiseOrValue<BigNumberish>,
+      amount: BigNumberish,
+      level: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     claimDividends(
-      amount: PromiseOrValue<BigNumberish>,
+      amount: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    extract(
+      recipient: string,
+      amount: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
     fullSubscriptionCost(overrides?: CallOverrides): Promise<BigNumber>;
 
-    getReferralLevels(overrides?: CallOverrides): Promise<BigNumber>;
+    getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<string>;
 
-    getRoleAdmin(
-      role: PromiseOrValue<BytesLike>,
+    getSubscriptionReferralLevels(
       overrides?: CallOverrides
-    ): Promise<string>;
+    ): Promise<BigNumber>;
 
     getTimestamp(overrides?: CallOverrides): Promise<BigNumber>;
 
+    getTotalReferralLevels(overrides?: CallOverrides): Promise<BigNumber>;
+
     getUser1LvlReferrals(
-      userAddress: PromiseOrValue<string>,
+      userAddress: string,
       overrides?: CallOverrides
     ): Promise<string[]>;
 
     getUserInfo(
-      userAddress: PromiseOrValue<string>,
+      userAddress: string,
       overrides?: CallOverrides
     ): Promise<
       [
@@ -1045,6 +1182,7 @@ export interface ReferralManager extends BaseContract {
         BigNumber[],
         BigNumber,
         boolean,
+        boolean,
         BigNumber
       ] & {
         referrer: string;
@@ -1055,137 +1193,157 @@ export interface ReferralManager extends BaseContract {
         refCount: BigNumber[];
         totalReferrals: BigNumber;
         isActiveSubscriber: boolean;
+        hasActivatePowerA: boolean;
         activationDate: BigNumber;
       }
     >;
 
     getUserReferralsByLevel(
-      userAddress: PromiseOrValue<string>,
-      level: PromiseOrValue<BigNumberish>,
+      userAddress: string,
+      level: BigNumberish,
       overrides?: CallOverrides
     ): Promise<IReferralManager.ReferralStructOutput[]>;
 
-    getUserReferrer(
-      user: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<string>;
+    getUserReferrer(user: string, overrides?: CallOverrides): Promise<string>;
 
     grantRole(
-      role: PromiseOrValue<BytesLike>,
-      account: PromiseOrValue<string>,
+      role: BytesLike,
+      account: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
     hasRole(
-      role: PromiseOrValue<BytesLike>,
-      account: PromiseOrValue<string>,
+      role: BytesLike,
+      account: string,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
-    isAuthorized(
-      contractAddress: PromiseOrValue<string>,
+    initialize(
+      contractManager_: string,
+      fullSubscriptionCost_: BigNumberish,
+      levelSubscriptionCost_: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<boolean>;
+    ): Promise<void>;
 
     levelSubscriptionCost(overrides?: CallOverrides): Promise<BigNumber>;
 
-    removeContractAuthorization(
-      contractAddress: PromiseOrValue<string>,
+    proxiableUUID(overrides?: CallOverrides): Promise<string>;
+
+    renewPowerSubscriptionA(
+      user: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
     renounceRole(
-      role: PromiseOrValue<BytesLike>,
-      account: PromiseOrValue<string>,
+      role: BytesLike,
+      account: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
     revokeRole(
-      role: PromiseOrValue<BytesLike>,
-      account: PromiseOrValue<string>,
+      role: BytesLike,
+      account: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    rewardToken(overrides?: CallOverrides): Promise<string>;
-
-    setMyReferrer(
-      referrer: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<void>;
+    setMyReferrer(referrer: string, overrides?: CallOverrides): Promise<void>;
 
     setUserReferrer(
-      user: PromiseOrValue<string>,
-      referrer: PromiseOrValue<string>,
+      user: string,
+      referrer: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
     subscribeToAllLevels(overrides?: CallOverrides): Promise<void>;
 
     subscribeToLevel(
-      level: PromiseOrValue<BigNumberish>,
+      level: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    subscriptionToken(overrides?: CallOverrides): Promise<string>;
-
     supportsInterface(
-      interfaceId: PromiseOrValue<BytesLike>,
+      interfaceId: BytesLike,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
     updateFullSubscriptionCost(
-      cost: PromiseOrValue<BigNumberish>,
+      cost: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
     updateLevelSubscriptionCost(
-      cost: PromiseOrValue<BigNumberish>,
+      cost: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
     updateReferralPercent(
-      level: PromiseOrValue<BigNumberish>,
-      percent: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    updateRewardPool(
-      poolAddress: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    updateRewardToken(
-      token: PromiseOrValue<string>,
+      level: BigNumberish,
+      percent: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
     updateSubscriptionPeriod(
-      durationDays: PromiseOrValue<BigNumberish>,
+      durationDays: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    updateSubscriptionToken(
-      token: PromiseOrValue<string>,
+    upgradeTo(
+      newImplementation: string,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    upgradeToAndCall(
+      newImplementation: string,
+      data: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    userHasActivatedPowerA(
+      user: string,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
+    userHasActivePowerA(
+      user: string,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
 
     userHasAnySubscription(
-      user: PromiseOrValue<string>,
+      user: string,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
+    userHasFullSubscription(
+      user: string,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
     userHasSubscription(
-      user: PromiseOrValue<string>,
-      level: PromiseOrValue<BigNumberish>,
+      user: string,
+      level: BigNumberish,
       overrides?: CallOverrides
     ): Promise<boolean>;
   };
 
   filters: {
+    "AdminChanged(address,address)"(
+      previousAdmin?: null,
+      newAdmin?: null
+    ): AdminChangedEventFilter;
+    AdminChanged(
+      previousAdmin?: null,
+      newAdmin?: null
+    ): AdminChangedEventFilter;
+
+    "BeaconUpgraded(address)"(
+      beacon?: string | null
+    ): BeaconUpgradedEventFilter;
+    BeaconUpgraded(beacon?: string | null): BeaconUpgradedEventFilter;
+
     "DividendsAdded(address,address,uint256,uint256,uint256,uint256,uint256,uint256)"(
-      referrer?: PromiseOrValue<string> | null,
-      referral?: PromiseOrValue<string> | null,
-      level?: PromiseOrValue<BigNumberish> | null,
+      referrer?: string | null,
+      referral?: string | null,
+      level?: BigNumberish | null,
       depositAmount?: null,
       rewardAmount?: null,
       stakingPlanId?: null,
@@ -1193,9 +1351,9 @@ export interface ReferralManager extends BaseContract {
       timestamp?: null
     ): DividendsAddedEventFilter;
     DividendsAdded(
-      referrer?: PromiseOrValue<string> | null,
-      referral?: PromiseOrValue<string> | null,
-      level?: PromiseOrValue<BigNumberish> | null,
+      referrer?: string | null,
+      referral?: string | null,
+      level?: BigNumberish | null,
       depositAmount?: null,
       rewardAmount?: null,
       stakingPlanId?: null,
@@ -1203,234 +1361,278 @@ export interface ReferralManager extends BaseContract {
       timestamp?: null
     ): DividendsAddedEventFilter;
 
+    "DividendsClaimed(address,uint256)"(
+      owner?: string | null,
+      amount?: null
+    ): DividendsClaimedEventFilter;
+    DividendsClaimed(
+      owner?: string | null,
+      amount?: null
+    ): DividendsClaimedEventFilter;
+
+    "Initialized(uint8)"(version?: null): InitializedEventFilter;
+    Initialized(version?: null): InitializedEventFilter;
+
     "ReferralAdded(address,address)"(
-      referrer?: PromiseOrValue<string> | null,
-      referral?: PromiseOrValue<string> | null
+      referrer?: string | null,
+      referral?: string | null
     ): ReferralAddedEventFilter;
     ReferralAdded(
-      referrer?: PromiseOrValue<string> | null,
-      referral?: PromiseOrValue<string> | null
+      referrer?: string | null,
+      referral?: string | null
     ): ReferralAddedEventFilter;
 
+    "ReferrerSet(address,address)"(
+      referrer?: string | null,
+      referral?: string | null
+    ): ReferrerSetEventFilter;
+    ReferrerSet(
+      referrer?: string | null,
+      referral?: string | null
+    ): ReferrerSetEventFilter;
+
     "RoleAdminChanged(bytes32,bytes32,bytes32)"(
-      role?: PromiseOrValue<BytesLike> | null,
-      previousAdminRole?: PromiseOrValue<BytesLike> | null,
-      newAdminRole?: PromiseOrValue<BytesLike> | null
+      role?: BytesLike | null,
+      previousAdminRole?: BytesLike | null,
+      newAdminRole?: BytesLike | null
     ): RoleAdminChangedEventFilter;
     RoleAdminChanged(
-      role?: PromiseOrValue<BytesLike> | null,
-      previousAdminRole?: PromiseOrValue<BytesLike> | null,
-      newAdminRole?: PromiseOrValue<BytesLike> | null
+      role?: BytesLike | null,
+      previousAdminRole?: BytesLike | null,
+      newAdminRole?: BytesLike | null
     ): RoleAdminChangedEventFilter;
 
     "RoleGranted(bytes32,address,address)"(
-      role?: PromiseOrValue<BytesLike> | null,
-      account?: PromiseOrValue<string> | null,
-      sender?: PromiseOrValue<string> | null
+      role?: BytesLike | null,
+      account?: string | null,
+      sender?: string | null
     ): RoleGrantedEventFilter;
     RoleGranted(
-      role?: PromiseOrValue<BytesLike> | null,
-      account?: PromiseOrValue<string> | null,
-      sender?: PromiseOrValue<string> | null
+      role?: BytesLike | null,
+      account?: string | null,
+      sender?: string | null
     ): RoleGrantedEventFilter;
 
     "RoleRevoked(bytes32,address,address)"(
-      role?: PromiseOrValue<BytesLike> | null,
-      account?: PromiseOrValue<string> | null,
-      sender?: PromiseOrValue<string> | null
+      role?: BytesLike | null,
+      account?: string | null,
+      sender?: string | null
     ): RoleRevokedEventFilter;
     RoleRevoked(
-      role?: PromiseOrValue<BytesLike> | null,
-      account?: PromiseOrValue<string> | null,
-      sender?: PromiseOrValue<string> | null
+      role?: BytesLike | null,
+      account?: string | null,
+      sender?: string | null
     ): RoleRevokedEventFilter;
 
     "Subscribed(address,uint256,uint256)"(
-      subscriber?: PromiseOrValue<string> | null,
+      subscriber?: string | null,
       levels?: null,
-      timestamp?: PromiseOrValue<BigNumberish> | null
+      timestamp?: BigNumberish | null
     ): SubscribedEventFilter;
     Subscribed(
-      subscriber?: PromiseOrValue<string> | null,
+      subscriber?: string | null,
       levels?: null,
-      timestamp?: PromiseOrValue<BigNumberish> | null
+      timestamp?: BigNumberish | null
     ): SubscribedEventFilter;
+
+    "Upgraded(address)"(implementation?: string | null): UpgradedEventFilter;
+    Upgraded(implementation?: string | null): UpgradedEventFilter;
   };
 
   estimateGas: {
     DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
 
-    LEVELS(overrides?: CallOverrides): Promise<BigNumber>;
-
     REFERRAL_PERCENTS(
-      arg0: PromiseOrValue<BigNumberish>,
+      arg0: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    SUBSCRIPTION_LEVELS(overrides?: CallOverrides): Promise<BigNumber>;
+
     SUBSCRIPTION_PERIOD_DAYS(overrides?: CallOverrides): Promise<BigNumber>;
+
+    TOTAL_LEVELS(overrides?: CallOverrides): Promise<BigNumber>;
+
+    UPGRADER_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
 
     addUserDividends(
       params: IReferralManager.AddDividendsParamsStruct,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    authorizeContract(
-      contractAddress: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
 
     calculateRefReward(
-      amount: PromiseOrValue<BigNumberish>,
-      level: PromiseOrValue<BigNumberish>,
+      amount: BigNumberish,
+      level: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     claimDividends(
-      amount: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+
+    extract(
+      recipient: string,
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
 
     fullSubscriptionCost(overrides?: CallOverrides): Promise<BigNumber>;
 
-    getReferralLevels(overrides?: CallOverrides): Promise<BigNumber>;
-
     getRoleAdmin(
-      role: PromiseOrValue<BytesLike>,
+      role: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getSubscriptionReferralLevels(
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     getTimestamp(overrides?: CallOverrides): Promise<BigNumber>;
 
+    getTotalReferralLevels(overrides?: CallOverrides): Promise<BigNumber>;
+
     getUser1LvlReferrals(
-      userAddress: PromiseOrValue<string>,
+      userAddress: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     getUserInfo(
-      userAddress: PromiseOrValue<string>,
+      userAddress: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     getUserReferralsByLevel(
-      userAddress: PromiseOrValue<string>,
-      level: PromiseOrValue<BigNumberish>,
+      userAddress: string,
+      level: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     getUserReferrer(
-      user: PromiseOrValue<string>,
+      user: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     grantRole(
-      role: PromiseOrValue<BytesLike>,
-      account: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
 
     hasRole(
-      role: PromiseOrValue<BytesLike>,
-      account: PromiseOrValue<string>,
+      role: BytesLike,
+      account: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    isAuthorized(
-      contractAddress: PromiseOrValue<string>,
-      overrides?: CallOverrides
+    initialize(
+      contractManager_: string,
+      fullSubscriptionCost_: BigNumberish,
+      levelSubscriptionCost_: BigNumberish,
+      overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
 
     levelSubscriptionCost(overrides?: CallOverrides): Promise<BigNumber>;
 
-    removeContractAuthorization(
-      contractAddress: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    proxiableUUID(overrides?: CallOverrides): Promise<BigNumber>;
+
+    renewPowerSubscriptionA(
+      user: string,
+      overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
 
     renounceRole(
-      role: PromiseOrValue<BytesLike>,
-      account: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
 
     revokeRole(
-      role: PromiseOrValue<BytesLike>,
-      account: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
 
-    rewardToken(overrides?: CallOverrides): Promise<BigNumber>;
-
     setMyReferrer(
-      referrer: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      referrer: string,
+      overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
 
     setUserReferrer(
-      user: PromiseOrValue<string>,
-      referrer: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      user: string,
+      referrer: string,
+      overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
 
     subscribeToAllLevels(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
 
     subscribeToLevel(
-      level: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      level: BigNumberish,
+      overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
 
-    subscriptionToken(overrides?: CallOverrides): Promise<BigNumber>;
-
     supportsInterface(
-      interfaceId: PromiseOrValue<BytesLike>,
+      interfaceId: BytesLike,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     updateFullSubscriptionCost(
-      cost: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      cost: BigNumberish,
+      overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
 
     updateLevelSubscriptionCost(
-      cost: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      cost: BigNumberish,
+      overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
 
     updateReferralPercent(
-      level: PromiseOrValue<BigNumberish>,
-      percent: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    updateRewardPool(
-      poolAddress: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    updateRewardToken(
-      token: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      level: BigNumberish,
+      percent: BigNumberish,
+      overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
 
     updateSubscriptionPeriod(
-      durationDays: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      durationDays: BigNumberish,
+      overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
 
-    updateSubscriptionToken(
-      token: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    upgradeTo(
+      newImplementation: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+
+    upgradeToAndCall(
+      newImplementation: string,
+      data: BytesLike,
+      overrides?: PayableOverrides & { from?: string }
+    ): Promise<BigNumber>;
+
+    userHasActivatedPowerA(
+      user: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    userHasActivePowerA(
+      user: string,
+      overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     userHasAnySubscription(
-      user: PromiseOrValue<string>,
+      user: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    userHasFullSubscription(
+      user: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     userHasSubscription(
-      user: PromiseOrValue<string>,
-      level: PromiseOrValue<BigNumberish>,
+      user: string,
+      level: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
   };
@@ -1440,10 +1642,12 @@ export interface ReferralManager extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    LEVELS(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
     REFERRAL_PERCENTS(
-      arg0: PromiseOrValue<BigNumberish>,
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    SUBSCRIPTION_LEVELS(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -1451,172 +1655,194 @@ export interface ReferralManager extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    TOTAL_LEVELS(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    UPGRADER_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     addUserDividends(
       params: IReferralManager.AddDividendsParamsStruct,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    authorizeContract(
-      contractAddress: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 
     calculateRefReward(
-      amount: PromiseOrValue<BigNumberish>,
-      level: PromiseOrValue<BigNumberish>,
+      amount: BigNumberish,
+      level: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     claimDividends(
-      amount: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    extract(
+      recipient: string,
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 
     fullSubscriptionCost(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    getReferralLevels(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
     getRoleAdmin(
-      role: PromiseOrValue<BytesLike>,
+      role: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getSubscriptionReferralLevels(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     getTimestamp(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    getTotalReferralLevels(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     getUser1LvlReferrals(
-      userAddress: PromiseOrValue<string>,
+      userAddress: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     getUserInfo(
-      userAddress: PromiseOrValue<string>,
+      userAddress: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     getUserReferralsByLevel(
-      userAddress: PromiseOrValue<string>,
-      level: PromiseOrValue<BigNumberish>,
+      userAddress: string,
+      level: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     getUserReferrer(
-      user: PromiseOrValue<string>,
+      user: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     grantRole(
-      role: PromiseOrValue<BytesLike>,
-      account: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 
     hasRole(
-      role: PromiseOrValue<BytesLike>,
-      account: PromiseOrValue<string>,
+      role: BytesLike,
+      account: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    isAuthorized(
-      contractAddress: PromiseOrValue<string>,
-      overrides?: CallOverrides
+    initialize(
+      contractManager_: string,
+      fullSubscriptionCost_: BigNumberish,
+      levelSubscriptionCost_: BigNumberish,
+      overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 
     levelSubscriptionCost(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    removeContractAuthorization(
-      contractAddress: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    proxiableUUID(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    renewPowerSubscriptionA(
+      user: string,
+      overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 
     renounceRole(
-      role: PromiseOrValue<BytesLike>,
-      account: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 
     revokeRole(
-      role: PromiseOrValue<BytesLike>,
-      account: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 
-    rewardToken(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
     setMyReferrer(
-      referrer: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      referrer: string,
+      overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 
     setUserReferrer(
-      user: PromiseOrValue<string>,
-      referrer: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      user: string,
+      referrer: string,
+      overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 
     subscribeToAllLevels(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 
     subscribeToLevel(
-      level: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      level: BigNumberish,
+      overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 
-    subscriptionToken(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
     supportsInterface(
-      interfaceId: PromiseOrValue<BytesLike>,
+      interfaceId: BytesLike,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     updateFullSubscriptionCost(
-      cost: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      cost: BigNumberish,
+      overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 
     updateLevelSubscriptionCost(
-      cost: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      cost: BigNumberish,
+      overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 
     updateReferralPercent(
-      level: PromiseOrValue<BigNumberish>,
-      percent: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    updateRewardPool(
-      poolAddress: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    updateRewardToken(
-      token: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      level: BigNumberish,
+      percent: BigNumberish,
+      overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 
     updateSubscriptionPeriod(
-      durationDays: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      durationDays: BigNumberish,
+      overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 
-    updateSubscriptionToken(
-      token: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    upgradeTo(
+      newImplementation: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    upgradeToAndCall(
+      newImplementation: string,
+      data: BytesLike,
+      overrides?: PayableOverrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    userHasActivatedPowerA(
+      user: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    userHasActivePowerA(
+      user: string,
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     userHasAnySubscription(
-      user: PromiseOrValue<string>,
+      user: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    userHasFullSubscription(
+      user: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     userHasSubscription(
-      user: PromiseOrValue<string>,
-      level: PromiseOrValue<BigNumberish>,
+      user: string,
+      level: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
   };

@@ -47,6 +47,8 @@ export const useNotification = () => {
 
   const handleError = useCallback(
     (err: any) => {
+      console.error(err);
+
       const errData = tryToGetErrorData(err);
       if (errData) {
         error({ title: errData.title, description: errData.description });

@@ -30,7 +30,12 @@ export const ReferralRewardsList = () => {
 
   return (
     <>
-      <Flex justifyContent="space-between" alignItems="center" mb={{ sm: '4px', xl: '18px' }}>
+      <Flex
+        paddingX={{ sm: '10px', md: 'unset' }}
+        justifyContent="space-between"
+        alignItems="center"
+        mb={{ sm: '4px', xl: '18px' }}
+      >
         <Text
           textStyle="h3"
           id="ref-rewards-list"

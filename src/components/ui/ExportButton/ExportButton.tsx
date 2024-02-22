@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/Button/Button';
 import { useLogger } from '@/hooks/useLogger';
 
 type ExportButtonProps = {
-  event?: 'staking' | 'team';
+  event?: 'staking' | 'team' | 'avatarSettings';
   buttonLocation?: 'down' | 'mid' | 'up';
   onClick: () => void;
 };

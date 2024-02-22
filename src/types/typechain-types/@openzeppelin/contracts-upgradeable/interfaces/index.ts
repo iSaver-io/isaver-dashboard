@@ -3,3 +3,5 @@
 /* eslint-disable */
 import type * as draftIerc1822UpgradeableSol from "./draft-IERC1822Upgradeable.sol";
 export type { draftIerc1822UpgradeableSol };
+export type { IERC1967Upgradeable } from "./IERC1967Upgradeable";
+export type { IERC4906Upgradeable } from "./IERC4906Upgradeable";

@@ -5,17 +5,21 @@ import Contracts from '@/config/contracts.json';
 import { useChainId } from './useChainId';
 
 export enum ContractsEnum {
-  'SAV' = 'Token1',
-  'SAVR' = 'Token2',
+  'SAV' = 'ISaverSAVToken',
+  'SAVR' = 'ISaverSAVRToken',
   'Staking' = 'Staking',
   'ReferralManager' = 'ReferralManager',
-  'Squads' = 'Squads',
+  'Teams' = 'Teams',
   'Helper' = 'Helper',
   'VendorSell' = 'VendorSell',
-  'Lottery' = 'Lottery',
+  'Raffles' = 'Raffles',
   'Ticket' = 'Ticket',
   'TokenVesting' = 'TokenVesting',
   'TokenVesting_OLD' = 'TokenVesting_OLD',
+  'AvatarsSell' = 'AvatarsSell',
+  'ISaverAvatars' = 'ISaverAvatars',
+  'ISaverPowers' = 'ISaverPowers',
+  'AvatarSettings' = 'AvatarSettings',
 }
 
 type ContractAbi = {

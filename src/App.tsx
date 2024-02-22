@@ -11,6 +11,8 @@ import { theme } from '@/modules/chakra';
 import { queryClient } from '@/modules/query';
 import { client } from '@/modules/wagmi';
 
+import '@/modules/firebase';
+
 import { router } from './router';
 
 import '@/assets/styles/index.scss';

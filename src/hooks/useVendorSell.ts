@@ -15,7 +15,6 @@ import { useTokens } from './useTokens';
 
 const SWAP_RATE_REQUEST = 'swap-rate-request';
 const SELL_COMMISSION_REQUEST = 'sell-commission-request';
-const SELL_AVAILABLE_REQUEST = 'sell-available-request';
 const BUY_TOKENS_MUTATION = 'buy-tokens-mutation';
 const SELL_TOKENS_MUTATION = 'sell-tokens-mutation';
 
@@ -25,17 +24,9 @@ export const useVendorSellControl = () => {
   const queryClient = useQueryClient();
   const { success, handleError } = useNotification();
 
-  const isSellAvailableRequest = useQuery([SELL_AVAILABLE_REQUEST], async () => {
-    return await vendorSellContract.isSellAvailable();
-  });
-
   const sellCommissionRequest = useQuery([SELL_COMMISSION_REQUEST], async () => {
     return await vendorSellContract.getSellTokenCommission();
   });
-
-  const isSellAvailable = useMemo(() => {
-    return isSellAvailableRequest.data?.valueOf();
-  }, [isSellAvailableRequest.data]);
 
   const sellCommission = useMemo(() => {
     return sellCommissionRequest.data
@@ -57,42 +48,10 @@ export const useVendorSellControl = () => {
     }
   );
 
-  const enableSell = useMutation(
-    ['enable-sell'],
-    async () => {
-      const txHash = await vendorSellContract.enableSell();
-      success({ title: 'Success', description: 'SAV token sell enabled', txHash });
-    },
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries([SELL_AVAILABLE_REQUEST]);
-      },
-      onError: handleError,
-    }
-  );
-
-  const disableSell = useMutation(
-    ['disable-sell'],
-    async () => {
-      const txHash = await vendorSellContract.disableSell();
-      success({ title: 'Success', description: 'SAV token sell disabled', txHash });
-    },
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries([SELL_AVAILABLE_REQUEST]);
-      },
-      onError: handleError,
-    }
-  );
-
   return {
     sellCommissionRequest,
     sellCommission,
-    isSellAvailableRequest,
-    isSellAvailable,
     updateSellFee,
-    enableSell,
-    disableSell,
   };
 };
 
@@ -102,8 +61,7 @@ export const useVendorSell = () => {
   const vendorSellContract = useVendorSellContract();
   const usdtContract = useUsdtTokenContract();
   const tokens = useTokens();
-  const { sellCommissionRequest, sellCommission, isSellAvailableRequest, isSellAvailable } =
-    useVendorSellControl();
+  const { sellCommissionRequest, sellCommission } = useVendorSellControl();
   const { success, handleError } = useNotification();
 
   const { connect } = useConnectWallet();
@@ -215,8 +173,6 @@ export const useVendorSell = () => {
     swapRate,
     sellCommissionRequest,
     sellCommission,
-    isSellAvailableRequest,
-    isSellAvailable,
     getTokenSellEquivalent,
     getTokenBuyEquivalent,
     buyTokens,

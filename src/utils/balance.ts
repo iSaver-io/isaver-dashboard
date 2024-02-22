@@ -7,23 +7,23 @@ import { bigNumberToNumber } from './number';
 export const BALANCE_HISTORY_PERIOD = 1 * 30 * 24 * 60 * 60 * 1000; // 1 month
 
 type BalanceHistoryType = {
-  token1: number;
+  savToken: number;
   token2: number;
   block: number;
 };
 type BalanceHistoryReturnType = BalanceHistoryType[];
 export const getBalanceHistoryFromTransfers = (
-  token1Transfers: TransferEvent[],
+  savTokenTransfers: TransferEvent[],
   token2Transfers: TransferEvent[],
-  currentToken1Balance: BigNumber,
-  currentToken2Balance: BigNumber,
+  currentSAVTokenBalance: BigNumber,
+  currentSAVRTokenBalance: BigNumber,
   currentBlock: number,
   userAccount: string
 ): BalanceHistoryReturnType => {
   // @ts-ignore
-  const token1Address = token1Transfers[0] ? token1Transfers[0].address : null;
+  const savTokenAddress = savTokenTransfers[0] ? savTokenTransfers[0].address : null;
 
-  const tokensHistory = token1Transfers
+  const tokensHistory = savTokenTransfers
     .concat(token2Transfers)
     // @ts-ignore
     .sort((t1, t2) => t2.blockNumber - t1.blockNumber)
@@ -32,7 +32,7 @@ export const getBalanceHistoryFromTransfers = (
         // @ts-ignore
         const block = transfer.blockNumber;
         // @ts-ignore
-        const isToken1 = transfer.address === token1Address;
+        const isSAVToken = transfer.address === savTokenAddress;
         let transferAmount = bigNumberToNumber(transfer.args.value);
         if (transfer.args.from === userAccount) {
           transferAmount = -transferAmount;
@@ -41,21 +41,21 @@ export const getBalanceHistoryFromTransfers = (
         const lastBalance = acc[acc.length - 1];
 
         if (lastBalance.block === block) {
-          if (isToken1) {
-            acc[acc.length - 1].token1 -= transferAmount;
+          if (isSAVToken) {
+            acc[acc.length - 1].savToken -= transferAmount;
           } else {
             acc[acc.length - 1].token2 -= transferAmount;
           }
         } else {
-          if (isToken1) {
+          if (isSAVToken) {
             acc.push({
-              token1: lastBalance.token1 - transferAmount,
+              savToken: lastBalance.savToken - transferAmount,
               token2: lastBalance.token2,
               block,
             });
           } else {
             acc.push({
-              token1: lastBalance.token1,
+              savToken: lastBalance.savToken,
               token2: lastBalance.token2 - transferAmount,
               block,
             });
@@ -66,8 +66,8 @@ export const getBalanceHistoryFromTransfers = (
       },
       [
         {
-          token1: bigNumberToNumber(currentToken1Balance),
-          token2: bigNumberToNumber(currentToken2Balance),
+          savToken: bigNumberToNumber(currentSAVTokenBalance),
+          token2: bigNumberToNumber(currentSAVRTokenBalance),
           block: currentBlock,
         },
       ] as BalanceHistoryType[]

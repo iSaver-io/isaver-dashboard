@@ -223,7 +223,7 @@ const _abi = [
     stateMutability: "nonpayable",
     type: "function",
   },
-];
+] as const;
 
 export class VRFCoordinatorV2Interface__factory {
   static readonly abi = _abi;
