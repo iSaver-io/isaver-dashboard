@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { Box, Container } from '@chakra-ui/react';
 
-import { useDocumentTitle } from '@/hooks/useMeta';
+import { useDocumentTitle, useMetaDescription } from '@/hooks/useMeta';
 
 import { HistoryTable } from './HistoryTable';
 import { Main } from './Main';
@@ -12,6 +12,9 @@ import './Momento.scss';
 
 const Momento = () => {
   useDocumentTitle('iSaver | Momento');
+  useMetaDescription(
+    'Instant Win-Win Raffle of various NFTs and ERC20 tokens. Anyone with iSaver Raffle Tickets can join the fun and win exciting prizes!'
+  );
 
   useEffect(() => {
     const backgroundElement = document.querySelector('.background');

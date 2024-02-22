@@ -18,7 +18,7 @@ export const Main = () => {
   const { buyTickets } = useRaffle();
   const { balance } = useTicketSupply();
   const { ticketPrice } = useRaffleControl();
-  const { isTicketBurned, burnTicket, requestPrize } = useMomento();
+  const { isTicketBurned, isOracleResponseReady, burnTicket, getPrize } = useMomento();
 
   return (
     <Box>
@@ -103,10 +103,10 @@ export const Main = () => {
             </Text>
             <Button
               w="160px"
-              isDisabled={!isTicketBurned}
+              isDisabled={!isTicketBurned && !isOracleResponseReady}
               size={{ base: 'md', lg: 'lg' }}
-              onClick={() => requestPrize.mutateAsync()}
-              isLoading={requestPrize.isLoading}
+              onClick={() => getPrize.mutateAsync()}
+              isLoading={getPrize.isLoading}
             >
               Go!
             </Button>

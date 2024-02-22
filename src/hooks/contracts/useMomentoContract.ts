@@ -23,13 +23,17 @@ export const useMomentoContract = () => {
     return contract.ticketBurned(address);
   };
 
+  const isOracleResponseReady = (address: string) => {
+    return contract.isOracleResponseReady(address);
+  };
+
   const burnTicket = async () => {
     const tx = await contract.burnTicket();
     return waitForTransaction(tx);
   };
 
-  const requestPrize = async () => {
-    const tx = await contract.requestPrize();
+  const getPrize = async () => {
+    const tx = await contract.getPrize();
     return waitForTransaction(tx);
   };
 
@@ -37,7 +41,8 @@ export const useMomentoContract = () => {
     contract,
     address: contractAddress,
     isTicketBurned,
+    isOracleResponseReady,
     burnTicket,
-    requestPrize,
+    getPrize,
   };
 };

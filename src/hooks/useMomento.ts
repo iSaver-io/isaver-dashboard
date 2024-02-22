@@ -8,8 +8,9 @@ import { useNotification } from '@/hooks/useNotification';
 import { useMomentoContract } from './contracts/useMomentoContract';
 
 const TICKET_BURNED_MUTATION = 'ticket-burned-mutation';
+const ORACLE_RESPONSE_MUTATION = 'oracle-response-mutation';
 const BURN_TICKET = 'burn-ticket-mutation';
-const REQUEST_PRIZE_MUTATION = 'request-prize-mutation';
+const GET_PRIZE_MUTATION = 'get-prize-mutation';
 
 export const useMomento = () => {
   const { address } = useAccount();
@@ -21,6 +22,11 @@ export const useMomento = () => {
 
   const { data: isTicketBurned } = useQuery([TICKET_BURNED_MUTATION, { address }], async () =>
     address ? await momentoContract.isTicketBurned(address) : null
+  );
+
+  const { data: isOracleResponseReady } = useQuery(
+    [ORACLE_RESPONSE_MUTATION, { address }],
+    async () => (address ? await momentoContract.isOracleResponseReady(address) : null)
   );
 
   const burnTicket = useMutation(
@@ -52,15 +58,15 @@ export const useMomento = () => {
     }
   );
 
-  const requestPrize = useMutation(
-    [REQUEST_PRIZE_MUTATION],
+  const getPrize = useMutation(
+    [GET_PRIZE_MUTATION],
     async () => {
       if (!address) {
         connect();
         return;
       }
 
-      const txHash = await momentoContract.requestPrize();
+      const txHash = await momentoContract.getPrize();
       success({
         title: 'Success',
         txHash,
@@ -77,8 +83,9 @@ export const useMomento = () => {
   );
 
   return {
+    isOracleResponseReady,
     isTicketBurned,
     burnTicket,
-    requestPrize,
+    getPrize,
   };
 };
