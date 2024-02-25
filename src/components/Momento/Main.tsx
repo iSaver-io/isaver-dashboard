@@ -3,7 +3,7 @@ import { Link as RouterLink } from 'react-router-dom';
 import { ArrowBackIcon } from '@chakra-ui/icons';
 import { Box, Button, Flex, Link, Text, useDisclosure } from '@chakra-ui/react';
 
-import { useRaffle, useRaffleControl } from '@/hooks/raffle/useRaffle';
+import { useRaffle, useTicketPrice } from '@/hooks/raffle/useRaffle';
 import { useMomento } from '@/hooks/useMomento';
 import { useTicketSupply } from '@/hooks/useTickets';
 
@@ -17,7 +17,7 @@ export const Main = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { buyTickets } = useRaffle();
   const { balance } = useTicketSupply();
-  const { ticketPrice } = useRaffleControl();
+  const { ticketPrice } = useTicketPrice();
   const { isTicketBurned, isOracleResponseReady, burnTicket, getPrize } = useMomento();
 
   return (
@@ -91,7 +91,7 @@ export const Main = () => {
           <Flex flexDir={{ base: 'row', lg: 'column' }} gap={{ base: '20px', lg: '8px' }}>
             <Button
               w="160px"
-              isDisabled={!isActive || !!isTicketBurned}
+              isDisabled={!isActive || !isTicketBurned}
               size={{ base: 'md', lg: 'lg' }}
               onClick={() => burnTicket.mutateAsync()}
               isLoading={burnTicket.isLoading}

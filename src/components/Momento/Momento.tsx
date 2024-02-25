@@ -10,7 +10,7 @@ import { Prizes } from './Prizes';
 
 import './Momento.scss';
 
-const Momento = () => {
+export const Momento = () => {
   useDocumentTitle('iSaver | Momento');
   useMetaDescription(
     'Instant Win-Win Raffle of various NFTs and ERC20 tokens. Anyone with iSaver Raffle Tickets can join the fun and win exciting prizes!'
@@ -49,5 +49,3 @@ const Momento = () => {
     </Container>
   );
 };
-
-export default Momento;

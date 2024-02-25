@@ -9,6 +9,7 @@ export const useChainId = () => {
 
   // let chainId = process.env.NODE_ENV === 'production' ? ChainIDsEnum.mainnet : ChainIDsEnum.hardhat;
 
+  return ChainIDsEnum.hardhat;
   let chainId = isMainnetBuild ? ChainIDsEnum.mainnet : ChainIDsEnum.mumbai;
   if (chain?.network === 'matic') {
     chainId = ChainIDsEnum.mainnet;

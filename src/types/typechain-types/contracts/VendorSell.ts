@@ -122,7 +122,6 @@ export interface VendorSellInterface extends utils.Interface {
     functionFragment: "extractChange",
     values: [string, BigNumberish]
   ): string;
-  encodeFunctionData(functionFragment: "divider", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "getChangeTokenReserve",
     values?: undefined
@@ -215,7 +214,7 @@ export interface VendorSellInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "buyTokens", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "UPGRADER_ROLE",
+    functionFragment: "changeToken",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "divider", data: BytesLike): Result;

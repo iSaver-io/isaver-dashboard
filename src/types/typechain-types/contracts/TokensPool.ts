@@ -79,6 +79,7 @@ export interface TokensPoolInterface extends utils.Interface {
     "hasActiveRequest(address)": FunctionFragment;
     "hasRole(bytes32,address)": FunctionFragment;
     "initialize(address,uint64,bytes32)": FunctionFragment;
+    "isRequestFulfilled(address)": FunctionFragment;
     "onERC1155BatchReceived(address,address,uint256[],uint256[],bytes)": FunctionFragment;
     "onERC1155Received(address,address,uint256,uint256,bytes)": FunctionFragment;
     "onERC721Received(address,address,uint256,bytes)": FunctionFragment;
@@ -128,6 +129,7 @@ export interface TokensPoolInterface extends utils.Interface {
       | "hasActiveRequest"
       | "hasRole"
       | "initialize"
+      | "isRequestFulfilled"
       | "onERC1155BatchReceived"
       | "onERC1155Received"
       | "onERC721Received"
@@ -244,6 +246,10 @@ export interface TokensPoolInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "initialize",
     values: [string, BigNumberish, BytesLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "isRequestFulfilled",
+    values: [string]
   ): string;
   encodeFunctionData(
     functionFragment: "onERC1155BatchReceived",
@@ -405,6 +411,10 @@ export interface TokensPoolInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "hasRole", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "initialize", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "isRequestFulfilled",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "onERC1155BatchReceived",
     data: BytesLike
@@ -832,6 +842,11 @@ export interface TokensPool extends BaseContract {
       overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
 
+    isRequestFulfilled(
+      sender: string,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
+
     onERC1155BatchReceived(
       arg0: string,
       arg1: string,
@@ -1052,6 +1067,11 @@ export interface TokensPool extends BaseContract {
     keyHash: BytesLike,
     overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
+
+  isRequestFulfilled(
+    sender: string,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
 
   onERC1155BatchReceived(
     arg0: string,
@@ -1274,6 +1294,11 @@ export interface TokensPool extends BaseContract {
       keyHash: BytesLike,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    isRequestFulfilled(
+      sender: string,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
 
     onERC1155BatchReceived(
       arg0: string,
@@ -1640,6 +1665,11 @@ export interface TokensPool extends BaseContract {
       overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
 
+    isRequestFulfilled(
+      sender: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     onERC1155BatchReceived(
       arg0: string,
       arg1: string,
@@ -1868,6 +1898,11 @@ export interface TokensPool extends BaseContract {
       subscriptionId: BigNumberish,
       keyHash: BytesLike,
       overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    isRequestFulfilled(
+      sender: string,
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     onERC1155BatchReceived(

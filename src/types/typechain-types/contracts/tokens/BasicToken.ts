@@ -188,13 +188,6 @@ export type SnapshotEvent = TypedEvent<[BigNumber], SnapshotEventObject>;
 
 export type SnapshotEventFilter = TypedEventFilter<SnapshotEvent>;
 
-export interface SnapshotEventObject {
-  id: BigNumber;
-}
-export type SnapshotEvent = TypedEvent<[BigNumber], SnapshotEventObject>;
-
-export type SnapshotEventFilter = TypedEventFilter<SnapshotEvent>;
-
 export interface TransferEventObject {
   from: string;
   to: string;
@@ -464,9 +457,6 @@ export interface BasicToken extends BaseContract {
       spender?: string | null,
       value?: null
     ): ApprovalEventFilter;
-
-    "Snapshot(uint256)"(id?: null): SnapshotEventFilter;
-    Snapshot(id?: null): SnapshotEventFilter;
 
     "Snapshot(uint256)"(id?: null): SnapshotEventFilter;
     Snapshot(id?: null): SnapshotEventFilter;

@@ -20,6 +20,7 @@ export enum ContractsEnum {
   'ISaverAvatars' = 'ISaverAvatars',
   'ISaverPowers' = 'ISaverPowers',
   'AvatarSettings' = 'AvatarSettings',
+  'Momento' = 'Momento',
 }
 
 type ContractAbi = {

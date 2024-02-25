@@ -116,7 +116,6 @@ export interface ReferralManagerInterface extends utils.Interface {
     "userHasAnySubscription(address)": FunctionFragment;
     "userHasFullSubscription(address)": FunctionFragment;
     "userHasSubscription(address,uint256)": FunctionFragment;
-    "withdrawLiquidity(address,uint256)": FunctionFragment;
   };
 
   getFunction(
@@ -164,7 +163,6 @@ export interface ReferralManagerInterface extends utils.Interface {
       | "userHasAnySubscription"
       | "userHasFullSubscription"
       | "userHasSubscription"
-      | "withdrawLiquidity"
   ): FunctionFragment;
 
   encodeFunctionData(
@@ -317,7 +315,6 @@ export interface ReferralManagerInterface extends utils.Interface {
     functionFragment: "userHasActivatedPowerA",
     values: [string]
   ): string;
-  encodeFunctionData(functionFragment: "upgradeTo", values: [string]): string;
   encodeFunctionData(
     functionFragment: "userHasActivePowerA",
     values: [string]
@@ -473,7 +470,6 @@ export interface ReferralManagerInterface extends utils.Interface {
     functionFragment: "userHasActivatedPowerA",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "upgradeTo", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "userHasActivePowerA",
     data: BytesLike
@@ -488,10 +484,6 @@ export interface ReferralManagerInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "userHasSubscription",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "withdrawLiquidity",
     data: BytesLike
   ): Result;
 
@@ -908,12 +900,6 @@ export interface ReferralManager extends BaseContract {
       level: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
-
-    withdrawLiquidity(
-      recipient: string,
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
   };
 
   DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
@@ -1128,12 +1114,6 @@ export interface ReferralManager extends BaseContract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
-  withdrawLiquidity(
-    recipient: string,
-    amount: BigNumberish,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
   callStatic: {
     DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
 
@@ -1343,12 +1323,6 @@ export interface ReferralManager extends BaseContract {
       level: BigNumberish,
       overrides?: CallOverrides
     ): Promise<boolean>;
-
-    withdrawLiquidity(
-      recipient: string,
-      amount: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
   };
 
   filters: {
@@ -1661,12 +1635,6 @@ export interface ReferralManager extends BaseContract {
       level: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
-
-    withdrawLiquidity(
-      recipient: string,
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
   };
 
   populateTransaction: {
@@ -1876,12 +1844,6 @@ export interface ReferralManager extends BaseContract {
       user: string,
       level: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    withdrawLiquidity(
-      recipient: string,
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
   };
 }

@@ -76,6 +76,8 @@ export type { AccessControl } from "./@openzeppelin/contracts/access/AccessContr
 export { AccessControl__factory } from "./factories/@openzeppelin/contracts/access/AccessControl__factory";
 export type { IAccessControl } from "./@openzeppelin/contracts/access/IAccessControl";
 export { IAccessControl__factory } from "./factories/@openzeppelin/contracts/access/IAccessControl__factory";
+export type { Ownable } from "./@openzeppelin/contracts/access/Ownable";
+export { Ownable__factory } from "./factories/@openzeppelin/contracts/access/Ownable__factory";
 export type { IERC2981 } from "./@openzeppelin/contracts/interfaces/IERC2981";
 export { IERC2981__factory } from "./factories/@openzeppelin/contracts/interfaces/IERC2981__factory";
 export type { Pausable } from "./@openzeppelin/contracts/security/Pausable";
@@ -146,6 +148,8 @@ export type { ERC721Mock } from "./contracts/mocks/ERC721Mock";
 export { ERC721Mock__factory } from "./factories/contracts/mocks/ERC721Mock__factory";
 export type { VRFCoordinatorMock } from "./contracts/mocks/VRFCoordinatorMock";
 export { VRFCoordinatorMock__factory } from "./factories/contracts/mocks/VRFCoordinatorMock__factory";
+export type { Momento } from "./contracts/Momento";
+export { Momento__factory } from "./factories/contracts/Momento__factory";
 export type { Raffles } from "./contracts/Raffles";
 export { Raffles__factory } from "./factories/contracts/Raffles__factory";
 export type { ReferralManager } from "./contracts/ReferralManager";

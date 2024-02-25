@@ -33,13 +33,14 @@ export interface MomentoInterface extends utils.Interface {
     "TICKET_ID()": FunctionFragment;
     "UPGRADER_ROLE()": FunctionFragment;
     "burnTicket()": FunctionFragment;
+    "getPrize()": FunctionFragment;
     "getRoleAdmin(bytes32)": FunctionFragment;
     "grantRole(bytes32,address)": FunctionFragment;
     "hasRole(bytes32,address)": FunctionFragment;
     "initialize(address,uint256)": FunctionFragment;
+    "isOracleResponseReady(address)": FunctionFragment;
     "proxiableUUID()": FunctionFragment;
     "renounceRole(bytes32,address)": FunctionFragment;
-    "requestPrize()": FunctionFragment;
     "revokeRole(bytes32,address)": FunctionFragment;
     "supportsInterface(bytes4)": FunctionFragment;
     "ticketBurned(address)": FunctionFragment;
@@ -53,13 +54,14 @@ export interface MomentoInterface extends utils.Interface {
       | "TICKET_ID"
       | "UPGRADER_ROLE"
       | "burnTicket"
+      | "getPrize"
       | "getRoleAdmin"
       | "grantRole"
       | "hasRole"
       | "initialize"
+      | "isOracleResponseReady"
       | "proxiableUUID"
       | "renounceRole"
-      | "requestPrize"
       | "revokeRole"
       | "supportsInterface"
       | "ticketBurned"
@@ -80,6 +82,7 @@ export interface MomentoInterface extends utils.Interface {
     functionFragment: "burnTicket",
     values?: undefined
   ): string;
+  encodeFunctionData(functionFragment: "getPrize", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "getRoleAdmin",
     values: [BytesLike]
@@ -97,16 +100,16 @@ export interface MomentoInterface extends utils.Interface {
     values: [string, BigNumberish]
   ): string;
   encodeFunctionData(
+    functionFragment: "isOracleResponseReady",
+    values: [string]
+  ): string;
+  encodeFunctionData(
     functionFragment: "proxiableUUID",
     values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "renounceRole",
     values: [BytesLike, string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "requestPrize",
-    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "revokeRole",
@@ -136,6 +139,7 @@ export interface MomentoInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "burnTicket", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "getPrize", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getRoleAdmin",
     data: BytesLike
@@ -144,15 +148,15 @@ export interface MomentoInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "hasRole", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "initialize", data: BytesLike): Result;
   decodeFunctionResult(
+    functionFragment: "isOracleResponseReady",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "proxiableUUID",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "renounceRole",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "requestPrize",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "revokeRole", data: BytesLike): Result;
@@ -298,6 +302,10 @@ export interface Momento extends BaseContract {
       overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
 
+    getPrize(
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
+
     getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<[string]>;
 
     grantRole(
@@ -318,15 +326,16 @@ export interface Momento extends BaseContract {
       overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
 
+    isOracleResponseReady(
+      user: string,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
+
     proxiableUUID(overrides?: CallOverrides): Promise<[string]>;
 
     renounceRole(
       role: BytesLike,
       account: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    requestPrize(
       overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
 
@@ -365,6 +374,10 @@ export interface Momento extends BaseContract {
     overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
 
+  getPrize(
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
   getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<string>;
 
   grantRole(
@@ -385,15 +398,16 @@ export interface Momento extends BaseContract {
     overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
 
+  isOracleResponseReady(
+    user: string,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
   proxiableUUID(overrides?: CallOverrides): Promise<string>;
 
   renounceRole(
     role: BytesLike,
     account: string,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  requestPrize(
     overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
 
@@ -430,6 +444,8 @@ export interface Momento extends BaseContract {
 
     burnTicket(overrides?: CallOverrides): Promise<void>;
 
+    getPrize(overrides?: CallOverrides): Promise<void>;
+
     getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<string>;
 
     grantRole(
@@ -450,6 +466,11 @@ export interface Momento extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    isOracleResponseReady(
+      user: string,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
     proxiableUUID(overrides?: CallOverrides): Promise<string>;
 
     renounceRole(
@@ -457,8 +478,6 @@ export interface Momento extends BaseContract {
       account: string,
       overrides?: CallOverrides
     ): Promise<void>;
-
-    requestPrize(overrides?: CallOverrides): Promise<void>;
 
     revokeRole(
       role: BytesLike,
@@ -549,6 +568,8 @@ export interface Momento extends BaseContract {
 
     burnTicket(overrides?: Overrides & { from?: string }): Promise<BigNumber>;
 
+    getPrize(overrides?: Overrides & { from?: string }): Promise<BigNumber>;
+
     getRoleAdmin(
       role: BytesLike,
       overrides?: CallOverrides
@@ -572,6 +593,11 @@ export interface Momento extends BaseContract {
       overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
 
+    isOracleResponseReady(
+      user: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     proxiableUUID(overrides?: CallOverrides): Promise<BigNumber>;
 
     renounceRole(
@@ -579,8 +605,6 @@ export interface Momento extends BaseContract {
       account: string,
       overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
-
-    requestPrize(overrides?: Overrides & { from?: string }): Promise<BigNumber>;
 
     revokeRole(
       role: BytesLike,
@@ -620,6 +644,10 @@ export interface Momento extends BaseContract {
       overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 
+    getPrize(
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
     getRoleAdmin(
       role: BytesLike,
       overrides?: CallOverrides
@@ -643,15 +671,16 @@ export interface Momento extends BaseContract {
       overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 
+    isOracleResponseReady(
+      user: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     proxiableUUID(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     renounceRole(
       role: BytesLike,
       account: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    requestPrize(
       overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 

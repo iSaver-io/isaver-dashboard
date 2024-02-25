@@ -700,8 +700,3 @@ export const useStakingAvailableTokens = (isSAVRToken: boolean) => {
     stakingContract.getAvailableTokens(isSAVRToken)
   );
 };
-
-export const useStakingAvailableTokens = () => {
-  const stakingContract = useStakingContract();
-  return useQuery([STAKING_AVAILABLE_TOKENS_REQUEST], () => stakingContract.getAvailableTokens());
-};

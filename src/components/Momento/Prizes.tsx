@@ -38,11 +38,11 @@ export const Prizes = () => {
   return (
     <Box textAlign="center">
       <Text textStyle="h2">YOU CAN WIN PRIZES</Text>
-      <Text textStyle="h3" mt={{ base: '24px', lg: '48' }}>
+      <Text textStyle="h3" mt="24px">
         NFT TOP COLLECTIONS
       </Text>
       <div className="momento_line" />
-      <Box className="momento_prizes" mt={{ base: '24px', lg: '48' }}>
+      <Box className="momento_prizes" mt={{ base: '24px', lg: '48px' }}>
         <Slider {...settings}>
           {images.map((image, index) => (
             <Box key={index} px={{ sm: '5px', xl: '15px' }}>

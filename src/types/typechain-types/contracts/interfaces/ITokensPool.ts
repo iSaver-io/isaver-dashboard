@@ -23,16 +23,39 @@ import type {
 
 export interface ITokensPoolInterface extends utils.Interface {
   functions: {
+    "getPrizeFromOracleRandom()": FunctionFragment;
+    "isRequestFulfilled(address)": FunctionFragment;
     "requestPrize(address)": FunctionFragment;
   };
 
-  getFunction(nameOrSignatureOrTopic: "requestPrize"): FunctionFragment;
+  getFunction(
+    nameOrSignatureOrTopic:
+      | "getPrizeFromOracleRandom"
+      | "isRequestFulfilled"
+      | "requestPrize"
+  ): FunctionFragment;
 
+  encodeFunctionData(
+    functionFragment: "getPrizeFromOracleRandom",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "isRequestFulfilled",
+    values: [string]
+  ): string;
   encodeFunctionData(
     functionFragment: "requestPrize",
     values: [string]
   ): string;
 
+  decodeFunctionResult(
+    functionFragment: "getPrizeFromOracleRandom",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "isRequestFulfilled",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "requestPrize",
     data: BytesLike
@@ -68,11 +91,29 @@ export interface ITokensPool extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
+    getPrizeFromOracleRandom(
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
+
+    isRequestFulfilled(
+      sender: string,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
+
     requestPrize(
       arg0: string,
       overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
   };
+
+  getPrizeFromOracleRandom(
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  isRequestFulfilled(
+    sender: string,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
 
   requestPrize(
     arg0: string,
@@ -80,12 +121,28 @@ export interface ITokensPool extends BaseContract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
+    getPrizeFromOracleRandom(overrides?: CallOverrides): Promise<void>;
+
+    isRequestFulfilled(
+      sender: string,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
     requestPrize(arg0: string, overrides?: CallOverrides): Promise<void>;
   };
 
   filters: {};
 
   estimateGas: {
+    getPrizeFromOracleRandom(
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+
+    isRequestFulfilled(
+      sender: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     requestPrize(
       arg0: string,
       overrides?: Overrides & { from?: string }
@@ -93,6 +150,15 @@ export interface ITokensPool extends BaseContract {
   };
 
   populateTransaction: {
+    getPrizeFromOracleRandom(
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    isRequestFulfilled(
+      sender: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     requestPrize(
       arg0: string,
       overrides?: Overrides & { from?: string }

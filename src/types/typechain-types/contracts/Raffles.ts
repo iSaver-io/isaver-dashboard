@@ -393,7 +393,6 @@ export interface RafflesInterface extends utils.Interface {
     functionFragment: "updateTicketPrice",
     values: [BigNumberish]
   ): string;
-  encodeFunctionData(functionFragment: "upgradeTo", values: [string]): string;
   encodeFunctionData(
     functionFragment: "updateWinnerCalculationInRequest",
     values: [boolean]
