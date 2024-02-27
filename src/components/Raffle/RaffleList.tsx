@@ -19,6 +19,7 @@ import { StatBlock } from '@/components/ui/StatBlock/StatBlock';
 import { useRaffle } from '@/hooks/raffle/useRaffle';
 import { useRaffleRounds } from '@/hooks/raffle/useRaffleRounds';
 import { useLogger } from '@/hooks/useLogger';
+import { useTicketsBalance } from '@/hooks/useTicketsBalance';
 import {
   getNextRaffleTimestamp,
   RaffleRoundType,
@@ -39,7 +40,8 @@ export const RaffleList = () => {
     actionGroup: 'interactions',
   });
 
-  const { ticketBalanceRequest, userTotalPrizeRequest } = useRaffle();
+  const { userTotalPrizeRequest } = useRaffle();
+  const ticketBalanceRequest = useTicketsBalance();
   const { upcomingRounds, liveRounds, finishedRounds, activeRoundsRequest, finishedRoundsRequest } =
     useRaffleRounds();
 
