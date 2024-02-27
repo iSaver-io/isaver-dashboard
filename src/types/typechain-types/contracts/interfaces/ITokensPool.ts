@@ -23,24 +23,30 @@ import type {
 
 export interface ITokensPoolInterface extends utils.Interface {
   functions: {
-    "getPrizeFromOracleRandom()": FunctionFragment;
-    "isRequestFulfilled(address)": FunctionFragment;
+    "getPrizeFromOracleRandomForUser(address)": FunctionFragment;
+    "hasPendingRequest(address)": FunctionFragment;
+    "isLastRequestReady(address)": FunctionFragment;
     "requestPrize(address)": FunctionFragment;
   };
 
   getFunction(
     nameOrSignatureOrTopic:
-      | "getPrizeFromOracleRandom"
-      | "isRequestFulfilled"
+      | "getPrizeFromOracleRandomForUser"
+      | "hasPendingRequest"
+      | "isLastRequestReady"
       | "requestPrize"
   ): FunctionFragment;
 
   encodeFunctionData(
-    functionFragment: "getPrizeFromOracleRandom",
-    values?: undefined
+    functionFragment: "getPrizeFromOracleRandomForUser",
+    values: [string]
   ): string;
   encodeFunctionData(
-    functionFragment: "isRequestFulfilled",
+    functionFragment: "hasPendingRequest",
+    values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "isLastRequestReady",
     values: [string]
   ): string;
   encodeFunctionData(
@@ -49,11 +55,15 @@ export interface ITokensPoolInterface extends utils.Interface {
   ): string;
 
   decodeFunctionResult(
-    functionFragment: "getPrizeFromOracleRandom",
+    functionFragment: "getPrizeFromOracleRandomForUser",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "isRequestFulfilled",
+    functionFragment: "hasPendingRequest",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "isLastRequestReady",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -91,11 +101,17 @@ export interface ITokensPool extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
-    getPrizeFromOracleRandom(
+    getPrizeFromOracleRandomForUser(
+      sender: string,
       overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
 
-    isRequestFulfilled(
+    hasPendingRequest(
+      sender: string,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
+
+    isLastRequestReady(
       sender: string,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
@@ -106,11 +122,17 @@ export interface ITokensPool extends BaseContract {
     ): Promise<ContractTransaction>;
   };
 
-  getPrizeFromOracleRandom(
+  getPrizeFromOracleRandomForUser(
+    sender: string,
     overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
 
-  isRequestFulfilled(
+  hasPendingRequest(
+    sender: string,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
+  isLastRequestReady(
     sender: string,
     overrides?: CallOverrides
   ): Promise<boolean>;
@@ -121,9 +143,17 @@ export interface ITokensPool extends BaseContract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
-    getPrizeFromOracleRandom(overrides?: CallOverrides): Promise<void>;
+    getPrizeFromOracleRandomForUser(
+      sender: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
-    isRequestFulfilled(
+    hasPendingRequest(
+      sender: string,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
+    isLastRequestReady(
       sender: string,
       overrides?: CallOverrides
     ): Promise<boolean>;
@@ -134,11 +164,17 @@ export interface ITokensPool extends BaseContract {
   filters: {};
 
   estimateGas: {
-    getPrizeFromOracleRandom(
+    getPrizeFromOracleRandomForUser(
+      sender: string,
       overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
 
-    isRequestFulfilled(
+    hasPendingRequest(
+      sender: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    isLastRequestReady(
       sender: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -150,11 +186,17 @@ export interface ITokensPool extends BaseContract {
   };
 
   populateTransaction: {
-    getPrizeFromOracleRandom(
+    getPrizeFromOracleRandomForUser(
+      sender: string,
       overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 
-    isRequestFulfilled(
+    hasPendingRequest(
+      sender: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    isLastRequestReady(
       sender: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;

@@ -11,8 +11,14 @@ import type {
 
 const _abi = [
   {
-    inputs: [],
-    name: "getPrizeFromOracleRandom",
+    inputs: [
+      {
+        internalType: "address",
+        name: "sender",
+        type: "address",
+      },
+    ],
+    name: "getPrizeFromOracleRandomForUser",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -25,7 +31,26 @@ const _abi = [
         type: "address",
       },
     ],
-    name: "isRequestFulfilled",
+    name: "hasPendingRequest",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "sender",
+        type: "address",
+      },
+    ],
+    name: "isLastRequestReady",
     outputs: [
       {
         internalType: "bool",

@@ -5,11 +5,11 @@ import { AvatarSettings } from './components/AvatarSettings/AvatarSettings';
 import { Dashboard } from './components/Dashboard/Dashboard';
 import { ExchangePage } from './components/Exchange/ExchangePage';
 import { Layout } from './components/Layout/Layout';
+import { Momento } from './components/Momento/Momento';
 import { MyVesting } from './components/MyVeting/MyVesting';
 import { RafflePage } from './components/Raffle/RafflePage';
 import { StakingPage } from './components/Staking/StakingPage';
 import { TeamsPage } from './components/Teams/TeamsPage';
-import { Momento } from './components/Momento/Momento';
 
 const Landing = React.lazy(() => import('@/components/Landing/Landing'));
 const AvatarLanding = React.lazy(() => import('@/components/AvatarLanding/AvatarLanding'));

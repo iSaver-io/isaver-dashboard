@@ -4,8 +4,8 @@ import { Box } from '@chakra-ui/react';
 
 import { useMomento } from '@/hooks/useMomento';
 
-import SliderMock from './images/slider-mock.png';
 import DemoPrize from './images/otherPrizes/1.png';
+import SliderMock from './images/slider-mock.png';
 
 import 'slick-carousel/slick/slick.scss';
 import 'slick-carousel/slick/slick-theme.scss';

@@ -17,7 +17,7 @@ interface TicketProps {
 export const Ticket = ({ isActive, setActive }: TicketProps) => {
   const [hasTicket, setHasTicket] = useState(false);
   const { balance } = useTicketSupply();
-  const { isTicketBurned } = useMomento();
+  const { hasPendingRequest } = useMomento();
 
   useEffect(() => {
     if (balance.data) {
@@ -31,9 +31,9 @@ export const Ticket = ({ isActive, setActive }: TicketProps) => {
     }
   };
 
-  return isTicketBurned || isActive ? (
+  return hasPendingRequest || isActive ? (
     <Flex className="momento_ticket" justifyContent="center" alignItems="center" px="40px">
-      {isTicketBurned ? (
+      {hasPendingRequest ? (
         <img className="momento_ticket_image" src={TicketActiveImage} alt="Ticket" />
       ) : (
         <img className="momento_ticket_image" src={TicketImage} alt="Ticket" />

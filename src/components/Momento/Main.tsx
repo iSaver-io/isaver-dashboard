@@ -5,7 +5,7 @@ import { Box, Button, Flex, Link, Text, useDisclosure } from '@chakra-ui/react';
 
 import { useRaffle, useTicketPrice } from '@/hooks/raffle/useRaffle';
 import { useMomento } from '@/hooks/useMomento';
-import { useTicketSupply } from '@/hooks/useTickets';
+import { useTicketsBalance } from '@/hooks/useTicketsBalance';
 
 import { BuyRaffleTicketsModal } from '../Raffle/BuyRaffleTicketsModal';
 
@@ -16,9 +16,9 @@ export const Main = () => {
   const [isActive, setActive] = useState(false);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { buyTickets } = useRaffle();
-  const { balance } = useTicketSupply();
+  const { data: balance } = useTicketsBalance();
   const { ticketPrice } = useTicketPrice();
-  const { isTicketBurned, isOracleResponseReady, burnTicket, getPrize } = useMomento();
+  const { hasPendingRequest, isOracleResponseReady, burnTicket, getPrize } = useMomento();
 
   return (
     <Box>
@@ -55,7 +55,7 @@ export const Main = () => {
           gap="24px"
         >
           <Text textStyle="menuDefault">Your Tickets: </Text>
-          <Text textStyle="heading1">{balance.data || 0}</Text>
+          <Text textStyle="heading1">{balance || 0}</Text>
         </Flex>
         <Flex
           className="momento_actions"
@@ -91,7 +91,7 @@ export const Main = () => {
           <Flex flexDir={{ base: 'row', lg: 'column' }} gap={{ base: '20px', lg: '8px' }}>
             <Button
               w="160px"
-              isDisabled={!isActive || !isTicketBurned}
+              isDisabled={!isActive || !hasPendingRequest}
               size={{ base: 'md', lg: 'lg' }}
               onClick={() => burnTicket.mutateAsync()}
               isLoading={burnTicket.isLoading}
@@ -103,7 +103,7 @@ export const Main = () => {
             </Text>
             <Button
               w="160px"
-              isDisabled={!isTicketBurned && !isOracleResponseReady}
+              isDisabled={!hasPendingRequest && !isOracleResponseReady}
               size={{ base: 'md', lg: 'lg' }}
               onClick={() => getPrize.mutateAsync()}
               isLoading={getPrize.isLoading}

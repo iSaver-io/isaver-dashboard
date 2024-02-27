@@ -36,6 +36,7 @@ export interface MomentoInterface extends utils.Interface {
     "getPrize()": FunctionFragment;
     "getRoleAdmin(bytes32)": FunctionFragment;
     "grantRole(bytes32,address)": FunctionFragment;
+    "hasPendingRequest(address)": FunctionFragment;
     "hasRole(bytes32,address)": FunctionFragment;
     "initialize(address,uint256)": FunctionFragment;
     "isOracleResponseReady(address)": FunctionFragment;
@@ -43,7 +44,6 @@ export interface MomentoInterface extends utils.Interface {
     "renounceRole(bytes32,address)": FunctionFragment;
     "revokeRole(bytes32,address)": FunctionFragment;
     "supportsInterface(bytes4)": FunctionFragment;
-    "ticketBurned(address)": FunctionFragment;
     "upgradeTo(address)": FunctionFragment;
     "upgradeToAndCall(address,bytes)": FunctionFragment;
   };
@@ -57,6 +57,7 @@ export interface MomentoInterface extends utils.Interface {
       | "getPrize"
       | "getRoleAdmin"
       | "grantRole"
+      | "hasPendingRequest"
       | "hasRole"
       | "initialize"
       | "isOracleResponseReady"
@@ -64,7 +65,6 @@ export interface MomentoInterface extends utils.Interface {
       | "renounceRole"
       | "revokeRole"
       | "supportsInterface"
-      | "ticketBurned"
       | "upgradeTo"
       | "upgradeToAndCall"
   ): FunctionFragment;
@@ -90,6 +90,10 @@ export interface MomentoInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "grantRole",
     values: [BytesLike, string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "hasPendingRequest",
+    values: [string]
   ): string;
   encodeFunctionData(
     functionFragment: "hasRole",
@@ -119,10 +123,6 @@ export interface MomentoInterface extends utils.Interface {
     functionFragment: "supportsInterface",
     values: [BytesLike]
   ): string;
-  encodeFunctionData(
-    functionFragment: "ticketBurned",
-    values: [string]
-  ): string;
   encodeFunctionData(functionFragment: "upgradeTo", values: [string]): string;
   encodeFunctionData(
     functionFragment: "upgradeToAndCall",
@@ -145,6 +145,10 @@ export interface MomentoInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "grantRole", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "hasPendingRequest",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "hasRole", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "initialize", data: BytesLike): Result;
   decodeFunctionResult(
@@ -162,10 +166,6 @@ export interface MomentoInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "revokeRole", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "supportsInterface",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "ticketBurned",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "upgradeTo", data: BytesLike): Result;
@@ -314,6 +314,11 @@ export interface Momento extends BaseContract {
       overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
 
+    hasPendingRequest(
+      user: string,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
+
     hasRole(
       role: BytesLike,
       account: string,
@@ -350,8 +355,6 @@ export interface Momento extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
-    ticketBurned(arg0: string, overrides?: CallOverrides): Promise<[boolean]>;
-
     upgradeTo(
       newImplementation: string,
       overrides?: Overrides & { from?: string }
@@ -385,6 +388,8 @@ export interface Momento extends BaseContract {
     account: string,
     overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
+
+  hasPendingRequest(user: string, overrides?: CallOverrides): Promise<boolean>;
 
   hasRole(
     role: BytesLike,
@@ -422,8 +427,6 @@ export interface Momento extends BaseContract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
-  ticketBurned(arg0: string, overrides?: CallOverrides): Promise<boolean>;
-
   upgradeTo(
     newImplementation: string,
     overrides?: Overrides & { from?: string }
@@ -453,6 +456,11 @@ export interface Momento extends BaseContract {
       account: string,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    hasPendingRequest(
+      user: string,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
 
     hasRole(
       role: BytesLike,
@@ -489,8 +497,6 @@ export interface Momento extends BaseContract {
       interfaceId: BytesLike,
       overrides?: CallOverrides
     ): Promise<boolean>;
-
-    ticketBurned(arg0: string, overrides?: CallOverrides): Promise<boolean>;
 
     upgradeTo(
       newImplementation: string,
@@ -581,6 +587,11 @@ export interface Momento extends BaseContract {
       overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
 
+    hasPendingRequest(
+      user: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     hasRole(
       role: BytesLike,
       account: string,
@@ -616,8 +627,6 @@ export interface Momento extends BaseContract {
       interfaceId: BytesLike,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
-
-    ticketBurned(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
 
     upgradeTo(
       newImplementation: string,
@@ -659,6 +668,11 @@ export interface Momento extends BaseContract {
       overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 
+    hasPendingRequest(
+      user: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     hasRole(
       role: BytesLike,
       account: string,
@@ -692,11 +706,6 @@ export interface Momento extends BaseContract {
 
     supportsInterface(
       interfaceId: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    ticketBurned(
-      arg0: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

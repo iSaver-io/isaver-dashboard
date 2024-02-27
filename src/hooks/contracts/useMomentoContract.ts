@@ -19,8 +19,8 @@ export const useMomentoContract = () => {
     signerOrProvider: signer || provider,
   }) as unknown as Momento;
 
-  const isTicketBurned = (address: string) => {
-    return contract.ticketBurned(address);
+  const hasPendingRequest = (address: string) => {
+    return contract.hasPendingRequest(address);
   };
 
   const isOracleResponseReady = (address: string) => {
@@ -40,7 +40,7 @@ export const useMomentoContract = () => {
   return {
     contract,
     address: contractAddress,
-    isTicketBurned,
+    hasPendingRequest,
     isOracleResponseReady,
     burnTicket,
     getPrize,

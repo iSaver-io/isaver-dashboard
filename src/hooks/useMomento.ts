@@ -7,9 +7,9 @@ import { useNotification } from '@/hooks/useNotification';
 
 import { useMomentoContract } from './contracts/useMomentoContract';
 
-const TICKET_BURNED_MUTATION = 'ticket-burned-mutation';
-const ORACLE_RESPONSE_MUTATION = 'oracle-response-mutation';
-const BURN_TICKET = 'burn-ticket-mutation';
+const HAS_PENDING_REQUEST = 'has-pending-request';
+const ORACLE_RESPONSE_REQUEST = 'oracle-response-request';
+const BURN_TICKET_MUTATION = 'burn-ticket-mutation';
 const GET_PRIZE_MUTATION = 'get-prize-mutation';
 
 export const useMomento = () => {
@@ -20,17 +20,17 @@ export const useMomento = () => {
   const { success, handleError } = useNotification();
   const queryClient = useQueryClient();
 
-  const { data: isTicketBurned } = useQuery([TICKET_BURNED_MUTATION, { address }], async () =>
-    address ? await momentoContract.isTicketBurned(address) : null
+  const { data: hasPendingRequest } = useQuery([HAS_PENDING_REQUEST, { address }], async () =>
+    address ? await momentoContract.hasPendingRequest(address) : null
   );
 
   const { data: isOracleResponseReady } = useQuery(
-    [ORACLE_RESPONSE_MUTATION, { address }],
+    [ORACLE_RESPONSE_REQUEST, { address }],
     async () => (address ? await momentoContract.isOracleResponseReady(address) : null)
   );
 
   const burnTicket = useMutation(
-    [BURN_TICKET],
+    [BURN_TICKET_MUTATION],
     async () => {
       if (!address) {
         connect();
@@ -45,16 +45,15 @@ export const useMomento = () => {
       const txHash = await momentoContract.burnTicket();
       success({
         title: 'Success',
+        description: 'Your Ticket has been burned',
         txHash,
       });
     },
     {
       onSuccess: () => {
-        queryClient.invalidateQueries([TICKET_BURNED_MUTATION, { address }]);
+        queryClient.invalidateQueries([HAS_PENDING_REQUEST, { address }]);
       },
-      onError: (err) => {
-        handleError(err);
-      },
+      onError: handleError,
     }
   );
 
@@ -69,22 +68,21 @@ export const useMomento = () => {
       const txHash = await momentoContract.getPrize();
       success({
         title: 'Success',
+        description: 'Congrats! The prize has been sent to your wallet',
         txHash,
       });
     },
     {
       onSuccess: () => {
-        queryClient.invalidateQueries([TICKET_BURNED_MUTATION, { address }]);
+        queryClient.invalidateQueries([HAS_PENDING_REQUEST, { address }]);
       },
-      onError: (err) => {
-        handleError(err);
-      },
+      onError: handleError,
     }
   );
 
   return {
     isOracleResponseReady,
-    isTicketBurned,
+    hasPendingRequest,
     burnTicket,
     getPrize,
   };
