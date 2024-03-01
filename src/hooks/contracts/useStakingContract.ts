@@ -89,8 +89,6 @@ export const useStakingContract = () => {
       fromBlock: FROM_BLOCK,
       toBlock: 'latest',
     });
-
-    LogDescription;
     const stakingIface = new Interface(abi);
     const parsed = stakeLogs.map((e) => stakingIface.parseLog(e) as LogDescription & StakedEvent);
     return parsed;
