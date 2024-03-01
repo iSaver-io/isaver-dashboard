@@ -1,10 +1,11 @@
-import EthDater from 'ethereum-block-by-date';
+import { Interface } from '@ethersproject/abi';
 import { ethers } from 'ethers';
 import { useContract, useProvider, useSigner } from 'wagmi';
 
 import { FROM_BLOCK } from '@/constants';
+import alchemy from '@/modules/alchemy';
 import { Ticket } from '@/types.common';
-import { queryThrowBlocks } from '@/utils/queryThrowBlocks';
+import { TransferSingleEvent } from '@/types/typechain-types/contracts/tokens/Ticket';
 import { waitForTransaction } from '@/utils/waitForTransaction';
 
 import { ContractsEnum, useContractAbi } from './useContractAbi';
@@ -12,7 +13,6 @@ import { ContractsEnum, useContractAbi } from './useContractAbi';
 export const useTicketContract = () => {
   const { data: signer } = useSigner();
   const provider = useProvider();
-  const dater = new EthDater(provider);
 
   const { address: contractAddress, abi } = useContractAbi({
     contract: ContractsEnum.Ticket,
@@ -33,12 +33,19 @@ export const useTicketContract = () => {
   };
 
   const getAllMintTransfers = async () => {
-    const { block: toBlock } = await dater.getDate(new Date());
     const filter = contract.filters.TransferSingle(null, ethers.constants.AddressZero);
 
-    const fetchEvents = (from: number, to: number) => contract.queryFilter(filter, from, to);
+    const transferLogs = await alchemy.core.getLogs({
+      ...filter,
+      fromBlock: FROM_BLOCK,
+      toBlock: 'latest',
+    });
 
-    return await queryThrowBlocks(fetchEvents, { fromBlock: FROM_BLOCK, toBlock });
+    const ticketIface = new Interface(abi);
+    const parsed: ({ args: TransferSingleEvent } & any)[] = transferLogs.map((e) =>
+      ticketIface.parseLog(e)
+    );
+    return parsed;
   };
 
   const isApprovedForAll = (account: string, operator: string) => {

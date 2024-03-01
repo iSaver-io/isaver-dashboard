@@ -1,10 +1,11 @@
-import EthDater from 'ethereum-block-by-date';
+import { Interface, LogDescription } from '@ethersproject/abi';
 import { BigNumber, BigNumberish, ethers } from 'ethers';
 import { useContract, useProvider, useSigner } from 'wagmi';
 
 import { FROM_BLOCK } from '@/constants';
+import alchemy from '@/modules/alchemy';
 import { Staking } from '@/types.common';
-import { queryThrowBlocks } from '@/utils/queryThrowBlocks';
+import { ClaimedEvent, StakedEvent } from '@/types/typechain-types/contracts/Staking';
 import { waitForTransaction } from '@/utils/waitForTransaction';
 
 import { ContractsEnum, useContractAbi } from './useContractAbi';
@@ -20,7 +21,6 @@ export enum StakingEvent {
 export const useStakingContract = () => {
   const { data: signer } = useSigner();
   const provider = useProvider();
-  const dater = new EthDater(provider);
 
   const { address: contractAddress, abi } = useContractAbi({ contract: ContractsEnum.Staking });
 
@@ -82,21 +82,31 @@ export const useStakingContract = () => {
   };
 
   const getAllStakes = async () => {
-    const { block: toBlock } = await dater.getDate(new Date());
     const filter = contract.filters.Staked();
 
-    const fetchEvents = (from: number, to: number) => contract.queryFilter(filter, from, to);
+    const stakeLogs = await alchemy.core.getLogs({
+      ...filter,
+      fromBlock: FROM_BLOCK,
+      toBlock: 'latest',
+    });
 
-    return await queryThrowBlocks(fetchEvents, { fromBlock: FROM_BLOCK, toBlock });
+    LogDescription;
+    const stakingIface = new Interface(abi);
+    const parsed = stakeLogs.map((e) => stakingIface.parseLog(e) as LogDescription & StakedEvent);
+    return parsed;
   };
 
   const getAllClaims = async () => {
-    const { block: toBlock } = await dater.getDate(new Date());
     const filter = contract.filters.Claimed();
 
-    const fetchEvents = (from: number, to: number) => contract.queryFilter(filter, from, to);
-
-    return await queryThrowBlocks(fetchEvents, { fromBlock: FROM_BLOCK, toBlock });
+    const claimLogs = await alchemy.core.getLogs({
+      ...filter,
+      fromBlock: FROM_BLOCK,
+      toBlock: 'latest',
+    });
+    const stakingIface = new Interface(abi);
+    const parsed = claimLogs.map((e) => stakingIface.parseLog(e) as LogDescription & ClaimedEvent);
+    return parsed;
   };
 
   const updatePlanActivity = async (planId: number, isActive: boolean) => {
