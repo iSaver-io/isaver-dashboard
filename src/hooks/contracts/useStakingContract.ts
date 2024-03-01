@@ -1,6 +1,5 @@
 import { Interface } from '@ethersproject/abi';
 import { Log } from 'alchemy-sdk';
-import EthDater from 'ethereum-block-by-date';
 import { BigNumber, BigNumberish, ethers } from 'ethers';
 import { useContract, useProvider, useSigner } from 'wagmi';
 
@@ -30,7 +29,6 @@ export enum StakingEvent {
 export const useStakingContract = () => {
   const { data: signer } = useSigner();
   const provider = useProvider();
-  const dater = new EthDater(provider);
 
   const { address: contractAddress, abi } = useContractAbi({ contract: ContractsEnum.Staking });
 
