@@ -14,6 +14,7 @@ import { useHelperRaffleRoundWinners } from '@/hooks/useHelper';
 import { useLogger } from '@/hooks/useLogger';
 import { useDocumentTitle, useMetaDescription } from '@/hooks/useMeta';
 import { useNavigateByHash } from '@/hooks/useNavigateByHash';
+import { useTicketsBalance } from '@/hooks/useTicketsBalance';
 import { RaffleStatusEnum } from '@/utils/formatters/raffle';
 
 import { BuyRaffleTicketsModal } from './BuyRaffleTicketsModal';
@@ -44,7 +45,8 @@ export const RafflePage = () => {
   const { connect } = useConnectWallet();
   const { isOpen, onOpen, onClose } = useDisclosure(); // Buy Ticket modal
   const navigate = useNavigateByHash();
-  const { ticketBalanceRequest, buyTickets } = useRaffle();
+  const { buyTickets } = useRaffle();
+  const ticketBalanceRequest = useTicketsBalance();
   const { ticketPrice } = useTicketPrice();
   const logBuyTickets = useBuyTicketsLogger('raffle');
   const logger = useLogger({

@@ -4,8 +4,7 @@ import { useAccount } from 'wagmi';
 import { useRaffleContract } from '@/hooks/contracts/useRaffleContract';
 import { useUserPowers } from '@/hooks/useAvatarSettings';
 import { useNotification } from '@/hooks/useNotification';
-
-import { TICKET_BALANCE_REQUEST } from './useRaffle';
+import { TICKET_BALANCE_REQUEST } from '@/hooks/useTicketsBalance';
 
 const RAFFLE_CLAIM_PERIOD_REQUEST = 'raffle-claim-period-request';
 const RAFFLE_IS_CLAIMED_TODAY_REQUEST = 'raffle-is-claimed-today-request';
