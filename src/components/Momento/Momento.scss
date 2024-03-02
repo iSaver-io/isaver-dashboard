@@ -55,7 +55,7 @@
 
   &_otherPrizes {
     &_card {
-      height: 380px;
+      height: 480px;
       width: 100%;
       perspective: 1000px;
       transform-style: preserve-3d;
@@ -105,6 +105,13 @@
   }
 }
 
+@media screen and (max-width: $xl2) {
+ .momento_otherPrizes {
+    &_card {
+      height: 380px;
+    }
+  }
+}
 @media screen and (max-width: $xl) {
   .momento {
     &_otherPrizes {

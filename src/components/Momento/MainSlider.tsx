@@ -71,8 +71,8 @@ export const MainSlider = () => {
     >
       <Slider {...settings}>
         {images.map((image, index) => (
-          <Box key={index} px={{ sm: '5px', xl: '15px' }}>
-            <img src={image} alt="slider item" />
+          <Box key={index} px={{ sm: '5px', xl: '15px' }} textAlign="center">
+            <img src={image} alt="slider item" width="100%" />
           </Box>
         ))}
       </Slider>

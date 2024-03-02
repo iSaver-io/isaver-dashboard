@@ -105,7 +105,7 @@ const Card = ({ image, title, description }: CardProps) => {
     <Box onMouseEnter={() => setIsFlipped(true)} onMouseLeave={() => setIsFlipped(false)}>
       <Box className={`momento_otherPrizes_card ${isFlipped ? 'flipped' : ''}`}>
         <div className="front">
-          <img src={image} alt={title} />
+          <img src={image} alt={title} width="100%" />
           <Text
             className="momento_otherPrizes_card_title"
             textStyle={{ base: 'note', xl: 'textBold' }}

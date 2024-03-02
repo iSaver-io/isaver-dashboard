@@ -45,7 +45,7 @@ export const Prizes = () => {
       <Box className="momento_prizes" mt={{ base: '24px', lg: '48px' }}>
         <Slider {...settings}>
           {images.map((image, index) => (
-            <Box key={index} px={{ sm: '5px', xl: '15px' }}>
+            <Box key={index} px={{ sm: '5px', xl: '15px' }} textAlign="center">
               <img src={image} alt="slider item" />
             </Box>
           ))}
