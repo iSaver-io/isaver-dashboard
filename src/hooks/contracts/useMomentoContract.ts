@@ -12,6 +12,9 @@ export const useMomentoContract = () => {
   const { address: contractAddress, abi } = useContractAbi({
     contract: ContractsEnum.Momento,
   });
+  const { address: tokensPoolAddress, abi: tokensPoolAbi } = useContractAbi({
+    contract: ContractsEnum.MomentoTokensPool,
+  });
 
   const contract = useContract({
     address: contractAddress,
@@ -33,11 +36,16 @@ export const useMomentoContract = () => {
   };
 
   const getPrize = async () => {
-    const tx = await contract.getPrize();
-    return waitForTransaction(tx);
+    const tx = await contract.getPrize({ gasLimit: 15000000 });
+    const hash = await waitForTransaction(tx);
+    const receipt = provider.getTransactionReceipt(hash);
+    return receipt;
   };
 
   return {
+    tokensPoolAddress,
+    tokensPoolAbi,
+    abi,
     contract,
     address: contractAddress,
     hasPendingRequest,

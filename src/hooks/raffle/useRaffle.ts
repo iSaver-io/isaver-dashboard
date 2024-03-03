@@ -169,17 +169,27 @@ export const useRaffleControl = () => {
 
 export const useRaffle = () => {
   const { address: account } = useAccount();
-
-  const queryClient = useQueryClient();
   const raffleContract = useRaffleContract();
-  const { ticketPrice } = useTicketPrice();
   const ticketContract = useTicketContract();
-  const { success, handleError } = useNotification();
-  const tokens = useTokens();
 
   const userTotalPrizeRequest = useQuery([RAFFLE_WINNER_PRIZE_REQUEST, { account }], async () => {
     return account ? await raffleContract.getWinnerTotalPrize(account) : null;
   });
+
+  return {
+    raffleContract,
+    ticketContract,
+
+    userTotalPrizeRequest,
+  };
+};
+
+export const useBuyTickets = () => {
+  const queryClient = useQueryClient();
+  const raffleContract = useRaffleContract();
+  const { ticketPrice } = useTicketPrice();
+  const { success, handleError } = useNotification();
+  const tokens = useTokens();
 
   const buyTickets = useMutation(
     [BUY_TICKETS_MUTATION],
@@ -202,11 +212,5 @@ export const useRaffle = () => {
     }
   );
 
-  return {
-    raffleContract,
-    ticketContract,
-
-    userTotalPrizeRequest,
-    buyTickets,
-  };
+  return buyTickets;
 };

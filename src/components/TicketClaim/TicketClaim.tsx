@@ -17,7 +17,7 @@ import { Button } from '@/components/ui/Button/Button';
 import { ConnectWalletButton } from '@/components/ui/ConnectWalletButton/ConnectWalletButton';
 import { PowerStatus } from '@/components/ui/PowerStatus/PowerStatus';
 import { useBuyTicketsLogger } from '@/hooks/logger/useBuyTicketsLogger';
-import { useRaffle, useTicketPrice } from '@/hooks/raffle/useRaffle';
+import { useBuyTickets, useTicketPrice } from '@/hooks/raffle/useRaffle';
 import { useRaffleMiniGame } from '@/hooks/raffle/useRaffleMiniGame';
 import { useCountdown } from '@/hooks/useCountdown';
 import { useLogger } from '@/hooks/useLogger';
@@ -47,7 +47,7 @@ export const TicketClaim = () => {
   });
 
   const { ticketPrice } = useTicketPrice();
-  const { buyTickets } = useRaffle();
+  const buyTickets = useBuyTickets();
   const {
     claimPeriod,
     claimStreakForTicket,

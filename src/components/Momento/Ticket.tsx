@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Flex, Text } from '@chakra-ui/react';
 
 import { useMomento } from '@/hooks/useMomento';
-import { useTicketSupply } from '@/hooks/useTickets';
+import { useTicketsBalance } from '@/hooks/useTicketsBalance';
 
 import TicketImage from './images/ticket.png';
 import TicketActiveImage from './images/ticket-active.png';
@@ -16,8 +16,8 @@ interface TicketProps {
 
 export const Ticket = ({ isActive, setActive }: TicketProps) => {
   const [hasTicket, setHasTicket] = useState(false);
-  const { balance } = useTicketSupply();
-  const { hasPendingRequest } = useMomento();
+  const balance = useTicketsBalance();
+  const { hasPendingRequest, isOracleResponseReady } = useMomento();
 
   useEffect(() => {
     if (balance.data) {
@@ -31,15 +31,18 @@ export const Ticket = ({ isActive, setActive }: TicketProps) => {
     }
   };
 
-  return hasPendingRequest || isActive ? (
-    <Flex className="momento_ticket" justifyContent="center" alignItems="center" px="40px">
-      {hasPendingRequest ? (
-        <img className="momento_ticket_image" src={TicketActiveImage} alt="Ticket" />
-      ) : (
-        <img className="momento_ticket_image" src={TicketImage} alt="Ticket" />
-      )}
-    </Flex>
-  ) : (
+  if (hasPendingRequest || isOracleResponseReady || isActive)
+    return (
+      <Flex className="momento_ticket" justifyContent="center" alignItems="center" px="40px">
+        {hasPendingRequest || isOracleResponseReady ? (
+          <img className="momento_ticket_image" src={TicketActiveImage} alt="Ticket" />
+        ) : (
+          <img className="momento_ticket_image" src={TicketImage} alt="Ticket" />
+        )}
+      </Flex>
+    );
+
+  return (
     <Flex
       onClick={handleClick}
       className="momento_ticket"

@@ -1,10 +1,11 @@
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import { ArrowBackIcon } from '@chakra-ui/icons';
 import { Box, Button, Flex, Link, Text, useDisclosure } from '@chakra-ui/react';
 
-import { useRaffle, useTicketPrice } from '@/hooks/raffle/useRaffle';
+import { useBuyTickets, useTicketPrice } from '@/hooks/raffle/useRaffle';
 import { useMomento } from '@/hooks/useMomento';
+import { useNavigateByHash } from '@/hooks/useNavigateByHash';
 import { useTicketsBalance } from '@/hooks/useTicketsBalance';
 
 import { BuyRaffleTicketsModal } from '../Raffle/BuyRaffleTicketsModal';
@@ -15,10 +16,15 @@ import { Ticket } from './Ticket';
 export const Main = () => {
   const [isActive, setActive] = useState(false);
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const { buyTickets } = useRaffle();
+  const buyTickets = useBuyTickets();
   const { data: balance } = useTicketsBalance();
   const { ticketPrice } = useTicketPrice();
   const { hasPendingRequest, isOracleResponseReady, burnTicket, getPrize } = useMomento();
+  const navigate = useNavigateByHash();
+
+  const handleNavigateToClaimTickets = useCallback(() => {
+    navigate('/#claim-ticket');
+  }, [navigate]);
 
   return (
     <Box>
@@ -69,8 +75,7 @@ export const Main = () => {
             <Button
               w="160px"
               variant="outlinedWhite"
-              as={RouterLink}
-              to="/"
+              onClick={handleNavigateToClaimTickets}
               size={{ base: 'md', lg: 'lg' }}
             >
               mint ticket
@@ -91,7 +96,7 @@ export const Main = () => {
           <Flex flexDir={{ base: 'row', lg: 'column' }} gap={{ base: '20px', lg: '8px' }}>
             <Button
               w="160px"
-              isDisabled={!isActive || !hasPendingRequest}
+              isDisabled={!isActive || Boolean(hasPendingRequest) || Boolean(isOracleResponseReady)}
               size={{ base: 'md', lg: 'lg' }}
               onClick={() => burnTicket.mutateAsync()}
               isLoading={burnTicket.isLoading}
@@ -99,14 +104,16 @@ export const Main = () => {
               Burn
             </Button>
             <Text textStyle="text2" display={{ base: 'none', lg: 'block' }}>
-              OR
+              AND
             </Text>
             <Button
               w="160px"
-              isDisabled={!hasPendingRequest && !isOracleResponseReady}
+              isDisabled={!isOracleResponseReady}
               size={{ base: 'md', lg: 'lg' }}
               onClick={() => getPrize.mutateAsync()}
-              isLoading={getPrize.isLoading}
+              isLoading={
+                getPrize.isLoading || (Boolean(hasPendingRequest) && !isOracleResponseReady)
+              }
             >
               Go!
             </Button>

@@ -21,6 +21,7 @@ export enum ContractsEnum {
   'ISaverPowers' = 'ISaverPowers',
   'AvatarSettings' = 'AvatarSettings',
   'Momento' = 'Momento',
+  'MomentoTokensPool' = 'MomentoTokensPool',
 }
 
 type ContractAbi = {

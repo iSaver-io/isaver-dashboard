@@ -97,9 +97,11 @@ export const RaffleList = () => {
   return (
     <Container variant="dashboard" paddingX={{ sm: '10px', md: 'unset' }}>
       <Flex
+        width="100%"
+        gap={{ sm: '20px', md: '30px', lg: '20px' }}
         direction={{ sm: 'column', xl: 'row' }}
         justifyContent="space-between"
-        gap={5}
+        flexWrap="wrap"
         paddingX={{ md: '10px', lg: 'unset' }}
       >
         <Box>
@@ -114,13 +116,20 @@ export const RaffleList = () => {
           </Text>
         </Box>
 
-        <Box width={{ sm: '100%', lg: '50%', xl: 'unset' }}>
-          {!isConnected ? <ConnectWalletButton location="down" /> : null}
-        </Box>
+        {!isConnected ? (
+          <ConnectWalletButton location="down" />
+        ) : (
+          <Button
+            onClick={() => navigate('/momento')}
+            width={{ sm: '100%', lg: '50%', xl: 'unset' }}
+          >
+            Go and win
+          </Button>
+        )}
       </Flex>
 
       <Flex
-        mt="50px"
+        mt={{ sm: '30px', lg: '40px', xl: '50px' }}
         mb="30px"
         direction={{ sm: 'column-reverse', xl: 'row' }}
         justifyContent="space-between"
