@@ -1,8 +1,9 @@
-import { useCallback } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Box, Flex, Image, Text } from '@chakra-ui/react';
 
 import { useContractsAddresses } from '@/hooks/admin/useContractsAddresses';
 import { PrizeInfo, useGetNFT } from '@/hooks/useMomento';
+import alchemy from '@/modules/alchemy';
 
 import otherPrize from './images/other-prize.png';
 import powerAPrize from './images/powers/a.png';
@@ -33,7 +34,7 @@ export const MomentoPrize = ({ prizeInfo }: MomentoPrizeProps) => {
       case contracts.Ticket:
         return <Ticket amount={prizeInfo.amount} />;
       default:
-        return <OtherTokens amount={prizeInfo.amount} />;
+        return <OtherTokens amount={prizeInfo.amount} tokenAddress={prizeInfo.tokenAddress} />;
     }
   }, [contracts.ISaverPowers, contracts.ISaverSAVRToken, contracts.Ticket, prizeInfo]);
 
@@ -135,7 +136,18 @@ const Ticket = ({ amount }: Pick<PrizeInfo, 'amount'>) => {
   );
 };
 
-const OtherTokens = ({ amount }: Pick<PrizeInfo, 'amount'>) => {
+const OtherTokens = ({ amount, tokenAddress }: Pick<PrizeInfo, 'amount' | 'tokenAddress'>) => {
+  const [symbol, setSymbol] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchSymbol = async () => {
+      const tokenMetadata = await alchemy.core.getTokenMetadata(tokenAddress);
+      setSymbol(tokenMetadata.symbol);
+    };
+
+    fetchSymbol();
+  }, [tokenAddress]);
+
   return (
     <Flex
       justifyContent="center"
@@ -146,11 +158,21 @@ const OtherTokens = ({ amount }: Pick<PrizeInfo, 'amount'>) => {
       w="100%"
     >
       <Image src={otherPrize} alt="SAVR" pos="absolute" left="0" top="0" />
-      <Text textStyle="h2" lineHeight="1" zIndex={10}>
+      <Text
+        fontWeight="black"
+        fontSize={{ base: '20px', lg: '48px', xl: '84px' }}
+        lineHeight="1"
+        zIndex={10}
+      >
         {amount.toString()}
       </Text>
-      <Text textStyle="h2" lineHeight="1" zIndex={10}>
-        SAVR
+      <Text
+        fontWeight="black"
+        fontSize={{ base: '16px', lg: '32px', xl: '52px' }}
+        lineHeight="1"
+        zIndex={10}
+      >
+        {symbol}
       </Text>
     </Flex>
   );
