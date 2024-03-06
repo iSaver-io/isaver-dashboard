@@ -24,6 +24,21 @@
     }
   }
 
+  &_prize {
+    box-shadow: inset 2px 2px 4px 0px rgba(255, 255, 255, 0.17), 3px 4px 20px 0px rgba(0, 0, 0, 0.6);  
+    background: rgba(255, 255, 255, 0.10);
+    width: 250px;
+    height: 250px;
+    border-radius: 6px;
+    padding: 10px;
+
+    img {
+      width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+    }
+  }
+
   &_mainSlider {
     background: url(./images/slider-bg.png) center center / cover no-repeat;
   }
@@ -114,6 +129,11 @@
 }
 @media screen and (max-width: $xl) {
   .momento {
+    &_prize { 
+      width: 130px;
+      height: 130px;
+    }
+
     &_otherPrizes {
       &_card {
         height: 240px;
@@ -162,5 +182,14 @@
         margin-top: 16px;
       }
     }}
+  }
+}
+
+@media screen and (max-width: $md) {
+  .momento {    
+    &_prize { 
+      width: 80px;
+      height: 80px;
+    }
   }
 }

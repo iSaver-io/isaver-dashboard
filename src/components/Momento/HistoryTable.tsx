@@ -17,19 +17,25 @@ import { Button } from '@/components/ui/Button/Button';
 import { SortableTh } from '@/components/ui/Table/SortableTh';
 import { Table } from '@/components/ui/Table/Table';
 import { SortType, useDataSorting } from '@/hooks/useDataSorting';
+import { useAllPrizes } from '@/hooks/useMomento';
+import { exportToExcel } from '@/utils/exportToExcel';
+import { formatHistoryEventsToExport } from '@/utils/formatters/formatHistoryEventsToExport';
 import { getExplorerLink } from '@/utils/getExplorerLink';
 import { getLocalDateTimeString } from '@/utils/time';
 
+import { CenteredSpinner } from '../ui/CenteredSpinner/CenteredSpinner';
 import { ExportButton } from '../ui/ExportButton/ExportButton';
 
 const COLLAPSED_LIMIT = 6;
 
 export const HistoryTable = () => {
+  const { data: events, isFetching, isFetched } = useAllPrizes();
+  const isLoading = isFetching && !isFetched;
   const { isOpen, onToggle } = useDisclosure();
   const { chain } = useNetwork();
 
   const { sortedData, currentSortField, currentSortType, onSort } = useDataSorting(
-    [],
+    events,
     ['timestamp', 'label', 'transactionHash'],
     { field: 'timestamp', type: 'desc' }
   );
@@ -52,6 +58,11 @@ export const HistoryTable = () => {
     onToggle();
   }, [onToggle]);
 
+  const exportData = useCallback(() => {
+    const { data, headers } = formatHistoryEventsToExport(events);
+    exportToExcel('isaver_momento_prizes', data, headers);
+  }, [events]);
+
   return (
     <Box className="history">
       <Flex justifyContent="center" position="relative">
@@ -61,7 +72,7 @@ export const HistoryTable = () => {
           </Text>
         </Box>
         <Box position="absolute" right="0" bottom="6px">
-          <ExportButton onClick={() => {}} event="avatarSettings" buttonLocation="up" />
+          <ExportButton onClick={exportData} event="avatarSettings" buttonLocation="up" />
         </Box>
       </Flex>
       <Box className="table-responsive-wrapper">
@@ -103,6 +114,7 @@ export const HistoryTable = () => {
             </Tr>
           </Thead>
           <Tbody>
+            {isLoading ? <CenteredSpinner /> : null}
             {visibleItems.map(({ timestamp, transactionHash, label }) => (
               <Tr key={transactionHash}>
                 <Td pl="50px" textAlign="center">

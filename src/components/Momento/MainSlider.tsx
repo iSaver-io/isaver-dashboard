@@ -2,16 +2,17 @@ import { useEffect, useState } from 'react';
 import Slider, { Settings } from 'react-slick';
 import { Box } from '@chakra-ui/react';
 
-import { useMomento } from '@/hooks/useMomento';
-
-import DemoPrize from './images/otherPrizes/1.png';
 import SliderMock from './images/slider-mock.png';
 
 import 'slick-carousel/slick/slick.scss';
 import 'slick-carousel/slick/slick-theme.scss';
 
-export const MainSlider = () => {
-  const [images, setImages] = useState<string[]>([
+interface MainSliderProps {
+  isLoading: boolean;
+}
+
+export const MainSlider = ({ isLoading }: MainSliderProps) => {
+  const [images] = useState<string[]>([
     SliderMock,
     SliderMock,
     SliderMock,
@@ -23,11 +24,11 @@ export const MainSlider = () => {
     className: 'center',
     centerMode: true,
     infinite: true,
-    speed: 400,
+    speed: 120,
     slidesToShow: 3,
     slidesToScroll: 1,
     autoplay: true,
-    autoplaySpeed: 5000,
+    autoplaySpeed: 10000,
     arrows: false,
     pauseOnHover: false,
     responsive: [
@@ -40,28 +41,13 @@ export const MainSlider = () => {
       },
     ],
   });
-  const { getPrize } = useMomento();
 
   useEffect(() => {
-    if (getPrize.isLoading) {
-      setSettings((prevSettings) => ({
-        ...prevSettings,
-        speed: 100,
-        autoplaySpeed: 100,
-      }));
-    }
-  }, [getPrize.isLoading]);
-
-  useEffect(() => {
-    if (getPrize.isSuccess) {
-      setSettings((prevSettings) => ({
-        ...prevSettings,
-        autoplay: false,
-        infinite: false,
-      }));
-      setImages([DemoPrize]);
-    }
-  }, [getPrize.isSuccess]);
+    setSettings((prevSettings) => ({
+      ...prevSettings,
+      autoplaySpeed: isLoading ? 100 : 10000,
+    }));
+  }, [isLoading]);
 
   return (
     <Box

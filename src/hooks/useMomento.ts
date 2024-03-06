@@ -1,10 +1,12 @@
 import { Interface } from '@ethersproject/abi';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { useAccount } from 'wagmi';
+import { NftTokenType } from 'alchemy-sdk';
+import { Address, useAccount } from 'wagmi';
 
 import { useTicketContract } from '@/hooks/contracts/useTicketContract';
 import { useConnectWallet } from '@/hooks/useConnectWallet';
 import { useNotification } from '@/hooks/useNotification';
+import alchemy from '@/modules/alchemy';
 
 import { useMomentoContract } from './contracts/useMomentoContract';
 import { TICKET_BALANCE_REQUEST } from './useTicketsBalance';
@@ -13,6 +15,16 @@ const HAS_PENDING_REQUEST = 'has-pending-request';
 const ORACLE_RESPONSE_REQUEST = 'oracle-response-request';
 const BURN_TICKET_MUTATION = 'burn-ticket-mutation';
 const GET_PRIZE_MUTATION = 'get-prize-mutation';
+
+export type PrizeInfo = {
+  sender: Address;
+  tokenAddress: Address;
+  isERC20: boolean;
+  isERC721: boolean;
+  isERC1155: boolean;
+  tokenId: bigint;
+  amount: bigint;
+};
 
 export const useMomento = () => {
   const { address } = useAccount();
@@ -64,7 +76,7 @@ export const useMomento = () => {
     }
   );
 
-  const getPrize = useMutation(
+  const getPrize = useMutation<PrizeInfo | undefined>(
     [GET_PRIZE_MUTATION],
     async () => {
       if (!address) {
@@ -80,15 +92,7 @@ export const useMomento = () => {
       );
       if (prizeSentLog) {
         const prizeSentEvent = tokensPoolInterface.parseLog(prizeSentLog);
-        console.log(prizeSentEvent);
-        // TODO отобразить нужную карточку по данным из ивента prizeSentEvent.args:
-        // amount: BigNumber
-        // isERC20: boolean
-        // isERC721: boolean
-        // isERC1155: boolean
-        // sender: address
-        // tokenAddress: address
-        // tokenId: BigNumber
+        return prizeSentEvent.args as unknown as PrizeInfo;
       }
 
       success({
@@ -112,5 +116,40 @@ export const useMomento = () => {
     hasPendingRequest,
     burnTicket,
     getPrize,
+  };
+};
+
+export const GET_ALL_PRIZES = 'get-all-prizes';
+export const useAllPrizes = () => {
+  const { address } = useAccount();
+  const { getAllPrizes } = useMomentoContract();
+
+  const eventsRequest = useQuery(
+    [GET_ALL_PRIZES, { address }],
+    async () => (address ? await getAllPrizes(address) : []),
+    { staleTime: 0, cacheTime: 0, refetchInterval: 60_000, initialData: [], placeholderData: [] }
+  );
+
+  return eventsRequest;
+};
+
+export const GET_NFT = 'get-nft';
+export const useGetNFT = (contractAddress: Address, tokenId: number) => {
+  const { data } = useQuery(
+    [GET_NFT, tokenId],
+    async () => {
+      return await alchemy.nft.getNftMetadata(contractAddress, tokenId, {
+        tokenType: NftTokenType.ERC721,
+        refreshCache: true,
+      });
+    },
+    {
+      cacheTime: 0,
+      staleTime: 0,
+    }
+  );
+
+  return {
+    nft: data,
   };
 };

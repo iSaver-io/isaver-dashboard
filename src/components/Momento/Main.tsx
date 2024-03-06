@@ -11,6 +11,7 @@ import { useTicketsBalance } from '@/hooks/useTicketsBalance';
 import { BuyRaffleTicketsModal } from '../Raffle/BuyRaffleTicketsModal';
 
 import { MainSlider } from './MainSlider';
+import { MomentoPrize } from './MomentoPrize';
 import { Ticket } from './Ticket';
 
 export const Main = () => {
@@ -120,7 +121,11 @@ export const Main = () => {
           </Flex>
         </Flex>
       </Box>
-      <MainSlider />
+      {getPrize.data ? (
+        <MomentoPrize prizeInfo={getPrize.data} />
+      ) : (
+        <MainSlider isLoading={getPrize.isLoading} />
+      )}
       {isOpen ? (
         <BuyRaffleTicketsModal
           isPageView
