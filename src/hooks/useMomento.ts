@@ -86,26 +86,31 @@ export const useMomento = () => {
 
       const receipt = await momentoContract.getPrize();
 
-      const tokensPoolInterface = new Interface(momentoContract.tokensPoolAbi);
-      const prizeSentLog = receipt.logs.find(
-        (log) => log.address === momentoContract.tokensPoolAddress
-      );
-      if (prizeSentLog) {
-        const prizeSentEvent = tokensPoolInterface.parseLog(prizeSentLog);
-        return prizeSentEvent.args as unknown as PrizeInfo;
-      }
-
       success({
         title: 'Success',
         description: 'Congrats! The prize has been sent to your wallet',
         txHash: receipt.transactionHash,
       });
+
+      const tokensPoolInterface = new Interface(momentoContract.tokensPoolAbi);
+      const prizeSentLog = receipt.logs.find(
+        (log) => log.address === momentoContract.tokensPoolAddress
+      );
+
+      if (prizeSentLog) {
+        const prizeSentEvent = tokensPoolInterface.parseLog(prizeSentLog);
+        return prizeSentEvent.args as unknown as PrizeInfo;
+      }
     },
     {
       onSuccess: () => {
         queryClient.invalidateQueries([HAS_PENDING_REQUEST, { address }]);
         queryClient.invalidateQueries([ORACLE_RESPONSE_REQUEST, { address }]);
         queryClient.invalidateQueries([TICKET_BALANCE_REQUEST, { address }]);
+        queryClient.invalidateQueries([GET_ALL_USER_PRIZES, { address }]);
+      },
+      onSettled: () => {
+        momentoContract.setIsGetPrizeConfirmed(false);
       },
       onError: handleError,
     }
@@ -113,24 +118,23 @@ export const useMomento = () => {
 
   return {
     isOracleResponseReady,
+    isGetPrizeConfirmed: momentoContract.isGetPrizeConfirmed,
     hasPendingRequest,
     burnTicket,
     getPrize,
   };
 };
 
-export const GET_ALL_PRIZES = 'get-all-prizes';
-export const useAllPrizes = () => {
+export const GET_ALL_USER_PRIZES = 'get-all-user-prizes';
+export const useAllUserPrizes = () => {
   const { address } = useAccount();
-  const { getAllPrizes } = useMomentoContract();
+  const { getAllUserPrizes } = useMomentoContract();
 
-  const eventsRequest = useQuery(
-    [GET_ALL_PRIZES, { address }],
-    async () => (address ? await getAllPrizes(address) : []),
-    { staleTime: 0, cacheTime: 0, refetchInterval: 60_000, initialData: [], placeholderData: [] }
+  return useQuery(
+    [GET_ALL_USER_PRIZES, { address }],
+    async () => (address ? await getAllUserPrizes(address) : []),
+    { refetchInterval: 60_000, initialData: [], placeholderData: [] }
   );
-
-  return eventsRequest;
 };
 
 export const GET_NFT = 'get-nft';

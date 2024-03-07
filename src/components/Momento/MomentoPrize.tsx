@@ -4,6 +4,7 @@ import { Box, Flex, Image, Text } from '@chakra-ui/react';
 import { useContractsAddresses } from '@/hooks/admin/useContractsAddresses';
 import { PrizeInfo, useGetNFT } from '@/hooks/useMomento';
 import alchemy from '@/modules/alchemy';
+import { bigNumberToString } from '@/utils/number';
 
 import otherPrize from './images/other-prize.png';
 import powerAPrize from './images/powers/a.png';
@@ -34,7 +35,14 @@ export const MomentoPrize = ({ prizeInfo }: MomentoPrizeProps) => {
       case contracts.Ticket:
         return <Ticket amount={prizeInfo.amount} />;
       default:
-        return <OtherTokens amount={prizeInfo.amount} tokenAddress={prizeInfo.tokenAddress} />;
+        return (
+          <OtherTokens
+            amount={prizeInfo.amount}
+            tokenAddress={prizeInfo.tokenAddress}
+            isERC1155={prizeInfo.isERC1155}
+            isERC20={prizeInfo.isERC20}
+          />
+        );
     }
   }, [contracts.ISaverPowers, contracts.ISaverSAVRToken, contracts.Ticket, prizeInfo]);
 
@@ -71,7 +79,7 @@ const SavrTokens = ({ amount }: Pick<PrizeInfo, 'amount'>) => {
         lineHeight="1"
         zIndex={10}
       >
-        {amount.toString()}
+        {bigNumberToString(amount, { precision: 0 })}
       </Text>
       <Text
         fontWeight="black"
@@ -136,7 +144,12 @@ const Ticket = ({ amount }: Pick<PrizeInfo, 'amount'>) => {
   );
 };
 
-const OtherTokens = ({ amount, tokenAddress }: Pick<PrizeInfo, 'amount' | 'tokenAddress'>) => {
+const OtherTokens = ({
+  amount,
+  tokenAddress,
+  isERC1155,
+  isERC20,
+}: Pick<PrizeInfo, 'amount' | 'tokenAddress' | 'isERC20' | 'isERC1155'>) => {
   const [symbol, setSymbol] = useState<string | null>(null);
 
   useEffect(() => {
@@ -164,7 +177,7 @@ const OtherTokens = ({ amount, tokenAddress }: Pick<PrizeInfo, 'amount' | 'token
         lineHeight="1"
         zIndex={10}
       >
-        {amount.toString()}
+        {isERC20 ? bigNumberToString(amount, { precision: 0 }) : isERC1155 ? amount.toString() : ''}
       </Text>
       <Text
         fontWeight="black"

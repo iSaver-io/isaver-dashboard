@@ -1,11 +1,14 @@
+import { useState } from 'react';
 import { Interface } from '@ethersproject/abi';
 import { Log } from 'alchemy-sdk';
 import { Address, useContract, useProvider, useSigner } from 'wagmi';
 
 import { FROM_BLOCK_EPISODE_2 } from '@/constants';
+import { useContractsAddresses } from '@/hooks/admin/useContractsAddresses';
 import alchemy from '@/modules/alchemy';
 import { Momento, TokensPool } from '@/types.common';
 import { TypedEvent, TypedEventFilter } from '@/types/typechain-types/common';
+import { bigNumberToString } from '@/utils/number';
 import { waitForTransaction } from '@/utils/waitForTransaction';
 
 import { ContractsEnum, useContractAbi } from './useContractAbi';
@@ -13,6 +16,8 @@ import { ContractsEnum, useContractAbi } from './useContractAbi';
 export const useMomentoContract = () => {
   const { data: signer } = useSigner();
   const provider = useProvider();
+  const [isGetPrizeConfirmed, setIsGetPrizeConfirmed] = useState(false);
+  const addresses = useContractsAddresses();
 
   const { address: contractAddress, abi } = useContractAbi({
     contract: ContractsEnum.Momento,
@@ -48,12 +53,13 @@ export const useMomentoContract = () => {
 
   const getPrize = async () => {
     const tx = await contract.getPrize({ gasLimit: 15000000 });
+    setIsGetPrizeConfirmed(true);
     const hash = await waitForTransaction(tx);
     const receipt = provider.getTransactionReceipt(hash);
     return receipt;
   };
 
-  const getAllPrizes = async (sender: Address) => {
+  const getAllUserPrizes = async (user: Address) => {
     const tokensPoolIface = new Interface(tokensPoolAbi);
 
     const fetchEvent = async (filter: TypedEventFilter<TypedEvent<Event[]>>) => {
@@ -69,19 +75,36 @@ export const useMomentoContract = () => {
       }
     };
 
-    const filter = tokensPool.filters.PrizeSent(sender);
+    const filter = tokensPool.filters.PrizeSent(user);
     const allEvents = await fetchEvent(filter);
 
     const events = await Promise.all(
       allEvents.map(async ({ ...log }: Log) => {
         const logParsed = tokensPoolIface.parseLog(log);
         const block = await provider.getBlock(log.blockNumber);
-        const tokenMetadata = await alchemy.core.getTokenMetadata(logParsed.args.tokenAddress);
+
+        let tokenName = '';
+        if (logParsed.args.tokenAddress === addresses.ISaverAvatars) {
+          tokenName = 'iSaver Avatar';
+        } else if (logParsed.args.tokenAddress === addresses.ISaverPowers) {
+          tokenName = 'iSaver Powers';
+        } else if (logParsed.args.tokenAddress === addresses.ISaverSAVRToken) {
+          tokenName = 'iSaver Reward';
+        } else if (logParsed.args.tokenAddress === addresses.Ticket) {
+          tokenName = 'iSaver Raffle Ticket';
+        } else {
+          const tokenMetadata = await alchemy.core.getTokenMetadata(logParsed.args.tokenAddress);
+          tokenName = tokenMetadata.name || 'Unknown token';
+        }
 
         const label = (
-          logParsed.args.amount
-            ? `${logParsed.args.amount.toString()} ${tokenMetadata.name}`
-            : tokenMetadata.name
+          logParsed.args.isERC20 || logParsed.args.isERC1155
+            ? `${
+                logParsed.args.isERC20
+                  ? bigNumberToString(logParsed.args.amount, { precision: 0 })
+                  : logParsed.args.amount.toString()
+              } ${tokenName}`
+            : tokenName
         ) as string;
 
         return {
@@ -107,6 +130,8 @@ export const useMomentoContract = () => {
     isOracleResponseReady,
     burnTicket,
     getPrize,
-    getAllPrizes,
+    getAllUserPrizes,
+    isGetPrizeConfirmed,
+    setIsGetPrizeConfirmed,
   };
 };

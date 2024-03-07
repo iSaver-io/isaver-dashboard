@@ -17,7 +17,7 @@ import { Button } from '@/components/ui/Button/Button';
 import { SortableTh } from '@/components/ui/Table/SortableTh';
 import { Table } from '@/components/ui/Table/Table';
 import { SortType, useDataSorting } from '@/hooks/useDataSorting';
-import { useAllPrizes } from '@/hooks/useMomento';
+import { useAllUserPrizes } from '@/hooks/useMomento';
 import { exportToExcel } from '@/utils/exportToExcel';
 import { formatHistoryEventsToExport } from '@/utils/formatters/formatHistoryEventsToExport';
 import { getExplorerLink } from '@/utils/getExplorerLink';
@@ -29,7 +29,7 @@ import { ExportButton } from '../ui/ExportButton/ExportButton';
 const COLLAPSED_LIMIT = 6;
 
 export const HistoryTable = () => {
-  const { data: events, isFetching, isFetched } = useAllPrizes();
+  const { data: events, isFetching, isFetched } = useAllUserPrizes();
   const isLoading = isFetching && !isFetched;
   const { isOpen, onToggle } = useDisclosure();
   const { chain } = useNetwork();
@@ -145,7 +145,7 @@ export const HistoryTable = () => {
         </Table>
       </Box>
 
-      {0 > COLLAPSED_LIMIT ? (
+      {events.length > COLLAPSED_LIMIT ? (
         <Center mt="24px">
           <Button variant="link" onClick={handleToggleTable}>
             {isOpen ? 'Less' : 'More'}

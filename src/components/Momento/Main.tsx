@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import { ArrowBackIcon } from '@chakra-ui/icons';
 import { Box, Button, Flex, Link, Text, useDisclosure } from '@chakra-ui/react';
@@ -20,12 +20,19 @@ export const Main = () => {
   const buyTickets = useBuyTickets();
   const { data: balance } = useTicketsBalance();
   const { ticketPrice } = useTicketPrice();
-  const { hasPendingRequest, isOracleResponseReady, burnTicket, getPrize } = useMomento();
+  const { hasPendingRequest, isOracleResponseReady, burnTicket, getPrize, isGetPrizeConfirmed } =
+    useMomento();
   const navigate = useNavigateByHash();
 
   const handleNavigateToClaimTickets = useCallback(() => {
     navigate('/#claim-ticket');
   }, [navigate]);
+
+  useEffect(() => {
+    if (getPrize.data) {
+      setActive(false);
+    }
+  }, [getPrize.data]);
 
   return (
     <Box>
@@ -124,7 +131,7 @@ export const Main = () => {
       {getPrize.data ? (
         <MomentoPrize prizeInfo={getPrize.data} />
       ) : (
-        <MainSlider isLoading={getPrize.isLoading} />
+        <MainSlider isLoading={isGetPrizeConfirmed} />
       )}
       {isOpen ? (
         <BuyRaffleTicketsModal
