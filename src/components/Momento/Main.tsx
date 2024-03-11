@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import { ArrowBackIcon } from '@chakra-ui/icons';
 import { Box, Button, Flex, Link, Text, useDisclosure } from '@chakra-ui/react';
+import { useAccount } from 'wagmi';
 
 import { useBuyTickets, useTicketPrice } from '@/hooks/raffle/useRaffle';
 import { useMomento } from '@/hooks/useMomento';
@@ -20,6 +21,7 @@ export const Main = () => {
   const buyTickets = useBuyTickets();
   const { data: balance } = useTicketsBalance();
   const { ticketPrice } = useTicketPrice();
+  const { address } = useAccount();
   const { hasPendingRequest, isOracleResponseReady, burnTicket, getPrize, isGetPrizeConfirmed } =
     useMomento();
   const navigate = useNavigateByHash();
@@ -29,10 +31,10 @@ export const Main = () => {
   }, [navigate]);
 
   useEffect(() => {
-    if (getPrize.data) {
+    if (getPrize.data || address || !address) {
       setActive(false);
     }
-  }, [getPrize.data]);
+  }, [getPrize.data, address]);
 
   return (
     <Box>
@@ -72,7 +74,7 @@ export const Main = () => {
           <Text textStyle="heading1">{balance || 0}</Text>
         </Flex>
         <Flex
-          className="momento_actions"
+          className="momento_actions prevent-select"
           mt={{ base: '24px', lg: '36px' }}
           alignItems="center"
           justifyContent="space-around"
@@ -107,7 +109,9 @@ export const Main = () => {
               isDisabled={!isActive || Boolean(hasPendingRequest) || Boolean(isOracleResponseReady)}
               size={{ base: 'md', lg: 'lg' }}
               onClick={() => burnTicket.mutateAsync()}
-              isLoading={burnTicket.isLoading}
+              isLoading={
+                burnTicket.isLoading || (Boolean(hasPendingRequest) && !isOracleResponseReady)
+              }
             >
               Burn
             </Button>
@@ -119,9 +123,7 @@ export const Main = () => {
               isDisabled={!isOracleResponseReady}
               size={{ base: 'md', lg: 'lg' }}
               onClick={() => getPrize.mutateAsync()}
-              isLoading={
-                getPrize.isLoading || (Boolean(hasPendingRequest) && !isOracleResponseReady)
-              }
+              isLoading={getPrize.isLoading}
             >
               Go!
             </Button>

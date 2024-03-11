@@ -6,7 +6,6 @@
 
 .momento {
   &_ticket {
-    cursor: pointer;
     width: 240px;
     height: 145px;
     position: relative;
@@ -25,8 +24,8 @@
   }
 
   &_prize {
-    box-shadow: inset 2px 2px 4px 0px rgba(255, 255, 255, 0.17), 3px 4px 20px 0px rgba(0, 0, 0, 0.6);  
-    background: rgba(255, 255, 255, 0.10);
+    box-shadow: inset 2px 2px 4px 0px rgba(255, 255, 255, 0.17), 3px 4px 20px 0px rgba(0, 0, 0, 0.6);
+    background: rgba(255, 255, 255, 0.1);
     width: 250px;
     height: 250px;
     border-radius: 6px;
@@ -95,13 +94,13 @@
       .front {
         transform: rotateY(0deg);
         padding: 14px;
-        background-color: rgba(255, 255, 255, .1);
+        background-color: rgba(255, 255, 255, 0.1);
       }
 
       .back {
         transform: rotateY(180deg);
         padding: 12px;
-        background: linear-gradient(to bottom right, #163D31, #2D969A 40%, #19221F);
+        background: linear-gradient(to bottom right, #163d31, #2d969a 40%, #19221f);
         display: flex;
         flex-direction: column;
         justify-content: center;
@@ -121,7 +120,7 @@
 }
 
 @media screen and (max-width: $xl2) {
- .momento_otherPrizes {
+  .momento_otherPrizes {
     &_card {
       height: 380px;
     }
@@ -129,7 +128,7 @@
 }
 @media screen and (max-width: $xl) {
   .momento {
-    &_prize { 
+    &_prize {
       width: 130px;
       height: 130px;
     }
@@ -145,7 +144,6 @@
     }
   }
 }
-
 
 @media screen and (max-width: $lg) {
   .momento {
@@ -166,7 +164,8 @@
           font-size: 8px !important;
         }
 
-        .front, .back {
+        .front,
+        .back {
           padding: 8px 8px 32px;
         }
       }
@@ -176,18 +175,19 @@
       }
     }
 
-  &_prizes {
-    .slick-slider {
-      .slick-dots {
-        margin-top: 16px;
+    &_prizes {
+      .slick-slider {
+        .slick-dots {
+          margin-top: 16px;
+        }
       }
-    }}
+    }
   }
 }
 
 @media screen and (max-width: $md) {
-  .momento {    
-    &_prize { 
+  .momento {
+    &_prize {
       width: 80px;
       height: 80px;
     }

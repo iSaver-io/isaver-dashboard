@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react';
 import { Flex, Text } from '@chakra-ui/react';
 
 import { useMomento } from '@/hooks/useMomento';
@@ -15,15 +14,8 @@ interface TicketProps {
 }
 
 export const Ticket = ({ isActive, setActive }: TicketProps) => {
-  const [hasTicket, setHasTicket] = useState(false);
   const balance = useTicketsBalance();
   const { hasPendingRequest, isOracleResponseReady } = useMomento();
-
-  useEffect(() => {
-    if (balance.data) {
-      setHasTicket(balance.data > 0);
-    }
-  }, [balance.data]);
 
   const handleClick = (event: any) => {
     if (event.detail === 2) {
@@ -44,19 +36,20 @@ export const Ticket = ({ isActive, setActive }: TicketProps) => {
 
   return (
     <Flex
-      onClick={handleClick}
       className="momento_ticket"
       justifyContent="center"
       alignItems="center"
       px="40px"
+      cursor={balance.data ? 'pointer' : undefined}
+      onClick={balance.data ? handleClick : undefined}
     >
       <img
         className="momento_ticket_image"
-        src={hasTicket ? TicketEmptyBorder : TicketEmpty}
+        src={balance.data ? TicketEmptyBorder : TicketEmpty}
         alt="Ticket"
       />
       <Text textStyle="text1">
-        {hasTicket ? 'Double-click to activate your Ticket' : 'You need a Ticket to start'}
+        {balance.data ? 'Double-click to activate your Ticket' : 'You need a Ticket to start'}
       </Text>
     </Flex>
   );
