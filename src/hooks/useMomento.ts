@@ -1,14 +1,16 @@
+import { useMemo } from 'react';
 import { Interface } from '@ethersproject/abi';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueries, useQuery, useQueryClient } from '@tanstack/react-query';
 import { NftTokenType } from 'alchemy-sdk';
 import { Address, useAccount } from 'wagmi';
 
+import { useContractsAddresses } from '@/hooks/admin/useContractsAddresses';
+import { useMomentoContract } from '@/hooks/contracts/useMomentoContract';
 import { useTicketContract } from '@/hooks/contracts/useTicketContract';
 import { useConnectWallet } from '@/hooks/useConnectWallet';
 import { useNotification } from '@/hooks/useNotification';
 import alchemy from '@/modules/alchemy';
 
-import { useMomentoContract } from './contracts/useMomentoContract';
 import { TICKET_BALANCE_REQUEST } from './useTicketsBalance';
 
 const HAS_PENDING_REQUEST = 'has-pending-request';
@@ -72,6 +74,9 @@ export const useMomento = () => {
         queryClient.invalidateQueries([HAS_PENDING_REQUEST, { address }]);
         queryClient.invalidateQueries([ORACLE_RESPONSE_REQUEST, { address }]);
       },
+      onSettled: () => {
+        momentoContract.setIsBurnTicketConfirmed(false);
+      },
       onError: handleError,
     }
   );
@@ -118,11 +123,51 @@ export const useMomento = () => {
 
   return {
     isOracleResponseReady,
+    isBurnTicketConfirmed: momentoContract.isBurnTicketConfirmed,
     isGetPrizeConfirmed: momentoContract.isGetPrizeConfirmed,
     hasPendingRequest,
     burnTicket,
     getPrize,
   };
+};
+export const GET_MOMENTO_PRIZES = 'get-momento-prizes-request';
+export const GET_MOMENTO_EXTERNAL_PRIZES = 'get-momento-external-prizes-request';
+export const useMomentoPrizes = () => {
+  const momentoContract = useMomentoContract();
+  const addresses = useContractsAddresses();
+
+  const momentoPrizesRequest = useQuery([GET_MOMENTO_PRIZES], async () =>
+    momentoContract.getMomentoPrizes()
+  );
+
+  const MAX_NFTS = 10;
+  const externalNFTAddresses = useMemo(() => {
+    const nfts = (momentoPrizesRequest.data || [])
+      .flat()
+      .filter((prize) => prize.isERC721 && !Object.values(addresses).includes(prize.tokenAddress))
+      .map((category) => category.tokenIds.map((tokenId: string) => ({ ...category, tokenId })))
+      .flat();
+
+    return nfts.slice(0, MAX_NFTS);
+  }, [addresses, momentoPrizesRequest.data]);
+
+  const externalNFTRequests = useQueries({
+    queries: externalNFTAddresses.map((nft) => ({
+      queryKey: [GET_MOMENTO_EXTERNAL_PRIZES, nft.tokenAddress, nft.tokenId],
+      queryFn: async () =>
+        await alchemy.nft.getNftMetadata(nft.tokenAddress, nft.tokenId, {
+          tokenType: NftTokenType.ERC721,
+          refreshCache: true,
+        }),
+    })),
+  });
+
+  const externalNFTs = useMemo(
+    () => externalNFTRequests.map((req) => req.data).filter((data) => Boolean(data)),
+    [externalNFTRequests]
+  );
+
+  return { momentoPrizesRequest, externalNFTs };
 };
 
 export const GET_ALL_USER_PRIZES = 'get-all-user-prizes';

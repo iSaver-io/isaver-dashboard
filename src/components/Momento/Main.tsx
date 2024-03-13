@@ -17,18 +17,56 @@ import { Ticket } from './Ticket';
 
 export const Main = () => {
   const [isActive, setActive] = useState(false);
+  const [ticketTip, setTicketTip] = useState('');
   const { isOpen, onOpen, onClose } = useDisclosure();
   const buyTickets = useBuyTickets();
   const { data: balance } = useTicketsBalance();
   const { ticketPrice } = useTicketPrice();
   const { address } = useAccount();
-  const { hasPendingRequest, isOracleResponseReady, burnTicket, getPrize, isGetPrizeConfirmed } =
-    useMomento();
+  const {
+    hasPendingRequest,
+    isOracleResponseReady,
+    burnTicket,
+    getPrize,
+    isBurnTicketConfirmed,
+    isGetPrizeConfirmed,
+  } = useMomento();
   const navigate = useNavigateByHash();
 
   const handleNavigateToClaimTickets = useCallback(() => {
     navigate('/#claim-ticket');
   }, [navigate]);
+
+  useEffect(() => {
+    if (
+      (burnTicket.isLoading && !isBurnTicketConfirmed) ||
+      (getPrize.isLoading && !isGetPrizeConfirmed)
+    ) {
+      setTicketTip('Confirm transaction in your wallet app');
+    } else if (
+      (burnTicket.isLoading && isBurnTicketConfirmed) ||
+      (getPrize.isLoading && isGetPrizeConfirmed)
+    ) {
+      setTicketTip('Waiting for transaction...');
+    } else if (Boolean(hasPendingRequest) && !isOracleResponseReady) {
+      setTicketTip('Waiting for Oracle response...');
+    } else if (isOracleResponseReady) {
+      setTicketTip('Hit GO');
+    } else if (getPrize.data) {
+      setTicketTip('Congrats!');
+    } else if (isActive) {
+      setTicketTip('Burn the Ticket and hit GO');
+    }
+  }, [
+    burnTicket.isLoading,
+    getPrize.isLoading,
+    getPrize.data,
+    isBurnTicketConfirmed,
+    isGetPrizeConfirmed,
+    hasPendingRequest,
+    isOracleResponseReady,
+    isActive,
+  ]);
 
   useEffect(() => {
     if (getPrize.data || address || !address) {
@@ -75,7 +113,6 @@ export const Main = () => {
         </Flex>
         <Flex
           className="momento_actions prevent-select"
-          mt={{ base: '24px', lg: '36px' }}
           alignItems="center"
           justifyContent="space-around"
           gap="24px"
@@ -102,11 +139,16 @@ export const Main = () => {
               buy tickets
             </Button>
           </Flex>
-          <Ticket isActive={isActive} setActive={setActive} />
+          <Ticket tip={ticketTip} isActive={isActive} setActive={setActive} />
           <Flex flexDir={{ base: 'row', lg: 'column' }} gap={{ base: '20px', lg: '8px' }}>
             <Button
               w="160px"
-              isDisabled={!isActive || Boolean(hasPendingRequest) || Boolean(isOracleResponseReady)}
+              isDisabled={
+                !isActive ||
+                Boolean(hasPendingRequest) ||
+                Boolean(isOracleResponseReady) ||
+                getPrize.isLoading
+              }
               size={{ base: 'md', lg: 'lg' }}
               onClick={() => burnTicket.mutateAsync()}
               isLoading={

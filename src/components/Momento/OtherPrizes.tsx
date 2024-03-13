@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Box, Grid, Text } from '@chakra-ui/react';
+import { Box, Grid, Text, useBreakpoint } from '@chakra-ui/react';
 
 import { APP_URL, AVATARS_LANDING_PATH, WHITEPAPER_URL } from '@/router';
 
@@ -15,12 +15,14 @@ import PrizeImage6 from './images/otherPrizes/6.png';
 export const OtherPrizes = () => {
   return (
     <Box textAlign="center">
-      <Text textStyle="h3">OTHER PRIZES</Text>
+      <Text textStyle="h3" fontSize={{ sm: '18px', lg: '26px' }}>
+        OTHER PRIZES
+      </Text>
       <Grid
         className="momento_otherPrizes"
         templateColumns={{ base: 'repeat(2, 1fr)', md: 'repeat(3, 1fr)' }}
-        gap={{ base: '8px', lg: '24px' }}
-        mt={{ base: '24px', lg: '48px' }}
+        gap={{ sm: '8px', xl: '20px', '2xl': '24px' }}
+        mt={{ sm: '30px', '2xl': '50px' }}
       >
         <Card
           image={PrizeImage1}
@@ -63,7 +65,7 @@ export const OtherPrizes = () => {
             <>
               The Ticket allows you to participate in the iSaver Raffles and Momento. Join Momento
               for a chance to win from 1 to 10 Tickets. You can mint your first Ticket by
-              participating in our mini <Link to={APP_URL}>FREE TO PLAY</Link>
+              participating in our mini <Link to={APP_URL}>FREE&nbsp;TO&nbsp;PLAY</Link>
             </>
           }
         />
@@ -100,9 +102,20 @@ interface CardProps {
 
 const Card = ({ image, title, description }: CardProps) => {
   const [isFlipped, setIsFlipped] = useState(false);
+  const bp = useBreakpoint({ ssr: false });
+
+  const toggleCard = useCallback(() => {
+    if (bp === 'sm') {
+      setIsFlipped((val) => !val);
+    }
+  }, [bp]);
 
   return (
-    <Box onMouseEnter={() => setIsFlipped(true)} onMouseLeave={() => setIsFlipped(false)}>
+    <Box
+      onMouseEnter={bp !== 'sm' ? () => setIsFlipped(true) : undefined}
+      onMouseLeave={bp !== 'sm' ? () => setIsFlipped(false) : undefined}
+      onClick={toggleCard}
+    >
       <Box className={`momento_otherPrizes_card ${isFlipped ? 'flipped' : ''}`}>
         <div className="front">
           <img src={image} alt={title} width="100%" />

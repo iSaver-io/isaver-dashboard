@@ -1,5 +1,7 @@
-import { Flex, Text } from '@chakra-ui/react';
+import { useCallback, useMemo } from 'react';
+import { Box, Flex, Text } from '@chakra-ui/react';
 
+import { ReactComponent as RepeatIcon } from '@/assets/images/icons/repeat.svg';
 import { useMomento } from '@/hooks/useMomento';
 import { useTicketsBalance } from '@/hooks/useTicketsBalance';
 
@@ -9,48 +11,83 @@ import TicketEmpty from './images/ticket-empty.png';
 import TicketEmptyBorder from './images/ticket-empty-border.png';
 
 interface TicketProps {
+  tip: string;
   isActive: boolean;
   setActive: (active: boolean) => void;
 }
 
-export const Ticket = ({ isActive, setActive }: TicketProps) => {
+export const Ticket = ({ tip, isActive, setActive }: TicketProps) => {
   const balance = useTicketsBalance();
   const { hasPendingRequest, isOracleResponseReady } = useMomento();
 
-  const handleClick = (event: any) => {
-    if (event.detail === 2) {
-      setActive(true);
-    }
-  };
+  const isReplay = useMemo(() => !isActive && tip, [isActive, tip]);
 
-  if (hasPendingRequest || isOracleResponseReady || isActive)
-    return (
-      <Flex className="momento_ticket" justifyContent="center" alignItems="center" px="40px">
-        {hasPendingRequest || isOracleResponseReady ? (
-          <img className="momento_ticket_image" src={TicketActiveImage} alt="Ticket" />
-        ) : (
-          <img className="momento_ticket_image" src={TicketImage} alt="Ticket" />
-        )}
-      </Flex>
-    );
+  const handleClick = useCallback(
+    (event: any) => {
+      if (event.detail === 2 || (isReplay && event.detail === 1)) {
+        setActive(true);
+      }
+    },
+    [isReplay, setActive]
+  );
 
   return (
     <Flex
-      className="momento_ticket"
       justifyContent="center"
       alignItems="center"
-      px="40px"
-      cursor={balance.data ? 'pointer' : undefined}
-      onClick={balance.data ? handleClick : undefined}
+      flexDir="column"
+      mt={{ sm: '30px' }}
+      mb={!tip ? { sm: '34px', xl: '40px' } : undefined}
     >
-      <img
-        className="momento_ticket_image"
-        src={balance.data ? TicketEmptyBorder : TicketEmpty}
-        alt="Ticket"
-      />
-      <Text textStyle="text1">
-        {balance.data ? 'Double-click to activate your Ticket' : 'You need a Ticket to start'}
-      </Text>
+      <Flex
+        className="momento_ticket"
+        justifyContent="center"
+        alignItems="center"
+        px="40px"
+        cursor={balance.data && !isActive ? 'pointer' : undefined}
+        onClick={balance.data && !isActive ? handleClick : undefined}
+      >
+        {hasPendingRequest || isOracleResponseReady ? (
+          <img className="momento_ticket_image" src={TicketActiveImage} alt="Ticket" />
+        ) : isActive ? (
+          <img className="momento_ticket_image" src={TicketImage} alt="Ticket" />
+        ) : (
+          <>
+            <img
+              className="momento_ticket_image"
+              src={balance.data ? TicketEmptyBorder : TicketEmpty}
+              alt="Ticket"
+            />
+            {balance.data ? (
+              isReplay ? (
+                // if replay
+                <Flex color="sav" alignItems="center">
+                  <Box width="28px" height="28px" mr="5px">
+                    <RepeatIcon />
+                  </Box>
+                  <Text textStyle="button" fontSize={{ xl: '18px' }}>
+                    Again
+                  </Text>
+                </Flex>
+              ) : (
+                // if first play
+                <Text textStyle="text1">Double-click to activate your Ticket</Text>
+              )
+            ) : (
+              <Text textStyle="text1">You need a Ticket to start</Text>
+            )}
+          </>
+        )}
+      </Flex>
+      {tip ? (
+        <Text
+          mt={{ sm: '20px', xl: '25px' }}
+          fontSize={{ sm: '12px', xl: '16px' }}
+          fontWeight={{ xl: '500' }}
+        >
+          {tip}
+        </Text>
+      ) : null}
     </Flex>
   );
 };

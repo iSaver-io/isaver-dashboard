@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Interface } from '@ethersproject/abi';
 import { Log } from 'alchemy-sdk';
+import { ethers } from 'ethers';
 import { Address, useContract, useProvider, useSigner } from 'wagmi';
 
 import { FROM_BLOCK_EPISODE_2 } from '@/constants';
@@ -16,6 +17,7 @@ import { ContractsEnum, useContractAbi } from './useContractAbi';
 export const useMomentoContract = () => {
   const { data: signer } = useSigner();
   const provider = useProvider();
+  const [isBurnTicketConfirmed, setIsBurnTicketConfirmed] = useState(false);
   const [isGetPrizeConfirmed, setIsGetPrizeConfirmed] = useState(false);
   const addresses = useContractsAddresses();
 
@@ -32,7 +34,7 @@ export const useMomentoContract = () => {
     signerOrProvider: signer || provider,
   }) as unknown as Momento;
 
-  const tokensPool = useContract({
+  const tokensPoolContract = useContract({
     address: tokensPoolAddress,
     abi: tokensPoolAbi,
     signerOrProvider: signer || provider,
@@ -48,6 +50,7 @@ export const useMomentoContract = () => {
 
   const burnTicket = async () => {
     const tx = await contract.burnTicket();
+    setIsBurnTicketConfirmed(true);
     return waitForTransaction(tx);
   };
 
@@ -75,7 +78,7 @@ export const useMomentoContract = () => {
       }
     };
 
-    const filter = tokensPool.filters.PrizeSent(user);
+    const filter = tokensPoolContract.filters.PrizeSent(user);
     const allEvents = await fetchEvent(filter);
 
     const events = await Promise.all(
@@ -120,9 +123,31 @@ export const useMomentoContract = () => {
     return sortedEvents;
   };
 
+  const getMomentoPrizes = async () => {
+    const nonEmptyResponse = await tokensPoolContract.getNonEmptyCategories();
+    const nonEmptyCategories = nonEmptyResponse.map((val: any) => val.toNumber());
+
+    return await Promise.all(
+      nonEmptyCategories.map(async (categoryId) => {
+        const prizesResponse = await tokensPoolContract.getCategoryPrizes(categoryId);
+        return prizesResponse.map((val: any) => ({
+          tokenAddress: val[0],
+          isERC20: val[1],
+          isERC721: val[2],
+          isERC1155: val[3],
+          amount: val[1] ? ethers.utils.formatEther(val[4].toString()) : val[4].toNumber(),
+          tokenIds: val[5].map((val: any) => val.toString()),
+          remaining: val[6].toNumber(),
+        }));
+      })
+    );
+  };
+
   return {
     tokensPoolAddress,
     tokensPoolAbi,
+    tokensPoolContract,
+    getMomentoPrizes,
     abi,
     contract,
     address: contractAddress,
@@ -131,6 +156,8 @@ export const useMomentoContract = () => {
     burnTicket,
     getPrize,
     getAllUserPrizes,
+    isBurnTicketConfirmed,
+    setIsBurnTicketConfirmed,
     isGetPrizeConfirmed,
     setIsGetPrizeConfirmed,
   };

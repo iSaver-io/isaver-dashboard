@@ -12,3 +12,11 @@ export const getExplorerLink = (chain?: Chain, hash?: string, isAddress?: boolea
 
   return `https://mumbai.polygonscan.com/${type}/${hash}`;
 };
+
+export const getOpenseaLink = (contract: string, tokenId: string, chain?: Chain) => {
+  if (chain?.id === polygon.id) {
+    return `https://opensea.io/assets/matic/${contract}/${tokenId}`;
+  }
+
+  return `https://testnets.opensea.io/assets/mumbai/${contract}/${tokenId}`;
+};

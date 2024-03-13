@@ -14,6 +14,8 @@ import {
 import { useNetwork } from 'wagmi';
 
 import { Button } from '@/components/ui/Button/Button';
+import { CenteredSpinner } from '@/components/ui/CenteredSpinner/CenteredSpinner';
+import { ExportButton } from '@/components/ui/ExportButton/ExportButton';
 import { SortableTh } from '@/components/ui/Table/SortableTh';
 import { Table } from '@/components/ui/Table/Table';
 import { SortType, useDataSorting } from '@/hooks/useDataSorting';
@@ -22,9 +24,6 @@ import { exportToExcel } from '@/utils/exportToExcel';
 import { formatHistoryEventsToExport } from '@/utils/formatters/formatHistoryEventsToExport';
 import { getExplorerLink } from '@/utils/getExplorerLink';
 import { getLocalDateTimeString } from '@/utils/time';
-
-import { CenteredSpinner } from '../ui/CenteredSpinner/CenteredSpinner';
-import { ExportButton } from '../ui/ExportButton/ExportButton';
 
 const COLLAPSED_LIMIT = 6;
 
@@ -64,7 +63,7 @@ export const HistoryTable = () => {
   }, [events]);
 
   return (
-    <Box className="history">
+    <Box className="momento__history">
       <Flex justifyContent="center" position="relative">
         <Box textAlign="center" mb={{ sm: '20px', lg: '30px', xl: '50px', '2xl': '63px' }}>
           <Text textStyle="h2" as="h2" textTransform="uppercase">
@@ -75,6 +74,7 @@ export const HistoryTable = () => {
           <ExportButton onClick={exportData} event="avatarSettings" buttonLocation="up" />
         </Box>
       </Flex>
+
       <Box className="table-responsive-wrapper">
         <Table>
           <Thead>

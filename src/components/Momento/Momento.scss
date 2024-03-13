@@ -75,6 +75,7 @@
       transform-style: preserve-3d;
       transition: transform 0.5s;
       position: relative;
+      box-shadow: 3px 4px 20px black;
 
       &_description {
         a {
@@ -95,6 +96,7 @@
         transform: rotateY(0deg);
         padding: 14px;
         background-color: rgba(255, 255, 255, 0.1);
+        box-shadow: inset 2px 2px 4px rgba(255, 255, 255, 0.17);
       }
 
       .back {
@@ -117,12 +119,22 @@
       right: 8px;
     }
   }
+
+  &__history {
+    padding-bottom: 70px;
+  }
 }
 
 @media screen and (max-width: $xl2) {
-  .momento_otherPrizes {
-    &_card {
-      height: 380px;
+  .momento {
+    &_otherPrizes {
+      &_card {
+        height: 380px;
+      }
+    }
+
+    &__history {
+      padding-bottom: 40px;
     }
   }
 }
@@ -181,6 +193,10 @@
           margin-top: 16px;
         }
       }
+    }
+
+    &__history {
+      padding-bottom: 30px;
     }
   }
 }
