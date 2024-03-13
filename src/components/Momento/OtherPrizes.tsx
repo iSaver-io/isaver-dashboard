@@ -22,7 +22,9 @@ export const OtherPrizes = () => {
         className="momento_otherPrizes"
         templateColumns={{ base: 'repeat(2, 1fr)', md: 'repeat(3, 1fr)' }}
         gap={{ sm: '8px', xl: '20px', '2xl': '24px' }}
+        width={{ sm: '300px', md: '454px', xl: '970px', '2xl': '978px' }}
         mt={{ sm: '30px', '2xl': '50px' }}
+        mx="auto"
       >
         <Card
           image={PrizeImage1}
@@ -110,19 +112,26 @@ const Card = ({ image, title, description }: CardProps) => {
     }
   }, [bp]);
 
+  const isSm = ['sm', 'md', 'lg'].includes(bp);
+
   return (
     <Box
       onMouseEnter={bp !== 'sm' ? () => setIsFlipped(true) : undefined}
       onMouseLeave={bp !== 'sm' ? () => setIsFlipped(false) : undefined}
       onClick={toggleCard}
     >
-      <Box className={`momento_otherPrizes_card ${isFlipped ? 'flipped' : ''}`}>
+      <Box
+        className={`momento_otherPrizes_card ${isFlipped ? 'flipped' : ''} ${
+          isSm ? 'momento_otherPrizes_card__small' : ''
+        }`}
+      >
         <div className="front">
           <img src={image} alt={title} width="100%" />
           <Text
             className="momento_otherPrizes_card_title"
-            textStyle={{ base: 'note', xl: 'textBold' }}
-            mt={{ base: '12px', xl: '24px' }}
+            fontSize={isSm ? '12px' : '18px'}
+            fontWeight={isSm ? '400' : '700'}
+            mt={isSm ? '10px' : '25px'}
           >
             {title}
           </Text>

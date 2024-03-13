@@ -101,8 +101,9 @@ export const Prizes = () => {
         <Slider {...settings}>
           {cards.map((card, index) => (
             <Box
+              width={{ sm: '146px', xl: '310px' }}
               key={card.label + index.toString()}
-              px={{ sm: '5px', xl: '15px' }}
+              px={{ sm: '4px', xl: '10px' }}
               textAlign="center"
               onClick={() => handleOpenOpenseaPage(card)}
             >
