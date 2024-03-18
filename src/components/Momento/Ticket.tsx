@@ -37,18 +37,18 @@ export const Ticket = ({ tip, isActive, setActive }: TicketProps) => {
       alignItems="center"
       flexDir="column"
       mt={{ sm: '30px' }}
-      mb={!tip ? { sm: '34px', xl: '40px' } : undefined}
+      mb={!tip ? { base: '30px', lg: '0' } : undefined}
     >
       <Flex
         className="momento_ticket"
         justifyContent="center"
         alignItems="center"
-        px="40px"
+        px="55px"
         cursor={balance.data && !isActive ? 'pointer' : undefined}
         onClick={balance.data && !isActive ? handleClick : undefined}
       >
         {hasPendingRequest || isOracleResponseReady ? (
-          <img className="momento_ticket_image" src={TicketActiveImage} alt="Ticket" />
+          <img className="momento_ticket_image active" src={TicketActiveImage} alt="Ticket" />
         ) : isActive ? (
           <img className="momento_ticket_image" src={TicketImage} alt="Ticket" />
         ) : (
@@ -71,10 +71,10 @@ export const Ticket = ({ tip, isActive, setActive }: TicketProps) => {
                 </Flex>
               ) : (
                 // if first play
-                <Text textStyle="text1">Double-click to activate your Ticket</Text>
+                <Text textStyle="textSansSmall">Double-click to activate your Ticket</Text>
               )
             ) : (
-              <Text textStyle="text1">You need a Ticket to start</Text>
+              <Text textStyle="textSansSmall">You need a Ticket to&nbsp;start</Text>
             )}
           </>
         )}
@@ -82,6 +82,7 @@ export const Ticket = ({ tip, isActive, setActive }: TicketProps) => {
       {tip ? (
         <Text
           mt={{ sm: '20px', xl: '25px' }}
+          mb={{ base: '20px', lg: '0' }}
           fontSize={{ sm: '12px', xl: '16px' }}
           fontWeight={{ xl: '500' }}
         >

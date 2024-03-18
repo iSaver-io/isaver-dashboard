@@ -1,12 +1,12 @@
 @import '@/assets/styles/vars.scss';
 
 .background.momento-background {
-  background: url(./images/bg.jpg) repeat center center / cover !important;
+  background: url(./images/bg-xl.png) no-repeat top center / cover !important;
 }
 
 .momento {
   &_ticket {
-    width: 240px;
+    width: 237px;
     height: 145px;
     position: relative;
 
@@ -16,6 +16,11 @@
       position: absolute;
       top: 0;
       left: 0;
+
+      &.active {
+        height: calc(100% + 14px);
+        width: calc(100% + 14px);
+      }
     }
 
     p {
@@ -26,10 +31,15 @@
   &_prize {
     box-shadow: inset 2px 2px 4px 0px rgba(255, 255, 255, 0.17), 3px 4px 20px 0px rgba(0, 0, 0, 0.6);
     background: rgba(255, 255, 255, 0.1);
-    width: 250px;
-    height: 250px;
+    width: 100%;
+    height: 100%;
     border-radius: 6px;
     padding: 10px;
+
+    &_container {
+      width: 290px;
+      height: 290px;
+    }
 
     img {
       width: 100%;
@@ -40,6 +50,11 @@
 
   &_mainSlider {
     background: url(./images/slider-bg.png) center center / cover no-repeat;
+    overflow: hidden;
+
+    .slick-list {
+      overflow: visible !important;
+    }
   }
 
   &_line {
@@ -162,8 +177,10 @@
 @media screen and (max-width: $xl) {
   .momento {
     &_prize {
-      width: 130px;
-      height: 130px;
+      &_container {
+        width: 130px;
+        height: 130px;
+      }
     }
 
     &_otherPrizes {
@@ -190,6 +207,10 @@
 }
 
 @media screen and (max-width: $lg) {
+  .background.momento-background {
+    background: url(./images/bg-lg.png) repeat top center / cover !important;
+  }
+
   .momento {
     &_actions {
       .chakra-button {
@@ -212,10 +233,21 @@
 }
 
 @media screen and (max-width: $md) {
+  .background.momento-background {
+    background: url(./images/bg-md.png) repeat top center / cover !important;
+  }
+
   .momento {
     &_prize {
       width: 80px;
       height: 80px;
     }
+  }
+}
+
+
+@media screen and (max-width: $sm) {
+  .background.momento-background {
+    background: url(./images/bg-sm.png) repeat top center / cover !important;
   }
 }

@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import { ArrowBackIcon } from '@chakra-ui/icons';
-import { Box, Button, Flex, Link, Text, useDisclosure } from '@chakra-ui/react';
+import { Box, Button, Container, Flex, Link, Text, useDisclosure } from '@chakra-ui/react';
 import { useAccount } from 'wagmi';
 
 import { useBuyTickets, useTicketPrice } from '@/hooks/raffle/useRaffle';
@@ -12,7 +12,6 @@ import { useTicketsBalance } from '@/hooks/useTicketsBalance';
 import { BuyRaffleTicketsModal } from '../Raffle/BuyRaffleTicketsModal';
 
 import { MainSlider } from './MainSlider';
-import { MomentoPrize } from './MomentoPrize';
 import { Ticket } from './Ticket';
 
 export const Main = () => {
@@ -75,116 +74,146 @@ export const Main = () => {
   }, [getPrize.data, address]);
 
   return (
-    <Box>
-      <Link
-        as={RouterLink}
-        to="/"
-        textStyle="button"
-        alignSelf="flex-start"
-        mb={{ sm: '30px', '2xl': '40px' }}
-        display={{ base: 'none', lg: 'block' }}
-      >
-        <ArrowBackIcon w="24px" h="24px" mr="10px" />
-        Back
-      </Link>
-      <Box textAlign="center">
-        <Text textStyle="h1" as="h1" fontSize={{ sm: '26px', md: '38px', xl: '90px' }} margin={0}>
-          MOMENTO
-        </Text>
-        <Text textStyle="text1" mt="20px" maxW="600px" mx="auto">
-          Instant{' '}
-          <Text as="span" color="sav">
-            Win-Win
-          </Text>{' '}
-          Raffle of various NFTs and SAVR tokens. Anyone with iSaver Raffle Tickets can join the fun
-          and win exciting{' '}
-          <Text as="span" color="sav">
-            prizes
-          </Text>
-        </Text>
-        <Flex
-          mt={{ base: '24px', lg: '36px' }}
-          alignItems="center"
-          justifyContent="center"
-          gap="24px"
-        >
-          <Text textStyle="menuDefault">Your Tickets: </Text>
-          <Text textStyle="heading1">{balance || 0}</Text>
-        </Flex>
-        <Flex
-          className="momento_actions prevent-select"
-          alignItems="center"
-          justifyContent="space-around"
-          gap="24px"
-          flexDir={{ base: 'column', lg: 'row' }}
-        >
-          <Flex flexDir={{ base: 'row', lg: 'column' }} gap={{ base: '20px', lg: '8px' }}>
-            <Button
-              w="160px"
-              variant="outlinedWhite"
-              onClick={handleNavigateToClaimTickets}
-              size={{ base: 'md', lg: 'lg' }}
+    <>
+      <Container className="momento" variant="dashboard">
+        <Box>
+          <Link
+            as={RouterLink}
+            to="/"
+            textStyle="button"
+            alignSelf="flex-start"
+            mb="16px"
+            display={{ base: 'none', lg: 'block' }}
+          >
+            <ArrowBackIcon w="24px" h="24px" mr="10px" />
+            Back
+          </Link>
+          <Box textAlign="center">
+            <Text
+              textStyle="h1"
+              as="h1"
+              fontSize={{ sm: '26px', md: '38px', xl: '90px' }}
+              margin={0}
             >
-              mint ticket
-            </Button>
-            <Text textStyle="text2" display={{ base: 'none', lg: 'block' }}>
-              OR
+              MOMENTO
             </Text>
-            <Button
-              w="160px"
-              variant="outlinedGreen"
-              onClick={onOpen}
-              size={{ base: 'md', lg: 'lg' }}
+            <Text
+              textStyle={{ base: 'note', lg: 'text1' }}
+              mt="20px"
+              maxW={{ base: '290px', md: '360px', lg: '460px', xl: '600px' }}
+              mx="auto"
             >
-              buy tickets
-            </Button>
-          </Flex>
-          <Ticket tip={ticketTip} isActive={isActive} setActive={setActive} />
-          <Flex flexDir={{ base: 'row', lg: 'column' }} gap={{ base: '20px', lg: '8px' }}>
-            <Button
-              w="160px"
-              isDisabled={
-                !isActive ||
-                Boolean(hasPendingRequest) ||
-                Boolean(isOracleResponseReady) ||
-                getPrize.isLoading
-              }
-              size={{ base: 'md', lg: 'lg' }}
-              onClick={() => burnTicket.mutateAsync()}
-              isLoading={
-                burnTicket.isLoading || (Boolean(hasPendingRequest) && !isOracleResponseReady)
-              }
-            >
-              Burn
-            </Button>
-            <Text textStyle="text2" display={{ base: 'none', lg: 'block' }}>
-              AND
+              Instant{' '}
+              <Text as="span" color="sav" fontWeight={{ base: '600', lg: '400' }}>
+                Win-Win
+              </Text>{' '}
+              Raffle of various NFTs and SAVR tokens. Anyone with iSaver Raffle Tickets can join the
+              fun and win exciting{' '}
+              <Text as="span" color="sav" fontWeight={{ base: '600', lg: '400' }}>
+                prizes
+              </Text>
             </Text>
-            <Button
-              w="160px"
-              isDisabled={!isOracleResponseReady}
-              size={{ base: 'md', lg: 'lg' }}
-              onClick={() => getPrize.mutateAsync()}
-              isLoading={getPrize.isLoading}
+            <Flex
+              mt={{ base: '30px', xl: '40px', '2xl': '36px' }}
+              alignItems="center"
+              justifyContent="center"
+              gap={{ base: '15px', xl: '24px' }}
             >
-              Go!
-            </Button>
-          </Flex>
-        </Flex>
-      </Box>
-      {getPrize.data ? (
-        <MomentoPrize prizeInfo={getPrize.data} />
-      ) : (
-        <MainSlider isLoading={isGetPrizeConfirmed} />
-      )}
-      {isOpen ? (
-        <BuyRaffleTicketsModal
-          isPageView
-          ticketPrice={ticketPrice}
-          onBuy={buyTickets.mutateAsync}
-          onClose={onClose}
+              <Text textStyle={{ base: 'body1', xl: 'menuDefault' }}>Your Tickets: </Text>
+              <Text
+                textStyle={{ base: 'menuDefault', xl: 'body1' }}
+                fontSize={{ base: '26px', xl: '55px' }}
+              >
+                {balance || 0}
+              </Text>
+            </Flex>
+            <Flex
+              className="momento_actions prevent-select"
+              alignItems="center"
+              justifyContent="center"
+              gap={{ lg: '50px', xl: '115px', '2xl': '150px' }}
+              flexDir={{ base: 'column', lg: 'row' }}
+              mt={{ base: '30px', lg: '0' }}
+            >
+              <Flex flexDir={{ base: 'row', lg: 'column' }} gap={{ base: '20px', lg: '8px' }}>
+                <Button
+                  w={{ base: '120px', xl: '160px' }}
+                  h={{ base: '30px', xl: '45px' }}
+                  size={{ base: 'sm', xl: 'md' }}
+                  fontSize="12px !important"
+                  variant="outlinedWhite"
+                  onClick={handleNavigateToClaimTickets}
+                >
+                  mint ticket
+                </Button>
+                <Text textStyle="textSansSmall" display={{ base: 'none', lg: 'block' }}>
+                  OR
+                </Text>
+                <Button
+                  w={{ base: '120px', xl: '160px' }}
+                  h={{ base: '30px', xl: '45px' }}
+                  size={{ base: 'sm', xl: 'md' }}
+                  fontSize="12px !important"
+                  variant="outlinedGreen"
+                  onClick={onOpen}
+                >
+                  buy tickets
+                </Button>
+              </Flex>
+              <Ticket tip={ticketTip} isActive={isActive} setActive={setActive} />
+              <Flex flexDir={{ base: 'row', lg: 'column' }} gap={{ base: '20px', lg: '8px' }}>
+                <Button
+                  w={{ base: '120px', xl: '160px' }}
+                  h={{ base: '30px', xl: '45px' }}
+                  size={{ base: 'sm', xl: 'md' }}
+                  fontSize="12px !important"
+                  isDisabled={
+                    !isActive ||
+                    Boolean(hasPendingRequest) ||
+                    Boolean(isOracleResponseReady) ||
+                    getPrize.isLoading
+                  }
+                  onClick={() => burnTicket.mutateAsync()}
+                  isLoading={
+                    burnTicket.isLoading || (Boolean(hasPendingRequest) && !isOracleResponseReady)
+                  }
+                >
+                  Burn
+                </Button>
+                <Text textStyle="textSansSmall" display={{ base: 'none', lg: 'block' }}>
+                  AND
+                </Text>
+                <Button
+                  w={{ base: '120px', xl: '160px' }}
+                  h={{ base: '30px', xl: '45px' }}
+                  size={{ base: 'sm', xl: 'md' }}
+                  fontSize="12px !important"
+                  isDisabled={!isOracleResponseReady}
+                  onClick={() => getPrize.mutateAsync()}
+                  isLoading={getPrize.isLoading}
+                >
+                  Go!
+                </Button>
+              </Flex>
+            </Flex>
+          </Box>
+          {isOpen ? (
+            <BuyRaffleTicketsModal
+              isPageView
+              ticketPrice={ticketPrice}
+              onBuy={buyTickets.mutateAsync}
+              onClose={onClose}
+            />
+          ) : null}
+        </Box>
+      </Container>
+      <Box h={{ base: '220px', xl: '460px' }}>
+        <MainSlider
+          isSuccess={getPrize.isSuccess}
+          isLoading={isGetPrizeConfirmed}
+          prizeInfo={getPrize.data}
         />
-      ) : null}
-    </Box>
+      </Box>
+    </>
   );
 };
