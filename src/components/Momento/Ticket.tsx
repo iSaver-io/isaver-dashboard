@@ -79,16 +79,17 @@ export const Ticket = ({ tip, isActive, setActive }: TicketProps) => {
           </>
         )}
       </Flex>
-      {tip ? (
-        <Text
-          mt={{ sm: '20px', xl: '25px' }}
-          mb={{ base: '20px', lg: '0' }}
-          fontSize={{ sm: '12px', xl: '16px' }}
-          fontWeight={{ xl: '500' }}
-        >
-          {tip}
-        </Text>
-      ) : null}
+
+      <Text
+        display={{ sm: tip ? 'unset' : 'none', lg: 'unset' }}
+        mt={{ sm: '20px', xl: '25px' }}
+        mb={{ base: '20px', lg: '0' }}
+        height={{ sm: '18px', xl: '24px' }}
+        fontSize={{ sm: '12px', xl: '16px' }}
+        fontWeight={{ xl: '500' }}
+      >
+        {tip || ''}
+      </Text>
     </Flex>
   );
 };

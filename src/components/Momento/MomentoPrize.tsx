@@ -121,10 +121,10 @@ const SavrTokens = ({ amount }: Pick<PrizeInfo, 'amount'>) => {
 
 const Powers = ({ tokenId }: Pick<PrizeInfo, 'tokenId'>) => {
   const powerPrizes: Record<number, any> = {
-    1: powerAPrize,
-    2: powerBPrize,
-    3: powerCPrize,
-    4: powerDPrize,
+    0: powerAPrize,
+    1: powerBPrize,
+    2: powerCPrize,
+    3: powerDPrize,
   };
 
   return (
@@ -161,7 +161,7 @@ const Ticket = ({ amount }: Pick<PrizeInfo, 'amount'>) => {
         right={0}
         bottom={0}
       >
-        {amount.toString()}
+        x{amount.toString()}
       </Text>
     </PrizeCard>
   );

@@ -66,6 +66,13 @@ export const MainSlider = ({ isLoading, isSuccess, prizeInfo }: MainSliderProps)
   });
 
   useEffect(() => {
+    if (!isLoading && !isSuccess && !prizeInfo) {
+      setShowPrize(false);
+      setHideCard(false);
+    }
+  }, [isLoading, isSuccess, prizeInfo]);
+
+  useEffect(() => {
     if (isLoading) {
       setAutoplaySpeed(180);
     }

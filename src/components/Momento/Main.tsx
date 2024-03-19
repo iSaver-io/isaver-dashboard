@@ -5,7 +5,7 @@ import { Box, Button, Container, Flex, Link, Text, useDisclosure } from '@chakra
 import { useAccount } from 'wagmi';
 
 import { useBuyTickets, useTicketPrice } from '@/hooks/raffle/useRaffle';
-import { useMomento } from '@/hooks/useMomento';
+import { PrizeInfo, useMomento } from '@/hooks/useMomento';
 import { useNavigateByHash } from '@/hooks/useNavigateByHash';
 import { useTicketsBalance } from '@/hooks/useTicketsBalance';
 
@@ -17,6 +17,8 @@ import { Ticket } from './Ticket';
 export const Main = () => {
   const [isActive, setActive] = useState(false);
   const [ticketTip, setTicketTip] = useState('');
+  const [isSuccessGetPrize, setIsSuccessGetPrize] = useState(false);
+  const [prizeInfo, setPrizeInfo] = useState<PrizeInfo>();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const buyTickets = useBuyTickets();
   const { data: balance } = useTicketsBalance();
@@ -68,10 +70,25 @@ export const Main = () => {
   ]);
 
   useEffect(() => {
-    if (getPrize.data || address || !address) {
+    setActive(false);
+    setTicketTip('');
+  }, [address]);
+
+  useEffect(() => {
+    if (getPrize.data) {
       setActive(false);
+      setTicketTip('');
     }
-  }, [getPrize.data, address]);
+    setPrizeInfo(getPrize.data);
+    setIsSuccessGetPrize(getPrize.isSuccess);
+  }, [getPrize.data, getPrize.isSuccess]);
+
+  useEffect(() => {
+    if (isActive) {
+      setPrizeInfo(undefined);
+      setIsSuccessGetPrize(false);
+    }
+  }, [isActive]);
 
   return (
     <>
@@ -209,9 +226,9 @@ export const Main = () => {
       </Container>
       <Box h={{ base: '220px', xl: '460px' }}>
         <MainSlider
-          isSuccess={getPrize.isSuccess}
+          isSuccess={isSuccessGetPrize}
           isLoading={isGetPrizeConfirmed}
-          prizeInfo={getPrize.data}
+          prizeInfo={prizeInfo}
         />
       </Box>
     </>
