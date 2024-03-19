@@ -304,34 +304,41 @@ export const useActiveStakingPlansWithUserInfo = () => {
               (s) => s.data?.[0]?.stakingPlanId === plan.stakingPlanId
             )?.data;
 
-            const { totalReward, totalDeposit, totalAvailableReward } = stakes
-              ? stakes.reduce(
-                  (acc, stake) => {
-                    if (stake.isClaimed) {
+            const { totalReward, totalDeposit, totalAvailableReward, totalAvailableDeposit } =
+              stakes
+                ? stakes.reduce(
+                    (acc, stake) => {
+                      if (stake.isClaimed) {
+                        return acc;
+                      }
+
+                      if (!stake.isSAVRToken) {
+                        acc.totalDeposit = acc.totalDeposit.add(stake.amount);
+                      }
+                      acc.totalReward = acc.totalReward.add(stake.profit);
+
+                      if (stake.timeEnd.toNumber() < Date.now() / 1000) {
+                        acc.totalAvailableReward = acc.totalAvailableReward.add(stake.profit);
+                        if (!stake.isSAVRToken) {
+                          acc.totalAvailableDeposit = acc.totalAvailableDeposit.add(stake.amount);
+                        }
+                      }
+
                       return acc;
+                    },
+                    {
+                      totalReward: BigNumber.from(0),
+                      totalDeposit: BigNumber.from(0),
+                      totalAvailableReward: BigNumber.from(0),
+                      totalAvailableDeposit: BigNumber.from(0),
                     }
-                    if (!stake.isSAVRToken) {
-                      acc.totalDeposit = acc.totalDeposit.add(stake.amount);
-                    }
-                    acc.totalReward = acc.totalReward.add(stake.profit);
-
-                    if (stake.timeEnd.toNumber() < Date.now() / 1000) {
-                      acc.totalAvailableReward = stake.profit;
-                    }
-
-                    return acc;
-                  },
-                  {
-                    totalReward: BigNumber.from(0),
-                    totalAvailableReward: BigNumber.from(0),
-                    totalDeposit: BigNumber.from(0),
-                  }
-                )
-              : {
-                  totalReward: undefined,
-                  totalDeposit: undefined,
-                  totalAvailableReward: undefined,
-                };
+                  )
+                : {
+                    totalReward: undefined,
+                    totalDeposit: undefined,
+                    totalAvailableReward: undefined,
+                    totalAvailableDeposit: undefined,
+                  };
 
             const hasReadyStakes = stakes?.some(
               (stake) => stake.timeEnd.toNumber() <= currentTime && !stake.isClaimed
@@ -342,8 +349,9 @@ export const useActiveStakingPlansWithUserInfo = () => {
               ...userPlansInfoRequest.data?.[index],
               isSubscriptionEnding,
               totalReward,
-              totalAvailableReward,
               totalDeposit,
+              totalAvailableReward,
+              totalAvailableDeposit,
               stakes,
               hasReadyStakes,
             };
@@ -534,7 +542,7 @@ export const useStakingActions = () => {
       success({
         title: 'Success',
         description: getWithdrawMessage(
-          stakingPlan?.totalDeposit,
+          stakingPlan?.totalAvailableDeposit,
           stakingPlan?.totalAvailableReward
         ),
         txHash,
