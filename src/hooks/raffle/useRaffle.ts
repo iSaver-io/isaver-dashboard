@@ -9,6 +9,7 @@ import { CreateRaffleProps, useRaffleContract } from '@/hooks/contracts/useRaffl
 import { useTicketContract } from '@/hooks/contracts/useTicketContract';
 import { TOKENS } from '@/hooks/contracts/useTokenContract';
 import { useNotification } from '@/hooks/useNotification';
+import { TICKET_BALANCE_REQUEST } from '@/hooks/useTicketsBalance';
 import { SAV_BALANCE_REQUEST } from '@/hooks/useTokenBalance';
 import { useTokens } from '@/hooks/useTokens';
 import { parseRaffleFormat } from '@/utils/formatters/raffle';
@@ -17,7 +18,6 @@ import { bigNumberToString } from '@/utils/number';
 import { EXTRA_TICKETS_POWER_D_REQUEST } from './useRaffleMiniGame';
 import { useRaffleRoundAdditionalData } from './useRaffleRoundAdditionalData';
 
-export const TICKET_BALANCE_REQUEST = 'ticket-balance-request';
 const RAFFLE_ROUNDS_REQUEST = 'raffle-rounds-request';
 const RAFFLE_TICKET_PRICE_REQUEST = 'raffle-ticket-price-request';
 const RAFFLE_WINNER_PRIZE_REQUEST = 'raffle-winner-prize-request';
@@ -169,27 +169,27 @@ export const useRaffleControl = () => {
 
 export const useRaffle = () => {
   const { address: account } = useAccount();
-
-  const queryClient = useQueryClient();
   const raffleContract = useRaffleContract();
-  const { ticketPrice } = useTicketPrice();
   const ticketContract = useTicketContract();
-  const { success, handleError } = useNotification();
-  const tokens = useTokens();
 
   const userTotalPrizeRequest = useQuery([RAFFLE_WINNER_PRIZE_REQUEST, { account }], async () => {
     return account ? await raffleContract.getWinnerTotalPrize(account) : null;
   });
 
-  const ticketBalanceRequest = useQuery(
-    [TICKET_BALANCE_REQUEST, { account }],
-    async () => {
-      return account ? await ticketContract.balanceOf(account) : null;
-    },
-    {
-      select: (data) => data?.toNumber(),
-    }
-  );
+  return {
+    raffleContract,
+    ticketContract,
+
+    userTotalPrizeRequest,
+  };
+};
+
+export const useBuyTickets = () => {
+  const queryClient = useQueryClient();
+  const raffleContract = useRaffleContract();
+  const { ticketPrice } = useTicketPrice();
+  const { success, handleError } = useNotification();
+  const tokens = useTokens();
 
   const buyTickets = useMutation(
     [BUY_TICKETS_MUTATION],
@@ -212,12 +212,5 @@ export const useRaffle = () => {
     }
   );
 
-  return {
-    raffleContract,
-    ticketContract,
-
-    userTotalPrizeRequest,
-    ticketBalanceRequest,
-    buyTickets,
-  };
+  return buyTickets;
 };

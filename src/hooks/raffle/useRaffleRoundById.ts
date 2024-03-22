@@ -5,9 +5,9 @@ import { useAccount } from 'wagmi';
 
 import { useRaffleContract } from '@/hooks/contracts/useRaffleContract';
 import { useTicketContract } from '@/hooks/contracts/useTicketContract';
-import { TICKET_BALANCE_REQUEST } from '@/hooks/raffle/useRaffle';
 import { useConnectWallet } from '@/hooks/useConnectWallet';
 import { useNotification } from '@/hooks/useNotification';
+import { TICKET_BALANCE_REQUEST } from '@/hooks/useTicketsBalance';
 import { parseRaffleFormat } from '@/utils/formatters/raffle';
 
 import { useRaffleRoundAdditionalData } from './useRaffleRoundAdditionalData';

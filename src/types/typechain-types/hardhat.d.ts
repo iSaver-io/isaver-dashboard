@@ -293,6 +293,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.VRFCoordinatorMock__factory>;
     getContractFactory(
+      name: "Momento",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.Momento__factory>;
+    getContractFactory(
       name: "Raffles",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.Raffles__factory>;
@@ -695,6 +699,11 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.VRFCoordinatorMock>;
+    getContractAt(
+      name: "Momento",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.Momento>;
     getContractAt(
       name: "Raffles",
       address: string,

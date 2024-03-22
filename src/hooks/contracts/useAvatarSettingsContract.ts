@@ -1,6 +1,5 @@
 import { Interface } from '@ethersproject/abi';
 import { Log } from 'alchemy-sdk';
-import EthDater from 'ethereum-block-by-date';
 import { BigNumberish, Event } from 'ethers';
 import { Address, useContract, useProvider, useSigner } from 'wagmi';
 
@@ -24,7 +23,6 @@ const powerActivationLabels: Record<number, string> = {
 export const useAvatarSettingsContract = () => {
   const { data: signer } = useSigner();
   const provider = useProvider();
-  const dater = new EthDater(provider);
 
   const { address: avatarSettingsAddress, abi } = useContractAbi({
     contract: ContractsEnum.AvatarSettings,

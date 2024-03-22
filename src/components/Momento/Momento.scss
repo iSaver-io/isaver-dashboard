@@ -1,0 +1,253 @@
+@import '@/assets/styles/vars.scss';
+
+.background.momento-background {
+  background: url(./images/bg-xl.png) no-repeat top center / cover !important;
+}
+
+.momento {
+  &_ticket {
+    width: 237px;
+    height: 145px;
+    position: relative;
+
+    &_image {
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      top: 0;
+      left: 0;
+
+      &.active {
+        height: calc(100% + 14px);
+        width: calc(100% + 14px);
+      }
+    }
+
+    p {
+      z-index: 1;
+    }
+  }
+
+  &_prize {
+    box-shadow: inset 2px 2px 4px 0px rgba(255, 255, 255, 0.17), 3px 4px 20px 0px rgba(0, 0, 0, 0.6);
+    background: rgba(255, 255, 255, 0.1);
+    width: 100%;
+    height: 100%;
+    border-radius: 6px;
+    padding: 10px;
+
+    &_container {
+      width: 290px;
+      height: 290px;
+    }
+
+    img {
+      width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+    }
+  }
+
+  &_mainSlider {
+    background: url(./images/slider-bg.png) center center / cover no-repeat;
+    overflow: hidden;
+
+    .slick-list {
+      overflow: visible !important;
+    }
+  }
+
+  &_line {
+    margin: 8px auto 0;
+    max-width: 780px;
+    width: 100%;
+    height: 4px;
+    background: linear-gradient(to right, transparent 20%, #a5ed5d 50%, transparent 80%);
+  }
+
+  &_prizes {
+    .slick-slider {
+      .slick-next {
+        right: -70px;
+      }
+
+      .slick-prev {
+        left: -70px;
+      }
+    }
+
+    img {
+      width: 100%;
+      height: 100%;
+    }
+  }
+
+  &_otherPrizes {
+    $this: &;
+
+    &_backside {
+      position: absolute;
+      bottom: 9px;
+      right: 9px;
+      width: 38px;
+      height: 31px;
+    }
+
+    &_card {
+      height: 380px;
+      width: 310px;
+
+      perspective: 1000px;
+      transform-style: preserve-3d;
+      transition: transform 0.5s;
+      position: relative;
+      box-shadow: 3px 4px 20px black;
+      border-radius: 6px;
+
+      &__small {
+        height: 190px;
+        width: 146px;
+
+        #{$this}_backside {
+          bottom: 5px;
+          right: 5px;
+          width: 27px;
+          height: 19px;
+        }
+
+        .front {
+          padding: 8px;
+        }
+      }
+
+      &_description {
+        a {
+          color: $color-blue;
+        }
+      }
+
+      .front,
+      .back {
+        position: absolute;
+        height: 100%;
+        width: 100%;
+        backface-visibility: hidden;
+        border-radius: 6px;
+        overflow: hidden;
+      }
+
+      .front {
+        transform: rotateY(0deg);
+        padding: 15px;
+        background-color: rgba(255, 255, 255, 0.1);
+        box-shadow: inset 2px 2px 4px rgba(255, 255, 255, 0.17);
+
+        img {
+          border-radius: 5px;
+        }
+      }
+
+      .back {
+        transform: rotateY(180deg);
+        padding: 12px;
+        background: linear-gradient(to bottom right, #163d31, #2d969a 40%, #19221f);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      }
+
+      &.flipped {
+        transform: rotateY(180deg);
+      }
+    }
+  }
+
+  &__history {
+    padding-bottom: 70px;
+  }
+}
+
+@media screen and (max-width: $xl2) {
+  .momento {
+    &__history {
+      padding-bottom: 40px;
+    }
+  }
+}
+@media screen and (max-width: $xl) {
+  .momento {
+    &_prize {
+      &_container {
+        width: 130px;
+        height: 130px;
+      }
+    }
+
+    &_otherPrizes {
+      &_card {
+        &_title {
+          font-size: 12px !important;
+        }
+
+        &_description {
+          font-size: 8px !important;
+        }
+
+        .front,
+        .back {
+          padding: 8px 8px 32px;
+        }
+      }
+
+      &_backside {
+        width: 28px;
+      }
+    }
+  }
+}
+
+@media screen and (max-width: $lg) {
+  .background.momento-background {
+    background: url(./images/bg-lg.png) repeat top center / cover !important;
+  }
+
+  .momento {
+    &_actions {
+      .chakra-button {
+        max-width: 140px !important;
+      }
+    }
+
+    &_prizes {
+      .slick-slider {
+        .slick-dots {
+          margin-top: 16px;
+        }
+      }
+    }
+
+    &__history {
+      padding-bottom: 30px;
+    }
+  }
+}
+
+@media screen and (max-width: $md) {
+  .background.momento-background {
+    background: url(./images/bg-md.png) repeat top center / cover !important;
+  }
+
+  .momento {
+    &_prize {
+      width: 80px;
+      height: 80px;
+    }
+  }
+}
+
+
+@media screen and (max-width: $sm) {
+  .background.momento-background {
+    background: url(./images/bg-sm.png) repeat top center / cover !important;
+  }
+}

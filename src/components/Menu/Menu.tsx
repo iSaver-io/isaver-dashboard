@@ -20,6 +20,7 @@ import { ReactComponent as CrossIcon } from '@/assets/images/icons/cross.svg';
 import { ReactComponent as GameboyIcon } from '@/assets/images/icons/gameboy.svg';
 import { ReactComponent as GraphIcon } from '@/assets/images/icons/graph.svg';
 import { ReactComponent as HouseIcon } from '@/assets/images/icons/house.svg';
+import { ReactComponent as MomentoIcon } from '@/assets/images/icons/momento.svg';
 import { ReactComponent as RocketIcon } from '@/assets/images/icons/rocket.svg';
 import { ReactComponent as StarsIcon } from '@/assets/images/icons/stars.svg';
 import { ReactComponent as TabletIcon } from '@/assets/images/icons/tablet.svg';
@@ -153,6 +154,11 @@ export const Menu = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void
             text="Raffles"
             icon={<RocketIcon />}
             onClick={() => handleNavigateWithLogger('/#raffles')}
+          />
+          <NavMenuItem
+            text="Momento"
+            icon={<MomentoIcon />}
+            onClick={() => handleNavigateWithLogger('/momento')}
           />
           <Divider mb="30px" borderBottomWidth="2px" borderColor="white" />
           <NavMenuItem

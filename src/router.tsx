@@ -5,6 +5,7 @@ import { AvatarSettings } from './components/AvatarSettings/AvatarSettings';
 import { Dashboard } from './components/Dashboard/Dashboard';
 import { ExchangePage } from './components/Exchange/ExchangePage';
 import { Layout } from './components/Layout/Layout';
+import { Momento } from './components/Momento/Momento';
 import { MyVesting } from './components/MyVeting/MyVesting';
 import { RafflePage } from './components/Raffle/RafflePage';
 import { StakingPage } from './components/Staking/StakingPage';
@@ -48,6 +49,7 @@ const appRoutes = [
   { path: '/vesting', name: 'Vesting', element: <MyVesting />, nodeRef: createRef() },
   { path: '/raffles/:id', name: 'Raffle', element: <RafflePage />, nodeRef: createRef() },
   { path: '/admin-panel', name: 'Admin panel', element: <AdminPanel />, nodeRef: createRef() },
+  { path: '/momento', name: 'Momento', element: <Momento />, nodeRef: createRef() },
   {
     path: '/avatar-settings',
     name: 'Avatar settings',

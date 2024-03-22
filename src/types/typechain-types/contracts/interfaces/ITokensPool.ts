@@ -23,16 +23,49 @@ import type {
 
 export interface ITokensPoolInterface extends utils.Interface {
   functions: {
+    "getPrizeFromOracleRandomForUser(address)": FunctionFragment;
+    "hasPendingRequest(address)": FunctionFragment;
+    "isLastRequestReady(address)": FunctionFragment;
     "requestPrize(address)": FunctionFragment;
   };
 
-  getFunction(nameOrSignatureOrTopic: "requestPrize"): FunctionFragment;
+  getFunction(
+    nameOrSignatureOrTopic:
+      | "getPrizeFromOracleRandomForUser"
+      | "hasPendingRequest"
+      | "isLastRequestReady"
+      | "requestPrize"
+  ): FunctionFragment;
 
+  encodeFunctionData(
+    functionFragment: "getPrizeFromOracleRandomForUser",
+    values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "hasPendingRequest",
+    values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "isLastRequestReady",
+    values: [string]
+  ): string;
   encodeFunctionData(
     functionFragment: "requestPrize",
     values: [string]
   ): string;
 
+  decodeFunctionResult(
+    functionFragment: "getPrizeFromOracleRandomForUser",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "hasPendingRequest",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "isLastRequestReady",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "requestPrize",
     data: BytesLike
@@ -68,11 +101,41 @@ export interface ITokensPool extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
+    getPrizeFromOracleRandomForUser(
+      sender: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
+
+    hasPendingRequest(
+      sender: string,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
+
+    isLastRequestReady(
+      sender: string,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
+
     requestPrize(
       arg0: string,
       overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
   };
+
+  getPrizeFromOracleRandomForUser(
+    sender: string,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  hasPendingRequest(
+    sender: string,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
+  isLastRequestReady(
+    sender: string,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
 
   requestPrize(
     arg0: string,
@@ -80,12 +143,42 @@ export interface ITokensPool extends BaseContract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
+    getPrizeFromOracleRandomForUser(
+      sender: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    hasPendingRequest(
+      sender: string,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
+    isLastRequestReady(
+      sender: string,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
     requestPrize(arg0: string, overrides?: CallOverrides): Promise<void>;
   };
 
   filters: {};
 
   estimateGas: {
+    getPrizeFromOracleRandomForUser(
+      sender: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+
+    hasPendingRequest(
+      sender: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    isLastRequestReady(
+      sender: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     requestPrize(
       arg0: string,
       overrides?: Overrides & { from?: string }
@@ -93,6 +186,21 @@ export interface ITokensPool extends BaseContract {
   };
 
   populateTransaction: {
+    getPrizeFromOracleRandomForUser(
+      sender: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    hasPendingRequest(
+      sender: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    isLastRequestReady(
+      sender: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     requestPrize(
       arg0: string,
       overrides?: Overrides & { from?: string }

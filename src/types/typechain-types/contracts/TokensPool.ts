@@ -73,12 +73,15 @@ export interface TokensPoolInterface extends utils.Interface {
     "getCategoryRemainingPrizes(uint256)": FunctionFragment;
     "getNonEmptyCategories()": FunctionFragment;
     "getPrizeFromOracleRandom()": FunctionFragment;
+    "getPrizeFromOracleRandomForUser(address)": FunctionFragment;
     "getRoleAdmin(bytes32)": FunctionFragment;
     "getTotalChance()": FunctionFragment;
     "grantRole(bytes32,address)": FunctionFragment;
     "hasActiveRequest(address)": FunctionFragment;
+    "hasPendingRequest(address)": FunctionFragment;
     "hasRole(bytes32,address)": FunctionFragment;
     "initialize(address,uint64,bytes32)": FunctionFragment;
+    "isLastRequestReady(address)": FunctionFragment;
     "onERC1155BatchReceived(address,address,uint256[],uint256[],bytes)": FunctionFragment;
     "onERC1155Received(address,address,uint256,uint256,bytes)": FunctionFragment;
     "onERC721Received(address,address,uint256,bytes)": FunctionFragment;
@@ -122,12 +125,15 @@ export interface TokensPoolInterface extends utils.Interface {
       | "getCategoryRemainingPrizes"
       | "getNonEmptyCategories"
       | "getPrizeFromOracleRandom"
+      | "getPrizeFromOracleRandomForUser"
       | "getRoleAdmin"
       | "getTotalChance"
       | "grantRole"
       | "hasActiveRequest"
+      | "hasPendingRequest"
       | "hasRole"
       | "initialize"
+      | "isLastRequestReady"
       | "onERC1155BatchReceived"
       | "onERC1155Received"
       | "onERC721Received"
@@ -222,6 +228,10 @@ export interface TokensPoolInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
+    functionFragment: "getPrizeFromOracleRandomForUser",
+    values: [string]
+  ): string;
+  encodeFunctionData(
     functionFragment: "getRoleAdmin",
     values: [BytesLike]
   ): string;
@@ -238,12 +248,20 @@ export interface TokensPoolInterface extends utils.Interface {
     values: [string]
   ): string;
   encodeFunctionData(
+    functionFragment: "hasPendingRequest",
+    values: [string]
+  ): string;
+  encodeFunctionData(
     functionFragment: "hasRole",
     values: [BytesLike, string]
   ): string;
   encodeFunctionData(
     functionFragment: "initialize",
     values: [string, BigNumberish, BytesLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "isLastRequestReady",
+    values: [string]
   ): string;
   encodeFunctionData(
     functionFragment: "onERC1155BatchReceived",
@@ -391,6 +409,10 @@ export interface TokensPoolInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "getPrizeFromOracleRandomForUser",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "getRoleAdmin",
     data: BytesLike
   ): Result;
@@ -403,8 +425,16 @@ export interface TokensPoolInterface extends utils.Interface {
     functionFragment: "hasActiveRequest",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "hasPendingRequest",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "hasRole", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "initialize", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "isLastRequestReady",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "onERC1155BatchReceived",
     data: BytesLike
@@ -804,6 +834,11 @@ export interface TokensPool extends BaseContract {
       overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
 
+    getPrizeFromOracleRandomForUser(
+      sender: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
+
     getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<[string]>;
 
     getTotalChance(overrides?: CallOverrides): Promise<[BigNumber]>;
@@ -815,6 +850,11 @@ export interface TokensPool extends BaseContract {
     ): Promise<ContractTransaction>;
 
     hasActiveRequest(
+      sender: string,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
+
+    hasPendingRequest(
       sender: string,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
@@ -831,6 +871,11 @@ export interface TokensPool extends BaseContract {
       keyHash: BytesLike,
       overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
+
+    isLastRequestReady(
+      sender: string,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
 
     onERC1155BatchReceived(
       arg0: string,
@@ -1028,6 +1073,11 @@ export interface TokensPool extends BaseContract {
     overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
 
+  getPrizeFromOracleRandomForUser(
+    sender: string,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
   getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<string>;
 
   getTotalChance(overrides?: CallOverrides): Promise<BigNumber>;
@@ -1039,6 +1089,11 @@ export interface TokensPool extends BaseContract {
   ): Promise<ContractTransaction>;
 
   hasActiveRequest(sender: string, overrides?: CallOverrides): Promise<boolean>;
+
+  hasPendingRequest(
+    sender: string,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
 
   hasRole(
     role: BytesLike,
@@ -1052,6 +1107,11 @@ export interface TokensPool extends BaseContract {
     keyHash: BytesLike,
     overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
+
+  isLastRequestReady(
+    sender: string,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
 
   onERC1155BatchReceived(
     arg0: string,
@@ -1247,6 +1307,11 @@ export interface TokensPool extends BaseContract {
 
     getPrizeFromOracleRandom(overrides?: CallOverrides): Promise<void>;
 
+    getPrizeFromOracleRandomForUser(
+      sender: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<string>;
 
     getTotalChance(overrides?: CallOverrides): Promise<BigNumber>;
@@ -1258,6 +1323,11 @@ export interface TokensPool extends BaseContract {
     ): Promise<void>;
 
     hasActiveRequest(
+      sender: string,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
+    hasPendingRequest(
       sender: string,
       overrides?: CallOverrides
     ): Promise<boolean>;
@@ -1274,6 +1344,11 @@ export interface TokensPool extends BaseContract {
       keyHash: BytesLike,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    isLastRequestReady(
+      sender: string,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
 
     onERC1155BatchReceived(
       arg0: string,
@@ -1609,6 +1684,11 @@ export interface TokensPool extends BaseContract {
       overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
 
+    getPrizeFromOracleRandomForUser(
+      sender: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+
     getRoleAdmin(
       role: BytesLike,
       overrides?: CallOverrides
@@ -1627,6 +1707,11 @@ export interface TokensPool extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    hasPendingRequest(
+      sender: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     hasRole(
       role: BytesLike,
       account: string,
@@ -1638,6 +1723,11 @@ export interface TokensPool extends BaseContract {
       subscriptionId: BigNumberish,
       keyHash: BytesLike,
       overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+
+    isLastRequestReady(
+      sender: string,
+      overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     onERC1155BatchReceived(
@@ -1839,6 +1929,11 @@ export interface TokensPool extends BaseContract {
       overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 
+    getPrizeFromOracleRandomForUser(
+      sender: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
     getRoleAdmin(
       role: BytesLike,
       overrides?: CallOverrides
@@ -1857,6 +1952,11 @@ export interface TokensPool extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    hasPendingRequest(
+      sender: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     hasRole(
       role: BytesLike,
       account: string,
@@ -1868,6 +1968,11 @@ export interface TokensPool extends BaseContract {
       subscriptionId: BigNumberish,
       keyHash: BytesLike,
       overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    isLastRequestReady(
+      sender: string,
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     onERC1155BatchReceived(
