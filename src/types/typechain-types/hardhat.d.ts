@@ -41,6 +41,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IERC1967Upgradeable__factory>;
     getContractFactory(
+      name: "IERC2981Upgradeable",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IERC2981Upgradeable__factory>;
+    getContractFactory(
       name: "IERC4906Upgradeable",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IERC4906Upgradeable__factory>;
@@ -76,6 +80,10 @@ declare module "hardhat/types/runtime" {
       name: "ERC1155BurnableUpgradeable",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.ERC1155BurnableUpgradeable__factory>;
+    getContractFactory(
+      name: "ERC1155SupplyUpgradeable",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ERC1155SupplyUpgradeable__factory>;
     getContractFactory(
       name: "IERC1155MetadataURIUpgradeable",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -385,6 +393,11 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.IERC1967Upgradeable>;
     getContractAt(
+      name: "IERC2981Upgradeable",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IERC2981Upgradeable>;
+    getContractAt(
       name: "IERC4906Upgradeable",
       address: string,
       signer?: ethers.Signer
@@ -429,6 +442,11 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.ERC1155BurnableUpgradeable>;
+    getContractAt(
+      name: "ERC1155SupplyUpgradeable",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ERC1155SupplyUpgradeable>;
     getContractAt(
       name: "IERC1155MetadataURIUpgradeable",
       address: string,

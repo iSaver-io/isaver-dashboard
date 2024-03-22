@@ -1,6 +1,6 @@
 import { BigNumber } from 'ethers';
 
-import { IStaking } from '@/types.common';
+import { IStaking } from './typechain-types';
 
 export * from './typechain-types';
 

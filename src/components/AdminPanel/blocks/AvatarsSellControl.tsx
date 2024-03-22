@@ -1,5 +1,15 @@
+import { Box, Flex, Text } from '@chakra-ui/react';
+
 import { AdminSection } from '@/components/AdminPanel/common/AdminSection';
-import { useAvatarsSell, useAvatarsSellControl, usePowerPrices } from '@/hooks/useAvatarsSell';
+import { CenteredSpinner } from '@/components/ui/CenteredSpinner/CenteredSpinner';
+import {
+  useAvatarSellStatistic,
+  useAvatarsSell,
+  useAvatarsSellControl,
+  usePowerPrices,
+} from '@/hooks/useAvatarsSell';
+import { POWERS_LIST } from '@/hooks/usePowers';
+import { bigNumberToNumber } from '@/utils/number';
 
 import { ControlField } from '../common/ControlField';
 
@@ -9,9 +19,45 @@ export const AvatarsSellControl = () => {
   const { updateBasePrice, updateInflationRate, updateInflationPeriod, updatePowerPrice } =
     useAvatarsSellControl();
 
+  const {
+    avatarsSold,
+    powersSold,
+    soldStatisticRequest: { isLoading },
+  } = useAvatarSellStatistic();
+
   return (
-    <AdminSection title="AvatarsSell">
+    <AdminSection title="Avatars Sell">
       <>
+        <Box mb="24px">
+          {isLoading ? <CenteredSpinner /> : null}
+
+          <Flex textStyle="text1" mb="10px">
+            <Text mr="12px" flex="200px 0 0">
+              Minted Avatars (SAV):
+            </Text>
+            <Text color="sav">
+              {avatarsSold
+                ? `${avatarsSold.amount} (${bigNumberToNumber(avatarsSold.cumulativeCost)})`
+                : '---'}
+            </Text>
+          </Flex>
+
+          {POWERS_LIST.map((power, index) => (
+            <Flex textStyle="text1" mb="10px" key={index}>
+              <Text mr="12px" flex="200px 0 0">
+                Minted Powers {power} (SAV):
+              </Text>
+              <Text color="sav">
+                {powersSold && powersSold[index]
+                  ? `${powersSold[index].amount} (${bigNumberToNumber(
+                      powersSold[index].cumulativeCost
+                    )})`
+                  : '---'}
+              </Text>
+            </Flex>
+          ))}
+        </Box>
+
         <ControlField
           label="Avatar base cost"
           value={basePrice}

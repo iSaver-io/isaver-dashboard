@@ -1,15 +1,38 @@
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import { addDoc, updateDoc } from 'firebase/firestore';
 
 import { auth, configDoc, rafflesCollection } from '@/modules/firebase';
 
-export const useDashboardConfigControl = () => {
+export const useFirebaseAuth = () => {
   const [user] = useAuthState(auth);
 
   const isAuthorized = Boolean(user);
 
+  const isAdmin = useMemo(
+    () => user && ['kAEYkPpIYBMMVcUP3xGy5tM3oP42'].includes(user?.uid),
+    [user]
+  );
+
+  const signIn = useCallback(() => {
+    const provider = new GoogleAuthProvider();
+    return signInWithPopup(auth, provider);
+  }, []);
+
+  const signOut = useCallback(() => {
+    return auth.signOut();
+  }, []);
+
+  return {
+    isAuthorized,
+    isAdmin,
+    signIn,
+    signOut,
+  };
+};
+
+export const useDashboardConfigControl = () => {
   const setIsExchangeSellEnabled = useCallback(async (value: boolean) => {
     return await updateDoc(configDoc, {
       isExchangeSellEnabled: value,
@@ -32,21 +55,9 @@ export const useDashboardConfigControl = () => {
     []
   );
 
-  const signIn = useCallback(() => {
-    const provider = new GoogleAuthProvider();
-    return signInWithPopup(auth, provider);
-  }, []);
-
-  const signOut = useCallback(() => {
-    return auth.signOut();
-  }, []);
-
   return {
-    isAuthorized,
     setIsExchangeSellEnabled,
     setTopNotification,
     setRaffleRoundParams,
-    signIn,
-    signOut,
   };
 };

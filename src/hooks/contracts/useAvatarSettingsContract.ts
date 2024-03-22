@@ -27,6 +27,7 @@ export const useAvatarSettingsContract = () => {
   const { address: avatarSettingsAddress, abi } = useContractAbi({
     contract: ContractsEnum.AvatarSettings,
   });
+  const avatarSettingsIface = new Interface(abi);
 
   const avatarSettings = useContract({
     address: avatarSettingsAddress,
@@ -34,7 +35,7 @@ export const useAvatarSettingsContract = () => {
     signerOrProvider: signer || provider,
   }) as unknown as AvatarSettings;
 
-  const getAllEvents = async (address: Address) => {
+  const getAllUserEvents = async (address: Address) => {
     const fetchEvents = async (filter: TypedEventFilter<TypedEvent<Event[]>>) =>
       alchemy.core.getLogs({ ...filter, fromBlock: FROM_BLOCK_EPISODE_2, toBlock: 'latest' });
 
@@ -72,8 +73,6 @@ export const useAvatarSettingsContract = () => {
         label: 'Birthday present claimed',
       },
     };
-
-    const avatarSettingsIface = new Interface(abi);
 
     let allEvents: LogWithEventName[] = [];
     for (const [key, filter] of Object.entries(filters)) {
@@ -127,6 +126,30 @@ export const useAvatarSettingsContract = () => {
     }
 
     return Array.from(activeCollections) as Address[];
+  };
+
+  const getActivatePowerEvents = async () => {
+    const filter = avatarSettings.filters.PowerActivated();
+
+    const fetchEvents = async (filter: TypedEventFilter<TypedEvent<Event[]>>) =>
+      alchemy.core.getLogs({ ...filter, fromBlock: FROM_BLOCK_EPISODE_2, toBlock: 'latest' });
+
+    const events = await fetchEvents(filter);
+
+    return events.map((event) => ({ ...event, ...avatarSettingsIface.parseLog(event) }));
+  };
+  const getDeactivateAvatarEvents = async () => {
+    const filter = avatarSettings.filters.AvatarDeactivated();
+
+    const fetchEvents = async (filter: TypedEventFilter<TypedEvent<Event[]>>) =>
+      alchemy.core.getLogs({ ...filter, fromBlock: FROM_BLOCK_EPISODE_2, toBlock: 'latest' });
+
+    const events = await fetchEvents(filter);
+    return events.map((event) => ({ ...event, ...avatarSettingsIface.parseLog(event) }));
+  };
+
+  const getStatistic = () => {
+    return avatarSettings.getStatistic();
   };
 
   const getActiveAvatar = async (owner: Address) => {
@@ -204,13 +227,16 @@ export const useAvatarSettingsContract = () => {
     getActiveAvatar,
     getPowerActivationFee,
     getUserPower,
+    getStatistic,
     activatePowerAccess,
     activateAvatar,
     activatePower,
     deactivateAvatar,
     setTokenName,
     setTokenTelegram,
-    getAllEvents,
+    getAllUserEvents,
+    getActivatePowerEvents,
+    getDeactivateAvatarEvents,
     isBirthdayPresentAvailable,
     claimBirthdayPresent,
     hasPowerA,

@@ -269,6 +269,21 @@ export const useAvatarsSell = () => {
   };
 };
 
+export const AVATARS_SELL_SOLD_STATISTIC_REQUEST = 'avatars-sell-sold-statistic-request';
+export const useAvatarSellStatistic = () => {
+  const avatarsSellContract = useAvatarsSellContract();
+
+  const soldStatisticRequest = useQuery(
+    [AVATARS_SELL_SOLD_STATISTIC_REQUEST],
+    async () => await avatarsSellContract.getSoldStatistic()
+  );
+
+  const avatarsSold = useMemo(() => soldStatisticRequest.data?.[0], [soldStatisticRequest.data]);
+  const powersSold = useMemo(() => soldStatisticRequest.data?.[1], [soldStatisticRequest.data]);
+
+  return { soldStatisticRequest, avatarsSold, powersSold };
+};
+
 export const useAvatarsSellControl = () => {
   const avatarsSellContract = useAvatarsSellContract();
   const queryClient = useQueryClient();

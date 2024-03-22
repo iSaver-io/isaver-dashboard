@@ -28,6 +28,9 @@ export const Addresses = () => {
         <AddressInfo title="Powers (ERC1155)" address={contracts.ISaverPowers} />
         <AddressInfo title="Sell avatars & powers" address={contracts.AvatarsSell} />
         <AddressInfo title="Avatar settings" address={contracts.AvatarSettings} />
+        <AddressInfo title="Birthday Present pool" address={contracts.BirthdayTokensPool} />
+        <AddressInfo title="Momento" address={contracts.Momento} />
+        <AddressInfo title="Momento Prizes pool" address={contracts.MomentoTokensPool} />
 
         <Text textStyle="textMedium" mt="20px" mb="8px" fontSize="18px">
           Accounts (Pools)

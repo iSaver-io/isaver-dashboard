@@ -22,6 +22,8 @@ export type { IERC1822ProxiableUpgradeable } from "./@openzeppelin/contracts-upg
 export { IERC1822ProxiableUpgradeable__factory } from "./factories/@openzeppelin/contracts-upgradeable/interfaces/draft-IERC1822Upgradeable.sol/IERC1822ProxiableUpgradeable__factory";
 export type { IERC1967Upgradeable } from "./@openzeppelin/contracts-upgradeable/interfaces/IERC1967Upgradeable";
 export { IERC1967Upgradeable__factory } from "./factories/@openzeppelin/contracts-upgradeable/interfaces/IERC1967Upgradeable__factory";
+export type { IERC2981Upgradeable } from "./@openzeppelin/contracts-upgradeable/interfaces/IERC2981Upgradeable";
+export { IERC2981Upgradeable__factory } from "./factories/@openzeppelin/contracts-upgradeable/interfaces/IERC2981Upgradeable__factory";
 export type { IERC4906Upgradeable } from "./@openzeppelin/contracts-upgradeable/interfaces/IERC4906Upgradeable";
 export { IERC4906Upgradeable__factory } from "./factories/@openzeppelin/contracts-upgradeable/interfaces/IERC4906Upgradeable__factory";
 export type { IBeaconUpgradeable } from "./@openzeppelin/contracts-upgradeable/proxy/beacon/IBeaconUpgradeable";
@@ -40,6 +42,8 @@ export type { ERC1155Upgradeable } from "./@openzeppelin/contracts-upgradeable/t
 export { ERC1155Upgradeable__factory } from "./factories/@openzeppelin/contracts-upgradeable/token/ERC1155/ERC1155Upgradeable__factory";
 export type { ERC1155BurnableUpgradeable } from "./@openzeppelin/contracts-upgradeable/token/ERC1155/extensions/ERC1155BurnableUpgradeable";
 export { ERC1155BurnableUpgradeable__factory } from "./factories/@openzeppelin/contracts-upgradeable/token/ERC1155/extensions/ERC1155BurnableUpgradeable__factory";
+export type { ERC1155SupplyUpgradeable } from "./@openzeppelin/contracts-upgradeable/token/ERC1155/extensions/ERC1155SupplyUpgradeable";
+export { ERC1155SupplyUpgradeable__factory } from "./factories/@openzeppelin/contracts-upgradeable/token/ERC1155/extensions/ERC1155SupplyUpgradeable__factory";
 export type { IERC1155MetadataURIUpgradeable } from "./@openzeppelin/contracts-upgradeable/token/ERC1155/extensions/IERC1155MetadataURIUpgradeable";
 export { IERC1155MetadataURIUpgradeable__factory } from "./factories/@openzeppelin/contracts-upgradeable/token/ERC1155/extensions/IERC1155MetadataURIUpgradeable__factory";
 export type { IERC1155ReceiverUpgradeable } from "./@openzeppelin/contracts-upgradeable/token/ERC1155/IERC1155ReceiverUpgradeable";
