@@ -38,9 +38,9 @@ export const MainSlider = ({ isLoading, isSuccess, prizeInfo }: MainSliderProps)
     pauseOnDotsHover: false,
     pauseOnFocus: false,
     pauseOnHover: false,
-    draggable: false,
+    // draggable: false,
     infinite: true,
-    touchMove: false,
+    // touchMove: false,
     autoplay: true,
 
     // autoplaySpeed: 100000000,
