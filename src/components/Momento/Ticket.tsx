@@ -1,5 +1,5 @@
 import { useCallback, useMemo } from 'react';
-import { Box, Flex, Text } from '@chakra-ui/react';
+import { Box, Flex, Text, useBreakpoint } from '@chakra-ui/react';
 
 import { ReactComponent as RepeatIcon } from '@/assets/images/icons/repeat.svg';
 import { useMomento } from '@/hooks/useMomento';
@@ -19,16 +19,18 @@ interface TicketProps {
 export const Ticket = ({ tip, isActive, setActive }: TicketProps) => {
   const balance = useTicketsBalance();
   const { hasPendingRequest, isOracleResponseReady } = useMomento();
+  const bp = useBreakpoint({ ssr: false });
 
   const isReplay = useMemo(() => !isActive && tip, [isActive, tip]);
+  const isSm = useMemo(() => ['sm', 'md', 'lg'].includes(bp), [bp]);
 
   const handleClick = useCallback(
     (event: any) => {
-      if (event.detail === 2 || (isReplay && event.detail === 1)) {
+      if (event.detail === 2 || ((isSm || isReplay) && event.detail === 1)) {
         setActive(true);
       }
     },
-    [isReplay, setActive]
+    [isReplay, isSm, setActive]
   );
 
   return (
@@ -71,7 +73,9 @@ export const Ticket = ({ tip, isActive, setActive }: TicketProps) => {
                 </Flex>
               ) : (
                 // if first play
-                <Text textStyle="textSansSmall">Double-click to activate your Ticket</Text>
+                <Text textStyle="textSansSmall">
+                  {isSm ? 'Click' : 'Double-click'} to activate your Ticket
+                </Text>
               )
             ) : (
               <Text textStyle="textSansSmall">You need a Ticket to&nbsp;start</Text>
