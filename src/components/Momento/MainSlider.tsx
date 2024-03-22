@@ -30,14 +30,25 @@ export const MainSlider = ({ isLoading, isSuccess, prizeInfo }: MainSliderProps)
     SliderMock,
     SliderMock,
     SliderMock,
+    SliderMock,
   ]);
   const [settings] = useState<Settings>({
-    infinite: true,
+    // easing: 'linear',
+    // focusOnSelect: false,
+    // pauseOnDotsHover: false,
+    // pauseOnFocus: false,
+    // pauseOnHover: false,
+    // draggable: false,
+    // infinite: true,
+    // touchMove: false,
+    // autoplay: true,
+
+    // autoplaySpeed: 100000000,
+    // speed: 500,
+
     slidesToShow: 5,
     slidesToScroll: 1,
-    autoplay: true,
     arrows: false,
-    pauseOnHover: false,
     adaptiveHeight: true,
     className: 'center',
     centerMode: true,

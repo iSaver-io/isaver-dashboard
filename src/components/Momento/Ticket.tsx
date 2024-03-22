@@ -2,6 +2,7 @@ import { useCallback, useMemo } from 'react';
 import { Box, Flex, Text, useBreakpoint } from '@chakra-ui/react';
 
 import { ReactComponent as RepeatIcon } from '@/assets/images/icons/repeat.svg';
+import { useImagePreloader } from '@/hooks/useImagePreloader';
 import { useMomento } from '@/hooks/useMomento';
 import { useTicketsBalance } from '@/hooks/useTicketsBalance';
 
@@ -16,6 +17,7 @@ interface TicketProps {
   setActive: (active: boolean) => void;
 }
 
+const images = [TicketImage, TicketActiveImage, TicketEmpty, TicketEmptyBorder];
 export const Ticket = ({ tip, isActive, setActive }: TicketProps) => {
   const balance = useTicketsBalance();
   const { hasPendingRequest, isOracleResponseReady } = useMomento();
@@ -32,6 +34,8 @@ export const Ticket = ({ tip, isActive, setActive }: TicketProps) => {
     },
     [isReplay, isSm, setActive]
   );
+
+  useImagePreloader(images);
 
   return (
     <Flex
