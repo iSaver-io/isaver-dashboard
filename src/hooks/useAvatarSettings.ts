@@ -1,15 +1,7 @@
 import { useEffect, useMemo } from 'react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { BigNumber, BigNumberish, ethers } from 'ethers';
-import {
-  Address,
-  erc721ABI,
-  useAccount,
-  useMutation,
-  useProvider,
-  useQuery,
-  useQueryClient,
-  useSigner,
-} from 'wagmi';
+import { Address, erc721ABI, useAccount, useMutation, useProvider, useSigner } from 'wagmi';
 import { getContract } from 'wagmi/actions';
 
 import { POWER_SUBSCRIPTION_ENDING_NOTIFICATION } from '@/components/AvatarSettings/PowerCard';

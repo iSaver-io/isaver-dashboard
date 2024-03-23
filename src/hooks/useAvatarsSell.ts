@@ -80,7 +80,7 @@ export const usePowerPrices = (ids: number[]) => {
 
   useQueries({
     queries: ids.map((id) => ({
-      queryKey: [POWER_PRICE_REQUEST, id],
+      queryKey: [POWER_PRICE_REQUEST, { id }],
       queryFn: async () => {
         const price = await avatarsSellContract.getPowerPrice(id);
         return bigNumberToNumber(price, { decimals: 18 });
@@ -210,14 +210,6 @@ export const useBuyPowers = () => {
 
       const allowance = await savToken.allowance(account, avatarsSellContract.address);
       const powerPrice = await avatarsSellContract.getPowerPrice(id);
-      const powerTypeMap: Record<string, string> = {
-        '1': 'A',
-        '2': 'B',
-        '3': 'C',
-        '4': 'D',
-      };
-      const idStr = id.toString();
-      const powerType = Object.keys(powerTypeMap).includes(idStr) ? powerTypeMap[idStr] : '';
 
       if (allowance.lt(powerPrice)) {
         const txHash = await savToken.approve(
@@ -228,6 +220,15 @@ export const useBuyPowers = () => {
       }
 
       const txHash = await avatarsSellContract.buyPower(id, amount);
+
+      const idStr = id.toString();
+      const powerTypeMap: Record<string, string> = {
+        '1': 'A',
+        '2': 'B',
+        '3': 'C',
+        '4': 'D',
+      };
+      const powerType = Object.keys(powerTypeMap).includes(idStr) ? powerTypeMap[idStr] : '';
       success({
         title: 'Success',
         description: `You have minted ${amount} Powers ${powerType}`,

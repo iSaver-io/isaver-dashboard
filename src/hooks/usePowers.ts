@@ -1,7 +1,8 @@
-import { useMemo } from 'react';
-import { useQueries } from '@tanstack/react-query';
+// eslint-disable-next-line
+import { useQuery, useQueries } from '@tanstack/react-query';
+import { useMemo, useState } from 'react';
 import { BigNumber } from 'ethers';
-import { useAccount, useQuery } from 'wagmi';
+import { useAccount } from 'wagmi';
 
 import { useAccounts } from './admin/useAccounts';
 import { useContractsAddresses } from './admin/useContractsAddresses';
@@ -42,6 +43,35 @@ export const usePowersSupply = () => {
   return { supply, isLoading };
 };
 
+const usePowersMintedEvents = () => {
+  const powersContract = usePowersContract();
+
+  const totalMintedRequest = useQuery(
+    [POWER_TOTAL_MINTED_REQUEST],
+    () => powersContract.getAllMintTransfers(),
+    {
+      select: (data) =>
+        data.reduce((acc, transfer) => {
+          if (transfer.name === 'TransferBatch') {
+            transfer.args.ids.map((id: BigNumber) => {
+              const powerId = id.toNumber();
+              const amount = transfer.args[4][powerId].toNumber();
+              acc[powerId] += amount;
+            });
+          } else {
+            const powerId = transfer.args.id.toNumber();
+            const amount = transfer.args[4].toNumber();
+            acc[powerId] += amount;
+          }
+
+          return acc;
+        }, Array.from({ length: POWERS_LIST.length }).fill(0) as number[]),
+    }
+  );
+
+  return { totalMinted: totalMintedRequest.data, isLoading: totalMintedRequest.isLoading };
+};
+
 export const POWER_SUPPLY_REQUEST = 'power-supply-request';
 export const POWER_CIRCULATION_SUPPLY_REQUEST = 'power-circulation-supply-request';
 export const POWER_TOTAL_MINTED_REQUEST = 'power-total-minted-request';
@@ -51,63 +81,63 @@ export const usePowerSupply = (tokenId: number) => {
   const accounts = useAccounts();
   const contracts = useContractsAddresses();
 
+  const { totalMinted, isLoading: isLoadingTotalMinted } = usePowersMintedEvents();
+
+  const powerTotalMinted = useMemo(
+    () => (totalMinted ? totalMinted[tokenId] : undefined),
+    [totalMinted, tokenId]
+  );
+
   const uniqueSystemAddresses = useMemo(
     () => Array.from(new Set([...Object.values(accounts), ...Object.values(contracts)])),
     [accounts, contracts]
   );
 
-  const currentSupply = useQuery([POWER_SUPPLY_REQUEST, tokenId], () =>
+  const currentSupply = useQuery([POWER_SUPPLY_REQUEST, { tokenId }], () =>
     powersContract.getTotalSupply(tokenId)
   );
 
-  const totalMinted = useQuery(
-    [POWER_TOTAL_MINTED_REQUEST, tokenId],
-    () => powersContract.getAllMintTransfers(),
-    {
-      select: (data) =>
-        data.reduce((acc, transfer) => {
-          acc += transfer.args.value.toNumber();
-          return acc;
-        }, 0),
-    }
-  );
-
-  const balances = useQueries({
-    queries: uniqueSystemAddresses.map((address) => ({
-      queryKey: [POWER_CIRCULATION_SUPPLY_REQUEST, address],
-      queryFn: () => powersContract.getBalanceOf(address, tokenId),
+  const systemBalances = useQueries({
+    queries: uniqueSystemAddresses.map((systemAddress) => ({
+      queryKey: [POWER_CIRCULATION_SUPPLY_REQUEST, { tokenId, address: systemAddress }],
+      queryFn: () => powersContract.getBalanceOf(systemAddress, tokenId),
     })),
   });
 
   const totalBurned = useMemo(() => {
-    if (totalMinted.data === undefined || currentSupply.data === undefined) return undefined;
-    return totalMinted.data - currentSupply.data?.toNumber();
-  }, [totalMinted.data, currentSupply.data]);
+    if (powerTotalMinted === undefined || currentSupply.data === undefined) return undefined;
+    return powerTotalMinted - currentSupply.data?.toNumber();
+  }, [powerTotalMinted, currentSupply.data]);
 
   const circulatingSupply = useMemo(() => {
     if (!currentSupply.data) return 0;
-    return balances
+    return systemBalances
       .reduce((sum, balanceRequest) => {
         if (balanceRequest.data) return sum.sub(balanceRequest.data);
         return sum;
       }, currentSupply.data)
       .toNumber();
-  }, [currentSupply.data, balances]);
+  }, [currentSupply.data, systemBalances]);
+
+  const isCirculatingSupplyLoading = useMemo(
+    () =>
+      circulatingSupply === undefined ||
+      currentSupply.isLoading ||
+      systemBalances.some((req) => req.isLoading),
+    [circulatingSupply, currentSupply.isLoading, systemBalances]
+  );
 
   const isLoading = useMemo(
-    () =>
-      totalBurned === undefined ||
-      circulatingSupply === undefined ||
-      totalMinted.isLoading ||
-      currentSupply.isLoading,
-    [totalBurned, circulatingSupply, totalMinted.isLoading, currentSupply.isLoading]
+    () => totalBurned === undefined || isCirculatingSupplyLoading || isLoadingTotalMinted,
+    [totalBurned, isLoadingTotalMinted, isCirculatingSupplyLoading]
   );
 
   return {
     isLoading,
+    isCirculatingSupplyLoading,
     currentSupply: currentSupply.data,
     circulatingSupply,
-    totalMinted: totalMinted.data,
+    totalMinted: powerTotalMinted,
     totalBurned,
   };
 };

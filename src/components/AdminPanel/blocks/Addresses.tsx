@@ -36,6 +36,13 @@ export const Addresses = () => {
           Accounts (Pools)
         </Text>
         <AddressInfo title="Vesting Pool" address={accounts.vestingPool} />
+
+        <Text textStyle="textMedium" mt="20px" mb="8px" fontSize="18px">
+          Helpful Links
+        </Text>
+        <Link href="https://polygonscan.com/unitconverter" target="_blank" color="green.400">
+          Unit Converter
+        </Link>
       </Flex>
     </AdminSection>
   );

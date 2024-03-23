@@ -34,12 +34,14 @@ export const usePowersContract = () => {
   };
 
   const getAllMintTransfers = async () => {
-    const filter = contract.filters.TransferSingle(null, ethers.constants.AddressZero);
+    const filter = contract.filters.TransferSingle(undefined, ethers.constants.AddressZero);
+    const filterBatch = contract.filters.TransferBatch(undefined, ethers.constants.AddressZero);
 
     const fetchEvents = async (filter: TypedEventFilter<TypedEvent<Event[]>>) =>
       alchemy.core.getLogs({ ...filter, fromBlock: FROM_BLOCK_EPISODE_2, toBlock: 'latest' });
 
-    const events = await fetchEvents(filter);
+    const events = (await Promise.all([fetchEvents(filter), fetchEvents(filterBatch)])).flat();
+
     return events.map((event) => powersIface.parseLog(event));
   };
 

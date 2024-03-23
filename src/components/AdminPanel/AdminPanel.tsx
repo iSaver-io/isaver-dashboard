@@ -11,6 +11,7 @@ import { AvatarSettingsControl } from './blocks/AvatarSettingsControl';
 import { AvatarsSellControl } from './blocks/AvatarsSellControl';
 import { Balances } from './blocks/Balances';
 import { ExchangeControl } from './blocks/ExchangeControl';
+import { MomentoControl } from './blocks/MomentoControl';
 import { PowersControl } from './blocks/PowersControl';
 import { RaffleControl } from './blocks/RaffleControl';
 import { ReferralControl } from './blocks/ReferralControl';
@@ -61,6 +62,7 @@ export const AdminPanel = () => {
       <RaffleControl />
       <PowersControl />
       <AvatarSettingsControl />
+      <MomentoControl />
       <AvatarsSellControl />
       <VestingControl />
 

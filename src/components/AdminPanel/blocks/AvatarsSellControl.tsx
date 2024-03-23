@@ -15,7 +15,7 @@ import { ControlField } from '../common/ControlField';
 
 export const AvatarsSellControl = () => {
   const { basePrice, inflationRate, inflationPeriod } = useAvatarsSell();
-  const powerPrices = usePowerPrices([1, 2, 3, 4]);
+  const powerPrices = usePowerPrices([0, 1, 2, 3]);
   const { updateBasePrice, updateInflationRate, updateInflationPeriod, updatePowerPrice } =
     useAvatarsSellControl();
 
@@ -32,26 +32,26 @@ export const AvatarsSellControl = () => {
           {isLoading ? <CenteredSpinner /> : null}
 
           <Flex textStyle="text1" mb="10px">
-            <Text mr="12px" flex="200px 0 0">
-              Minted Avatars (SAV):
+            <Text mr="12px" flex="160px 0 0">
+              Bought Avatars:
             </Text>
             <Text color="sav">
               {avatarsSold
-                ? `${avatarsSold.amount} (${bigNumberToNumber(avatarsSold.cumulativeCost)})`
+                ? `${avatarsSold.amount} (${bigNumberToNumber(avatarsSold.cumulativeCost)} SAV)`
                 : '---'}
             </Text>
           </Flex>
 
           {POWERS_LIST.map((power, index) => (
             <Flex textStyle="text1" mb="10px" key={index}>
-              <Text mr="12px" flex="200px 0 0">
-                Minted Powers {power} (SAV):
+              <Text mr="12px" flex="160px 0 0">
+                Bought Powers {power}:
               </Text>
               <Text color="sav">
                 {powersSold && powersSold[index]
                   ? `${powersSold[index].amount} (${bigNumberToNumber(
                       powersSold[index].cumulativeCost
-                    )})`
+                    )} SAV)`
                   : '---'}
               </Text>
             </Flex>
@@ -75,23 +75,23 @@ export const AvatarsSellControl = () => {
         />
         <ControlField
           label="Cost of power A"
+          value={powerPrices[0]}
+          onSubmit={(price) => updatePowerPrice.mutateAsync({ id: 0, price })}
+        />
+        <ControlField
+          label="Cost of power B"
           value={powerPrices[1]}
           onSubmit={(price) => updatePowerPrice.mutateAsync({ id: 1, price })}
         />
         <ControlField
-          label="Cost of power B"
+          label="Cost of power C"
           value={powerPrices[2]}
           onSubmit={(price) => updatePowerPrice.mutateAsync({ id: 2, price })}
         />
         <ControlField
-          label="Cost of power C"
+          label="Cost of power D"
           value={powerPrices[3]}
           onSubmit={(price) => updatePowerPrice.mutateAsync({ id: 3, price })}
-        />
-        <ControlField
-          label="Cost of power D"
-          value={powerPrices[4]}
-          onSubmit={(price) => updatePowerPrice.mutateAsync({ id: 4, price })}
         />
       </>
     </AdminSection>

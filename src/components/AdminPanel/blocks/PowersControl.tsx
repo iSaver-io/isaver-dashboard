@@ -32,7 +32,11 @@ export const PowersControl = () => {
             <Balance
               label={`Circulating supply ${power}:`}
               labelWidth="220px"
-              balance={supply[index as 1].circulatingSupply}
+              balance={
+                !supply[index as 1].isCirculatingSupplyLoading
+                  ? supply[index as 1].circulatingSupply
+                  : undefined
+              }
               minLimit={0}
               isRaw
             />

@@ -24,7 +24,7 @@ type PowersCardProps = {
 
 let POWERS: PowersCardProps[] = [
   {
-    id: 1,
+    id: 0,
     name: 'Power a',
     description:
       // eslint-disable-next-line prettier/prettier
@@ -34,7 +34,7 @@ let POWERS: PowersCardProps[] = [
     price: 0,
   },
   {
-    id: 2,
+    id: 1,
     name: 'Power b',
     description:
       'Unlocks access to the SAVR Staking Pool for 365 days after activation. Use this pool to maximize your income on the iSaver platform',
@@ -43,7 +43,7 @@ let POWERS: PowersCardProps[] = [
     price: 0,
   },
   {
-    id: 3,
+    id: 2,
     name: 'Power c',
     description:
       'Increases the APR/APY of all Staking Pools on the iSaver platform for 365 days after activation',
@@ -52,7 +52,7 @@ let POWERS: PowersCardProps[] = [
     price: 0,
   },
   {
-    id: 4,
+    id: 3,
     name: 'Power d',
     description:
       'Increases the number of iSaver Raffle Tickets minted for completing PUZZLES - mini free-to-play game on the iSaver platform',
