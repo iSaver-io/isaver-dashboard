@@ -90,7 +90,7 @@ export const useMomentoContract = () => {
         if (logParsed.args.tokenAddress === addresses.ISaverAvatars) {
           tokenName = 'iSaver Avatar';
         } else if (logParsed.args.tokenAddress === addresses.ISaverPowers) {
-          tokenName = 'iSaver Powers';
+          tokenName = 'iSaver Powers ' + ['A', 'B', 'C', 'D'][logParsed.args.tokenId.toNumber()];
         } else if (logParsed.args.tokenAddress === addresses.ISaverSAVRToken) {
           tokenName = 'SAVR';
         } else if (logParsed.args.tokenAddress === addresses.Ticket) {

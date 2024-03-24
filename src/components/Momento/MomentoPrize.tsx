@@ -126,9 +126,10 @@ const Powers = ({ tokenId }: Pick<PrizeInfo, 'tokenId'>) => {
     2: powerCPrize,
     3: powerDPrize,
   };
+  const letter = ['A', 'B', 'C', 'D'][Number(tokenId)];
 
   return (
-    <PrizeCard label="iSaver Powers">
+    <PrizeCard label={`iSaver Powers ${letter}`}>
       <Image src={powerPrizes[Number(tokenId)]} alt="iSaver Powers" />
     </PrizeCard>
   );
@@ -150,7 +151,7 @@ const NFT = ({
 
 const Ticket = ({ amount }: Pick<PrizeInfo, 'amount'>) => {
   return (
-    <PrizeCard label="Raffle tickets">
+    <PrizeCard label="Raffle Tickets">
       <Image src={ticketPrize} alt="ticket" />
       <Text
         fontWeight="black"

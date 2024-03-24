@@ -16,8 +16,10 @@ const settings: Settings = {
   slidesToScroll: 1,
   autoplay: true,
   autoplaySpeed: 5000,
-  adaptiveHeight: true,
   dots: true,
+  arrows: true,
+  variableWidth: false,
+  adaptiveHeight: false,
 
   responsive: [
     {
@@ -62,6 +64,12 @@ const cardsMock = [
     contract: '0xeff82d6979a9961a081513d5d0a3d70e833a0de1',
     tokenId: '3',
   },
+  {
+    image: Prizes2,
+    label: '#4524',
+    contract: '0xeff82d6979a9961a081513d5d0a3d70e833a0de1',
+    tokenId: '4',
+  },
 ];
 
 export const Prizes = () => {
@@ -101,14 +109,19 @@ export const Prizes = () => {
         <Slider {...settings}>
           {cards.map((card, index) => (
             <Box
-              width={{ sm: '146px', xl: '310px' }}
               key={card.label + index.toString()}
               px={{ sm: '4px', xl: '10px' }}
               textAlign="center"
-              onClick={() => handleOpenOpenseaPage(card)}
             >
-              <img src={card.image} alt="slider item" />
-              <Text mt={{ sm: '20px' }} fontSize={{ sm: '12px' }}>
+              <Box width={{ sm: '146px', xl: '310px' }}>
+                <img src={card.image} alt="slider item" />
+              </Box>
+              <Text
+                mt={{ sm: '20px' }}
+                fontSize={{ sm: '12px' }}
+                _hover={{ cursor: 'pointer', textDecoration: 'underline' }}
+                onClick={() => handleOpenOpenseaPage(card)}
+              >
                 {card.label}
               </Text>
             </Box>

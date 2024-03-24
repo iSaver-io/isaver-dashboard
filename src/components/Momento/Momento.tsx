@@ -34,16 +34,16 @@ export const Momento = () => {
       <Box pt={{ sm: '20px', md: '30px' }} pb={{ sm: '30px', xl: '40px', '2xl': '50px' }}>
         <Main />
       </Box>
+      <Box py={{ sm: '30px', xl: '40px', '2xl': '50px' }}>
+        <Prizes />
+      </Box>
       <Container className="momento" variant="dashboard">
-        <Box py={{ sm: '30px', xl: '40px', '2xl': '50px' }}>
-          <Prizes />
-        </Box>
         <Box py={{ sm: '30px', xl: '40px', '2xl': '50px' }}>
           <OtherPrizes />
         </Box>
         <Box
           pt={{ sm: '30px', xl: '40px', '2xl': '50px' }}
-          pb={{ sm: '30px', xl: '50px', '2xl': '100px' }}
+          pb={{ sm: '60px', lg: '70px', '2xl': '100px' }}
         >
           <HistoryTable />
         </Box>

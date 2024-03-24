@@ -18,8 +18,10 @@
       left: 0;
 
       &.active {
-        height: calc(100% + 14px);
-        width: calc(100% + 14px);
+        overflow: visible;
+        object-fit: cover;
+        top: -10px;
+        height: 164px;
       }
     }
 
@@ -74,6 +76,17 @@
       .slick-prev {
         left: -70px;
       }
+    }
+    .slick-slider {
+      overflow: hidden;
+    }
+    .slick-list {
+      margin: 0 auto;
+      overflow: visible;
+      max-width: 1320px !important;
+    }
+    .slick-slide {
+      width: 330px !important;
     }
 
     img {
@@ -161,25 +174,24 @@
       }
     }
   }
-
-  &__history {
-    padding-bottom: 70px;
-  }
 }
 
-@media screen and (max-width: $xl2) {
-  .momento {
-    &__history {
-      padding-bottom: 40px;
-    }
-  }
-}
 @media screen and (max-width: $xl) {
   .momento {
     &_prize {
       &_container {
         width: 130px;
         height: 130px;
+      }
+    }
+
+    &_prizes {
+      .slick-list {
+        padding-bottom: 0 !important;
+        max-width: 462px !important;
+      }
+      .slick-slide {
+        width: 154px !important;
       }
     }
 
@@ -225,10 +237,6 @@
         }
       }
     }
-
-    &__history {
-      padding-bottom: 30px;
-    }
   }
 }
 
@@ -242,9 +250,14 @@
       width: 80px;
       height: 80px;
     }
+
+    &_prizes {
+      .slick-list {
+        max-width: 308px !important;
+      }
+    }
   }
 }
-
 
 @media screen and (max-width: $sm) {
   .background.momento-background {

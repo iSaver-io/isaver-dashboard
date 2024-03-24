@@ -19,8 +19,8 @@ interface MainSliderProps {
 
 export const MainSlider = ({ isLoading, isSuccess, prizeInfo }: MainSliderProps) => {
   const [currentSlide, setCurrentSlide] = useState(1);
-  const [speed, setSpeed] = useState(180);
-  const [autoplaySpeed, setAutoplaySpeed] = useState(100000000);
+  const [speed, setSpeed] = useState(800);
+  const [isAutoplay, setIsAutoplay] = useState(false);
   const [showPrize, setShowPrize] = useState<boolean>(false);
   const [hideCard, setHideCard] = useState<boolean>(false);
   const [images] = useState<string[]>([
@@ -42,9 +42,7 @@ export const MainSlider = ({ isLoading, isSuccess, prizeInfo }: MainSliderProps)
     infinite: true,
     touchMove: true,
     autoplay: true,
-
-    // autoplaySpeed: 100000000,
-    // speed: 500,
+    cssEase: 'linear',
 
     slidesToShow: 5,
     slidesToScroll: 1,
@@ -77,22 +75,24 @@ export const MainSlider = ({ isLoading, isSuccess, prizeInfo }: MainSliderProps)
   });
 
   useEffect(() => {
-    if (!isLoading && !isSuccess && !prizeInfo) {
+    if (!isSuccess && !prizeInfo) {
       setShowPrize(false);
       setHideCard(false);
+      setIsAutoplay(false);
+      setSpeed(800);
     }
   }, [isLoading, isSuccess, prizeInfo]);
 
   useEffect(() => {
     if (isLoading) {
-      setAutoplaySpeed(180);
+      setIsAutoplay(true);
     }
   }, [isLoading]);
 
   useEffect(() => {
     let timeout: NodeJS.Timeout;
     if (hideCard) {
-      timeout = setTimeout(() => setShowPrize(true), 300);
+      timeout = setTimeout(() => setShowPrize(true), 600);
     }
 
     return () => {
@@ -103,22 +103,27 @@ export const MainSlider = ({ isLoading, isSuccess, prizeInfo }: MainSliderProps)
   const handleAfterChange = useCallback(
     (slide: number) => {
       if (isSuccess) {
-        if (speed > 500) {
-          setAutoplaySpeed(100000000);
+        if (speed > 700) {
+          setIsAutoplay(false);
           setCurrentSlide(slide);
           setHideCard(true);
+          setSpeed(800);
           return;
         }
-        setAutoplaySpeed(autoplaySpeed);
-        setSpeed(speed + 100);
+        setSpeed((val) => val + 100);
+      } else if (isLoading) {
+        setIsAutoplay(true);
+        if (speed > 150) {
+          setSpeed((val) => Math.max(val - 100, 150));
+        }
       }
     },
-    [autoplaySpeed, isSuccess, speed]
+    [isLoading, isSuccess, speed]
   );
 
   return (
     <AnimatePresence>
-      <Box className="momento_mainSlider" mt={{ base: '30px', lg: '60px', xl: '80px' }} h="100%">
+      <Box className="momento_mainSlider" mt={{ base: '30px', lg: '22px', xl: '32px' }} h="100%">
         {showPrize && prizeInfo ? (
           <MomentoPrize prizeInfo={prizeInfo} />
         ) : (
@@ -126,7 +131,7 @@ export const MainSlider = ({ isLoading, isSuccess, prizeInfo }: MainSliderProps)
             <Slider
               {...settings}
               afterChange={handleAfterChange}
-              autoplaySpeed={autoplaySpeed}
+              autoplaySpeed={isAutoplay ? 0 : 100000000}
               speed={speed}
             >
               {images.map((image, index) => (
