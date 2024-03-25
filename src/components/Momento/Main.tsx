@@ -12,12 +12,12 @@ import { useTicketsBalance } from '@/hooks/useTicketsBalance';
 import { BuyRaffleTicketsModal } from '../Raffle/BuyRaffleTicketsModal';
 
 import { MainSlider } from './MainSlider';
-import { Ticket } from './Ticket';
+import { Ticket, TicketStates } from './Ticket';
 
 export const Main = () => {
-  const [isActive, setActive] = useState(false);
+  const [state, setState] = useState<TicketStates>(TicketStates.Initial);
+
   const [ticketTip, setTicketTip] = useState('');
-  const [isSuccessGetPrize, setIsSuccessGetPrize] = useState(false);
   const [prizeInfo, setPrizeInfo] = useState<PrizeInfo>();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const buyTickets = useBuyTickets();
@@ -44,51 +44,66 @@ export const Main = () => {
       (getPrize.isLoading && !isGetPrizeConfirmed)
     ) {
       setTicketTip('Confirm transaction in your wallet app');
-    } else if (
-      (burnTicket.isLoading && isBurnTicketConfirmed) ||
-      (getPrize.isLoading && isGetPrizeConfirmed)
-    ) {
+    } else if (state === TicketStates.TicketBurnLoading || state === TicketStates.TicketGoLoading) {
       setTicketTip('Waiting for transaction...');
-    } else if (Boolean(hasPendingRequest) && !isOracleResponseReady) {
+    } else if (state === TicketStates.TicketBurned) {
       setTicketTip('Waiting for Oracle response...');
-    } else if (isOracleResponseReady) {
+    } else if (state === TicketStates.OracleResponded) {
       setTicketTip('Hit GO');
-    } else if (getPrize.data) {
+    } else if (state === TicketStates.Finished) {
       setTicketTip('Congrats!');
-    } else if (isActive) {
+    } else if (state === TicketStates.TicketPlaced) {
       setTicketTip('Burn the Ticket and hit GO');
+    } else {
+      setTicketTip('');
     }
-  }, [
-    burnTicket.isLoading,
-    getPrize.isLoading,
-    getPrize.data,
-    isBurnTicketConfirmed,
-    isGetPrizeConfirmed,
-    hasPendingRequest,
-    isOracleResponseReady,
-    isActive,
-  ]);
+  }, [state, burnTicket.isLoading, getPrize.isLoading, isBurnTicketConfirmed, isGetPrizeConfirmed]);
 
   useEffect(() => {
-    setActive(false);
-    setTicketTip('');
+    setState(TicketStates.Initial);
   }, [address]);
 
   useEffect(() => {
-    if (getPrize.data) {
-      setActive(false);
-      setTicketTip('');
+    if (isOracleResponseReady) {
+      setState(TicketStates.OracleResponded);
+    } else if (hasPendingRequest) {
+      setState(TicketStates.TicketBurned);
     }
-    setPrizeInfo(getPrize.data);
-    setIsSuccessGetPrize(getPrize.isSuccess);
-  }, [getPrize.data, getPrize.isSuccess]);
+  }, [isOracleResponseReady, hasPendingRequest]);
 
   useEffect(() => {
-    if (isActive) {
-      setPrizeInfo(undefined);
-      setIsSuccessGetPrize(false);
+    setPrizeInfo(getPrize.data);
+  }, [getPrize.data]);
+
+  const handleTicketClick = useCallback(() => {
+    if (state === TicketStates.Initial) {
+      setState(TicketStates.TicketPlaced);
     }
-  }, [isActive]);
+    if (state === TicketStates.Finished) {
+      setState(TicketStates.Initial);
+      setPrizeInfo(undefined);
+    }
+  }, [state]);
+
+  const handleBurnTicket = useCallback(() => {
+    if (state === TicketStates.TicketPlaced) {
+      setState(TicketStates.TicketBurnLoading);
+      burnTicket.mutateAsync().then(() => {
+        setState(TicketStates.TicketBurned);
+      });
+    }
+  }, [burnTicket, state]);
+
+  const handleGoClick = useCallback(() => {
+    if (state === TicketStates.OracleResponded) {
+      setState(TicketStates.TicketGoLoading);
+      getPrize.mutateAsync().then(() => {
+        setTimeout(() => {
+          setState(TicketStates.Finished);
+        }, 4500);
+      });
+    }
+  }, [getPrize, state]);
 
   return (
     <>
@@ -177,23 +192,23 @@ export const Main = () => {
                   buy tickets
                 </Button>
               </Flex>
-              <Ticket tip={ticketTip} isActive={isActive} setActive={setActive} />
+              <Ticket
+                tip={ticketTip}
+                state={state}
+                hasTickets={Boolean(balance)}
+                onClick={handleTicketClick}
+              />
               <Flex flexDir={{ base: 'row', lg: 'column' }} gap={{ base: '20px', lg: '8px' }}>
                 <Button
                   w={{ base: '120px', xl: '160px' }}
                   h={{ base: '30px', xl: '45px' }}
                   size={{ base: 'sm', xl: 'md' }}
                   fontSize="12px !important"
-                  isDisabled={
-                    !isActive ||
-                    Boolean(hasPendingRequest) ||
-                    Boolean(isOracleResponseReady) ||
-                    getPrize.isLoading
-                  }
-                  onClick={() => burnTicket.mutateAsync()}
-                  isLoading={
-                    burnTicket.isLoading || (Boolean(hasPendingRequest) && !isOracleResponseReady)
-                  }
+                  isDisabled={state !== TicketStates.TicketPlaced}
+                  onClick={handleBurnTicket}
+                  isLoading={[TicketStates.TicketBurnLoading, TicketStates.TicketBurned].includes(
+                    state
+                  )}
                 >
                   Burn
                 </Button>
@@ -205,9 +220,9 @@ export const Main = () => {
                   h={{ base: '30px', xl: '45px' }}
                   size={{ base: 'sm', xl: 'md' }}
                   fontSize="12px !important"
-                  isDisabled={!isOracleResponseReady}
-                  onClick={() => getPrize.mutateAsync()}
+                  isDisabled={state !== TicketStates.OracleResponded}
                   isLoading={getPrize.isLoading}
+                  onClick={handleGoClick}
                 >
                   Go!
                 </Button>
@@ -226,9 +241,8 @@ export const Main = () => {
       </Container>
       <Box h={{ base: '220px', xl: '460px' }}>
         <MainSlider
-          isSuccess={isSuccessGetPrize}
-          isLoading={isGetPrizeConfirmed}
           prizeInfo={prizeInfo}
+          isLoading={isGetPrizeConfirmed && state === TicketStates.TicketGoLoading}
         />
       </Box>
     </>

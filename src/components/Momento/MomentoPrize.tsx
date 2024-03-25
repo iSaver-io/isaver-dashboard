@@ -150,7 +150,7 @@ const NFT = ({
 
 const Ticket = ({ amount }: Pick<PrizeInfo, 'amount'>) => {
   return (
-    <PrizeCard label="Raffle tickets">
+    <PrizeCard label="Raffle Tickets">
       <Image src={ticketPrize} alt="ticket" />
       <Text
         fontWeight="black"

@@ -2,73 +2,86 @@ import { useCallback, useMemo } from 'react';
 import { Box, Flex, Text, useBreakpoint } from '@chakra-ui/react';
 
 import { ReactComponent as RepeatIcon } from '@/assets/images/icons/repeat.svg';
-import { useImagePreloader } from '@/hooks/useImagePreloader';
-import { useMomento } from '@/hooks/useMomento';
-import { useTicketsBalance } from '@/hooks/useTicketsBalance';
 
 import TicketImage from './images/ticket.png';
 import TicketActiveImage from './images/ticket-active.png';
 import TicketEmpty from './images/ticket-empty.png';
 import TicketEmptyBorder from './images/ticket-empty-border.png';
 
-interface TicketProps {
-  tip: string;
-  isActive: boolean;
-  setActive: (active: boolean) => void;
+export enum TicketStates {
+  Initial,
+  TicketPlaced,
+  TicketBurnLoading,
+  TicketBurned,
+  OracleResponded,
+  TicketGoLoading,
+  Finished,
 }
 
-const images = [TicketImage, TicketActiveImage, TicketEmpty, TicketEmptyBorder];
-export const Ticket = ({ tip, isActive, setActive }: TicketProps) => {
-  const balance = useTicketsBalance();
-  const { hasPendingRequest, isOracleResponseReady } = useMomento();
-  const bp = useBreakpoint({ ssr: false });
+interface TicketProps {
+  tip: string;
+  hasTickets: boolean;
+  state: TicketStates;
+  onClick: () => void;
+}
 
-  const isReplay = useMemo(() => !isActive && tip, [isActive, tip]);
+export const Ticket = ({ tip, state, hasTickets, onClick }: TicketProps) => {
+  const bp = useBreakpoint({ ssr: false });
   const isSm = useMemo(() => ['sm', 'md', 'lg'].includes(bp), [bp]);
 
   const handleClick = useCallback(
     (event: any) => {
-      if (event.detail === 2 || ((isSm || isReplay) && event.detail === 1)) {
-        setActive(true);
+      if (event.detail === 2 || ((isSm || state === TicketStates.Finished) && event.detail === 1)) {
+        onClick();
       }
     },
-    [isReplay, isSm, setActive]
+    [isSm, onClick, state]
   );
 
-  useImagePreloader(images);
+  const isActive = useMemo(
+    () => ![TicketStates.Initial, TicketStates.Finished].includes(state),
+    [state]
+  );
 
   return (
     <Flex
+      position="relative"
       justifyContent="center"
       alignItems="center"
       flexDir="column"
+      overflow="visible"
       mt={{ sm: '30px' }}
-      mb={!tip ? { base: '30px', lg: '0' } : undefined}
+      pb={{ sm: '58px', lg: '38px', xl: '48px' }}
     >
+      {/* Hack for image preloading */}
+      <Box position="absolute" w="1px" h="1px" opacity="0" top="-10000000px" left="-10000000px">
+        <img src={TicketEmptyBorder} alt="Ticket" />
+        <img src={TicketEmpty} alt="Ticket" />
+        <img src={TicketImage} alt="Ticket" />
+        <img src={TicketActiveImage} alt="Ticket" />
+      </Box>
+
       <Flex
         className="momento_ticket"
         justifyContent="center"
         alignItems="center"
         px="55px"
-        cursor={balance.data && !isActive ? 'pointer' : undefined}
-        onClick={balance.data && !isActive ? handleClick : undefined}
+        overflow="visible"
+        cursor={hasTickets && !isActive ? 'pointer' : undefined}
+        onClick={hasTickets && !isActive ? handleClick : undefined}
       >
-        {hasPendingRequest || isOracleResponseReady ? (
-          <img className="momento_ticket_image active" src={TicketActiveImage} alt="Ticket" />
-        ) : isActive ? (
-          <img className="momento_ticket_image" src={TicketImage} alt="Ticket" />
-        ) : (
+        {!isActive ? (
           <>
             <img
               className="momento_ticket_image"
-              src={balance.data ? TicketEmptyBorder : TicketEmpty}
+              src={hasTickets && state === TicketStates.Initial ? TicketEmptyBorder : TicketEmpty}
               alt="Ticket"
             />
-            {balance.data ? (
-              isReplay ? (
+            {hasTickets ? (
+              state === TicketStates.Finished ? (
                 // if replay
                 <Flex color="sav" alignItems="center">
-                  <Box width="28px" height="28px" mr="5px">
+                  <Box width="28px" height="28px" mr="5px" zIndex={10}>
                     <RepeatIcon />
                   </Box>
                   <Text textStyle="button" fontSize={{ xl: '18px' }}>
@@ -78,20 +91,33 @@ export const Ticket = ({ tip, isActive, setActive }: TicketProps) => {
               ) : (
                 // if first play
                 <Text textStyle="textSansSmall">
-                  {isSm ? 'Click' : 'Double-click'} to activate your Ticket
+                  {isSm ? 'Tap' : 'Double-click'} to activate your Ticket
                 </Text>
               )
             ) : (
               <Text textStyle="textSansSmall">You need a Ticket to&nbsp;start</Text>
             )}
           </>
-        )}
+        ) : null}
+
+        {[TicketStates.TicketPlaced, TicketStates.TicketBurnLoading].includes(state) ? (
+          <img className="momento_ticket_image" src={TicketImage} alt="Ticket" />
+        ) : null}
+
+        {[
+          TicketStates.TicketBurned,
+          TicketStates.OracleResponded,
+          TicketStates.TicketGoLoading,
+        ].includes(state) ? (
+          <img className="momento_ticket_image active" src={TicketActiveImage} alt="Ticket" />
+        ) : null}
       </Flex>
 
       <Text
+        position="absolute"
+        bottom={{ sm: '20px', lg: '0' }}
+        whiteSpace="nowrap"
         display={{ sm: tip ? 'unset' : 'none', lg: 'unset' }}
-        mt={{ sm: '20px', xl: '25px' }}
-        mb={{ base: '20px', lg: '0' }}
         height={{ sm: '18px', xl: '24px' }}
         fontSize={{ sm: '12px', xl: '16px' }}
         fontWeight={{ xl: '500' }}
