@@ -74,7 +74,7 @@ export const HistoryTable = () => {
           </Text>
         </Box>
         <Box position="absolute" right="0" bottom="6px">
-          <ExportButton onClick={exportData} event="avatarSettings" buttonLocation="up" />
+          <ExportButton onClick={exportData} event="settings" buttonLocation="up" />
         </Box>
       </Flex>
       <Box className="table-responsive-wrapper">

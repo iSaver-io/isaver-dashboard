@@ -71,7 +71,7 @@ export const HistoryTable = () => {
           </Text>
         </Box>
         <Box position="absolute" right="0" bottom="6px">
-          <ExportButton onClick={exportData} event="avatarSettings" buttonLocation="up" />
+          <ExportButton onClick={exportData} event="momento" buttonLocation="up" />
         </Box>
       </Flex>
 

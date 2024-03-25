@@ -1,14 +1,15 @@
 import { useCallback } from 'react';
 import { useAccount } from 'wagmi';
 
-type EventName =
+export type EventName =
   | 'cross'
   | 'dashboard'
   | 'landing'
   | 'staking'
   | 'team'
   | 'raffle'
-  | 'avatarSettings';
+  | 'settings'
+  | 'momento';
 type EventCategory = 'elements' | 'forms' | 'blocks' | 'notifications';
 type EventAction =
   | 'element_click'
@@ -23,8 +24,15 @@ type EventAction =
   | 'notification_show';
 type EventLabel = string;
 type EventValue = string | number | null;
-type EventContext = 'staking' | 'teams' | 'raffles' | 'levels';
-type ButtonLocation = 'header' | 'up' | 'mid' | 'down' | 'footer' | 'popup';
+export type EventContext =
+  | 'staking'
+  | 'teams'
+  | 'raffles'
+  | 'levels'
+  | 'avatars'
+  | 'powers'
+  | 'momento';
+type ButtonLocation = 'header' | 'subhead' | 'up' | 'mid' | 'down' | 'footer' | 'popup';
 type ActionGroup = 'interactions' | 'conversions' | 'callbacks';
 
 type LoggerProps = {
@@ -38,6 +46,13 @@ type LoggerProps = {
   buttonLocation: ButtonLocation;
   actionGroup: ActionGroup;
 };
+
+const defaultProps = {
+  value: undefined,
+  content: undefined,
+  context: undefined,
+};
+
 export const useLogger = (commonProps?: Partial<LoggerProps>) => {
   const { address } = useAccount();
 
@@ -45,12 +60,13 @@ export const useLogger = (commonProps?: Partial<LoggerProps>) => {
     (props?: Partial<LoggerProps>) => {
       const pagePath = window.location.origin + window.location.pathname;
 
+      const allProps = { ...defaultProps, ...commonProps, ...props };
+
       // @ts-ignore
       window?.dataLayer.push({
         pagePath,
         userId: address?.slice(2) || 'Not connected',
-        ...commonProps,
-        ...props,
+        ...allProps,
       });
     },
     [commonProps, address]

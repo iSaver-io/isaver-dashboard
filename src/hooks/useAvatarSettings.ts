@@ -298,7 +298,7 @@ export const useActivatePower = (powerId: number) => {
         queryClient.invalidateQueries({ queryKey: [GET_ALL_EVENTS] });
       },
       onError: (err) => {
-        handleError(err);
+        handleError(err, 'powers');
       },
     }
   );
@@ -369,7 +369,7 @@ export const useActivateAvatar = () => {
         queryClient.invalidateQueries({ queryKey: [GET_ALL_EVENTS] });
       },
       onError: (err) => {
-        handleError(err);
+        handleError(err, 'avatars');
       },
     }
   );
@@ -411,7 +411,7 @@ export const useDeactivateAvatar = () => {
         refetchAllowedNfts();
       },
       onError: (err) => {
-        handleError(err);
+        handleError(err, 'avatars');
       },
     }
   );
@@ -447,7 +447,7 @@ export const useTokenName = () => {
         queryClient.invalidateQueries({ queryKey: [GET_ALL_EVENTS] });
       },
       onError: (err) => {
-        handleError(err);
+        handleError(err, 'avatars');
       },
     }
   );
@@ -483,7 +483,7 @@ export const useTokenTelegram = () => {
         queryClient.invalidateQueries({ queryKey: [GET_ALL_EVENTS] });
       },
       onError: (err) => {
-        handleError(err);
+        handleError(err, 'avatars');
       },
     }
   );
@@ -532,7 +532,7 @@ export const useActivatePowerAccess = () => {
         queryClient.invalidateQueries({ queryKey: [GET_ALL_EVENTS] });
       },
       onError: (err) => {
-        handleError(err);
+        handleError(err, 'powers');
       },
     }
   );
@@ -567,7 +567,7 @@ export const useClaimBirthdayPresent = () => {
         queryClient.invalidateQueries({ queryKey: [GET_ALL_EVENTS] });
       },
       onError: (err) => {
-        handleError(err);
+        handleError(err, 'avatars');
       },
     }
   );

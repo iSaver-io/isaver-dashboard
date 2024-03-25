@@ -75,7 +75,7 @@ export const useVesting_OLD = () => {
         queryClient.invalidateQueries([VESTING_SCHEDULES_BY_BENEFICIARY_REQUEST]);
         queryClient.invalidateQueries([SAV_BALANCE_REQUEST]);
       },
-      onError: handleError,
+      onError: (err) => handleError(err),
     }
   );
 

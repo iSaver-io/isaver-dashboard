@@ -40,7 +40,7 @@ export const useTeamPlans = () => {
       onSuccess: () => {
         queryClient.invalidateQueries([SQUAD_PLANS_REQUEST]);
       },
-      onError: handleError,
+      onError: (err) => handleError(err, 'teams'),
     }
   );
 
@@ -60,7 +60,7 @@ export const useTeamPlans = () => {
       onSuccess: () => {
         queryClient.invalidateQueries([SQUAD_PLANS_REQUEST]);
       },
-      onError: handleError,
+      onError: (err) => handleError(err, 'teams'),
     }
   );
 
@@ -125,9 +125,7 @@ export const useTeams = () => {
         queryClient.invalidateQueries({ queryKey: [HELPER_USER_TEAMS_INFO_REQUEST] });
         queryClient.invalidateQueries({ queryKey: [SAV_BALANCE_REQUEST] });
       },
-      onError: (err) => {
-        handleError(err);
-      },
+      onError: (err) => handleError(err, 'teams'),
     }
   );
 

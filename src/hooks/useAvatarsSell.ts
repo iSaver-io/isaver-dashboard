@@ -187,7 +187,7 @@ export const useBuyAvatar = () => {
     },
     {
       onError: (err) => {
-        handleError(err);
+        handleError(err, 'avatars');
       },
     }
   );
@@ -237,7 +237,7 @@ export const useBuyPowers = () => {
     },
     {
       onError: (err) => {
-        handleError(err);
+        handleError(err, 'powers');
       },
     }
   );
@@ -301,7 +301,7 @@ export const useAvatarsSellControl = () => {
       onSuccess: () => {
         queryClient.invalidateQueries([BASE_PRICE_REQUEST, AVATAR_PRICE_REQUEST]);
       },
-      onError: handleError,
+      onError: (err) => handleError(err),
     }
   );
 
@@ -315,7 +315,7 @@ export const useAvatarsSellControl = () => {
       onSuccess: () => {
         queryClient.invalidateQueries([INFLATION_RATE_REQUEST]);
       },
-      onError: handleError,
+      onError: (err) => handleError(err),
     }
   );
 
@@ -329,7 +329,7 @@ export const useAvatarsSellControl = () => {
       onSuccess: () => {
         queryClient.invalidateQueries([INFLATION_PERIOD_REQUEST]);
       },
-      onError: handleError,
+      onError: (err) => handleError(err),
     }
   );
 
@@ -344,7 +344,7 @@ export const useAvatarsSellControl = () => {
       onSuccess: () => {
         queryClient.invalidateQueries([POWER_PRICE_REQUEST]);
       },
-      onError: handleError,
+      onError: (err) => handleError(err),
     }
   );
   return {

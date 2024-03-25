@@ -56,7 +56,7 @@ export const useReferralManagerSubscriptions = () => {
         queryClient.invalidateQueries([LEVEL_SUBSCRIPTION_COST_REQUEST]);
         queryClient.invalidateQueries([ALL_LEVELS_SUBSCRIPTION_COST_REQUEST]);
       },
-      onError: handleError,
+      onError: (err) => handleError(err, 'levels'),
     }
   );
 
@@ -73,7 +73,7 @@ export const useReferralManagerSubscriptions = () => {
         queryClient.invalidateQueries([LEVEL_SUBSCRIPTION_COST_REQUEST]);
         queryClient.invalidateQueries([ALL_LEVELS_SUBSCRIPTION_COST_REQUEST]);
       },
-      onError: handleError,
+      onError: (err) => handleError(err, 'levels'),
     }
   );
 
@@ -166,7 +166,7 @@ export const useUserReferralSubscription = () => {
         queryClient.invalidateQueries({ queryKey: [SAV_BALANCE_REQUEST] });
       },
       onError: (err) => {
-        handleError(err);
+        handleError(err, 'levels');
       },
     }
   );
@@ -194,7 +194,7 @@ export const useUserReferralSubscription = () => {
         queryClient.invalidateQueries({ queryKey: [SAV_BALANCE_REQUEST] });
       },
       onError: (err) => {
-        handleError(err);
+        handleError(err, 'levels');
       },
     }
   );
@@ -253,7 +253,7 @@ export const useUserReferrer = () => {
         queryClient.invalidateQueries({ queryKey: [SAV_BALANCE_REQUEST] });
       },
       onError: (err) => {
-        handleError(err);
+        handleError(err, 'levels');
       },
     }
   );
@@ -304,7 +304,7 @@ export const useReferralRewards = () => {
         queryClient.invalidateQueries({ queryKey: [SAVR_BALANCE_REQUEST] });
       },
       onError: (err) => {
-        handleError(err);
+        handleError(err, 'levels');
       },
     }
   );

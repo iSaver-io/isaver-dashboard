@@ -53,7 +53,7 @@ export const useTokensPoolControl = (
           queryKey: [TOKENS_POOL_TOTAL_CHANCE_REQUEST, contractName],
         });
       },
-      onError: handleError,
+      onError: (err) => handleError(err),
     }
   );
   const updateCategoryMutation = useMutation(
@@ -73,7 +73,7 @@ export const useTokensPoolControl = (
           queryKey: [TOKENS_POOL_TOTAL_CHANCE_REQUEST, contractName],
         });
       },
-      onError: handleError,
+      onError: (err) => handleError(err),
     }
   );
   const addPrizeToCategory = useMutation(
@@ -206,7 +206,7 @@ export const useTokensPoolControl = (
           queryKey: [TOKENS_POOL_TOTAL_CHANCE_REQUEST, contractName],
         });
       },
-      onError: handleError,
+      onError: (err) => handleError(err),
     }
   );
   const removePrizeFromCategory = useMutation(
@@ -234,7 +234,7 @@ export const useTokensPoolControl = (
           queryKey: [TOKENS_POOL_TOTAL_CHANCE_REQUEST, contractName],
         });
       },
-      onError: handleError,
+      onError: (err) => handleError(err),
     }
   );
 

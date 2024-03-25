@@ -77,7 +77,7 @@ export const useMomento = () => {
       onSettled: () => {
         momentoContract.setIsBurnTicketConfirmed(false);
       },
-      onError: handleError,
+      onError: (err) => handleError(err, 'momento'),
     }
   );
 
@@ -117,7 +117,7 @@ export const useMomento = () => {
       onSettled: () => {
         momentoContract.setIsGetPrizeConfirmed(false);
       },
-      onError: handleError,
+      onError: (err) => handleError(err, 'momento'),
     }
   );
 

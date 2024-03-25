@@ -85,7 +85,7 @@ export const useRaffleControl = () => {
       onSuccess: () => {
         queryClient.invalidateQueries([RAFFLE_TICKET_PRICE_REQUEST]);
       },
-      onError: handleError,
+      onError: (err) => handleError(err, 'raffles'),
     }
   );
 
@@ -103,7 +103,7 @@ export const useRaffleControl = () => {
       onSuccess: () => {
         queryClient.invalidateQueries([EXTRA_TICKETS_POWER_D_REQUEST]);
       },
-      onError: handleError,
+      onError: (err) => handleError(err, 'raffles'),
     }
   );
 
@@ -123,7 +123,7 @@ export const useRaffleControl = () => {
       onSuccess: () => {
         queryClient.invalidateQueries([RAFFLE_ROUNDS_REQUEST]);
       },
-      onError: handleError,
+      onError: (err) => handleError(err, 'raffles'),
     }
   );
 
@@ -141,7 +141,7 @@ export const useRaffleControl = () => {
       onSuccess: () => {
         queryClient.invalidateQueries([RAFFLE_ROUNDS_REQUEST]);
       },
-      onError: handleError,
+      onError: (err) => handleError(err, 'raffles'),
     }
   );
 
@@ -160,7 +160,7 @@ export const useRaffleControl = () => {
       onSuccess: () => {
         queryClient.invalidateQueries([RAFFLE_ROUNDS_REQUEST]);
       },
-      onError: handleError,
+      onError: (err) => handleError(err, 'raffles'),
     }
   );
 
@@ -219,7 +219,7 @@ export const useBuyTickets = () => {
         queryClient.invalidateQueries({ queryKey: [TICKET_BALANCE_REQUEST] });
         queryClient.invalidateQueries({ queryKey: [SAV_BALANCE_REQUEST] });
       },
-      onError: handleError,
+      onError: (err) => handleError(err, 'raffles'),
     }
   );
 
