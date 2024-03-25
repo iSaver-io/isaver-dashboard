@@ -18,7 +18,6 @@ export const Main = () => {
   const [state, setState] = useState<TicketStates>(TicketStates.Initial);
 
   const [ticketTip, setTicketTip] = useState('');
-  const [isSuccessGetPrize, setIsSuccessGetPrize] = useState(false);
   const [prizeInfo, setPrizeInfo] = useState<PrizeInfo>();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const buyTickets = useBuyTickets();
@@ -74,8 +73,7 @@ export const Main = () => {
 
   useEffect(() => {
     setPrizeInfo(getPrize.data);
-    setIsSuccessGetPrize(getPrize.isSuccess);
-  }, [getPrize.data, getPrize.isSuccess]);
+  }, [getPrize.data]);
 
   const handleTicketClick = useCallback(() => {
     if (state === TicketStates.Initial) {
@@ -84,7 +82,6 @@ export const Main = () => {
     if (state === TicketStates.Finished) {
       setState(TicketStates.Initial);
       setPrizeInfo(undefined);
-      setIsSuccessGetPrize(false);
     }
   }, [state]);
 
@@ -103,7 +100,7 @@ export const Main = () => {
       getPrize.mutateAsync().then(() => {
         setTimeout(() => {
           setState(TicketStates.Finished);
-        }, 4000);
+        }, 4500);
       });
     }
   }, [getPrize, state]);
@@ -244,9 +241,8 @@ export const Main = () => {
       </Container>
       <Box h={{ base: '220px', xl: '460px' }}>
         <MainSlider
-          isSuccess={isSuccessGetPrize}
-          isLoading={isGetPrizeConfirmed && state !== TicketStates.Initial}
           prizeInfo={prizeInfo}
+          isLoading={isGetPrizeConfirmed && state === TicketStates.TicketGoLoading}
         />
       </Box>
     </>

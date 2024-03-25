@@ -14,10 +14,9 @@ import 'slick-carousel/slick/slick-theme.scss';
 interface MainSliderProps {
   isLoading: boolean;
   prizeInfo?: PrizeInfo;
-  isSuccess: boolean;
 }
 
-export const MainSlider = ({ isLoading, isSuccess, prizeInfo }: MainSliderProps) => {
+export const MainSlider = ({ isLoading, prizeInfo }: MainSliderProps) => {
   const [currentSlide, setCurrentSlide] = useState(1);
   const [speed, setSpeed] = useState(800);
   const [isAutoplay, setIsAutoplay] = useState(false);
@@ -43,6 +42,7 @@ export const MainSlider = ({ isLoading, isSuccess, prizeInfo }: MainSliderProps)
     touchMove: true,
     autoplay: true,
     cssEase: 'linear',
+    swipeToSlide: true,
 
     slidesToShow: 5,
     slidesToScroll: 1,
@@ -75,13 +75,13 @@ export const MainSlider = ({ isLoading, isSuccess, prizeInfo }: MainSliderProps)
   });
 
   useEffect(() => {
-    if (!isSuccess && !prizeInfo) {
+    if (!prizeInfo) {
       setShowPrize(false);
       setHideCard(false);
       setIsAutoplay(false);
       setSpeed(800);
     }
-  }, [isLoading, isSuccess, prizeInfo]);
+  }, [prizeInfo]);
 
   useEffect(() => {
     if (isLoading) {
@@ -102,7 +102,7 @@ export const MainSlider = ({ isLoading, isSuccess, prizeInfo }: MainSliderProps)
 
   const handleAfterChange = useCallback(
     (slide: number) => {
-      if (isSuccess) {
+      if (prizeInfo) {
         if (speed > 700) {
           setIsAutoplay(false);
           setCurrentSlide(slide);
@@ -118,7 +118,7 @@ export const MainSlider = ({ isLoading, isSuccess, prizeInfo }: MainSliderProps)
         }
       }
     },
-    [isLoading, isSuccess, speed]
+    [isLoading, prizeInfo, speed]
   );
 
   return (
@@ -146,6 +146,7 @@ export const MainSlider = ({ isLoading, isSuccess, prizeInfo }: MainSliderProps)
                   key={index}
                   h={{ base: '130px !important', xl: '290px !important' }}
                   w={{ base: '140px !important', xl: '320px !important' }}
+                  _focus={{ outline: 'none' }}
                 >
                   <Image
                     src={image}

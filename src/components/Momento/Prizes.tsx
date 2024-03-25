@@ -20,6 +20,7 @@ const settings: Settings = {
   arrows: true,
   variableWidth: false,
   adaptiveHeight: false,
+  swipeToSlide: true,
 
   responsive: [
     {

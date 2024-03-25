@@ -126,10 +126,9 @@ const Powers = ({ tokenId }: Pick<PrizeInfo, 'tokenId'>) => {
     2: powerCPrize,
     3: powerDPrize,
   };
-  const letter = ['A', 'B', 'C', 'D'][Number(tokenId)];
 
   return (
-    <PrizeCard label={`iSaver Powers ${letter}`}>
+    <PrizeCard label="iSaver Powers">
       <Image src={powerPrizes[Number(tokenId)]} alt="iSaver Powers" />
     </PrizeCard>
   );

@@ -27,7 +27,6 @@ interface TicketProps {
 
 export const Ticket = ({ tip, state, hasTickets, onClick }: TicketProps) => {
   const bp = useBreakpoint({ ssr: false });
-
   const isSm = useMemo(() => ['sm', 'md', 'lg'].includes(bp), [bp]);
 
   const handleClick = useCallback(
@@ -50,6 +49,7 @@ export const Ticket = ({ tip, state, hasTickets, onClick }: TicketProps) => {
       justifyContent="center"
       alignItems="center"
       flexDir="column"
+      overflow="visible"
       mt={{ sm: '30px' }}
       pb={{ sm: '58px', lg: '38px', xl: '48px' }}
     >
@@ -66,6 +66,7 @@ export const Ticket = ({ tip, state, hasTickets, onClick }: TicketProps) => {
         justifyContent="center"
         alignItems="center"
         px="55px"
+        overflow="visible"
         cursor={hasTickets && !isActive ? 'pointer' : undefined}
         onClick={hasTickets && !isActive ? handleClick : undefined}
       >
@@ -73,14 +74,14 @@ export const Ticket = ({ tip, state, hasTickets, onClick }: TicketProps) => {
           <>
             <img
               className="momento_ticket_image"
-              src={hasTickets ? TicketEmptyBorder : TicketEmpty}
+              src={hasTickets && state === TicketStates.Initial ? TicketEmptyBorder : TicketEmpty}
               alt="Ticket"
             />
             {hasTickets ? (
               state === TicketStates.Finished ? (
                 // if replay
                 <Flex color="sav" alignItems="center">
-                  <Box width="28px" height="28px" mr="5px">
+                  <Box width="28px" height="28px" mr="5px" zIndex={10}>
                     <RepeatIcon />
                   </Box>
                   <Text textStyle="button" fontSize={{ xl: '18px' }}>
@@ -114,7 +115,7 @@ export const Ticket = ({ tip, state, hasTickets, onClick }: TicketProps) => {
 
       <Text
         position="absolute"
-        bottom="0"
+        bottom={{ sm: '20px', lg: '0' }}
         whiteSpace="nowrap"
         display={{ sm: tip ? 'unset' : 'none', lg: 'unset' }}
         height={{ sm: '18px', xl: '24px' }}
