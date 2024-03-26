@@ -5,6 +5,7 @@ import { Box, Button, Container, Flex, Link, Text, useDisclosure } from '@chakra
 import { useAccount } from 'wagmi';
 
 import { useBuyTickets, useTicketPrice } from '@/hooks/raffle/useRaffle';
+import { useLogger } from '@/hooks/useLogger';
 import { PrizeInfo, useMomento } from '@/hooks/useMomento';
 import { useNavigateByHash } from '@/hooks/useNavigateByHash';
 import { useTicketsBalance } from '@/hooks/useTicketsBalance';
@@ -33,10 +34,12 @@ export const Main = () => {
     isGetPrizeConfirmed,
   } = useMomento();
   const navigate = useNavigateByHash();
-
-  const handleNavigateToClaimTickets = useCallback(() => {
-    navigate('/#claim-ticket');
-  }, [navigate]);
+  const logger = useLogger({
+    event: 'momento',
+    category: 'elements',
+    action: 'button_click',
+    buttonLocation: 'up',
+  });
 
   useEffect(() => {
     if (
@@ -75,6 +78,16 @@ export const Main = () => {
     setPrizeInfo(getPrize.data);
   }, [getPrize.data]);
 
+  const handleNavigateToClaimTickets = useCallback(() => {
+    logger({ label: 'mint_ticket', context: 'momento', actionGroup: 'interactions' });
+    navigate('/#claim-ticket');
+  }, [navigate, logger]);
+
+  const handleOpenBuyTicketsModal = useCallback(() => {
+    logger({ label: 'buy_tickets', context: 'momento', actionGroup: 'interactions' });
+    onOpen();
+  }, [logger, onOpen]);
+
   const handleTicketClick = useCallback(() => {
     if (state === TicketStates.Initial) {
       setState(TicketStates.TicketPlaced);
@@ -87,15 +100,19 @@ export const Main = () => {
 
   const handleBurnTicket = useCallback(() => {
     if (state === TicketStates.TicketPlaced) {
+      logger({ label: 'burn', actionGroup: 'conversions' });
+
       setState(TicketStates.TicketBurnLoading);
       burnTicket.mutateAsync().then(() => {
         setState(TicketStates.TicketBurned);
       });
     }
-  }, [burnTicket, state]);
+  }, [burnTicket, state, logger]);
 
   const handleGoClick = useCallback(() => {
     if (state === TicketStates.OracleResponded) {
+      logger({ label: 'go', actionGroup: 'conversions' });
+
       setState(TicketStates.TicketGoLoading);
       getPrize.mutateAsync().then(() => {
         setTimeout(() => {
@@ -103,7 +120,7 @@ export const Main = () => {
         }, 4500);
       });
     }
-  }, [getPrize, state]);
+  }, [getPrize, state, logger]);
 
   return (
     <>
@@ -187,7 +204,7 @@ export const Main = () => {
                   size={{ base: 'sm', xl: 'md' }}
                   fontSize="12px !important"
                   variant="outlinedGreen"
-                  onClick={onOpen}
+                  onClick={handleOpenBuyTicketsModal}
                 >
                   buy tickets
                 </Button>
@@ -231,7 +248,8 @@ export const Main = () => {
           </Box>
           {isOpen ? (
             <BuyRaffleTicketsModal
-              isPageView
+              event="momento"
+              context="momento"
               ticketPrice={ticketPrice}
               onBuy={buyTickets.mutateAsync}
               onClose={onClose}

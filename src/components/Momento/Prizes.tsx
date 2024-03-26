@@ -1,8 +1,9 @@
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useRef } from 'react';
 import Slider, { Settings } from 'react-slick';
 import { Box, Text } from '@chakra-ui/react';
 import { useNetwork } from 'wagmi';
 
+import { useOnVisibleLogger } from '@/hooks/logger/useOnVisibleLogger';
 import { useMomentoPrizes } from '@/hooks/useMomento';
 import { getOpenseaLink } from '@/utils/getExplorerLink';
 
@@ -75,7 +76,6 @@ const cardsMock = [
 
 export const Prizes = () => {
   const { externalNFTs } = useMomentoPrizes();
-  const { chain } = useNetwork();
 
   const cards = useMemo(() => {
     if (externalNFTs.length) {
@@ -89,14 +89,6 @@ export const Prizes = () => {
     return cardsMock;
   }, [externalNFTs]);
 
-  const handleOpenOpenseaPage = useCallback(
-    (card: any) => {
-      const link = getOpenseaLink(card.contract, card.tokenId, chain);
-      window.open(link, '__blank');
-    },
-    [chain]
-  );
-
   return (
     <Box textAlign="center">
       <Text textStyle="h2" fontSize={{ sm: '26px', lg: '38px' }} px={{ sm: '24px', md: '0' }}>
@@ -109,26 +101,53 @@ export const Prizes = () => {
       <Box className="momento_prizes" mt={{ sm: '30px', '2xl': '50px' }}>
         <Slider {...settings}>
           {cards.map((card, index) => (
-            <Box
-              key={card.label + index.toString()}
-              px={{ sm: '4px', xl: '10px' }}
-              textAlign="center"
-            >
-              <Box width={{ sm: '146px', xl: '310px' }}>
-                <img src={card.image} alt="slider item" />
-              </Box>
-              <Text
-                mt={{ sm: '20px' }}
-                fontSize={{ sm: '12px' }}
-                _hover={{ cursor: 'pointer', textDecoration: 'underline' }}
-                onClick={() => handleOpenOpenseaPage(card)}
-              >
-                {card.label}
-              </Text>
-            </Box>
+            <PrizeCard key={card.label + index.toString()} {...card} />
           ))}
         </Slider>
       </Box>
+    </Box>
+  );
+};
+
+type PrizeCardProps = {
+  image?: string;
+  label?: string;
+  contract?: string;
+  tokenId?: string;
+};
+const PrizeCard = ({ image, label, tokenId, contract }: PrizeCardProps) => {
+  const { chain } = useNetwork();
+  const ref = useRef(null);
+
+  useOnVisibleLogger(ref, {
+    event: 'momento',
+    category: 'banners',
+    action: 'show',
+    label: 'top_nft',
+    content: label,
+    buttonLocation: 'mid',
+    actionGroup: 'interactions',
+  });
+
+  const handleOpenOpenseaPage = useCallback(() => {
+    const link = getOpenseaLink(contract || '', tokenId || '', chain);
+    window.open(link, '__blank');
+  }, [chain, contract, tokenId]);
+
+  return (
+    <Box px={{ sm: '4px', xl: '10px' }} textAlign="center">
+      <Box width={{ sm: '146px', xl: '310px' }}>
+        <img src={image} alt="slider item" />
+      </Box>
+      <Text
+        ref={ref}
+        mt={{ sm: '20px' }}
+        fontSize={{ sm: '12px' }}
+        _hover={{ cursor: 'pointer', textDecoration: 'underline' }}
+        onClick={handleOpenOpenseaPage}
+      >
+        {label}
+      </Text>
     </Box>
   );
 };

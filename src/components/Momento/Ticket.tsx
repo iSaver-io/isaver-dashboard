@@ -2,6 +2,7 @@ import { useCallback, useMemo } from 'react';
 import { Box, Flex, Text, useBreakpoint } from '@chakra-ui/react';
 
 import { ReactComponent as RepeatIcon } from '@/assets/images/icons/repeat.svg';
+import { useLogger } from '@/hooks/useLogger';
 
 import TicketImage from './images/ticket.png';
 import TicketActiveImage from './images/ticket-active.png';
@@ -28,14 +29,26 @@ interface TicketProps {
 export const Ticket = ({ tip, state, hasTickets, onClick }: TicketProps) => {
   const bp = useBreakpoint({ ssr: false });
   const isSm = useMemo(() => ['sm', 'md', 'lg'].includes(bp), [bp]);
+  const logger = useLogger({
+    event: 'momento',
+    category: 'elements',
+    action: 'element_click',
+    buttonLocation: 'up',
+  });
 
   const handleClick = useCallback(
     (event: any) => {
+      if (event.detail === 2) {
+        logger({ label: 'double_click', actionGroup: 'conversions' });
+      }
+      if (state === TicketStates.Finished) {
+        logger({ label: 'again', actionGroup: 'interactions' });
+      }
       if (event.detail === 2 || ((isSm || state === TicketStates.Finished) && event.detail === 1)) {
         onClick();
       }
     },
-    [isSm, onClick, state]
+    [isSm, onClick, state, logger]
   );
 
   const isActive = useMemo(

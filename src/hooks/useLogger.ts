@@ -8,10 +8,18 @@ export type EventName =
   | 'staking'
   | 'team'
   | 'raffle'
+  | 'exchange'
   | 'settings'
   | 'avatars'
   | 'momento';
-type EventCategory = 'elements' | 'forms' | 'blocks' | 'notifications' | 'cards' | 'banners';
+type EventCategory =
+  | 'elements'
+  | 'forms'
+  | 'blocks'
+  | 'notifications'
+  | 'cards'
+  | 'banners'
+  | 'presentations';
 type EventAction =
   | 'element_click'
   | 'button_click'
