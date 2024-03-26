@@ -43,6 +43,12 @@ export const Ticket = ({ tip, state, hasTickets, onClick }: TicketProps) => {
     [state]
   );
 
+  const isActiveImage = [
+    TicketStates.TicketBurned,
+    TicketStates.OracleResponded,
+    TicketStates.TicketGoLoading,
+  ].includes(state);
+
   return (
     <Flex
       position="relative"
@@ -67,6 +73,8 @@ export const Ticket = ({ tip, state, hasTickets, onClick }: TicketProps) => {
         alignItems="center"
         px="55px"
         overflow="visible"
+        width={isActiveImage ? '251px' : undefined}
+        margin={isActiveImage ? '0 -7px' : undefined}
         cursor={hasTickets && !isActive ? 'pointer' : undefined}
         onClick={hasTickets && !isActive ? handleClick : undefined}
       >
@@ -104,11 +112,7 @@ export const Ticket = ({ tip, state, hasTickets, onClick }: TicketProps) => {
           <img className="momento_ticket_image" src={TicketImage} alt="Ticket" />
         ) : null}
 
-        {[
-          TicketStates.TicketBurned,
-          TicketStates.OracleResponded,
-          TicketStates.TicketGoLoading,
-        ].includes(state) ? (
+        {isActiveImage ? (
           <img className="momento_ticket_image active" src={TicketActiveImage} alt="Ticket" />
         ) : null}
       </Flex>
