@@ -1,5 +1,8 @@
+import { useRef } from 'react';
 import Slider from 'react-slick';
 import { Box, Flex, Text, useBreakpoint } from '@chakra-ui/react';
+
+import { useOnVisibleLogger } from '@/hooks/logger/useOnVisibleLogger';
 
 import AvatarImage from './images/avatar.png';
 import AccessoryImage from './images/visual-traits/accessory.png';
@@ -134,11 +137,22 @@ export const VisualTraits = () => {
 };
 
 const TraitsItem = ({ title, description, image }: TraitsItemType) => {
+  const ref = useRef(null);
+  useOnVisibleLogger(ref, {
+    event: 'avatars',
+    category: 'elements',
+    action: 'show',
+    buttonLocation: 'mid',
+    actionGroup: 'interactions',
+    label: 'traits',
+    content: title,
+  });
+
   return (
     <Flex className="visual-traits__item" alignItems="flex-start" gap="15px">
       <img src={image} alt={title} width="50px" height="50px" />
       <div>
-        <Text as="h4" textStyle="textBold" textTransform="uppercase" mt="14px" mb="10px">
+        <Text as="h4" textStyle="textBold" textTransform="uppercase" mt="14px" mb="10px" ref={ref}>
           {title}
         </Text>
         <Text

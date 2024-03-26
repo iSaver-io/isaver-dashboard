@@ -1,10 +1,11 @@
 import { useCallback } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Button, Flex, Text, useBreakpoint } from '@chakra-ui/react';
 import { useAccount } from 'wagmi';
 
 import { ContractsEnum, useContractAbi } from '@/hooks/contracts/useContractAbi';
 import { useAvatarPrices, useBuyAvatar, useNextInflationTimestamp } from '@/hooks/useAvatarsSell';
+import { useLogger } from '@/hooks/useLogger';
 import { useAddressHasNFT } from '@/hooks/useNFTHolders';
 
 import { ConnectWalletButton } from '../ui/ConnectWalletButton/ConnectWalletButton';
@@ -16,15 +17,28 @@ export const MintAvatar = () => {
   const { avatarPrice, avatarNextPrice } = useAvatarPrices();
   const nextInflationTimestamp = useNextInflationTimestamp();
   const buyAvatar = useBuyAvatar();
+  const logger = useLogger({
+    event: 'avatars',
+    category: 'elements',
+    action: 'button_click',
+    buttonLocation: 'mid',
+  });
   const bp = useBreakpoint({ ssr: false });
   const isSm = ['sm', 'md', 'lg'].includes(bp);
+  const navigate = useNavigate();
 
   const { address: avatarsAddress } = useContractAbi({ contract: ContractsEnum.ISaverAvatars });
   const { hasNFT } = useAddressHasNFT(avatarsAddress, address);
 
   const handleBuy = useCallback(() => {
+    logger({ label: 'mint_now', value: avatarPrice, actionGroup: 'conversions' });
     buyAvatar.mutateAsync();
-  }, [buyAvatar]);
+  }, [buyAvatar, logger, avatarPrice]);
+
+  const handleOpenAvatarSettings = useCallback(() => {
+    logger({ label: 'activate', actionGroup: 'interactions' });
+    navigate('/avatar-settings');
+  }, [logger, navigate]);
 
   return (
     <Flex flexDirection="column" alignItems="center">
@@ -94,7 +108,7 @@ export const MintAvatar = () => {
             Mint now
           </Button>
           {hasNFT ? (
-            <Button variant="outlinedWhite" as={Link} to="/" mt="10px" w="200px">
+            <Button variant="outlinedWhite" onClick={handleOpenAvatarSettings} mt="10px" w="200px">
               Activate
             </Button>
           ) : null}

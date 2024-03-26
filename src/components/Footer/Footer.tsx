@@ -172,7 +172,7 @@ export const Footer = () => {
                 href="https://twitter.com/iSaver_official"
                 target="_blank"
                 rel="noreferrer"
-                onClick={() => handleSocialLinkClick('tw')}
+                onClick={() => handleSocialLinkClick('twitter')}
               >
                 <TwitterIcon />
               </a>

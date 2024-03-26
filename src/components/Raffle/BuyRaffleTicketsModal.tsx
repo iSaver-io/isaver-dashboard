@@ -17,7 +17,7 @@ import { useAccount } from 'wagmi';
 import { Button } from '@/components/ui/Button/Button';
 import { InputAmount } from '@/components/ui/InputAmount/InputAmount';
 import { useDebounce } from '@/hooks/useDebounce';
-import { useLogger } from '@/hooks/useLogger';
+import { EventContext, EventName, useLogger } from '@/hooks/useLogger';
 import { useSavBalance } from '@/hooks/useTokenBalance';
 import { bigNumberToString } from '@/utils/number';
 
@@ -33,13 +33,15 @@ const boxCommonStyles = {
 
 type BuyRaffleTicketsModalProps = {
   ticketPrice: BigNumber;
-  isPageView?: boolean;
+  event: EventName;
+  context?: EventContext;
   onClose: () => void;
   onBuy: (amount: number) => Promise<void>;
 };
 export const BuyRaffleTicketsModal: FC<BuyRaffleTicketsModalProps> = ({
   ticketPrice,
-  isPageView,
+  event,
+  context,
   onClose,
   onBuy,
 }) => {
@@ -48,6 +50,7 @@ export const BuyRaffleTicketsModal: FC<BuyRaffleTicketsModalProps> = ({
   const { address } = useAccount();
   const { data: savBalance } = useSavBalance(address);
   const logger = useLogger({
+    event,
     context: 'raffles',
     buttonLocation: 'popup',
   });
@@ -62,7 +65,6 @@ export const BuyRaffleTicketsModal: FC<BuyRaffleTicketsModalProps> = ({
       setAmount(value || undefined);
 
       debouncedLogger({
-        event: isPageView ? 'raffle' : 'dashboard',
         category: 'forms',
         action: 'form_add',
         label: 'amount',
@@ -70,7 +72,7 @@ export const BuyRaffleTicketsModal: FC<BuyRaffleTicketsModalProps> = ({
         actionGroup: 'interactions',
       });
     },
-    [setAmount, debouncedLogger, isPageView]
+    [setAmount, debouncedLogger]
   );
 
   const handleBuy = useCallback(() => {
@@ -86,14 +88,14 @@ export const BuyRaffleTicketsModal: FC<BuyRaffleTicketsModalProps> = ({
       });
 
     logger({
-      event: isPageView ? 'raffle' : 'dashboard',
       category: 'elements',
       action: 'button_click',
       label: 'buy_tickets',
       content: amount,
+      context,
       actionGroup: 'conversions',
     });
-  }, [amount, onBuy, onClose, logger, isPageView]);
+  }, [amount, onBuy, onClose, logger, context]);
 
   return (
     <Modal isCentered isOpen={true} onClose={onClose}>

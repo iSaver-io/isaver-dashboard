@@ -10,7 +10,7 @@ import { useVendorSellControl } from '@/hooks/useVendorSell';
 export const ExchangeControl = () => {
   const { sellCommissionRequest, sellCommission, updateSellFee } = useVendorSellControl();
 
-  const { isAuthorized, setIsExchangeSellEnabled, signIn } = useDashboardConfigControl();
+  const { setIsExchangeSellEnabled } = useDashboardConfigControl();
   const { isExchangeSellEnabled } = useDashboardConfig();
 
   return (
@@ -30,26 +30,20 @@ export const ExchangeControl = () => {
         )}
 
         <ButtonGroup size="sm" ml="24px">
-          {isAuthorized ? (
-            <>
-              <Button
-                borderRadius="sm"
-                isDisabled={isExchangeSellEnabled}
-                onClick={() => setIsExchangeSellEnabled(true)}
-              >
-                Enable
-              </Button>
-              <Button
-                variant="filledRed"
-                isDisabled={!isExchangeSellEnabled}
-                onClick={() => setIsExchangeSellEnabled(false)}
-              >
-                Disable
-              </Button>
-            </>
-          ) : (
-            <Button onClick={signIn}>Log In with Google</Button>
-          )}
+          <Button
+            borderRadius="sm"
+            isDisabled={isExchangeSellEnabled}
+            onClick={() => setIsExchangeSellEnabled(true)}
+          >
+            Enable
+          </Button>
+          <Button
+            variant="filledRed"
+            isDisabled={!isExchangeSellEnabled}
+            onClick={() => setIsExchangeSellEnabled(false)}
+          >
+            Disable
+          </Button>
         </ButtonGroup>
       </Flex>
       <ControlField

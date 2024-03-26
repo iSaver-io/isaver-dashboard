@@ -20,8 +20,8 @@ export const TeamsList = ({ isPageView = false }: { isPageView?: boolean }) => {
   const logger = useLogger({
     category: 'elements',
     action: 'button_click',
-    label: 'activate',
     context: 'teams',
+    buttonLocation: 'mid',
     actionGroup: 'conversions',
   });
 
@@ -29,7 +29,7 @@ export const TeamsList = ({ isPageView = false }: { isPageView?: boolean }) => {
   const isSm = ['sm', 'lg', 'xl'].includes(bp);
 
   const handleSubscribe = useCallback(
-    (planId: number) => {
+    (planId: number, isProlong?: boolean) => {
       const teamPlan = teamPlansRequest?.data?.find(
         (plan) => plan.teamPlanId.toNumber() === planId
       );
@@ -40,8 +40,9 @@ export const TeamsList = ({ isPageView = false }: { isPageView?: boolean }) => {
 
         logger({
           event: isPageView ? 'team' : 'dashboard',
+          label: isProlong ? 'prolong' : 'activate',
           value: bigNumberToString(teamPlan.subscriptionCost),
-          content: stakingPlan?.subscriptionDuration.toString(),
+          content: stakingPlan?.stakingDuration.toString(),
         });
       }
 
@@ -91,7 +92,7 @@ export const TeamsList = ({ isPageView = false }: { isPageView?: boolean }) => {
             userHasStake={userHasSufficientStaking}
             members={members}
             reward={plan.reward}
-            onSubscribe={() => handleSubscribe(plan.teamPlanId.toNumber())}
+            onSubscribe={() => handleSubscribe(plan.teamPlanId.toNumber(), isSubscriptionEnding)}
           />
         )
       )}

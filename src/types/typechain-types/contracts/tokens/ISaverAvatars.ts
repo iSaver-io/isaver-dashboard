@@ -138,6 +138,7 @@ export interface ISaverAvatarsInterface extends utils.Interface {
     "renounceRole(bytes32,address)": FunctionFragment;
     "revokeRole(bytes32,address)": FunctionFragment;
     "safeMint(address)": FunctionFragment;
+    "safeMintBatch(address,uint256)": FunctionFragment;
     "safeTransferFrom(address,address,uint256)": FunctionFragment;
     "safeTransferFrom(address,address,uint256,bytes)": FunctionFragment;
     "setApprovalForAll(address,bool)": FunctionFragment;
@@ -184,6 +185,7 @@ export interface ISaverAvatarsInterface extends utils.Interface {
       | "renounceRole"
       | "revokeRole"
       | "safeMint"
+      | "safeMintBatch"
       | "safeTransferFrom(address,address,uint256)"
       | "safeTransferFrom(address,address,uint256,bytes)"
       | "setApprovalForAll"
@@ -276,6 +278,10 @@ export interface ISaverAvatarsInterface extends utils.Interface {
     values: [BytesLike, string]
   ): string;
   encodeFunctionData(functionFragment: "safeMint", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "safeMintBatch",
+    values: [string, BigNumberish]
+  ): string;
   encodeFunctionData(
     functionFragment: "safeTransferFrom(address,address,uint256)",
     values: [string, string, BigNumberish]
@@ -406,6 +412,10 @@ export interface ISaverAvatarsInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "revokeRole", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "safeMint", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "safeMintBatch",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "safeTransferFrom(address,address,uint256)",
     data: BytesLike
@@ -762,6 +772,12 @@ export interface ISaverAvatars extends BaseContract {
       overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
 
+    safeMintBatch(
+      to: string,
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
+
     "safeTransferFrom(address,address,uint256)"(
       from: string,
       to: string,
@@ -961,6 +977,12 @@ export interface ISaverAvatars extends BaseContract {
     overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
 
+  safeMintBatch(
+    to: string,
+    amount: BigNumberish,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
   "safeTransferFrom(address,address,uint256)"(
     from: string,
     to: string,
@@ -1151,6 +1173,12 @@ export interface ISaverAvatars extends BaseContract {
     ): Promise<void>;
 
     safeMint(to: string, overrides?: CallOverrides): Promise<void>;
+
+    safeMintBatch(
+      to: string,
+      amount: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     "safeTransferFrom(address,address,uint256)"(
       from: string,
@@ -1469,6 +1497,12 @@ export interface ISaverAvatars extends BaseContract {
       overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
 
+    safeMintBatch(
+      to: string,
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+
     "safeTransferFrom(address,address,uint256)"(
       from: string,
       to: string,
@@ -1667,6 +1701,12 @@ export interface ISaverAvatars extends BaseContract {
 
     safeMint(
       to: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    safeMintBatch(
+      to: string,
+      amount: BigNumberish,
       overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 

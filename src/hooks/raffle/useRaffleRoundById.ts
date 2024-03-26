@@ -75,7 +75,7 @@ export const useRaffleRoundById = (id?: number) => {
         queryClient.invalidateQueries({ queryKey: [RAFFLE_ROUND_USER_TICKETS_REQUEST] });
       },
       onError: (err) => {
-        handleError(err);
+        handleError(err, 'raffles');
       },
     }
   );

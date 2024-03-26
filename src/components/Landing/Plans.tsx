@@ -39,7 +39,14 @@ export const Plans = () => {
   const isSmall = ['md', 'xl'].includes(bp);
 
   const ref = useRef<HTMLHeadingElement>(null);
-  useOnVisibleLogger(ref, 'our_plans');
+  useOnVisibleLogger(ref, {
+    event: 'landing',
+    category: 'blocks',
+    action: 'page_sсroll',
+    buttonLocation: 'mid',
+    actionGroup: 'interactions',
+    label: 'our_plans',
+  });
 
   return (
     <Flex justifyContent="center" flexWrap="wrap" className="plans">

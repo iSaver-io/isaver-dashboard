@@ -1,6 +1,22 @@
+import { useCallback } from 'react';
 import { Flex, Grid, Text } from '@chakra-ui/react';
 
+import { useLogger } from '@/hooks/useLogger';
+
 export const HowItWorks = () => {
+  const logger = useLogger({
+    event: 'avatars',
+    category: 'elements',
+    action: 'element_click',
+    buttonLocation: 'down',
+    actionGroup: 'interactions',
+    label: 'more',
+    context: 'avatars',
+  });
+  const handleMoreClick = useCallback(() => {
+    logger();
+  }, [logger]);
+
   return (
     <Flex
       flexDirection="column"
@@ -86,7 +102,7 @@ export const HowItWorks = () => {
         </div>
       </Grid>
       {/* Отображаем кнопку только если больше 4 блоков */}
-      {/* <Button variant="link" as={Link} to="/" mt="30px">
+      {/* <Button variant="link" mt="30px" onClick={handleMoreClick} >
         See more
       </Button> */}
     </Flex>

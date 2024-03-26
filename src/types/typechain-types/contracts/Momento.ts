@@ -44,6 +44,7 @@ export interface MomentoInterface extends utils.Interface {
     "renounceRole(bytes32,address)": FunctionFragment;
     "revokeRole(bytes32,address)": FunctionFragment;
     "supportsInterface(bytes4)": FunctionFragment;
+    "totalBurnedTickets()": FunctionFragment;
     "upgradeTo(address)": FunctionFragment;
     "upgradeToAndCall(address,bytes)": FunctionFragment;
   };
@@ -65,6 +66,7 @@ export interface MomentoInterface extends utils.Interface {
       | "renounceRole"
       | "revokeRole"
       | "supportsInterface"
+      | "totalBurnedTickets"
       | "upgradeTo"
       | "upgradeToAndCall"
   ): FunctionFragment;
@@ -123,6 +125,10 @@ export interface MomentoInterface extends utils.Interface {
     functionFragment: "supportsInterface",
     values: [BytesLike]
   ): string;
+  encodeFunctionData(
+    functionFragment: "totalBurnedTickets",
+    values?: undefined
+  ): string;
   encodeFunctionData(functionFragment: "upgradeTo", values: [string]): string;
   encodeFunctionData(
     functionFragment: "upgradeToAndCall",
@@ -166,6 +172,10 @@ export interface MomentoInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "revokeRole", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "supportsInterface",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "totalBurnedTickets",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "upgradeTo", data: BytesLike): Result;
@@ -355,6 +365,8 @@ export interface Momento extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
+    totalBurnedTickets(overrides?: CallOverrides): Promise<[BigNumber]>;
+
     upgradeTo(
       newImplementation: string,
       overrides?: Overrides & { from?: string }
@@ -427,6 +439,8 @@ export interface Momento extends BaseContract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
+  totalBurnedTickets(overrides?: CallOverrides): Promise<BigNumber>;
+
   upgradeTo(
     newImplementation: string,
     overrides?: Overrides & { from?: string }
@@ -497,6 +511,8 @@ export interface Momento extends BaseContract {
       interfaceId: BytesLike,
       overrides?: CallOverrides
     ): Promise<boolean>;
+
+    totalBurnedTickets(overrides?: CallOverrides): Promise<BigNumber>;
 
     upgradeTo(
       newImplementation: string,
@@ -628,6 +644,8 @@ export interface Momento extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    totalBurnedTickets(overrides?: CallOverrides): Promise<BigNumber>;
+
     upgradeTo(
       newImplementation: string,
       overrides?: Overrides & { from?: string }
@@ -706,6 +724,10 @@ export interface Momento extends BaseContract {
 
     supportsInterface(
       interfaceId: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    totalBurnedTickets(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

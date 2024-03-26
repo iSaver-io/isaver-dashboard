@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/Button/Button';
 import { useLogger } from '@/hooks/useLogger';
 
 type ExportButtonProps = {
-  event?: 'staking' | 'team' | 'avatarSettings';
+  event?: 'staking' | 'team' | 'settings' | 'momento';
   buttonLocation?: 'down' | 'mid' | 'up';
   onClick: () => void;
 };
@@ -14,8 +14,7 @@ export const ExportButton: FC<ExportButtonProps> = ({ buttonLocation, event, onC
   const logger = useLogger({
     category: 'elements',
     action: 'element_click',
-    label: 'sort',
-    buttonLocation: 'down',
+    label: 'export',
     actionGroup: 'interactions',
   });
 

@@ -121,3 +121,57 @@ export const AddStakingModal: FC<AddStakingModalProps> = ({ onClose, onSubmit })
     </Modal>
   );
 };
+
+type AddSuperStakingModalProps = {
+  onClose: () => void;
+  onSubmit: ({ apr }: { apr: number }) => Promise<void>;
+};
+export const AddSuperStakingModal: FC<AddSuperStakingModalProps> = ({ onClose, onSubmit }) => {
+  const [apr, setApr] = useState<string>();
+
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleSubmit = useCallback(() => {
+    if (apr) {
+      const formattedAPR = Math.floor(parseFloat(apr || '0') * 10);
+
+      setIsLoading(true);
+      onSubmit({ apr: formattedAPR }).finally(() => setIsLoading(false));
+    }
+  }, [apr, setIsLoading, onSubmit]);
+
+  const isDataValid = Boolean(apr);
+
+  return (
+    <Modal isCentered isOpen={true} onClose={onClose}>
+      <ModalOverlay />
+      <ModalContent>
+        <ModalHeader textStyle="textSansBold" fontSize={26}>
+          Create new Super Staking plan
+          <CloseButton onClick={onClose} size="lg" />
+        </ModalHeader>
+
+        <ModalBody>
+          <Box mb="20px">
+            <Text textStyle="text1" mb="4px">
+              APR:
+            </Text>
+            <Input type="number" placeholder="%" onChange={(e) => setApr(e.target.value)} />
+          </Box>
+        </ModalBody>
+
+        <ModalFooter>
+          <Button
+            width="100%"
+            variant="outlined"
+            onClick={handleSubmit}
+            isDisabled={!isDataValid || isLoading}
+            isLoading={isLoading}
+          >
+            Create super staking plan
+          </Button>
+        </ModalFooter>
+      </ModalContent>
+    </Modal>
+  );
+};

@@ -48,6 +48,10 @@ export const useAvatarsSellContract = () => {
     return contract.divider();
   };
 
+  const getSoldStatistic = () => {
+    return contract.getSoldStatistic();
+  };
+
   const buyAvatar = async () => {
     const tx = await contract.buyAvatar();
     return waitForTransaction(tx);
@@ -88,6 +92,7 @@ export const useAvatarsSellContract = () => {
     getBaseTimestamp,
     getPowerPrice,
     getDivider,
+    getSoldStatistic,
     buyAvatar,
     buyPower,
     updateBasePrice,

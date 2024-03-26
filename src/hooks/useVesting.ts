@@ -47,7 +47,7 @@ export const useVesting = () => {
         queryClient.invalidateQueries([VESTING_SCHEDULES_BY_BENEFICIARY_REQUEST]);
         queryClient.invalidateQueries([SAV_BALANCE_REQUEST]);
       },
-      onError: handleError,
+      onError: (err) => handleError(err),
     }
   );
 
@@ -61,7 +61,7 @@ export const useVesting = () => {
       onSuccess: () => {
         queryClient.invalidateQueries([ALL_VESTING_SCHEDULES_REQUEST]);
       },
-      onError: handleError,
+      onError: (err) => handleError(err),
     }
   );
 
@@ -75,7 +75,7 @@ export const useVesting = () => {
       onSuccess: () => {
         queryClient.invalidateQueries([ALL_VESTING_SCHEDULES_REQUEST]);
       },
-      onError: handleError,
+      onError: (err) => handleError(err),
     }
   );
 

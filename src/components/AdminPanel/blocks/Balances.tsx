@@ -85,8 +85,8 @@ export const Balances = () => {
         minLimit={0}
       />
 
-      <Balance label="Raffle rewards balance" balance={raffleBalance.data} symbol="SAVR" />
       <Balance label="Referral rewards balance" balance={referralBalance.data} symbol="SAVR" />
+      <Balance label="Raffle rewards balance" balance={raffleBalance.data} symbol="SAVR" />
       <Balance label="Exchange balance (SAV)" balance={vendorBalance.data} symbol="SAV" />
       <Balance
         label="Exchange balance (USDT)"

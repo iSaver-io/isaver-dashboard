@@ -11,6 +11,7 @@ import {
   useAvatarMetadata,
   useDeactivateAvatar,
 } from '@/hooks/useAvatarSettings';
+import { useLogger } from '@/hooks/useLogger';
 import { useActiveAvatarNFT } from '@/hooks/useNFTHolders';
 import { AVATARS_URL } from '@/router';
 
@@ -28,14 +29,42 @@ export const AvatarPlace = () => {
   const { mutateAsync, isLoading: isDeactivateLoading } = useDeactivateAvatar();
   const { isConnected } = useAccount();
   const { isLoading: isMetadataLoading } = useAvatarMetadata();
+  const logger = useLogger({
+    event: 'settings',
+    category: 'elements',
+    buttonLocation: 'up',
+    actionGroup: 'interactions',
+    context: 'avatars',
+  });
 
   const [isOpen, setOpen] = useState(false);
   const [isDeleteOpen, setDeleteOpen] = useState(false);
 
+  const handleOpenAddAvatar = useCallback(() => {
+    logger({ label: 'add_avatar', action: 'button_click' });
+    setOpen(true);
+  }, [logger]);
+
+  const handleOpenDeleteModal = useCallback(() => {
+    logger({ action: 'element_click', label: 'basket' });
+    setDeleteOpen(true);
+  }, [logger]);
+
+  const handleCloseDeleteModal = useCallback(() => {
+    logger({ action: 'button_click', label: 'cancel', buttonLocation: 'popup' });
+    setDeleteOpen(false);
+  }, [logger]);
+
   const handleDelete = useCallback(() => {
+    logger({
+      action: 'button_click',
+      label: 'deactivate',
+      buttonLocation: 'popup',
+      actionGroup: 'conversions',
+    });
     setDeleteOpen(false);
     mutateAsync();
-  }, [mutateAsync]);
+  }, [mutateAsync, logger]);
 
   if (isActiveAvatarFetching || (hasAvatar && isNFTLoading) || isActivateLoading) {
     return (
@@ -60,15 +89,21 @@ export const AvatarPlace = () => {
               Place your Avatar
             </Text>
             {isConnected ? (
-              <Button rightIcon={<AddIcon />} onClick={() => setOpen(true)}>
+              <Button rightIcon={<AddIcon />} onClick={handleOpenAddAvatar}>
                 add avatar
               </Button>
             ) : (
-              <ConnectWalletButton />
+              <ConnectWalletButton event="settings" location="up" />
             )}
             <Text textStyle="text2" mt={{ base: '20px', md: '30px' }}>
               A more detailed is{' '}
-              <Link as={RouterLink} to={AVATARS_URL} color="savr" target="_blank">
+              <Link
+                as={RouterLink}
+                to={AVATARS_URL}
+                color="savr"
+                target="_blank"
+                onClick={() => logger({ action: 'link_click', label: 'here' })}
+              >
                 here
               </Link>
             </Text>
@@ -83,7 +118,7 @@ export const AvatarPlace = () => {
               />
               <Box className="avatarPlace_trash">
                 <IconButton
-                  onClick={() => setDeleteOpen(true)}
+                  onClick={handleOpenDeleteModal}
                   variant="iconButtonRed"
                   aria-label="delete avatar"
                   icon={<TrashIcon />}
@@ -98,7 +133,7 @@ export const AvatarPlace = () => {
       <AvatarSelectionModal isOpen={isOpen} onClose={() => setOpen(false)} />
       <AvatarDeletionModal
         isOpen={isDeleteOpen}
-        onClose={() => setDeleteOpen(false)}
+        onClose={handleCloseDeleteModal}
         onConfirm={handleDelete}
       />
     </>

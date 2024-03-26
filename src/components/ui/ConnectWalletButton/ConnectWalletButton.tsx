@@ -4,22 +4,25 @@ import { ButtonProps, IconButton } from '@chakra-ui/react';
 import { ReactComponent as WalletIcon } from '@/assets/images/icons/wallet_filled.svg';
 import { Button } from '@/components/ui/Button/Button';
 import { useConnectWallet } from '@/hooks/useConnectWallet';
-import { useLogger } from '@/hooks/useLogger';
+import { ButtonLocation, EventName, useLogger } from '@/hooks/useLogger';
 
 type ConnectWalletButtonProps = {
   isSmall?: boolean;
-  location?: 'header' | 'up' | 'mid' | 'down';
-  event?: 'dashboard' | 'team';
+  location?: ButtonLocation;
+  event?: EventName;
+  content?: string;
 };
 export const ConnectWalletButton = ({
   isSmall,
   location,
+  content,
   event = 'dashboard',
   ...props
 }: ButtonProps & ConnectWalletButtonProps) => {
   const { connect } = useConnectWallet();
   const logger = useLogger({
     category: 'elements',
+    event: 'cross',
     action: 'button_click',
     label: 'connect_wallet',
     actionGroup: 'interactions',
@@ -27,11 +30,11 @@ export const ConnectWalletButton = ({
 
   const handleConnectWalletClick = useCallback(() => {
     if (location) {
-      logger({ event, buttonLocation: location });
+      logger({ event, buttonLocation: location, content });
     }
 
     connect();
-  }, [logger, connect, location, event]);
+  }, [logger, connect, location, event, content]);
 
   if (isSmall) {
     return (

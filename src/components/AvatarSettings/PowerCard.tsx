@@ -1,6 +1,8 @@
+import { useCallback } from 'react';
 import { Box, Button, Flex, Text, useBreakpoint } from '@chakra-ui/react';
 
 import { useActivatePower, useUserPowers } from '@/hooks/useAvatarSettings';
+import { useLogger } from '@/hooks/useLogger';
 import { usePowerBalance } from '@/hooks/usePowers';
 import { getLocalDateString } from '@/utils/time';
 
@@ -20,6 +22,15 @@ export const PowerCard = ({ id, name, label, description, isPowersAllowed }: Pow
   const balance = usePowerBalance(id);
   const bp = useBreakpoint({ ssr: false });
   const isSm = ['sm', 'xl'].includes(bp);
+  const logger = useLogger({
+    event: 'settings',
+    category: 'elements',
+    action: 'button_click',
+    content: `Power ${name}`,
+    buttonLocation: 'down',
+    actionGroup: 'conversions',
+    context: 'powers',
+  });
 
   const getColor = () => {
     switch (id) {
@@ -35,6 +46,14 @@ export const PowerCard = ({ id, name, label, description, isPowersAllowed }: Pow
         return 'white';
     }
   };
+
+  const handleActivate = useCallback(
+    (isProlong: boolean) => {
+      logger({ label: isProlong ? 'prolong' : 'activate' });
+      activatePower();
+    },
+    [logger, activatePower]
+  );
 
   return (
     <Flex className="powerCard">
@@ -74,7 +93,7 @@ export const PowerCard = ({ id, name, label, description, isPowersAllowed }: Pow
               <Button
                 isDisabled={!balance.toNumber()}
                 size="md"
-                onClick={() => activatePower()}
+                onClick={() => handleActivate(false)}
                 isLoading={isLoading}
               >
                 Activate
@@ -85,7 +104,7 @@ export const PowerCard = ({ id, name, label, description, isPowersAllowed }: Pow
                 <Button
                   isDisabled={!balance.toNumber()}
                   size="md"
-                  onClick={() => activatePower()}
+                  onClick={() => handleActivate(true)}
                   isLoading={isLoading}
                 >
                   Prolong

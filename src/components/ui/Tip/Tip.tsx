@@ -1,3 +1,4 @@
+import { useCallback } from 'react';
 import {
   Button,
   Flex,
@@ -8,17 +9,34 @@ import {
   useBreakpoint,
 } from '@chakra-ui/react';
 
+import { EventName, useLogger } from '@/hooks/useLogger';
+
 type TipProps = {
   text: string;
   width?: string;
   append?: JSX.Element;
+  event?: EventName;
+  eventContent?: string;
 };
-export const Tip = ({ text, width, append }: TipProps) => {
+export const Tip = ({ text, width, append, event, eventContent }: TipProps) => {
   const bp = useBreakpoint({ ssr: false });
   const isSm = ['sm', 'md'].includes(bp);
+  const logger = useLogger({
+    category: 'elements',
+    action: 'element_click',
+    label: 'information',
+    buttonLocation: 'subhead',
+    actionGroup: 'interactions',
+  });
+
+  const handleOpen = useCallback(() => {
+    if (isSm && event && eventContent) {
+      logger({ event, content: eventContent });
+    }
+  }, [isSm, logger, event, eventContent]);
 
   return (
-    <Popover trigger={isSm ? 'click' : 'hover'} placement="top">
+    <Popover trigger={isSm ? 'click' : 'hover'} placement="top" onOpen={handleOpen}>
       <PopoverTrigger>
         <Button
           padding="0"

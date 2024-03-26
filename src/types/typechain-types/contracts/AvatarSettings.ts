@@ -43,6 +43,7 @@ export interface AvatarSettingsInterface extends utils.Interface {
     "deactivateAvatar()": FunctionFragment;
     "getPowerEndingTime(address,uint256)": FunctionFragment;
     "getRoleAdmin(bytes32)": FunctionFragment;
+    "getStatistic()": FunctionFragment;
     "getYear(uint256)": FunctionFragment;
     "grantRole(bytes32,address)": FunctionFragment;
     "hasPowerA(address)": FunctionFragment;
@@ -87,6 +88,7 @@ export interface AvatarSettingsInterface extends utils.Interface {
       | "deactivateAvatar"
       | "getPowerEndingTime"
       | "getRoleAdmin"
+      | "getStatistic"
       | "getYear"
       | "grantRole"
       | "hasPowerA"
@@ -170,6 +172,10 @@ export interface AvatarSettingsInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "getRoleAdmin",
     values: [BytesLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getStatistic",
+    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "getYear",
@@ -305,6 +311,10 @@ export interface AvatarSettingsInterface extends utils.Interface {
     functionFragment: "getRoleAdmin",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "getStatistic",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "getYear", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "grantRole", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "hasPowerA", data: BytesLike): Result;
@@ -370,18 +380,18 @@ export interface AvatarSettingsInterface extends utils.Interface {
 
   events: {
     "AdminChanged(address,address)": EventFragment;
-    "AvatarActivated(address,uint256)": EventFragment;
-    "AvatarDeactivated(address,uint256,address,bool)": EventFragment;
+    "AvatarActivated(address,uint256,uint256)": EventFragment;
+    "AvatarDeactivated(address,uint256,address,bool,uint256)": EventFragment;
     "BeaconUpgraded(address)": EventFragment;
-    "BirthdayPresentClaimed(uint256,address)": EventFragment;
+    "BirthdayPresentClaimed(uint256,address,uint256)": EventFragment;
     "CollectionApprovalUpdated(address,bool)": EventFragment;
-    "ExternalAvatarActivated(address,uint256,address)": EventFragment;
+    "ExternalAvatarActivated(address,uint256,address,uint256)": EventFragment;
     "Initialized(uint8)": EventFragment;
     "NameChanged(address,uint256,string)": EventFragment;
     "Paused(address)": EventFragment;
-    "PowerActivated(address,uint256,uint256)": EventFragment;
+    "PowerActivated(address,uint256,uint256,uint256)": EventFragment;
     "PowerActivationFeeUpdated(uint256)": EventFragment;
-    "PowersAccessActivated(address)": EventFragment;
+    "PowersAccessActivated(address,uint256)": EventFragment;
     "RoleAdminChanged(bytes32,bytes32,bytes32)": EventFragment;
     "RoleGranted(bytes32,address,address)": EventFragment;
     "RoleRevoked(bytes32,address,address)": EventFragment;
@@ -425,9 +435,10 @@ export type AdminChangedEventFilter = TypedEventFilter<AdminChangedEvent>;
 export interface AvatarActivatedEventObject {
   sender: string;
   tokenId: BigNumber;
+  timestamp: BigNumber;
 }
 export type AvatarActivatedEvent = TypedEvent<
-  [string, BigNumber],
+  [string, BigNumber, BigNumber],
   AvatarActivatedEventObject
 >;
 
@@ -438,9 +449,10 @@ export interface AvatarDeactivatedEventObject {
   tokenId: BigNumber;
   collectionAddress: string;
   isAvatarCollection: boolean;
+  timestamp: BigNumber;
 }
 export type AvatarDeactivatedEvent = TypedEvent<
-  [string, BigNumber, string, boolean],
+  [string, BigNumber, string, boolean, BigNumber],
   AvatarDeactivatedEventObject
 >;
 
@@ -460,9 +472,10 @@ export type BeaconUpgradedEventFilter = TypedEventFilter<BeaconUpgradedEvent>;
 export interface BirthdayPresentClaimedEventObject {
   tokenId: BigNumber;
   owner: string;
+  timestamp: BigNumber;
 }
 export type BirthdayPresentClaimedEvent = TypedEvent<
-  [BigNumber, string],
+  [BigNumber, string, BigNumber],
   BirthdayPresentClaimedEventObject
 >;
 
@@ -485,9 +498,10 @@ export interface ExternalAvatarActivatedEventObject {
   sender: string;
   tokenId: BigNumber;
   collection: string;
+  timestamp: BigNumber;
 }
 export type ExternalAvatarActivatedEvent = TypedEvent<
-  [string, BigNumber, string],
+  [string, BigNumber, string, BigNumber],
   ExternalAvatarActivatedEventObject
 >;
 
@@ -524,9 +538,10 @@ export interface PowerActivatedEventObject {
   sender: string;
   powerId: BigNumber;
   expirationTime: BigNumber;
+  timestamp: BigNumber;
 }
 export type PowerActivatedEvent = TypedEvent<
-  [string, BigNumber, BigNumber],
+  [string, BigNumber, BigNumber, BigNumber],
   PowerActivatedEventObject
 >;
 
@@ -545,9 +560,10 @@ export type PowerActivationFeeUpdatedEventFilter =
 
 export interface PowersAccessActivatedEventObject {
   sender: string;
+  timestamp: BigNumber;
 }
 export type PowersAccessActivatedEvent = TypedEvent<
-  [string],
+  [string, BigNumber],
   PowersAccessActivatedEventObject
 >;
 
@@ -705,6 +721,10 @@ export interface AvatarSettings extends BaseContract {
     ): Promise<[BigNumber]>;
 
     getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<[string]>;
+
+    getStatistic(
+      overrides?: CallOverrides
+    ): Promise<[BigNumber, BigNumber, BigNumber[]]>;
 
     getYear(
       timestamp: BigNumberish,
@@ -881,6 +901,10 @@ export interface AvatarSettings extends BaseContract {
 
   getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<string>;
 
+  getStatistic(
+    overrides?: CallOverrides
+  ): Promise<[BigNumber, BigNumber, BigNumber[]]>;
+
   getYear(
     timestamp: BigNumberish,
     overrides?: CallOverrides
@@ -1050,6 +1074,10 @@ export interface AvatarSettings extends BaseContract {
 
     getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<string>;
 
+    getStatistic(
+      overrides?: CallOverrides
+    ): Promise<[BigNumber, BigNumber, BigNumber[]]>;
+
     getYear(
       timestamp: BigNumberish,
       overrides?: CallOverrides
@@ -1169,26 +1197,30 @@ export interface AvatarSettings extends BaseContract {
       newAdmin?: null
     ): AdminChangedEventFilter;
 
-    "AvatarActivated(address,uint256)"(
+    "AvatarActivated(address,uint256,uint256)"(
       sender?: string | null,
-      tokenId?: null
+      tokenId?: null,
+      timestamp?: null
     ): AvatarActivatedEventFilter;
     AvatarActivated(
       sender?: string | null,
-      tokenId?: null
+      tokenId?: null,
+      timestamp?: null
     ): AvatarActivatedEventFilter;
 
-    "AvatarDeactivated(address,uint256,address,bool)"(
+    "AvatarDeactivated(address,uint256,address,bool,uint256)"(
       sender?: string | null,
       tokenId?: BigNumberish | null,
       collectionAddress?: string | null,
-      isAvatarCollection?: null
+      isAvatarCollection?: null,
+      timestamp?: null
     ): AvatarDeactivatedEventFilter;
     AvatarDeactivated(
       sender?: string | null,
       tokenId?: BigNumberish | null,
       collectionAddress?: string | null,
-      isAvatarCollection?: null
+      isAvatarCollection?: null,
+      timestamp?: null
     ): AvatarDeactivatedEventFilter;
 
     "BeaconUpgraded(address)"(
@@ -1196,13 +1228,15 @@ export interface AvatarSettings extends BaseContract {
     ): BeaconUpgradedEventFilter;
     BeaconUpgraded(beacon?: string | null): BeaconUpgradedEventFilter;
 
-    "BirthdayPresentClaimed(uint256,address)"(
+    "BirthdayPresentClaimed(uint256,address,uint256)"(
       tokenId?: BigNumberish | null,
-      owner?: string | null
+      owner?: string | null,
+      timestamp?: null
     ): BirthdayPresentClaimedEventFilter;
     BirthdayPresentClaimed(
       tokenId?: BigNumberish | null,
-      owner?: string | null
+      owner?: string | null,
+      timestamp?: null
     ): BirthdayPresentClaimedEventFilter;
 
     "CollectionApprovalUpdated(address,bool)"(
@@ -1214,15 +1248,17 @@ export interface AvatarSettings extends BaseContract {
       approved?: null
     ): CollectionApprovalUpdatedEventFilter;
 
-    "ExternalAvatarActivated(address,uint256,address)"(
+    "ExternalAvatarActivated(address,uint256,address,uint256)"(
       sender?: string | null,
       tokenId?: null,
-      collection?: string | null
+      collection?: string | null,
+      timestamp?: null
     ): ExternalAvatarActivatedEventFilter;
     ExternalAvatarActivated(
       sender?: string | null,
       tokenId?: null,
-      collection?: string | null
+      collection?: string | null,
+      timestamp?: null
     ): ExternalAvatarActivatedEventFilter;
 
     "Initialized(uint8)"(version?: null): InitializedEventFilter;
@@ -1242,15 +1278,17 @@ export interface AvatarSettings extends BaseContract {
     "Paused(address)"(account?: null): PausedEventFilter;
     Paused(account?: null): PausedEventFilter;
 
-    "PowerActivated(address,uint256,uint256)"(
+    "PowerActivated(address,uint256,uint256,uint256)"(
       sender?: string | null,
       powerId?: BigNumberish | null,
-      expirationTime?: null
+      expirationTime?: null,
+      timestamp?: null
     ): PowerActivatedEventFilter;
     PowerActivated(
       sender?: string | null,
       powerId?: BigNumberish | null,
-      expirationTime?: null
+      expirationTime?: null,
+      timestamp?: null
     ): PowerActivatedEventFilter;
 
     "PowerActivationFeeUpdated(uint256)"(
@@ -1260,11 +1298,13 @@ export interface AvatarSettings extends BaseContract {
       newFee?: null
     ): PowerActivationFeeUpdatedEventFilter;
 
-    "PowersAccessActivated(address)"(
-      sender?: string | null
+    "PowersAccessActivated(address,uint256)"(
+      sender?: string | null,
+      timestamp?: null
     ): PowersAccessActivatedEventFilter;
     PowersAccessActivated(
-      sender?: string | null
+      sender?: string | null,
+      timestamp?: null
     ): PowersAccessActivatedEventFilter;
 
     "RoleAdminChanged(bytes32,bytes32,bytes32)"(
@@ -1373,6 +1413,8 @@ export interface AvatarSettings extends BaseContract {
       role: BytesLike,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    getStatistic(overrides?: CallOverrides): Promise<BigNumber>;
 
     getYear(
       timestamp: BigNumberish,
@@ -1545,6 +1587,8 @@ export interface AvatarSettings extends BaseContract {
       role: BytesLike,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
+
+    getStatistic(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getYear(
       timestamp: BigNumberish,

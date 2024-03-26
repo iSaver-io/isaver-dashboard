@@ -1,24 +1,21 @@
-import { RefObject, useEffect } from 'react';
+import { RefObject, useEffect, useState } from 'react';
 
-import { useLogger } from '../useLogger';
+import { LoggerProps, useLogger } from '../useLogger';
 import { useOnScreenObserver } from '../useOnScreenObserver';
 
 export const useOnVisibleLogger = (
   ref: RefObject<HTMLElement>,
-  label: 'our_numbers' | 'our_plans' | 'our_mini'
+  loggerProps: LoggerProps,
+  isSingle: boolean = true
 ) => {
+  const [isShown, setIsShown] = useState(false);
   const isVisible = useOnScreenObserver(ref);
-  const logger = useLogger({
-    event: 'landing',
-    category: 'blocks',
-    action: 'page_sсroll',
-    buttonLocation: 'mid',
-    actionGroup: 'interactions',
-  });
+  const logger = useLogger(loggerProps);
 
   useEffect(() => {
-    if (isVisible) {
-      logger({ label });
+    if (isVisible && (!isSingle || (isSingle && !isShown))) {
+      logger();
+      setIsShown(true);
     }
-  }, [isVisible, logger, label]);
+  }, [isVisible, isSingle, isShown, logger]);
 };

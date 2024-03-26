@@ -15,6 +15,7 @@ import { BigNumberish, OwnedNft } from 'alchemy-sdk';
 import { Address } from 'wagmi';
 
 import { useActivateAvatar } from '@/hooks/useAvatarSettings';
+import { useLogger } from '@/hooks/useLogger';
 import { useAllowedNFTsForOwner } from '@/hooks/useNFTHolders';
 
 import { Button } from '../ui/Button/Button';
@@ -27,17 +28,31 @@ type AvatarSelectionModalProps = {
 
 export const AvatarSelectionModal = ({ onClose, isOpen }: AvatarSelectionModalProps) => {
   const { activateAvatar } = useActivateAvatar();
-
   const { nftsForOwner, refetch, isLoading, avatarAddress } = useAllowedNFTsForOwner();
+  const logger = useLogger({
+    event: 'settings',
+    category: 'elements',
+    action: 'button_click',
+    buttonLocation: 'popup',
+    context: 'avatars',
+  });
 
   const handleActivateAvatar = useCallback(
-    (address: string, tokenId: BigNumberish) =>
-      activateAvatar({
+    (address: string, tokenId: BigNumberish, tokenName?: string) => {
+      logger({ label: 'activate', content: tokenName || 'ERC721', actionGroup: 'conversions' });
+
+      return activateAvatar({
         collectionAddress: address as Address,
         tokenId,
-      }).then(() => onClose()),
-    [activateAvatar, onClose]
+      }).then(() => onClose());
+    },
+    [activateAvatar, onClose, logger]
   );
+
+  const handleRefetch = useCallback(() => {
+    logger({ label: 'reiterate', actionGroup: 'interactions' });
+    refetch();
+  }, [refetch, logger]);
 
   return (
     <Modal isCentered isOpen={isOpen} onClose={onClose}>
@@ -60,7 +75,9 @@ export const AvatarSelectionModal = ({ onClose, isOpen }: AvatarSelectionModalPr
                     key={`${nft.contract.address}-${nft.tokenId}`}
                     {...nft}
                     isIsaverCollection={nft.contract.address === avatarAddress}
-                    onClick={() => handleActivateAvatar(nft.contract.address, nft.tokenId)}
+                    onClick={() =>
+                      handleActivateAvatar(nft.contract.address, nft.tokenId, nft.name)
+                    }
                   />
                 ))}
               </Box>
@@ -71,7 +88,7 @@ export const AvatarSelectionModal = ({ onClose, isOpen }: AvatarSelectionModalPr
                   <br />
                   Retry again or return later
                 </Text>
-                <Button onClick={() => refetch()} isLoading={isLoading}>
+                <Button isLoading={isLoading} onClick={handleRefetch}>
                   Reiterate
                 </Button>
               </Flex>

@@ -4,7 +4,10 @@ import { BigNumber } from 'ethers';
 import { parseEther } from 'ethers/lib/utils';
 import { useAccount } from 'wagmi';
 
-import { useDashboardConfigControl } from '@/hooks/admin/useDashboardConfigControl';
+import {
+  useDashboardConfigControl,
+  useFirebaseAuth,
+} from '@/hooks/admin/useDashboardConfigControl';
 import { CreateRaffleProps, useRaffleContract } from '@/hooks/contracts/useRaffleContract';
 import { useTicketContract } from '@/hooks/contracts/useTicketContract';
 import { TOKENS } from '@/hooks/contracts/useTokenContract';
@@ -19,6 +22,7 @@ import { EXTRA_TICKETS_POWER_D_REQUEST } from './useRaffleMiniGame';
 import { useRaffleRoundAdditionalData } from './useRaffleRoundAdditionalData';
 
 const RAFFLE_ROUNDS_REQUEST = 'raffle-rounds-request';
+const RAFFLE_TOTAL_BURNED_TICKETS_REQUEST = 'raffle-total-burned-tickets-request';
 const RAFFLE_TICKET_PRICE_REQUEST = 'raffle-ticket-price-request';
 const RAFFLE_WINNER_PRIZE_REQUEST = 'raffle-winner-prize-request';
 const BUY_TICKETS_MUTATION = 'buy-tickets-mutation';
@@ -47,9 +51,14 @@ export const useRaffleControl = () => {
   const { raffleRoundDataMap, isRafflesDataLoading } = useRaffleRoundAdditionalData();
   const queryClient = useQueryClient();
   const { success, handleError } = useNotification();
-  const { isAuthorized, signIn, setRaffleRoundParams } = useDashboardConfigControl();
+  const { setRaffleRoundParams } = useDashboardConfigControl();
+  const { isAuthorized, signIn } = useFirebaseAuth();
 
   const roundsRequest = useQuery([RAFFLE_ROUNDS_REQUEST], () => raffleContract.getRounds());
+
+  const totalBurnedTicketsRequest = useQuery([RAFFLE_TOTAL_BURNED_TICKETS_REQUEST], () =>
+    raffleContract.getTotalBurnedTickets()
+  );
 
   const raffleRounds = useMemo(() => {
     if (roundsRequest.data && raffleRoundDataMap) {
@@ -76,7 +85,7 @@ export const useRaffleControl = () => {
       onSuccess: () => {
         queryClient.invalidateQueries([RAFFLE_TICKET_PRICE_REQUEST]);
       },
-      onError: handleError,
+      onError: (err) => handleError(err, 'raffles'),
     }
   );
 
@@ -94,7 +103,7 @@ export const useRaffleControl = () => {
       onSuccess: () => {
         queryClient.invalidateQueries([EXTRA_TICKETS_POWER_D_REQUEST]);
       },
-      onError: handleError,
+      onError: (err) => handleError(err, 'raffles'),
     }
   );
 
@@ -114,7 +123,7 @@ export const useRaffleControl = () => {
       onSuccess: () => {
         queryClient.invalidateQueries([RAFFLE_ROUNDS_REQUEST]);
       },
-      onError: handleError,
+      onError: (err) => handleError(err, 'raffles'),
     }
   );
 
@@ -132,7 +141,7 @@ export const useRaffleControl = () => {
       onSuccess: () => {
         queryClient.invalidateQueries([RAFFLE_ROUNDS_REQUEST]);
       },
-      onError: handleError,
+      onError: (err) => handleError(err, 'raffles'),
     }
   );
 
@@ -151,12 +160,14 @@ export const useRaffleControl = () => {
       onSuccess: () => {
         queryClient.invalidateQueries([RAFFLE_ROUNDS_REQUEST]);
       },
-      onError: handleError,
+      onError: (err) => handleError(err, 'raffles'),
     }
   );
 
   return {
     roundsRequest,
+    totalBurnedTicketsRequest,
+    totalBurnedTickets: totalBurnedTicketsRequest.data,
     isRafflesDataLoading,
     raffleRounds,
     updateTicketPrice,
@@ -208,7 +219,7 @@ export const useBuyTickets = () => {
         queryClient.invalidateQueries({ queryKey: [TICKET_BALANCE_REQUEST] });
         queryClient.invalidateQueries({ queryKey: [SAV_BALANCE_REQUEST] });
       },
-      onError: handleError,
+      onError: (err) => handleError(err, 'raffles'),
     }
   );
 

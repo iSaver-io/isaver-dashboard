@@ -77,7 +77,7 @@ export const useMomento = () => {
       onSettled: () => {
         momentoContract.setIsBurnTicketConfirmed(false);
       },
-      onError: handleError,
+      onError: (err) => handleError(err, 'momento'),
     }
   );
 
@@ -117,7 +117,7 @@ export const useMomento = () => {
       onSettled: () => {
         momentoContract.setIsGetPrizeConfirmed(false);
       },
-      onError: handleError,
+      onError: (err) => handleError(err, 'momento'),
     }
   );
 
@@ -130,6 +130,17 @@ export const useMomento = () => {
     getPrize,
   };
 };
+const MOMENTO_TOTAL_BURNED_TICKETS_REQUEST = 'momento-total-burned-tickets';
+export const useMomentoControl = () => {
+  const momentoContract = useMomentoContract();
+
+  const totalBurnedTicketsRequest = useQuery([MOMENTO_TOTAL_BURNED_TICKETS_REQUEST], () =>
+    momentoContract.getTotalBurnedTickets()
+  );
+
+  return { totalBurnedTicketsRequest };
+};
+
 export const GET_MOMENTO_PRIZES = 'get-momento-prizes-request';
 export const GET_MOMENTO_EXTERNAL_PRIZES = 'get-momento-external-prizes-request';
 export const useMomentoPrizes = () => {

@@ -11,6 +11,7 @@ type BalanceProps = {
   symbol?: string;
   minLimit?: BigNumberish;
   decimals?: number;
+  labelWidth?: string;
 };
 export const Balance: FC<BalanceProps> = ({
   isRaw,
@@ -18,6 +19,7 @@ export const Balance: FC<BalanceProps> = ({
   balance,
   symbol,
   decimals,
+  labelWidth = '200px',
   minLimit = 10_000,
 }) => {
   const color = symbol === 'SAVR' ? 'savr' : 'sav';
@@ -30,7 +32,7 @@ export const Balance: FC<BalanceProps> = ({
 
   return (
     <Flex textStyle="text1" my="10px">
-      <Text mr="12px" flex="200px 0 0" bgColor={isLowBalance ? 'red' : undefined}>
+      <Text mr="12px" flex={`${labelWidth} 0 0`} bgColor={isLowBalance ? 'red' : undefined}>
         {label}
       </Text>
 

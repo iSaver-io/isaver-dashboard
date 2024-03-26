@@ -1,7 +1,11 @@
+import { useCallback, useMemo } from 'react';
+import { useLocation } from 'react-router-dom';
 import { Box, Flex, Link, Text } from '@chakra-ui/react';
 
 import { Tip } from '@/components/ui/Tip/Tip';
+import { EventName, useLogger } from '@/hooks/useLogger';
 import { AVATAR_LANDING_POWERS_INFO_URL } from '@/router';
+import { getPageByPathname } from '@/utils/logger';
 
 import { ReactComponent as PowerIcon } from './power-icon.svg';
 
@@ -21,15 +25,31 @@ type PowerStatusProps = {
   isActive: boolean;
 };
 export const PowerStatus = ({ powerId, isActive }: PowerStatusProps) => {
-  const letter = ['A', 'B', 'C', 'D'][powerId];
+  const location = useLocation();
+  const logger = useLogger({
+    category: 'elements',
+    action: 'link_click',
+    label: 'all_about_powers',
+    buttonLocation: 'popup',
+    actionGroup: 'interactions',
+  });
+
+  const title = useMemo(() => `Power ${['A', 'B', 'C', 'D'][powerId]}`, [powerId]);
   let color = ['white', 'sav', 'green.100', 'savr'][powerId];
 
   if (!isActive) {
     color = 'gray';
   }
 
+  const pageName = useMemo(() => getPageByPathname(location.pathname) as EventName, [location]);
+
   const InfoLink = (
-    <Link href={AVATAR_LANDING_POWERS_INFO_URL} color="savr" target="_blank">
+    <Link
+      href={AVATAR_LANDING_POWERS_INFO_URL}
+      color="savr"
+      target="_blank"
+      onClick={() => logger({ event: pageName, content: title })}
+    >
       All about Powers
     </Link>
   );
@@ -42,14 +62,14 @@ export const PowerStatus = ({ powerId, isActive }: PowerStatusProps) => {
         <PowerIcon />
       </Box>
 
-      <Text ml="8px" textColor={color} textStyle="button">
-        POWER {letter}
+      <Text ml="8px" textColor={color} textStyle="button" textTransform="capitalize">
+        {title}
       </Text>
       <Text ml="11px" mr="10px" textColor="white" fontSize="16px" fontWeight={600}>
         {isActive ? 'active' : 'not active'}
       </Text>
 
-      <Tip text={tipText} append={InfoLink} />
+      <Tip text={tipText} append={InfoLink} event={pageName} eventContent={title} />
     </Flex>
   );
 };

@@ -3,8 +3,10 @@ import { Box, Flex, Image, Text } from '@chakra-ui/react';
 import { motion } from 'framer-motion';
 
 import { useContractsAddresses } from '@/hooks/admin/useContractsAddresses';
+import { useLogger } from '@/hooks/useLogger';
 import { PrizeInfo, useGetNFT } from '@/hooks/useMomento';
 import alchemy from '@/modules/alchemy';
+import { getTokenNameByAddress } from '@/utils/logger';
 import { bigNumberToString } from '@/utils/number';
 
 import otherPrize from './images/other-prize.png';
@@ -27,6 +29,25 @@ interface MomentoPrizeProps {
 
 export const MomentoPrize = ({ prizeInfo }: MomentoPrizeProps) => {
   const contracts = useContractsAddresses();
+  const logger = useLogger({
+    event: 'momento',
+    category: 'presentations',
+    action: 'show',
+    label: 'prize',
+    buttonLocation: 'up',
+    actionGroup: 'interactions',
+  });
+
+  useEffect(() => {
+    if (prizeInfo) {
+      let tokenName = getTokenNameByAddress(prizeInfo.tokenAddress, contracts);
+
+      logger({
+        value: prizeInfo.amount.toString(),
+        content: tokenName,
+      });
+    }
+  }, [prizeInfo, contracts, logger]);
 
   const renderPrize = useCallback(() => {
     if (prizeInfo.isERC721) {

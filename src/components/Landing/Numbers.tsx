@@ -17,7 +17,14 @@ export const Numbers = () => {
   const savBurned = useSavTokenBurn();
 
   const ref = useRef<HTMLHeadingElement>(null);
-  useOnVisibleLogger(ref, 'our_numbers');
+  useOnVisibleLogger(ref, {
+    event: 'landing',
+    category: 'blocks',
+    action: 'page_sсroll',
+    buttonLocation: 'mid',
+    actionGroup: 'interactions',
+    label: 'our_numbers',
+  });
 
   const { circulatingSupply, totalSupply } = useTokenSupply(ContractsEnum.SAV);
 

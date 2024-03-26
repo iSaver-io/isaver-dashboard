@@ -37,6 +37,7 @@ export interface ISaverPowersInterface extends utils.Interface {
     "burn(address,uint256,uint256)": FunctionFragment;
     "burnBatch(address,uint256[],uint256[])": FunctionFragment;
     "contractURI()": FunctionFragment;
+    "exists(uint256)": FunctionFragment;
     "getRoleAdmin(bytes32)": FunctionFragment;
     "grantRole(bytes32,address)": FunctionFragment;
     "hasRole(bytes32,address)": FunctionFragment;
@@ -61,6 +62,7 @@ export interface ISaverPowersInterface extends utils.Interface {
     "supportsInterface(bytes4)": FunctionFragment;
     "tokenData(uint256)": FunctionFragment;
     "tokenURI(uint256)": FunctionFragment;
+    "totalSupply(uint256)": FunctionFragment;
     "upgradeTo(address)": FunctionFragment;
     "upgradeToAndCall(address,bytes)": FunctionFragment;
     "uri(uint256)": FunctionFragment;
@@ -76,6 +78,7 @@ export interface ISaverPowersInterface extends utils.Interface {
       | "burn"
       | "burnBatch"
       | "contractURI"
+      | "exists"
       | "getRoleAdmin"
       | "grantRole"
       | "hasRole"
@@ -100,6 +103,7 @@ export interface ISaverPowersInterface extends utils.Interface {
       | "supportsInterface"
       | "tokenData"
       | "tokenURI"
+      | "totalSupply"
       | "upgradeTo"
       | "upgradeToAndCall"
       | "uri"
@@ -136,6 +140,10 @@ export interface ISaverPowersInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "contractURI",
     values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "exists",
+    values: [BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "getRoleAdmin",
@@ -233,6 +241,10 @@ export interface ISaverPowersInterface extends utils.Interface {
     functionFragment: "tokenURI",
     values: [BigNumberish]
   ): string;
+  encodeFunctionData(
+    functionFragment: "totalSupply",
+    values: [BigNumberish]
+  ): string;
   encodeFunctionData(functionFragment: "upgradeTo", values: [string]): string;
   encodeFunctionData(
     functionFragment: "upgradeToAndCall",
@@ -263,6 +275,7 @@ export interface ISaverPowersInterface extends utils.Interface {
     functionFragment: "contractURI",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "exists", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getRoleAdmin",
     data: BytesLike
@@ -335,6 +348,10 @@ export interface ISaverPowersInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "tokenData", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "tokenURI", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "totalSupply",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "upgradeTo", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "upgradeToAndCall",
@@ -550,6 +567,8 @@ export interface ISaverPowers extends BaseContract {
 
     contractURI(overrides?: CallOverrides): Promise<[string]>;
 
+    exists(id: BigNumberish, overrides?: CallOverrides): Promise<[boolean]>;
+
     getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<[string]>;
 
     grantRole(
@@ -697,6 +716,11 @@ export interface ISaverPowers extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[string]>;
 
+    totalSupply(
+      id: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
     upgradeTo(
       newImplementation: string,
       overrides?: Overrides & { from?: string }
@@ -744,6 +768,8 @@ export interface ISaverPowers extends BaseContract {
   ): Promise<ContractTransaction>;
 
   contractURI(overrides?: CallOverrides): Promise<string>;
+
+  exists(id: BigNumberish, overrides?: CallOverrides): Promise<boolean>;
 
   getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<string>;
 
@@ -889,6 +915,8 @@ export interface ISaverPowers extends BaseContract {
 
   tokenURI(tokenId: BigNumberish, overrides?: CallOverrides): Promise<string>;
 
+  totalSupply(id: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
+
   upgradeTo(
     newImplementation: string,
     overrides?: Overrides & { from?: string }
@@ -936,6 +964,8 @@ export interface ISaverPowers extends BaseContract {
     ): Promise<void>;
 
     contractURI(overrides?: CallOverrides): Promise<string>;
+
+    exists(id: BigNumberish, overrides?: CallOverrides): Promise<boolean>;
 
     getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<string>;
 
@@ -1078,6 +1108,11 @@ export interface ISaverPowers extends BaseContract {
     >;
 
     tokenURI(tokenId: BigNumberish, overrides?: CallOverrides): Promise<string>;
+
+    totalSupply(
+      id: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     upgradeTo(
       newImplementation: string,
@@ -1230,6 +1265,8 @@ export interface ISaverPowers extends BaseContract {
 
     contractURI(overrides?: CallOverrides): Promise<BigNumber>;
 
+    exists(id: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
+
     getRoleAdmin(
       role: BytesLike,
       overrides?: CallOverrides
@@ -1370,6 +1407,11 @@ export interface ISaverPowers extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    totalSupply(
+      id: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     upgradeTo(
       newImplementation: string,
       overrides?: Overrides & { from?: string }
@@ -1420,6 +1462,11 @@ export interface ISaverPowers extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     contractURI(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    exists(
+      id: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     getRoleAdmin(
       role: BytesLike,
@@ -1560,6 +1607,11 @@ export interface ISaverPowers extends BaseContract {
 
     tokenURI(
       tokenId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    totalSupply(
+      id: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

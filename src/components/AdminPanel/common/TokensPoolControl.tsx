@@ -1,0 +1,262 @@
+// eslint-disable-next-line
+import { Box, Flex, Text, useDisclosure } from '@chakra-ui/react';
+import { useCallback, useMemo, useState } from 'react';
+import { BigNumber } from 'ethers';
+
+import { Button } from '@/components/ui/Button/Button';
+import { useContractsAddresses } from '@/hooks/admin/useContractsAddresses';
+import { useTokensPoolControl } from '@/hooks/admin/useTokensPoolControl';
+import { ContractsEnum } from '@/hooks/contracts/useContractAbi';
+
+import { AddCategoryModal } from './AddCategoryModal';
+import { AddPrizeToTokensPoolModal } from './AddPrizeToTokensPoolModal';
+import { RemovePrizeModal } from './RemovePrizeModal';
+import { bigNumberToString } from '@/utils/number';
+
+type TokensPoolTypes = ContractsEnum.MomentoTokensPool | ContractsEnum.BirthdayTokensPool;
+
+export const TokensPoolControl = ({
+  label,
+  contractName,
+}: {
+  label: string;
+  contractName: TokensPoolTypes;
+}) => {
+  const tokensPool = useTokensPoolControl(contractName);
+
+  const {
+    isOpen: isOpenAddCategory,
+    onOpen: onOpenAddCategory,
+    onClose: onCloseAddCategory,
+  } = useDisclosure();
+
+  return (
+    <Box>
+      <Flex align="flex-end" gap="20px">
+        <Text fontSize="22px" fontWeight="600">
+          {label}
+        </Text>
+        <Button size="sm" mt="8px" onClick={onOpenAddCategory}>
+          Create category
+        </Button>
+      </Flex>
+
+      <Text fontWeight="500" my="8px" fontSize="18px">
+        Categories ({tokensPool.prizesRequest.data?.length}) (total chance:{' '}
+        {tokensPool.totalChanceRequest.data?.toString()}):
+      </Text>
+
+      {tokensPool.prizesRequest.data?.map((category) => (
+        <TokensPoolCategory
+          key={`category-${category.categoryId}`}
+          contractName={contractName}
+          {...category}
+        />
+      ))}
+
+      {isOpenAddCategory ? (
+        <AddCategoryModal
+          mode="create"
+          onClose={onCloseAddCategory}
+          onSubmit={tokensPool.createCategoryMutation.mutateAsync}
+        />
+      ) : null}
+    </Box>
+  );
+};
+
+type TokensPoolCategoryProps = {
+  contractName: TokensPoolTypes;
+  categoryId: number;
+  info: { chance: BigNumber; isEmpty: boolean };
+  prizes: Array<any>;
+};
+const TokensPoolCategory = ({
+  contractName,
+  categoryId,
+  info,
+  prizes,
+}: TokensPoolCategoryProps) => {
+  const { addPrizeToCategory, updateCategoryMutation, removePrizeFromCategory } =
+    useTokensPoolControl(contractName);
+
+  const {
+    isOpen: isOpenUpdateCategory,
+    onOpen: onOpenUpdateCategory,
+    onClose: onCloseUpdateCategory,
+  } = useDisclosure();
+  const {
+    isOpen: isOpenAddPrize,
+    onOpen: onOpenAddPrize,
+    onClose: onCloseAddPrize,
+  } = useDisclosure();
+
+  const handleUpdateCategory = useCallback(
+    (chance: number) =>
+      updateCategoryMutation.mutateAsync({
+        categoryId,
+        chance,
+      }),
+    [updateCategoryMutation, categoryId]
+  );
+
+  const handleAddPrizeToCategory = useCallback(
+    (params: any) =>
+      addPrizeToCategory.mutateAsync({
+        id: categoryId,
+        ...params,
+      }),
+    [addPrizeToCategory, categoryId]
+  );
+
+  const handleRemovePrize = useCallback(
+    (prizeId: number, toAddress: string) =>
+      removePrizeFromCategory.mutateAsync({
+        categoryId,
+        prizeId,
+        toAddress,
+      }),
+    [removePrizeFromCategory, categoryId]
+  );
+
+  return (
+    <Box border="1px solid gray" borderRadius="12px" padding="8px 12px" mt="8px">
+      <Flex align="flex-start" justifyContent="space-between">
+        <Box>
+          <Flex align="baseline" gap="12px">
+            <Text>Category id #{categoryId}</Text>
+            {info.isEmpty ? (
+              <Text color="red" textStyle="button">
+                Empty
+              </Text>
+            ) : (
+              <Text color="green" textStyle="button">
+                Not empty
+              </Text>
+            )}
+          </Flex>
+          <Text>Chance: {info.chance.toString()}</Text>
+          <Text>Prizes ({prizes.length}):</Text>
+        </Box>
+
+        <Flex direction="column" gap="8px">
+          <Button size="sm" onClick={onOpenAddPrize}>
+            Add prize
+          </Button>
+
+          <Button size="sm" onClick={onOpenUpdateCategory}>
+            Update chance
+          </Button>
+        </Flex>
+      </Flex>
+
+      <Flex direction="column">
+        {prizes.map((prize, prizeIndex) => (
+          <TokensPoolPrize
+            key={`prize-${prizeIndex}`}
+            {...prize}
+            prizeId={prizeIndex}
+            categoryId={categoryId}
+            onRemove={handleRemovePrize}
+          />
+        ))}
+      </Flex>
+
+      {isOpenUpdateCategory ? (
+        <AddCategoryModal
+          mode="update"
+          onClose={onCloseUpdateCategory}
+          onSubmit={handleUpdateCategory}
+        />
+      ) : null}
+
+      {isOpenAddPrize ? (
+        <AddPrizeToTokensPoolModal onClose={onCloseAddPrize} onSubmit={handleAddPrizeToCategory} />
+      ) : null}
+    </Box>
+  );
+};
+
+type TokensPoolPrizeProps = {
+  categoryId: number;
+  prizeId: number;
+  tokenAddress: string;
+  isERC20: boolean;
+  isERC721: boolean;
+  isERC1155: boolean;
+  amount: BigNumber;
+  remaining: BigNumber;
+  initialAmount: BigNumber;
+  tokenIds: string[];
+
+  onRemove: (id: number, to: string) => Promise<void>;
+};
+const TokensPoolPrize = ({
+  categoryId,
+  prizeId,
+  tokenAddress,
+  isERC1155,
+  isERC20,
+  isERC721,
+  amount,
+  initialAmount,
+  remaining,
+  tokenIds,
+  onRemove,
+}: TokensPoolPrizeProps) => {
+  const {
+    isOpen: isOpenRemovePrize,
+    onOpen: onOpenRemovePrize,
+    onClose: onCloseRemovePrize,
+  } = useDisclosure();
+  const contractAddresses = useContractsAddresses();
+
+  const tokenType = isERC20 ? 'ERC20' : isERC721 ? 'ERC721' : isERC1155 ? 'ERC1155' : 'unknown';
+
+  const tokenName = useMemo(() => {
+    if (tokenAddress === contractAddresses.ISaverSAVToken) return 'SAV';
+    if (tokenAddress === contractAddresses.ISaverSAVRToken) return 'SAVR';
+    if (tokenAddress === contractAddresses.ISaverAvatars) return 'iSaver Avatars';
+    if (tokenAddress === contractAddresses.Ticket) return 'iSaver Ticket';
+    if (tokenAddress === contractAddresses.ISaverPowers) return 'iSaver Powers';
+    return 'External token';
+  }, [tokenAddress, contractAddresses]);
+
+  return (
+    <Box padding="4px 8px" border="1px solid grey" borderRadius="8px" mt="4px">
+      <Flex align="flex-start" justifyContent="space-between">
+        <Box>
+          <Text>Prize № {prizeId}</Text>
+          <Text>
+            Token name:{' '}
+            <b>
+              {tokenName} ({tokenType})
+            </b>
+          </Text>
+          <Text>
+            Amount (in 1 prize): <b>{isERC20 ? bigNumberToString(amount) : amount.toString()}</b>
+          </Text>
+          <Text>
+            Remaining prizes:{' '}
+            <b>
+              {remaining.toString()} / {initialAmount.toString()}
+            </b>
+          </Text>
+        </Box>
+
+        <Button size="sm" bgColor="red" onClick={onOpenRemovePrize}>
+          Remove
+        </Button>
+      </Flex>
+
+      {isOpenRemovePrize ? (
+        <RemovePrizeModal
+          categoryId={categoryId}
+          prizeId={prizeId}
+          onClose={onCloseRemovePrize}
+          onSubmit={({ toAddress }) => onRemove(prizeId, toAddress)}
+        />
+      ) : null}
+    </Box>
+  );
+};

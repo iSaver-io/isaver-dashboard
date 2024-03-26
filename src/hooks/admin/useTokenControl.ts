@@ -25,7 +25,7 @@ export const useTokenControl = (token: ContractsEnum.SAVR) => {
       });
     },
     {
-      onError: handleError,
+      onError: (err) => handleError(err),
     }
   );
 
@@ -45,7 +45,7 @@ export const useTokenControl = (token: ContractsEnum.SAVR) => {
       });
     },
     {
-      onError: handleError,
+      onError: (err) => handleError(err),
     }
   );
 

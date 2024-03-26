@@ -120,9 +120,7 @@ export const useStakingSuperPlans = () => {
         queryClient.invalidateQueries({ queryKey: [USER_SUPER_STAKING_INFO_REQUEST] });
         queryClient.invalidateQueries({ queryKey: [SAVR_BALANCE_REQUEST] });
       },
-      onError: (err) => {
-        handleError(err);
-      },
+      onError: (err) => handleError(err, 'staking'),
     }
   );
 
@@ -148,9 +146,7 @@ export const useStakingSuperPlans = () => {
         queryClient.invalidateQueries({ queryKey: [USER_SUPER_STAKING_INFO_REQUEST] });
         queryClient.invalidateQueries({ queryKey: [SAVR_BALANCE_REQUEST] });
       },
-      onError: (err) => {
-        handleError(err);
-      },
+      onError: (err) => handleError(err, 'staking'),
     }
   );
 
@@ -178,9 +174,7 @@ export const useStakingSuperPlans = () => {
         queryClient.invalidateQueries({ queryKey: [USER_SUPER_STAKING_INFO_REQUEST] });
         queryClient.invalidateQueries({ queryKey: [SAVR_BALANCE_REQUEST] });
       },
-      onError: (err) => {
-        handleError(err);
-      },
+      onError: (err) => handleError(err, 'staking'),
     }
   );
 
@@ -456,9 +450,7 @@ export const useStakingActions = () => {
         queryClient.invalidateQueries({ queryKey: [USER_STAKING_INFO_REQUEST] });
         queryClient.invalidateQueries({ queryKey: [SAV_BALANCE_REQUEST] });
       },
-      onError: (err) => {
-        handleError(err);
-      },
+      onError: (err) => handleError(err, 'staking'),
     }
   );
 
@@ -504,9 +496,7 @@ export const useStakingActions = () => {
         queryClient.invalidateQueries({ queryKey: [SAV_BALANCE_REQUEST] });
         queryClient.invalidateQueries({ queryKey: [SAVR_BALANCE_REQUEST] });
       },
-      onError: (err) => {
-        handleError(err);
-      },
+      onError: (err) => handleError(err, 'staking'),
     }
   );
 
@@ -529,9 +519,7 @@ export const useStakingActions = () => {
         queryClient.invalidateQueries({ queryKey: [USER_STAKES_REQUEST] });
         queryClient.invalidateQueries({ queryKey: [SAV_BALANCE_REQUEST] });
       },
-      onError: (err) => {
-        handleError(err);
-      },
+      onError: (err) => handleError(err, 'staking'),
     }
   );
 
@@ -558,9 +546,7 @@ export const useStakingActions = () => {
         queryClient.invalidateQueries({ queryKey: [USER_STAKES_REQUEST] });
         queryClient.invalidateQueries({ queryKey: [SAV_BALANCE_REQUEST] });
       },
-      onError: (err) => {
-        handleError(err);
-      },
+      onError: (err) => handleError(err, 'staking'),
     }
   );
 
@@ -592,7 +578,7 @@ export const useStakingAdminActions = () => {
       onSuccess: () => {
         queryClient.invalidateQueries([STAKING_PLANS_REQUEST]);
       },
-      onError: handleError,
+      onError: (err) => handleError(err, 'staking'),
     }
   );
 
@@ -627,7 +613,7 @@ export const useStakingAdminActions = () => {
       onSuccess: () => {
         queryClient.invalidateQueries([STAKING_PLANS_REQUEST]);
       },
-      onError: handleError,
+      onError: (err) => handleError(err, 'staking'),
     }
   );
 
@@ -645,7 +631,7 @@ export const useStakingAdminActions = () => {
       onSuccess: () => {
         queryClient.invalidateQueries([USER_SUPER_STAKING_INFO_REQUEST]);
       },
-      onError: handleError,
+      onError: (err) => handleError(err, 'staking'),
     }
   );
 
@@ -663,7 +649,7 @@ export const useStakingAdminActions = () => {
       onSuccess: () => {
         queryClient.invalidateQueries([USER_SUPER_STAKING_INFO_REQUEST]);
       },
-      onError: handleError,
+      onError: (err) => handleError(err, 'staking'),
     }
   );
 
@@ -681,7 +667,7 @@ export const useStakingAdminActions = () => {
       onSuccess: () => {
         queryClient.invalidateQueries([USER_SUPER_STAKING_INFO_REQUEST]);
       },
-      onError: handleError,
+      onError: (err) => handleError(err, 'staking'),
     }
   );
 

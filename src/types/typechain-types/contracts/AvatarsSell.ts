@@ -27,6 +27,18 @@ import type {
   OnEvent,
 } from "../common";
 
+export declare namespace AvatarsSell {
+  export type SoldStatisticStruct = {
+    amount: BigNumberish;
+    cumulativeCost: BigNumberish;
+  };
+
+  export type SoldStatisticStructOutput = [BigNumber, BigNumber] & {
+    amount: BigNumber;
+    cumulativeCost: BigNumber;
+  };
+}
+
 export interface AvatarsSellInterface extends utils.Interface {
   functions: {
     "DEFAULT_ADMIN_ROLE()": FunctionFragment;
@@ -38,6 +50,7 @@ export interface AvatarsSellInterface extends utils.Interface {
     "divider()": FunctionFragment;
     "getCurrentAvatarPrice()": FunctionFragment;
     "getRoleAdmin(bytes32)": FunctionFragment;
+    "getSoldStatistic()": FunctionFragment;
     "grantRole(bytes32,address)": FunctionFragment;
     "hasRole(bytes32,address)": FunctionFragment;
     "inflationPeriod()": FunctionFragment;
@@ -71,6 +84,7 @@ export interface AvatarsSellInterface extends utils.Interface {
       | "divider"
       | "getCurrentAvatarPrice"
       | "getRoleAdmin"
+      | "getSoldStatistic"
       | "grantRole"
       | "hasRole"
       | "inflationPeriod"
@@ -119,6 +133,10 @@ export interface AvatarsSellInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "getRoleAdmin",
     values: [BytesLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getSoldStatistic",
+    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "grantRole",
@@ -211,6 +229,10 @@ export interface AvatarsSellInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "getRoleAdmin",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getSoldStatistic",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "grantRole", data: BytesLike): Result;
@@ -512,6 +534,15 @@ export interface AvatarsSell extends BaseContract {
 
     getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<[string]>;
 
+    getSoldStatistic(
+      overrides?: CallOverrides
+    ): Promise<
+      [
+        AvatarsSell.SoldStatisticStructOutput,
+        AvatarsSell.SoldStatisticStructOutput[]
+      ]
+    >;
+
     grantRole(
       role: BytesLike,
       account: string,
@@ -630,6 +661,15 @@ export interface AvatarsSell extends BaseContract {
 
   getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<string>;
 
+  getSoldStatistic(
+    overrides?: CallOverrides
+  ): Promise<
+    [
+      AvatarsSell.SoldStatisticStructOutput,
+      AvatarsSell.SoldStatisticStructOutput[]
+    ]
+  >;
+
   grantRole(
     role: BytesLike,
     account: string,
@@ -745,6 +785,15 @@ export interface AvatarsSell extends BaseContract {
     getCurrentAvatarPrice(overrides?: CallOverrides): Promise<BigNumber>;
 
     getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<string>;
+
+    getSoldStatistic(
+      overrides?: CallOverrides
+    ): Promise<
+      [
+        AvatarsSell.SoldStatisticStructOutput,
+        AvatarsSell.SoldStatisticStructOutput[]
+      ]
+    >;
 
     grantRole(
       role: BytesLike,
@@ -975,6 +1024,8 @@ export interface AvatarsSell extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    getSoldStatistic(overrides?: CallOverrides): Promise<BigNumber>;
+
     grantRole(
       role: BytesLike,
       account: string,
@@ -1096,6 +1147,8 @@ export interface AvatarsSell extends BaseContract {
       role: BytesLike,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
+
+    getSoldStatistic(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     grantRole(
       role: BytesLike,

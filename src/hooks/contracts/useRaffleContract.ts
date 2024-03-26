@@ -64,6 +64,10 @@ export const useRaffleContract = () => {
     return contract.CLAIM_PERIOD();
   };
 
+  const getTotalBurnedTickets = () => {
+    return contract.totalBurnedTickets();
+  };
+
   const isClaimAvailable = (user?: string) => {
     return user ? contract.isClaimAvailable(user) : Promise.reject('incorrect request data');
   };
@@ -156,6 +160,7 @@ export const useRaffleContract = () => {
     getUserRoundEntry,
     getActiveRounds,
     getLastFinishedRounds,
+    getTotalBurnedTickets,
 
     getClaimPeriod,
     getClaimStreak,

@@ -22,7 +22,7 @@ export const useTickets = () => {
         txHash,
       });
     },
-    { onError: handleError }
+    { onError: (err) => handleError(err, 'raffles') }
   );
 
   return {

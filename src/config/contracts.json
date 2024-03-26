@@ -22371,6 +22371,45 @@
               "inputs": [
                 {
                   "internalType": "uint256",
+                  "name": "stakingPlanId",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "address",
+                  "name": "referrer",
+                  "type": "address"
+                },
+                {
+                  "internalType": "address",
+                  "name": "member",
+                  "type": "address"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "amount",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "timestamp",
+                  "type": "uint256"
+                }
+              ],
+              "name": "tryToAddMemberByAdmin",
+              "outputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "",
+                  "type": "uint256"
+                }
+              ],
+              "stateMutability": "nonpayable",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "uint256",
                   "name": "planId",
                   "type": "uint256"
                 },
@@ -22554,9 +22593,67 @@
                   "internalType": "uint256",
                   "name": "planId",
                   "type": "uint256"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "timestamp",
+                  "type": "uint256"
+                }
+              ],
+              "name": "userHasPlanSubscriptionByAdmin",
+              "outputs": [
+                {
+                  "internalType": "bool",
+                  "name": "",
+                  "type": "bool"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "address",
+                  "name": "user",
+                  "type": "address"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "planId",
+                  "type": "uint256"
                 }
               ],
               "name": "userHasSufficientStaking",
+              "outputs": [
+                {
+                  "internalType": "bool",
+                  "name": "",
+                  "type": "bool"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "address",
+                  "name": "user",
+                  "type": "address"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "planId",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "timestamp",
+                  "type": "uint256"
+                }
+              ],
+              "name": "userHasSufficientStakingByAdmin",
               "outputs": [
                 {
                   "internalType": "bool",
@@ -28107,7 +28204,7 @@
       "chainId": "80001",
       "contracts": {
         "AvatarSettings": {
-          "address": "0x2d7B8A22899EE346D07FB8F1D05AD0941716340e",
+          "address": "0xd2F6ba118a78620E4747E0Ca1f150E76Ee01DA8B",
           "abi": [
             {
               "anonymous": false,
@@ -28142,6 +28239,12 @@
                   "internalType": "uint256",
                   "name": "tokenId",
                   "type": "uint256"
+                },
+                {
+                  "indexed": false,
+                  "internalType": "uint256",
+                  "name": "timestamp",
+                  "type": "uint256"
                 }
               ],
               "name": "AvatarActivated",
@@ -28173,6 +28276,12 @@
                   "internalType": "bool",
                   "name": "isAvatarCollection",
                   "type": "bool"
+                },
+                {
+                  "indexed": false,
+                  "internalType": "uint256",
+                  "name": "timestamp",
+                  "type": "uint256"
                 }
               ],
               "name": "AvatarDeactivated",
@@ -28205,6 +28314,12 @@
                   "internalType": "address",
                   "name": "owner",
                   "type": "address"
+                },
+                {
+                  "indexed": false,
+                  "internalType": "uint256",
+                  "name": "timestamp",
+                  "type": "uint256"
                 }
               ],
               "name": "BirthdayPresentClaimed",
@@ -28249,6 +28364,12 @@
                   "internalType": "address",
                   "name": "collection",
                   "type": "address"
+                },
+                {
+                  "indexed": false,
+                  "internalType": "uint256",
+                  "name": "timestamp",
+                  "type": "uint256"
                 }
               ],
               "name": "ExternalAvatarActivated",
@@ -28325,6 +28446,12 @@
                   "internalType": "uint256",
                   "name": "expirationTime",
                   "type": "uint256"
+                },
+                {
+                  "indexed": false,
+                  "internalType": "uint256",
+                  "name": "timestamp",
+                  "type": "uint256"
                 }
               ],
               "name": "PowerActivated",
@@ -28351,6 +28478,12 @@
                   "internalType": "address",
                   "name": "sender",
                   "type": "address"
+                },
+                {
+                  "indexed": false,
+                  "internalType": "uint256",
+                  "name": "timestamp",
+                  "type": "uint256"
                 }
               ],
               "name": "PowersAccessActivated",
@@ -28695,6 +28828,29 @@
                   "internalType": "bytes32",
                   "name": "",
                   "type": "bytes32"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
+              "inputs": [],
+              "name": "getStatistic",
+              "outputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "uint256[]",
+                  "name": "",
+                  "type": "uint256[]"
                 }
               ],
               "stateMutability": "view",
@@ -29129,7 +29285,7 @@
           ]
         },
         "AvatarsSell": {
-          "address": "0xCDd662C031bFe4aeF0eAEDb6A6BcD2C23C7054bA",
+          "address": "0xBECC28cfeb27b768d04Ed00b8F32ebA89f2a43eA",
           "abi": [
             {
               "inputs": [],
@@ -29532,6 +29688,48 @@
               "type": "function"
             },
             {
+              "inputs": [],
+              "name": "getSoldStatistic",
+              "outputs": [
+                {
+                  "components": [
+                    {
+                      "internalType": "uint256",
+                      "name": "amount",
+                      "type": "uint256"
+                    },
+                    {
+                      "internalType": "uint256",
+                      "name": "cumulativeCost",
+                      "type": "uint256"
+                    }
+                  ],
+                  "internalType": "struct AvatarsSell.SoldStatistic",
+                  "name": "",
+                  "type": "tuple"
+                },
+                {
+                  "components": [
+                    {
+                      "internalType": "uint256",
+                      "name": "amount",
+                      "type": "uint256"
+                    },
+                    {
+                      "internalType": "uint256",
+                      "name": "cumulativeCost",
+                      "type": "uint256"
+                    }
+                  ],
+                  "internalType": "struct AvatarsSell.SoldStatistic[]",
+                  "name": "",
+                  "type": "tuple[]"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
               "inputs": [
                 {
                   "internalType": "bytes32",
@@ -29835,7 +30033,7 @@
           ]
         },
         "BirthdayTokensPool": {
-          "address": "0x386abCB522575dCB84d2F3EEfE06bb0B5e61Ec25",
+          "address": "0x19bCDA2AC3caB2CfD8D9cD8216882Ec8891662fb",
           "abi": [
             {
               "inputs": [],
@@ -30441,6 +30639,11 @@
                       "internalType": "uint256",
                       "name": "remaining",
                       "type": "uint256"
+                    },
+                    {
+                      "internalType": "uint256",
+                      "name": "initialAmount",
+                      "type": "uint256"
                     }
                   ],
                   "internalType": "struct TokensPool.Prize",
@@ -30497,6 +30700,11 @@
                       "internalType": "uint256",
                       "name": "remaining",
                       "type": "uint256"
+                    },
+                    {
+                      "internalType": "uint256",
+                      "name": "initialAmount",
+                      "type": "uint256"
                     }
                   ],
                   "internalType": "struct TokensPool.Prize[]",
@@ -30552,6 +30760,11 @@
                     {
                       "internalType": "uint256",
                       "name": "remaining",
+                      "type": "uint256"
+                    },
+                    {
+                      "internalType": "uint256",
+                      "name": "initialAmount",
                       "type": "uint256"
                     }
                   ],
@@ -31208,7 +31421,7 @@
           ]
         },
         "ContractManager": {
-          "address": "0x34d73556468bc46C1F6C1862582f969c5af52C48",
+          "address": "0xF782DCc4ae64Ca7d82C074a0C83Ffd6cF2737dcb",
           "abi": [
             {
               "inputs": [],
@@ -32183,7 +32396,7 @@
           ]
         },
         "Helper": {
-          "address": "0x8C9578fD70366aD1f51790Bc0E0976F6fB48b568",
+          "address": "0x834D6F5bb7E4a4c3e5f52326aD8C7Fb9b919C689",
           "abi": [
             {
               "inputs": [],
@@ -32849,7 +33062,7 @@
           ]
         },
         "ISaverAvatars": {
-          "address": "0xefF82D6979A9961a081513d5D0a3D70E833A0dE1",
+          "address": "0xC3612B7Cf8a210f716cbc79E9D8f77892f4162CA",
           "abi": [
             {
               "inputs": [],
@@ -34073,7 +34286,7 @@
           ]
         },
         "ISaverPowers": {
-          "address": "0xE307E420Dca9E44ef99B8662853c140532fd3738",
+          "address": "0xC1Cbb2B9954B083E0973A15266deCC855606b3Eb",
           "abi": [
             {
               "inputs": [],
@@ -34472,6 +34685,25 @@
                   "internalType": "string",
                   "name": "",
                   "type": "string"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "id",
+                  "type": "uint256"
+                }
+              ],
+              "name": "exists",
+              "outputs": [
+                {
+                  "internalType": "bool",
+                  "name": "",
+                  "type": "bool"
                 }
               ],
               "stateMutability": "view",
@@ -34970,6 +35202,25 @@
                   "internalType": "string",
                   "name": "",
                   "type": "string"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "id",
+                  "type": "uint256"
+                }
+              ],
+              "name": "totalSupply",
+              "outputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "",
+                  "type": "uint256"
                 }
               ],
               "stateMutability": "view",
@@ -37609,7 +37860,7 @@
           ]
         },
         "Momento": {
-          "address": "0x14DAf622F216b4DD63E45ECcd57774e1002eB33B",
+          "address": "0x62d52B360c4c7E07A1A95759333C1453044eB317",
           "abi": [
             {
               "inputs": [],
@@ -37988,6 +38239,19 @@
               "type": "function"
             },
             {
+              "inputs": [],
+              "name": "totalBurnedTickets",
+              "outputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "",
+                  "type": "uint256"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
               "inputs": [
                 {
                   "internalType": "address",
@@ -38021,7 +38285,7 @@
           ]
         },
         "MomentoTokensPool": {
-          "address": "0x0711CA24C170fc0f3F1FF52e4B91127311886829",
+          "address": "0xF8e9d377965730883922E8bD63B7cC00b7608414",
           "abi": [
             {
               "inputs": [],
@@ -38627,6 +38891,11 @@
                       "internalType": "uint256",
                       "name": "remaining",
                       "type": "uint256"
+                    },
+                    {
+                      "internalType": "uint256",
+                      "name": "initialAmount",
+                      "type": "uint256"
                     }
                   ],
                   "internalType": "struct TokensPool.Prize",
@@ -38683,6 +38952,11 @@
                       "internalType": "uint256",
                       "name": "remaining",
                       "type": "uint256"
+                    },
+                    {
+                      "internalType": "uint256",
+                      "name": "initialAmount",
+                      "type": "uint256"
                     }
                   ],
                   "internalType": "struct TokensPool.Prize[]",
@@ -38738,6 +39012,11 @@
                     {
                       "internalType": "uint256",
                       "name": "remaining",
+                      "type": "uint256"
+                    },
+                    {
+                      "internalType": "uint256",
+                      "name": "initialAmount",
                       "type": "uint256"
                     }
                   ],
@@ -39394,7 +39673,7 @@
           ]
         },
         "Raffles": {
-          "address": "0x724Ecd4933B35887F3051CC1902b8532c3E3b74a",
+          "address": "0x4d2A1635BB1030307675229a0fc94AcCE75D3614",
           "abi": [
             {
               "inputs": [],
@@ -39592,6 +39871,31 @@
                 }
               ],
               "name": "RoleRevoked",
+              "type": "event"
+            },
+            {
+              "anonymous": false,
+              "inputs": [
+                {
+                  "indexed": true,
+                  "internalType": "address",
+                  "name": "user",
+                  "type": "address"
+                },
+                {
+                  "indexed": false,
+                  "internalType": "uint256",
+                  "name": "roundId",
+                  "type": "uint256"
+                },
+                {
+                  "indexed": false,
+                  "internalType": "uint256",
+                  "name": "tickets",
+                  "type": "uint256"
+                }
+              ],
+              "name": "RoundEntered",
               "type": "event"
             },
             {
@@ -40688,6 +40992,19 @@
               "type": "function"
             },
             {
+              "inputs": [],
+              "name": "totalBurnedTickets",
+              "outputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "",
+                  "type": "uint256"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
               "inputs": [
                 {
                   "internalType": "uint32",
@@ -40864,7 +41181,7 @@
           ]
         },
         "ReferralManager": {
-          "address": "0x106602BEaCbd588ae8bDb3598d98Ea425Ebc3CE7",
+          "address": "0xA38EC0364C6123DDF63675b2a0ACD7398b0D3513",
           "abi": [
             {
               "inputs": [],
@@ -42984,7 +43301,7 @@
           ]
         },
         "Staking": {
-          "address": "0x605246c863e34A1E816Ef835Ddc10e6B5dd4E003",
+          "address": "0x2Ba066de4aeEAa4dCAA26F58971d65f439defe8D",
           "abi": [
             {
               "inputs": [],
@@ -44819,7 +45136,7 @@
           ]
         },
         "Teams": {
-          "address": "0xb6227a856EA6B48761704Ce67295EfFF3A0966D2",
+          "address": "0x9b237c780Ba0D7ac0f832eCc423aD2803eaC5197",
           "abi": [
             {
               "inputs": [],
@@ -48564,7 +48881,7 @@
           ]
         },
         "TokenVesting": {
-          "address": "0x7cfEceeD5857dbf0DCE6aD8C9f5ad9CA8fC5898d",
+          "address": "0x0949b82E86d9012C54bd1Fa504e84d9fbD3fdd01",
           "abi": [
             {
               "anonymous": false,
@@ -50786,7 +51103,7 @@
           ]
         },
         "VendorSell": {
-          "address": "0x3DbeBfB515fBF870aA49236eff343fA743db6059",
+          "address": "0xB15b1c8A8757728cc82F6F5993E59096E24F6996",
           "abi": [
             {
               "inputs": [],

@@ -2,14 +2,23 @@ import { useCallback } from 'react';
 import { Box, Flex, Text } from '@chakra-ui/react';
 
 import { Button } from '@/components/ui/Button/Button';
+import { useLogger } from '@/hooks/useLogger';
 import { useScrollToHash } from '@/hooks/useScrollToHash';
 
 export const Main = () => {
   const scroll = useScrollToHash();
+  const logger = useLogger({
+    event: 'avatars',
+    category: 'elements',
+    action: 'button_click',
+    buttonLocation: 'up',
+    actionGroup: 'interactions',
+  });
 
   const scrollToMint = useCallback(() => {
+    logger({ label: 'generate' });
     scroll('mint');
-  }, [scroll]);
+  }, [scroll, logger]);
 
   return (
     <Flex

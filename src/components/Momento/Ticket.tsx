@@ -2,6 +2,7 @@ import { useCallback, useMemo } from 'react';
 import { Box, Flex, Text, useBreakpoint } from '@chakra-ui/react';
 
 import { ReactComponent as RepeatIcon } from '@/assets/images/icons/repeat.svg';
+import { useLogger } from '@/hooks/useLogger';
 
 import TicketImage from './images/ticket.png';
 import TicketActiveImage from './images/ticket-active.png';
@@ -28,20 +29,38 @@ interface TicketProps {
 export const Ticket = ({ tip, state, hasTickets, onClick }: TicketProps) => {
   const bp = useBreakpoint({ ssr: false });
   const isSm = useMemo(() => ['sm', 'md', 'lg'].includes(bp), [bp]);
+  const logger = useLogger({
+    event: 'momento',
+    category: 'elements',
+    action: 'element_click',
+    buttonLocation: 'up',
+  });
 
   const handleClick = useCallback(
     (event: any) => {
+      if (event.detail === 2) {
+        logger({ label: 'double_click', actionGroup: 'conversions' });
+      }
+      if (state === TicketStates.Finished) {
+        logger({ label: 'again', actionGroup: 'interactions' });
+      }
       if (event.detail === 2 || ((isSm || state === TicketStates.Finished) && event.detail === 1)) {
         onClick();
       }
     },
-    [isSm, onClick, state]
+    [isSm, onClick, state, logger]
   );
 
   const isActive = useMemo(
     () => ![TicketStates.Initial, TicketStates.Finished].includes(state),
     [state]
   );
+
+  const isActiveImage = [
+    TicketStates.TicketBurned,
+    TicketStates.OracleResponded,
+    TicketStates.TicketGoLoading,
+  ].includes(state);
 
   return (
     <Flex
@@ -67,6 +86,8 @@ export const Ticket = ({ tip, state, hasTickets, onClick }: TicketProps) => {
         alignItems="center"
         px="55px"
         overflow="visible"
+        width={isActiveImage ? '251px' : undefined}
+        margin={isActiveImage ? '0 -7px' : undefined}
         cursor={hasTickets && !isActive ? 'pointer' : undefined}
         onClick={hasTickets && !isActive ? handleClick : undefined}
       >
@@ -104,11 +125,7 @@ export const Ticket = ({ tip, state, hasTickets, onClick }: TicketProps) => {
           <img className="momento_ticket_image" src={TicketImage} alt="Ticket" />
         ) : null}
 
-        {[
-          TicketStates.TicketBurned,
-          TicketStates.OracleResponded,
-          TicketStates.TicketGoLoading,
-        ].includes(state) ? (
+        {isActiveImage ? (
           <img className="momento_ticket_image active" src={TicketActiveImage} alt="Ticket" />
         ) : null}
       </Flex>
