@@ -173,8 +173,8 @@ export const TicketClaim = () => {
           </Box>
 
           <Text textStyle="text1">
-            Claim puzzle every day to get a free Ticket to iSaver Raffles.
-            <br /> Just five days and you can mint a Ticket. Also, everyone can buy any number of
+            Claim one puzzle every day to get a free Ticket. Use Tickets in Monthly Raffles and
+            Momento. Just five days and you can mint a Ticket. Also, everyone can buy any number of
             Tickets.
           </Text>
         </Box>
