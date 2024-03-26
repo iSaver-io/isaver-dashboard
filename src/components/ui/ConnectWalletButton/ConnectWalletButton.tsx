@@ -4,12 +4,12 @@ import { ButtonProps, IconButton } from '@chakra-ui/react';
 import { ReactComponent as WalletIcon } from '@/assets/images/icons/wallet_filled.svg';
 import { Button } from '@/components/ui/Button/Button';
 import { useConnectWallet } from '@/hooks/useConnectWallet';
-import { useLogger } from '@/hooks/useLogger';
+import { ButtonLocation, EventName, useLogger } from '@/hooks/useLogger';
 
 type ConnectWalletButtonProps = {
   isSmall?: boolean;
-  location?: 'header' | 'up' | 'mid' | 'down';
-  event?: 'cross' | 'dashboard' | 'team';
+  location?: ButtonLocation;
+  event?: EventName;
   content?: string;
 };
 export const ConnectWalletButton = ({

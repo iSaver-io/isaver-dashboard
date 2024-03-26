@@ -11,7 +11,8 @@ export const useFirebaseAuth = () => {
   const isAuthorized = Boolean(user);
 
   const isAdmin = useMemo(
-    () => user && ['kAEYkPpIYBMMVcUP3xGy5tM3oP42'].includes(user?.uid),
+    () =>
+      user && ['kAEYkPpIYBMMVcUP3xGy5tM3oP42', 'SrQwnXw0Cah8OHzbRvVwjJST51h1'].includes(user?.uid),
     [user]
   );
 

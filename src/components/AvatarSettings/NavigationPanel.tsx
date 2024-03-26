@@ -4,11 +4,19 @@ import { ArrowBackIcon } from '@chakra-ui/icons';
 import { Box, Link, Text } from '@chakra-ui/react';
 
 import { useActiveAvatar } from '@/hooks/useAvatarSettings';
+import { useLogger } from '@/hooks/useLogger';
 import { useActiveAvatarNFT } from '@/hooks/useNFTHolders';
 
 export const NavigationPanel = () => {
   const { activeAvatar, hasAvatar } = useActiveAvatar();
   const { avatarNFT } = useActiveAvatarNFT();
+  const logger = useLogger({
+    event: 'settings',
+    category: 'elements',
+    action: 'element_click',
+    buttonLocation: 'up',
+    actionGroup: 'interactions',
+  });
 
   const name = useMemo(() => {
     if (hasAvatar) {
@@ -27,6 +35,7 @@ export const NavigationPanel = () => {
         className="navigationPanel_link"
         as={RouterLink}
         to="/"
+        onClick={() => logger({ label: 'back' })}
         textStyle="button"
         alignSelf="flex-start"
         mb={{ sm: '30px', '2xl': '40px' }}

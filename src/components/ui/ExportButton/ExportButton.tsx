@@ -14,8 +14,7 @@ export const ExportButton: FC<ExportButtonProps> = ({ buttonLocation, event, onC
   const logger = useLogger({
     category: 'elements',
     action: 'element_click',
-    label: 'sort',
-    buttonLocation: 'down',
+    label: 'export',
     actionGroup: 'interactions',
   });
 

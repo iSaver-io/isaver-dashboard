@@ -1,9 +1,10 @@
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { Box, Text, useBreakpoint } from '@chakra-ui/react';
 import { AnimatePresence, motion } from 'framer-motion';
 
 import { ReactComponent as ChevronDownIcon } from '@/assets/images/icons/chevron-down.svg';
 import { useActiveAvatar, useAvatarMetadata } from '@/hooks/useAvatarSettings';
+import { useLogger } from '@/hooks/useLogger';
 
 export const AllTraits = () => {
   const { activeAvatar } = useActiveAvatar();
@@ -11,13 +12,23 @@ export const AllTraits = () => {
   const bp = useBreakpoint({ ssr: false });
   const isSm = ['sm', 'md', 'lg'].includes(bp);
   const [isOpen, setOpen] = useState(!isSm);
+  const logger = useLogger({
+    event: 'settings',
+    category: 'elements',
+    action: 'element_click',
+    buttonLocation: 'up',
+    actionGroup: 'interactions',
+    context: 'avatars',
+  });
+
+  const handleOpen = useCallback(() => {
+    logger({ label: 'all_traits' });
+    setOpen((pv) => !pv);
+  }, [logger]);
 
   return activeAvatar?.isAvatarCollection && !isLoading ? (
     <Box className="allTraits">
-      <button
-        className={`allTraits_title ${isOpen ? 'active' : ''}`}
-        onClick={() => setOpen((pv) => !pv)}
-      >
+      <button className={`allTraits_title ${isOpen ? 'active' : ''}`} onClick={handleOpen}>
         <Text textStyle="h3" textTransform="uppercase">
           all Traits
         </Text>

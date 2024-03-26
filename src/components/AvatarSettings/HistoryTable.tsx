@@ -18,6 +18,7 @@ import { SortableTh } from '@/components/ui/Table/SortableTh';
 import { Table } from '@/components/ui/Table/Table';
 import { useAllEvents } from '@/hooks/useAvatarSettings';
 import { SortType, useDataSorting } from '@/hooks/useDataSorting';
+import { useLogger } from '@/hooks/useLogger';
 import { useActiveAvatarNFT } from '@/hooks/useNFTHolders';
 import { exportToExcel } from '@/utils/exportToExcel';
 import { formatHistoryEventsToExport } from '@/utils/formatters/formatHistoryEventsToExport';
@@ -35,6 +36,13 @@ export const HistoryTable = () => {
   const { isOpen, onToggle } = useDisclosure();
   const { chain } = useNetwork();
   const isLoading = isFetching && !isFetched;
+  const logger = useLogger({
+    event: 'settings',
+    category: 'elements',
+    action: 'element_click',
+    buttonLocation: 'down',
+    actionGroup: 'interactions',
+  });
 
   const { sortedData, currentSortField, currentSortType, onSort } = useDataSorting(
     events,
@@ -57,8 +65,9 @@ export const HistoryTable = () => {
   );
 
   const handleToggleTable = useCallback(() => {
+    logger({ label: 'more' });
     onToggle();
-  }, [onToggle]);
+  }, [onToggle, logger]);
 
   const exportData = useCallback(() => {
     const { data, headers } = formatHistoryEventsToExport(events);
@@ -74,7 +83,7 @@ export const HistoryTable = () => {
           </Text>
         </Box>
         <Box position="absolute" right="0" bottom="6px">
-          <ExportButton onClick={exportData} event="settings" buttonLocation="up" />
+          <ExportButton onClick={exportData} event="settings" buttonLocation="down" />
         </Box>
       </Flex>
       <Box className="table-responsive-wrapper">
@@ -130,7 +139,11 @@ export const HistoryTable = () => {
                   overflow="hidden"
                   textOverflow="ellipsis"
                 >
-                  <Link target="_blank" href={getExplorerLink(chain, transactionHash, false)}>
+                  <Link
+                    target="_blank"
+                    href={getExplorerLink(chain, transactionHash, false)}
+                    onClick={() => logger({ action: 'link_click', label: 'transaction' })}
+                  >
                     {transactionHash}
                   </Link>
                 </Td>

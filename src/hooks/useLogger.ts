@@ -35,7 +35,15 @@ export type EventContext =
   | 'avatars'
   | 'powers'
   | 'momento';
-type ButtonLocation = 'header' | 'subhead' | 'up' | 'mid' | 'down' | 'footer' | 'popup' | 'card';
+export type ButtonLocation =
+  | 'header'
+  | 'subhead'
+  | 'up'
+  | 'mid'
+  | 'down'
+  | 'footer'
+  | 'popup'
+  | 'card';
 type ActionGroup = 'interactions' | 'conversions' | 'callbacks';
 
 export type LoggerProps = {
