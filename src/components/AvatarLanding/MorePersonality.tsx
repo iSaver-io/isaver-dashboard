@@ -1,5 +1,8 @@
+import { useRef } from 'react';
 import Slider from 'react-slick';
 import { Flex, Grid, Text, useBreakpoint } from '@chakra-ui/react';
+
+import { useOnVisibleLogger } from '@/hooks/logger/useOnVisibleLogger';
 
 import BirthdayIcon from './images/other-traits/birthday.svg';
 import DiligenceIcon from './images/other-traits/diligence.svg';
@@ -125,10 +128,22 @@ export const MorePersonality = () => {
 };
 
 const TraitsItem = ({ title, description, icon }: TraitsItemType) => {
+  const ref = useRef(null);
+  useOnVisibleLogger(ref, {
+    event: 'avatars',
+    category: 'elements',
+    action: 'show',
+    buttonLocation: 'mid',
+    actionGroup: 'interactions',
+    label: 'personalities',
+    content: title,
+  });
+
   return (
     <div className="other-traits__item">
       <Flex alignItems="center" justifyContent="space-between">
         <Text
+          ref={ref}
           as="h3"
           textStyle="h3"
           fontSize={{ sm: '18px', '2xl': '22px' }}

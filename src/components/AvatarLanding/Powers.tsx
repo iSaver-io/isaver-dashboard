@@ -1,9 +1,11 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Slider, { Settings } from 'react-slick';
 import { Box, Button, Flex, Input, Text, useBreakpoint, useNumberInput } from '@chakra-ui/react';
 import { useAccount } from 'wagmi';
 
+import { useOnVisibleLogger } from '@/hooks/logger/useOnVisibleLogger';
 import { useBuyPowers, usePowerPrices } from '@/hooks/useAvatarsSell';
+import { useLogger } from '@/hooks/useLogger';
 
 import MinusIcon from './images/minus.svg';
 import PlusIcon from './images/plus.svg';
@@ -25,7 +27,7 @@ type PowersCardProps = {
 let POWERS: PowersCardProps[] = [
   {
     id: 0,
-    name: 'Power a',
+    name: 'Power A',
     description:
       // eslint-disable-next-line prettier/prettier
       'Unlocks access to an additional 5 Levels of the iSaver Referral Program for 365 days after activation. Each additional level will earn you 1% in SAVR from your friends` earnings',
@@ -35,7 +37,7 @@ let POWERS: PowersCardProps[] = [
   },
   {
     id: 1,
-    name: 'Power b',
+    name: 'Power B',
     description:
       'Unlocks access to the SAVR Staking Pool for 365 days after activation. Use this pool to maximize your income on the iSaver platform',
     image: PowerBImage,
@@ -44,7 +46,7 @@ let POWERS: PowersCardProps[] = [
   },
   {
     id: 2,
-    name: 'Power c',
+    name: 'Power C',
     description:
       'Increases the APR/APY of all Staking Pools on the iSaver platform for 365 days after activation',
     image: PowerCImage,
@@ -53,7 +55,7 @@ let POWERS: PowersCardProps[] = [
   },
   {
     id: 3,
-    name: 'Power d',
+    name: 'Power D',
     description:
       'Increases the number of iSaver Raffle Tickets minted for completing PUZZLES - mini free-to-play game on the iSaver platform',
     image: PowerDImage,
@@ -175,14 +177,52 @@ const PowersCard = ({
       precision: 0,
     }
   );
+  const logger = useLogger({
+    event: 'avatars',
+    category: 'elements',
+    buttonLocation: 'card',
+  });
+
+  const ref = useRef(null);
+  useOnVisibleLogger(ref, {
+    event: 'avatars',
+    category: 'cards',
+    action: 'show',
+    buttonLocation: 'card',
+    actionGroup: 'interactions',
+    label: 'powers',
+    content: name,
+  });
 
   const inc = getIncrementButtonProps();
   const dec = getDecrementButtonProps();
   const inputProps = getInputProps();
 
   const handleBuyPower = useCallback(() => {
+    logger({
+      action: 'button_click',
+      label: 'mint',
+      value,
+      content: name,
+      actionGroup: 'conversions',
+    });
     buyPowers.mutateAsync({ id, amount: value }).then(buyCallback);
-  }, [buyPowers, id, value, buyCallback]);
+  }, [buyPowers, id, value, buyCallback, logger, name]);
+
+  const handlePlusClick = useCallback(
+    (event: any) => {
+      logger({ action: 'element_click', label: 'plus', actionGroup: 'interactions' });
+      inc.onClick?.(event);
+    },
+    [inc, logger]
+  );
+  const handleMinusClick = useCallback(
+    (event: any) => {
+      logger({ action: 'element_click', label: 'minus', actionGroup: 'interactions' });
+      dec.onClick?.(event);
+    },
+    [dec, logger]
+  );
 
   return (
     <Box className="powers-card" bg="bgGreen.50">
@@ -200,11 +240,21 @@ const PowersCard = ({
       </Text>
       <Flex alignItems="center" justifyContent="space-between" mt="20px">
         <Flex className="powers-card__counter" alignItems="center" justifyContent="space-between">
-          <Button {...dec} variant="link" className="powers-card__counter__button">
+          <Button
+            {...dec}
+            onClick={handleMinusClick}
+            variant="link"
+            className="powers-card__counter__button"
+          >
             <img src={MinusIcon} alt="minus" />
           </Button>
           <Input {...inputProps} textStyle="buttonSmall" className="powers-card__counter__input" />
-          <Button {...inc} variant="link" className="powers-card__counter__button">
+          <Button
+            {...inc}
+            onClick={handlePlusClick}
+            variant="link"
+            className="powers-card__counter__button"
+          >
             <img src={PlusIcon} alt="minus" />
           </Button>
         </Flex>
@@ -216,6 +266,7 @@ const PowersCard = ({
         </Text>
       </Flex>
       <Button
+        ref={ref}
         isDisabled={!isConnected}
         onClick={handleBuyPower}
         isLoading={buyPowers.isLoading}

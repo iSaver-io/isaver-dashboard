@@ -13,7 +13,14 @@ export const Raffle = () => {
   const isSm = ['sm', 'md'].includes(bp);
 
   const ref = useRef<HTMLHeadingElement>(null);
-  useOnVisibleLogger(ref, 'our_mini');
+  useOnVisibleLogger(ref, {
+    event: 'landing',
+    category: 'blocks',
+    action: 'page_sсroll',
+    buttonLocation: 'mid',
+    actionGroup: 'interactions',
+    label: 'our_mini',
+  });
 
   return (
     <Flex

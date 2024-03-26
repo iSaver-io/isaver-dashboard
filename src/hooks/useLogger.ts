@@ -9,8 +9,9 @@ export type EventName =
   | 'team'
   | 'raffle'
   | 'settings'
+  | 'avatars'
   | 'momento';
-type EventCategory = 'elements' | 'forms' | 'blocks' | 'notifications';
+type EventCategory = 'elements' | 'forms' | 'blocks' | 'notifications' | 'cards' | 'banners';
 type EventAction =
   | 'element_click'
   | 'button_click'
@@ -21,6 +22,8 @@ type EventAction =
   | 'menu_click'
   | 'wallet_click'
   | 'link_click'
+  | 'click'
+  | 'show'
   | 'notification_show';
 type EventLabel = string;
 type EventValue = string | number | null;
@@ -32,10 +35,10 @@ export type EventContext =
   | 'avatars'
   | 'powers'
   | 'momento';
-type ButtonLocation = 'header' | 'subhead' | 'up' | 'mid' | 'down' | 'footer' | 'popup';
+type ButtonLocation = 'header' | 'subhead' | 'up' | 'mid' | 'down' | 'footer' | 'popup' | 'card';
 type ActionGroup = 'interactions' | 'conversions' | 'callbacks';
 
-type LoggerProps = {
+export type LoggerProps = {
   event: EventName;
   category: EventCategory;
   action: EventAction;
