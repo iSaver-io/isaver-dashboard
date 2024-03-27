@@ -1,7 +1,8 @@
 import { useRef } from 'react';
-import { Box, Flex, Text, useBreakpoint } from '@chakra-ui/react';
+import { Box, Flex, Link, Text, useBreakpoint } from '@chakra-ui/react';
 
 import { useOnVisibleLogger } from '@/hooks/logger/useOnVisibleLogger';
+import { APP_URL } from '@/router';
 
 import RaffleImg from './images/raffle_img.png';
 import RaffleImgSm from './images/raffle_img_sm.png';
@@ -29,7 +30,9 @@ export const Raffle = () => {
             {bp === 'sm' ? <br /> : ' '}
             free-to-play
           </h4>
-          <h5 className="subheading">As a first step</h5>
+          <Link href={`${APP_URL}/#claim-ticket`} color="savr" className="subheading">
+            As a first step
+          </Link>
         </Flex>
 
         <Flex direction={{ sm: 'row', lg: 'column' }} width={{ sm: '100vw', lg: 'unset' }}>
