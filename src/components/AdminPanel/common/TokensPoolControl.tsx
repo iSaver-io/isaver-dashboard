@@ -126,7 +126,8 @@ const TokensPoolCategory = ({
   const chancePercent = useMemo(() => {
     if (info.isEmpty) return undefined;
     if (!totalChanceRequest.data || !info.chance) return undefined;
-    const chance = (info.chance.toNumber() / totalChanceRequest.data.toNumber()) * 100;
+    const chance =
+      Math.round((info.chance.toNumber() / totalChanceRequest.data.toNumber()) * 10000) / 100;
 
     return chance;
   }, [info.isEmpty, info.chance, totalChanceRequest.data]);
@@ -148,7 +149,7 @@ const TokensPoolCategory = ({
             )}
           </Flex>
           <Text>
-            Chance: {info.chance.toString()} {chancePercent ? `(${chancePercent} %)` : '(empty)'}
+            Chance: {info.chance.toString()} {chancePercent ? `(${chancePercent}%)` : '(empty)'}
           </Text>
           <Text>Prizes ({prizes.length}):</Text>
         </Box>
