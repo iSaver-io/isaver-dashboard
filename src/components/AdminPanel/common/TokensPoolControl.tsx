@@ -148,7 +148,7 @@ const TokensPoolCategory = ({
             )}
           </Flex>
           <Text>
-            Chance: {info.chance.toString()} {chancePercent ? `(${chancePercent} %)` : `(empty)`}
+            Chance: {info.chance.toString()} {chancePercent ? `(${chancePercent} %)` : '(empty)'}
           </Text>
           <Text>Prizes ({prizes.length}):</Text>
         </Box>
