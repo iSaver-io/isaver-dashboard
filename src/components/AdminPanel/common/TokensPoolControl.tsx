@@ -77,8 +77,12 @@ const TokensPoolCategory = ({
   info,
   prizes,
 }: TokensPoolCategoryProps) => {
-  const { addPrizeToCategory, updateCategoryMutation, removePrizeFromCategory } =
-    useTokensPoolControl(contractName);
+  const {
+    totalChanceRequest,
+    addPrizeToCategory,
+    updateCategoryMutation,
+    removePrizeFromCategory,
+  } = useTokensPoolControl(contractName);
 
   const {
     isOpen: isOpenUpdateCategory,
@@ -119,6 +123,14 @@ const TokensPoolCategory = ({
     [removePrizeFromCategory, categoryId]
   );
 
+  const chancePercent = useMemo(() => {
+    if (info.isEmpty) return undefined;
+    if (!totalChanceRequest.data || !info.chance) return undefined;
+    const chance = (info.chance.toNumber() / totalChanceRequest.data.toNumber()) * 100;
+
+    return chance;
+  }, [info.isEmpty, info.chance, totalChanceRequest.data]);
+
   return (
     <Box border="1px solid gray" borderRadius="12px" padding="8px 12px" mt="8px">
       <Flex align="flex-start" justifyContent="space-between">
@@ -135,7 +147,9 @@ const TokensPoolCategory = ({
               </Text>
             )}
           </Flex>
-          <Text>Chance: {info.chance.toString()}</Text>
+          <Text>
+            Chance: {info.chance.toString()} {chancePercent ? `(${chancePercent} %)` : `(empty)`}
+          </Text>
           <Text>Prizes ({prizes.length}):</Text>
         </Box>
 
