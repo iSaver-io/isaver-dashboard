@@ -1,20 +1,27 @@
-import { useRef } from 'react';
-import { Flex, Text } from '@chakra-ui/react';
-import { BigNumber } from 'ethers';
+import { useEffect, useRef } from 'react';
+import { Flex, Link, Text, useClipboard } from '@chakra-ui/react';
+import { useNetwork } from 'wagmi';
 
-import { ContractsEnum } from '@/hooks/contracts/useContractAbi';
+import { ReactComponent as CoptyIcon } from '@/assets/images/icons/copy-2.svg';
+import { ReactComponent as MetamaskIcon } from '@/assets/images/icons/metamask.svg';
+import { ReactComponent as PolygonIcon } from '@/assets/images/icons/polygon.svg';
+import { useContractsAddresses } from '@/hooks/admin/useContractsAddresses';
 import { useOnVisibleLogger } from '@/hooks/logger/useOnVisibleLogger';
-import { useStakingMetrics } from '@/hooks/staking/useStaking';
-import { useSavTokenBurn } from '@/hooks/useSavTokenBurn';
-import { useTokenSupply } from '@/hooks/useTokenSupply';
-import { beautifyAmount, bigNumberToNumber, getReadableAmount } from '@/utils/number';
+import { useAddTokens } from '@/hooks/useAddTokens';
+import { useNotification } from '@/hooks/useNotification';
+import { trimAddress } from '@/utils/address';
+import { getExplorerLink } from '@/utils/getExplorerLink';
 
 import './Landing.scss';
 
-const maxSupply = BigNumber.from(10).pow(18).mul(1_000_000_000);
 export const Numbers = () => {
-  const { tvlSav } = useStakingMetrics();
-  const savBurned = useSavTokenBurn();
+  const { chain } = useNetwork();
+  const { success } = useNotification();
+  const { ISaverSAVToken, ISaverSAVRToken } = useContractsAddresses();
+  const { onCopy: onSAVCopy, hasCopied: hasSAVCopied } = useClipboard(ISaverSAVToken);
+  const { onCopy: onSAVRCopy, hasCopied: hasSAVRCopied } = useClipboard(ISaverSAVRToken);
+
+  const { addSAV, addSAVR } = useAddTokens();
 
   const ref = useRef<HTMLHeadingElement>(null);
   useOnVisibleLogger(ref, {
@@ -26,7 +33,11 @@ export const Numbers = () => {
     label: 'our_numbers',
   });
 
-  const { circulatingSupply, totalSupply } = useTokenSupply(ContractsEnum.SAV);
+  useEffect(() => {
+    if (hasSAVCopied || hasSAVRCopied) {
+      success({ title: 'Copied!' });
+    }
+  }, [hasSAVCopied, hasSAVRCopied, success]);
 
   return (
     <Flex mb={{ sm: '80px', xl: '100px', '2xl': '100px' }} justifyContent="center" flexWrap="wrap">
@@ -43,53 +54,98 @@ export const Numbers = () => {
           </Text>
         </Flex>
         <Flex className="number-item">
-          <Text className="number-item__heading">Type Token</Text>
-          <Text className="number-item__text" color="green.400">
-            ERC20
-          </Text>
-        </Flex>
-        <Flex className="number-item">
-          <Text className="number-item__heading">Chain</Text>
-          <Text className="number-item__text" color="green.400" textTransform="capitalize">
-            Polygon
-          </Text>
-        </Flex>
-        <Flex className="number-item">
-          <Text className="number-item__heading">Max Supply</Text>
-          <Text className="number-item__text" color="green.400">
-            {getReadableAmount(maxSupply, { precision: 0, prettify: true })}
-          </Text>
-        </Flex>
-        <Flex className="number-item">
-          <Text className="number-item__heading">Total Supply</Text>
-          <Text className="number-item__text" color="green.400">
-            {getReadableAmount(totalSupply || maxSupply, { precision: 0, prettify: true })}
-          </Text>
-        </Flex>
-        <Flex className="number-item">
-          <Text className="number-item__heading">Circulating Supply</Text>
-          <Text className="number-item__text" color="green.400">
-            {getReadableAmount(circulatingSupply, { precision: 0, prettify: true })}
+          <Text className="number-item__heading">Contract</Text>
+          <Text
+            className="number-item__text"
+            fontSize={{ sm: '16px', lg: '18px', xl: '26px' }}
+            color="green.400"
+          >
+            <Flex gap="13px" alignItems="center">
+              <Link target="_blank" href={getExplorerLink(chain, ISaverSAVToken, false)}>
+                <PolygonIcon />
+              </Link>
+              {trimAddress(ISaverSAVToken, 3, false)}
+              <CoptyIcon cursor="pointer" onClick={onSAVCopy} />
+              <MetamaskIcon cursor="pointer" onClick={addSAV} />
+            </Flex>
           </Text>
         </Flex>
         <Flex className="number-item">
           <Text className="number-item__heading">Holders</Text>
           <Text className="number-item__text" color="green.400">
-            {'> 1 K'}
+            {'>'} 2 K
           </Text>
         </Flex>
         <Flex className="number-item">
           <Text className="number-item__heading">Total Value Locked</Text>
           <Text className="number-item__text" color="green.400">
-            {beautifyAmount(bigNumberToNumber(tvlSav || 0, { precision: 0 }), { precision: 0 })}
+            115 344
+          </Text>
+        </Flex>
+        <Flex className="number-item">
+          <Text className="number-item__heading">Circulating Supply</Text>
+          <Text className="number-item__text" color="green.400">
+            1 000 M
           </Text>
         </Flex>
         <Flex className="number-item">
           <Text className="number-item__heading">Total Burned</Text>
           <Text className="number-item__text" color="green.400">
-            {beautifyAmount(bigNumberToNumber(savBurned.data || 0, { precision: 0 }), {
-              precision: 0,
-            })}
+            5 344
+          </Text>
+        </Flex>
+      </Flex>
+      <Flex
+        flexWrap="wrap"
+        justifyContent="space-between"
+        className="number"
+        mt={{ sm: '50px', '2xl': '80px' }}
+      >
+        <Flex className="number-item">
+          <Text className="number-item__heading">Token Symbol</Text>
+          <Text className="number-item__text" color="savr">
+            SAVR
+          </Text>
+        </Flex>
+        <Flex className="number-item">
+          <Text className="number-item__heading">Contract</Text>
+          <Text
+            className="number-item__text"
+            fontSize={{ sm: '16px', lg: '18px', xl: '26px' }}
+            color="savr"
+          >
+            <Flex gap="13px" alignItems="center">
+              <Link target="_blank" href={getExplorerLink(chain, ISaverSAVRToken, false)}>
+                <PolygonIcon />
+              </Link>
+              {trimAddress(ISaverSAVRToken, 3, false)}
+              <CoptyIcon cursor="pointer" onClick={onSAVRCopy} />
+              <MetamaskIcon cursor="pointer" onClick={addSAVR} />
+            </Flex>
+          </Text>
+        </Flex>
+        <Flex className="number-item">
+          <Text className="number-item__heading">Holders</Text>
+          <Text className="number-item__text" color="savr">
+            {'>'} 2 K
+          </Text>
+        </Flex>
+        <Flex className="number-item">
+          <Text className="number-item__heading">Total Value Locked</Text>
+          <Text className="number-item__text" color="savr">
+            115 344
+          </Text>
+        </Flex>
+        <Flex className="number-item">
+          <Text className="number-item__heading">Circulating Supply</Text>
+          <Text className="number-item__text" color="savr">
+            1 000 M
+          </Text>
+        </Flex>
+        <Flex className="number-item">
+          <Text className="number-item__heading">Total Burned</Text>
+          <Text className="number-item__text" color="savr">
+            5 344
           </Text>
         </Flex>
       </Flex>

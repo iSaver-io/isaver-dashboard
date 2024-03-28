@@ -19,6 +19,7 @@ export const LANDING_URL = 'https://isaver.io';
 export const APP_URL = 'https://dashboard.isaver.io';
 export const WHITEPAPER_URL = 'https://isaver.gitbook.io/isaver';
 export const AVATARS_URL = 'https://avatars.isaver.io';
+export const MOMENTO_URL = 'https://dashboard.isaver.io/momento';
 export const isLanding = Boolean(process.env.REACT_APP_IS_LANDING);
 export const isAvatarsLanding = Boolean(process.env.REACT_APP_IS_AVATARS_LANDING);
 export const isDashboard = !isLanding && !isAvatarsLanding;

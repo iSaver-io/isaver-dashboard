@@ -38,11 +38,13 @@ export const About = () => {
             and accessible for everyone
           </h5>
           <Text className="text" textAlign="center">
-            iSaver is a DeFi platform which allows users to get a financial success. We offer the
-            stable investments through Staking pools based on our tokens SAV and SAVR. Multi-level
-            Referral Program additionally rewards active participants. Our weekly Raffles are
-            available for everyone. In the future we are planning to build the ecosystem, which will
-            include DeFi platform, marketplace and crypto game based on Non-Fungible Tokens (NFTs).
+            iSaver is a DeFi platform on the Polygon blockchain that helps its users to generate
+            sustainable passive income through Staking Pools based on SAV and SAVR tokens. Discover
+            our ecosystem, where everyone can maximize the potential of their capital. Explore a
+            range of iSaver Avatars benefits that complement the staking capabilities. And
+            Multi-level Referral Program additionally rewards active participants. Be sure to join
+            iSaver Raffles for a chance to win exciting prizes! Our Mission is to adopt millions of
+            users to DeFi.
           </Text>
         </Flex>
         <Box className="about-container__img">
