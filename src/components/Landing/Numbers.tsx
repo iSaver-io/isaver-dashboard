@@ -1,13 +1,14 @@
-import { useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import { Flex, Link, Text, useClipboard } from '@chakra-ui/react';
 import { useNetwork } from 'wagmi';
 
-import { ReactComponent as CoptyIcon } from '@/assets/images/icons/copy-2.svg';
+import { ReactComponent as CopyIcon } from '@/assets/images/icons/copy-2.svg';
 import { ReactComponent as MetamaskIcon } from '@/assets/images/icons/metamask.svg';
 import { ReactComponent as PolygonIcon } from '@/assets/images/icons/polygon.svg';
 import { useContractsAddresses } from '@/hooks/admin/useContractsAddresses';
 import { useOnVisibleLogger } from '@/hooks/logger/useOnVisibleLogger';
 import { useAddTokens } from '@/hooks/useAddTokens';
+import { useLogger } from '@/hooks/useLogger';
 import { useNotification } from '@/hooks/useNotification';
 import { trimAddress } from '@/utils/address';
 import { getExplorerLink } from '@/utils/getExplorerLink';
@@ -20,8 +21,14 @@ export const Numbers = () => {
   const { ISaverSAVToken, ISaverSAVRToken } = useContractsAddresses();
   const { onCopy: onSAVCopy, hasCopied: hasSAVCopied } = useClipboard(ISaverSAVToken);
   const { onCopy: onSAVRCopy, hasCopied: hasSAVRCopied } = useClipboard(ISaverSAVRToken);
-
   const { addSAV, addSAVR } = useAddTokens();
+  const logger = useLogger({
+    event: 'landing',
+    category: 'elements',
+    action: 'element_click',
+    buttonLocation: 'mid',
+    actionGroup: 'interactions',
+  });
 
   const ref = useRef<HTMLHeadingElement>(null);
   useOnVisibleLogger(ref, {
@@ -32,6 +39,29 @@ export const Numbers = () => {
     actionGroup: 'interactions',
     label: 'our_numbers',
   });
+
+  const handleAddToken = useCallback(
+    (isSav: boolean) => {
+      logger({ label: 'add_to_wallet', content: isSav ? 'sav' : 'savr' });
+      if (isSav) {
+        addSAV();
+      } else {
+        addSAVR();
+      }
+    },
+    [logger, addSAV, addSAVR]
+  );
+  const handleAddressCopy = useCallback(
+    (isSav: boolean) => {
+      logger({ label: 'contract', content: isSav ? 'sav' : 'savr' });
+      if (isSav) {
+        onSAVCopy();
+      } else {
+        onSAVRCopy();
+      }
+    },
+    [logger, onSAVCopy, onSAVRCopy]
+  );
 
   useEffect(() => {
     if (hasSAVCopied || hasSAVRCopied) {
@@ -61,12 +91,12 @@ export const Numbers = () => {
             color="green.400"
           >
             <Flex gap="13px" alignItems="center">
-              <Link target="_blank" href={getExplorerLink(chain, ISaverSAVToken, false)}>
+              <Link target="_blank" href={getExplorerLink(chain, ISaverSAVToken)}>
                 <PolygonIcon />
               </Link>
-              {trimAddress(ISaverSAVToken, 3, false)}
-              <CoptyIcon cursor="pointer" onClick={onSAVCopy} />
-              <MetamaskIcon cursor="pointer" onClick={addSAV} />
+              {trimAddress(ISaverSAVToken, 3)}
+              <CopyIcon cursor="pointer" onClick={() => handleAddressCopy(true)} />
+              <MetamaskIcon cursor="pointer" onClick={() => handleAddToken(true)} />
             </Flex>
           </Text>
         </Flex>
@@ -119,8 +149,8 @@ export const Numbers = () => {
                 <PolygonIcon />
               </Link>
               {trimAddress(ISaverSAVRToken, 3, false)}
-              <CoptyIcon cursor="pointer" onClick={onSAVRCopy} />
-              <MetamaskIcon cursor="pointer" onClick={addSAVR} />
+              <CopyIcon cursor="pointer" onClick={() => handleAddressCopy(false)} />
+              <MetamaskIcon cursor="pointer" onClick={() => handleAddToken(false)} />
             </Flex>
           </Text>
         </Flex>

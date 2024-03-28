@@ -1,4 +1,5 @@
 import { useCallback } from 'react';
+import { useAccount } from 'wagmi';
 
 import { ContractsEnum, useContractAbi } from './contracts/useContractAbi';
 import { useNotification } from './useNotification';
@@ -7,6 +8,8 @@ export const useAddTokens = () => {
   const { address: savAddress } = useContractAbi({ contract: ContractsEnum.SAV });
   const { address: savrAddress } = useContractAbi({ contract: ContractsEnum.SAVR });
   const { success, handleError } = useNotification();
+
+  const signer = useAccount();
 
   const addToWallet = useCallback(
     async (tokenName: string) => {
@@ -30,18 +33,15 @@ export const useAddTokens = () => {
 
         if (!tokenParams) return;
 
-        const wasAdded = await window.ethereum?.request({
-          method: 'wallet_watchAsset',
-          params: {
-            type: 'ERC20',
-            options: {
-              address: tokenParams.address,
-              symbol: tokenParams.symbol,
-              decimals: tokenParams.decimals,
-              image: tokenParams.image,
-            },
-          },
-        });
+        const wasAdded =
+          signer.connector &&
+          signer.connector.watchAsset &&
+          (await signer.connector.watchAsset({
+            address: tokenParams.address,
+            symbol: tokenParams.symbol,
+            decimals: tokenParams.decimals,
+            image: tokenParams.image,
+          }));
         if (wasAdded) {
           success({ title: 'Token added' });
         }
@@ -49,7 +49,7 @@ export const useAddTokens = () => {
         handleError(err);
       }
     },
-    [savAddress, savrAddress, success, handleError]
+    [savAddress, savrAddress, success, handleError, signer]
   );
 
   const addSAV = () => addToWallet('SAV');

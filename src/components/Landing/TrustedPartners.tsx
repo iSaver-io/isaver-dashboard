@@ -20,6 +20,7 @@ const settings: Settings = {
   autoplay: true,
   autoplaySpeed: 5000,
   adaptiveHeight: true,
+  swipeToSlide: true,
 
   responsive: [
     {
@@ -39,20 +40,7 @@ const settings: Settings = {
   ],
 };
 
-const images = [
-  Partner1,
-  Partner2,
-  Partner3,
-  Partner4,
-  Partner5,
-  Partner6,
-  Partner1,
-  Partner2,
-  Partner3,
-  Partner4,
-  Partner5,
-  Partner6,
-];
+const images = [Partner1, Partner2, Partner3, Partner4, Partner5, Partner6];
 
 export const TrustedPartners = () => {
   return (

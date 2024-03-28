@@ -1,7 +1,8 @@
-import { useCallback } from 'react';
+import { useCallback, useRef } from 'react';
 import Slider from 'react-slick';
 import { Box, Container, Flex, Text } from '@chakra-ui/react';
 
+import { useOnVisibleLogger } from '@/hooks/logger/useOnVisibleLogger';
 import { useLogger } from '@/hooks/useLogger';
 import { APP_URL, AVATARS_URL, MOMENTO_URL } from '@/router';
 
@@ -20,12 +21,16 @@ import { CoinImage } from './CoinImage';
 import './Landing.scss';
 
 export const Main = () => {
+  const refSlideMain = useRef<HTMLDivElement>(null);
+  const refSlideAvatars = useRef<HTMLDivElement>(null);
+  const refSlideMomento = useRef<HTMLDivElement>(null);
+
   const logger = useLogger({
     event: 'landing',
-    category: 'elements',
-    action: 'button_click',
+    category: 'banners',
+    action: 'click',
     buttonLocation: 'up',
-    actionGroup: 'interactions',
+    actionGroup: 'conversions',
   });
 
   const settings = {
@@ -48,8 +53,33 @@ export const Main = () => {
     ),
   };
 
+  useOnVisibleLogger(refSlideMain, {
+    event: 'landing',
+    buttonLocation: 'up',
+    actionGroup: 'interactions',
+    category: 'banners',
+    action: 'show',
+    label: 'get_started',
+  });
+  useOnVisibleLogger(refSlideAvatars, {
+    event: 'landing',
+    buttonLocation: 'up',
+    actionGroup: 'interactions',
+    category: 'banners',
+    action: 'show',
+    label: 'avatars',
+  });
+  useOnVisibleLogger(refSlideMomento, {
+    event: 'landing',
+    buttonLocation: 'up',
+    actionGroup: 'interactions',
+    category: 'banners',
+    action: 'show',
+    label: 'momento',
+  });
+
   const handleGenerateClick = useCallback(() => {
-    logger({ label: 'generate' });
+    logger({ label: 'avatars' });
     window.open(AVATARS_URL, '_self');
   }, [logger]);
 
@@ -59,13 +89,14 @@ export const Main = () => {
   }, [logger]);
 
   const handleGoClick = useCallback(() => {
-    logger({ label: 'go' });
+    logger({ label: 'momento' });
     window.open(MOMENTO_URL, '_self');
   }, [logger]);
 
   return (
     <Slider {...settings}>
       <Box
+        ref={refSlideAvatars}
         bgImage={{
           sm: `url(${bannerAvatarsSM})`,
           md: `url(${bannerAvatarsMD})`,
@@ -126,7 +157,11 @@ export const Main = () => {
           </Button>
         </Container>
       </Box>
-      <Box h={{ sm: '504px', md: '574px', lg: '484px', xl: '504px', '2xl': '665px' }} w="100%">
+      <Box
+        ref={refSlideMain}
+        h={{ sm: '504px', md: '574px', lg: '484px', xl: '504px', '2xl': '665px' }}
+        w="100%"
+      >
         <Container
           variant="header"
           alignItems="flex-end"
@@ -174,6 +209,7 @@ export const Main = () => {
         </Container>
       </Box>
       <Box
+        ref={refSlideMomento}
         bgImage={`url(${bgMomento})`}
         bgPosition="center"
         bgSize="cover"

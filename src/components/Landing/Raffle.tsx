@@ -2,6 +2,7 @@ import { useRef } from 'react';
 import { Box, Flex, Link, Text, useBreakpoint } from '@chakra-ui/react';
 
 import { useOnVisibleLogger } from '@/hooks/logger/useOnVisibleLogger';
+import { useLogger } from '@/hooks/useLogger';
 import { APP_URL } from '@/router';
 
 import RaffleImg from './images/raffle_img.png';
@@ -12,6 +13,13 @@ import './Landing.scss';
 export const Raffle = () => {
   const bp = useBreakpoint({ ssr: false });
   const isSm = ['sm', 'md'].includes(bp);
+  const logger = useLogger({
+    event: 'landing',
+    category: 'elements',
+    action: 'link_click',
+    buttonLocation: 'down',
+    actionGroup: 'interactions',
+  });
 
   const ref = useRef<HTMLHeadingElement>(null);
   useOnVisibleLogger(ref, {
@@ -37,7 +45,12 @@ export const Raffle = () => {
             {bp === 'sm' ? <br /> : ' '}
             free-to-play
           </h4>
-          <Link href={`${APP_URL}/#claim-ticket`} color="savr" className="subheading">
+          <Link
+            href={`${APP_URL}/#claim-ticket`}
+            color="savr"
+            className="subheading"
+            onClick={() => logger({ label: 'first_step' })}
+          >
             As a first step
           </Link>
         </Flex>
