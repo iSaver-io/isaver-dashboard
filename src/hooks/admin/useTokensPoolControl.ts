@@ -26,7 +26,7 @@ export const useTokensPoolControl = (
 
   const contract = useTokensPoolContract(contractName);
 
-  const { success, handleError } = useNotification();
+  const { success, handleError, error } = useNotification();
   const queryClient = useQueryClient();
 
   const prizesRequest = useQuery([TOKENS_POOL_PRIZES_REQUEST, contractName], () =>
@@ -192,7 +192,12 @@ export const useTokensPoolControl = (
         }
       }
 
-      const txHash = await contract.addPrizeToCategory({ ...params, tokenIds, from });
+      const txHash = await contract.addPrizeToCategory({
+        ...params,
+        tokenIds,
+        remaining: isErc721 ? tokenIds.length : params.remaining,
+        from,
+      });
       success({
         title: 'Success',
         description: `Prize added in ${contractName}`,
@@ -206,7 +211,16 @@ export const useTokensPoolControl = (
           queryKey: [TOKENS_POOL_TOTAL_CHANCE_REQUEST, contractName],
         });
       },
-      onError: (err) => handleError(err),
+      onError: (err: any) => {
+        if (err.toString().includes('ERC721')) {
+          error({
+            title: 'Transaction failed',
+            description: 'Error of ERC721 token, check tokenIds',
+          });
+        } else {
+          handleError(err);
+        }
+      },
     }
   );
   const removePrizeFromCategory = useMutation(
