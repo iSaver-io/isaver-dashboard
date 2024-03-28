@@ -1,17 +1,26 @@
-import { Box, Flex, Text } from '@chakra-ui/react';
+import { Box, Flex, Text, useDisclosure } from '@chakra-ui/react';
 
 import { AdminSection } from '@/components/AdminPanel/common/AdminSection';
 import { Balance } from '@/components/Balance/Balance';
+import { Button } from '@/components/ui/Button/Button';
 import { CenteredSpinner } from '@/components/ui/CenteredSpinner/CenteredSpinner';
-import { POWERS_LIST, usePowersSupply } from '@/hooks/usePowers';
+import { POWERS_LIST, usePowerControl, usePowersSupply } from '@/hooks/usePowers';
+
+import { MintPowers } from '../common/MintPowers';
 
 export const PowersControl = () => {
   const { supply, isLoading } = usePowersSupply();
+  const { mintPowers } = usePowerControl();
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   return (
     <AdminSection title="Powers">
       <>
         {isLoading ? <CenteredSpinner /> : null}
+
+        <Button size="sm" onClick={onOpen} mb="20px">
+          Mint powers
+        </Button>
 
         {POWERS_LIST.map((power, index) => (
           <Box key={index}>
@@ -42,6 +51,8 @@ export const PowersControl = () => {
             />
           </Box>
         ))}
+
+        {isOpen ? <MintPowers onClose={onClose} onSubmit={mintPowers.mutateAsync} /> : null}
       </>
     </AdminSection>
   );

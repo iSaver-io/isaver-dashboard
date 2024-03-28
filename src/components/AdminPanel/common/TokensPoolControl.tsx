@@ -1,6 +1,6 @@
 // eslint-disable-next-line
 import { Box, Flex, Text, useDisclosure } from '@chakra-ui/react';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { BigNumber } from 'ethers';
 
 import { Button } from '@/components/ui/Button/Button';
@@ -12,6 +12,7 @@ import { AddCategoryModal } from './AddCategoryModal';
 import { AddPrizeToTokensPoolModal } from './AddPrizeToTokensPoolModal';
 import { RemovePrizeModal } from './RemovePrizeModal';
 import { bigNumberToString } from '@/utils/number';
+import alchemy from '@/modules/alchemy';
 
 type TokensPoolTypes = ContractsEnum.MomentoTokensPool | ContractsEnum.BirthdayTokensPool;
 
@@ -225,17 +226,29 @@ const TokensPoolPrize = ({
     onClose: onCloseRemovePrize,
   } = useDisclosure();
   const contractAddresses = useContractsAddresses();
+  const [tokenName, setTokenName] = useState<string>('');
 
   const tokenType = isERC20 ? 'ERC20' : isERC721 ? 'ERC721' : isERC1155 ? 'ERC1155' : 'unknown';
 
-  const tokenName = useMemo(() => {
-    if (tokenAddress === contractAddresses.ISaverSAVToken) return 'SAV';
-    if (tokenAddress === contractAddresses.ISaverSAVRToken) return 'SAVR';
-    if (tokenAddress === contractAddresses.ISaverAvatars) return 'iSaver Avatars';
-    if (tokenAddress === contractAddresses.Ticket) return 'iSaver Ticket';
-    if (tokenAddress === contractAddresses.ISaverPowers) return 'iSaver Powers';
-    return 'External token';
-  }, [tokenAddress, contractAddresses]);
+  useEffect(() => {
+    if (tokenName) return;
+
+    if (tokenAddress === contractAddresses.ISaverSAVToken) setTokenName('SAV');
+    else if (tokenAddress === contractAddresses.ISaverSAVRToken) setTokenName('SAVR');
+    else if (tokenAddress === contractAddresses.ISaverAvatars) setTokenName('iSaver Avatars');
+    else if (tokenAddress === contractAddresses.Ticket) setTokenName('iSaver Ticket');
+    else if (tokenAddress === contractAddresses.ISaverPowers) setTokenName('iSaver Powers');
+    else {
+      alchemy.core
+        .getTokenMetadata(tokenAddress)
+        .then(
+          (tokenMetadata) =>
+            tokenMetadata &&
+            setTokenName('External: ' + (tokenMetadata.name || tokenMetadata.symbol))
+        );
+      setTokenName('External token');
+    }
+  }, [tokenName, tokenAddress, contractAddresses]);
 
   return (
     <Box padding="4px 8px" border="1px solid grey" borderRadius="8px" mt="4px">

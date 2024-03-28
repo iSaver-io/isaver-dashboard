@@ -1,5 +1,5 @@
 // eslint-disable-next-line
-import { useQuery, useQueries } from '@tanstack/react-query';
+import { useQuery, useQueries, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useMemo, useState } from 'react';
 import { BigNumber } from 'ethers';
 import { useAccount } from 'wagmi';
@@ -7,6 +7,7 @@ import { useAccount } from 'wagmi';
 import { useAccounts } from './admin/useAccounts';
 import { useContractsAddresses } from './admin/useContractsAddresses';
 import { usePowersContract } from './contracts/usePowersContract';
+import { useNotification } from './useNotification';
 
 export const POWERS_LIST = ['A', 'B', 'C', 'D'];
 
@@ -140,4 +141,41 @@ export const usePowerSupply = (tokenId: number) => {
     totalMinted: powerTotalMinted,
     totalBurned,
   };
+};
+
+export const usePowerControl = () => {
+  const powersContract = usePowersContract();
+  const queryClient = useQueryClient();
+
+  const { success, handleError } = useNotification();
+
+  const mintPowers = useMutation(
+    ['mint-powers'],
+    async ({
+      tokenId,
+      toAddress,
+      amount,
+    }: {
+      tokenId: number;
+      toAddress: string;
+      amount: number;
+    }) => {
+      const txHash = await powersContract.mintPowers(tokenId, toAddress, amount);
+      success({
+        title: 'Success',
+        description: `${amount} powers with id ${tokenId} minted to ${toAddress}`,
+        txHash,
+      });
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: [POWER_SUPPLY_REQUEST] });
+        queryClient.invalidateQueries({ queryKey: [POWER_CIRCULATION_SUPPLY_REQUEST] });
+        queryClient.invalidateQueries({ queryKey: [POWER_TOTAL_MINTED_REQUEST] });
+      },
+      onError: (err) => handleError(err, 'powers'),
+    }
+  );
+
+  return { mintPowers };
 };

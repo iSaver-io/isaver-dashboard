@@ -6,6 +6,7 @@ import { FROM_BLOCK_EPISODE_2 } from '@/constants';
 import alchemy from '@/modules/alchemy';
 import { ISaverPowers } from '@/types.common';
 import { TypedEvent, TypedEventFilter } from '@/types/typechain-types/common';
+import { waitForTransaction } from '@/utils/waitForTransaction';
 
 import { ContractsEnum, useContractAbi } from './useContractAbi';
 
@@ -45,10 +46,16 @@ export const usePowersContract = () => {
     return events.map((event) => powersIface.parseLog(event));
   };
 
+  const mintPowers = async (tokenId: number, toAddress: string, amount: number) => {
+    const tx = await contract.mint(toAddress, tokenId, amount, ethers.utils.toUtf8Bytes(''));
+    return waitForTransaction(tx);
+  };
+
   return {
     powersContract: contract,
     getBalanceOf,
     getTotalSupply,
     getAllMintTransfers,
+    mintPowers,
   };
 };

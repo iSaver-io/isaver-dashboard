@@ -91,7 +91,7 @@ export const useTokensPoolControl = (
       }
 
       let tokenIds = params.tokenIds;
-      if (isErc721 && !tokenIds) {
+      if (isErc721 && !tokenIds.length) {
         let totalNfts: any[] = [];
         let pageKey;
         do {
@@ -192,7 +192,7 @@ export const useTokensPoolControl = (
         }
       }
 
-      const txHash = await contract.addPrizeToCategory({ ...params, from });
+      const txHash = await contract.addPrizeToCategory({ ...params, tokenIds, from });
       success({
         title: 'Success',
         description: `Prize added in ${contractName}`,

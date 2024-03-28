@@ -43,6 +43,9 @@ export const Addresses = () => {
         <Link href="https://polygonscan.com/unitconverter" target="_blank" color="green.400">
           Unit Converter
         </Link>
+        <Link href="/vesting" target="_blank" color="green.400">
+          Vestings
+        </Link>
       </Flex>
     </AdminSection>
   );
