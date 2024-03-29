@@ -31,7 +31,7 @@ export const AvatarsSellControl = () => {
         <Box mb="24px">
           {isLoading ? <CenteredSpinner /> : null}
 
-          <Flex textStyle="text1" mb="10px">
+          <Flex textStyle="text1" fontSize="16px" mb="10px">
             <Text mr="12px" flex="160px 0 0">
               Bought Avatars:
             </Text>
@@ -43,7 +43,7 @@ export const AvatarsSellControl = () => {
           </Flex>
 
           {POWERS_LIST.map((power, index) => (
-            <Flex textStyle="text1" mb="10px" key={index}>
+            <Flex textStyle="text1" fontSize="16px" mb="10px" key={index}>
               <Text mr="12px" flex="160px 0 0">
                 Bought Powers {power}:
               </Text>
@@ -74,22 +74,22 @@ export const AvatarsSellControl = () => {
           onSubmit={updateInflationPeriod.mutateAsync}
         />
         <ControlField
-          label="Cost of power A"
+          label="Cost of Power A"
           value={powerPrices[0]}
           onSubmit={(price) => updatePowerPrice.mutateAsync({ id: 0, price })}
         />
         <ControlField
-          label="Cost of power B"
+          label="Cost of Power B"
           value={powerPrices[1]}
           onSubmit={(price) => updatePowerPrice.mutateAsync({ id: 1, price })}
         />
         <ControlField
-          label="Cost of power C"
+          label="Cost of Power C"
           value={powerPrices[2]}
           onSubmit={(price) => updatePowerPrice.mutateAsync({ id: 2, price })}
         />
         <ControlField
-          label="Cost of power D"
+          label="Cost of Power D"
           value={powerPrices[3]}
           onSubmit={(price) => updatePowerPrice.mutateAsync({ id: 3, price })}
         />

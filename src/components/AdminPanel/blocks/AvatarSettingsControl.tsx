@@ -38,7 +38,7 @@ export const AvatarSettingsControl = () => {
         />
 
         {POWERS_LIST.map((power, index) => (
-          <Flex textStyle="text1" mb="10px" key={index}>
+          <Flex textStyle="text1" fontSize="16px" mb="10px" key={index}>
             <Text mr="12px" flex="200px 0 0">
               Active Powers {power} (total):
             </Text>
@@ -50,7 +50,7 @@ export const AvatarSettingsControl = () => {
           </Flex>
         ))}
 
-        <Balance label="Users with 4 powers:" balance={activePowers?.full} minLimit={0} isRaw />
+        <Balance label="Users with 4 Powers:" balance={activePowers?.full} minLimit={0} isRaw />
 
         <TokensPoolControl
           label="Birthday Present Pool"

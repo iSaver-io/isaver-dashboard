@@ -167,15 +167,17 @@ const TokensPoolCategory = ({
       </Flex>
 
       <Flex direction="column">
-        {prizes.map((prize, prizeIndex) => (
-          <TokensPoolPrize
-            key={`prize-${prizeIndex}`}
-            {...prize}
-            prizeId={prizeIndex}
-            categoryId={categoryId}
-            onRemove={handleRemovePrize}
-          />
-        ))}
+        {prizes
+          .filter((p) => p.remaining > 0)
+          .map((prize, prizeIndex) => (
+            <TokensPoolPrize
+              key={`prize-${prizeIndex}`}
+              {...prize}
+              prizeId={prizeIndex}
+              categoryId={categoryId}
+              onRemove={handleRemovePrize}
+            />
+          ))}
       </Flex>
 
       {isOpenUpdateCategory ? (

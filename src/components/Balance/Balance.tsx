@@ -31,7 +31,7 @@ export const Balance: FC<BalanceProps> = ({
   const isBalanceUnset = balance === null || balance === undefined;
 
   return (
-    <Flex textStyle="text1" my="10px">
+    <Flex textStyle="text1" my="10px" fontSize="16px">
       <Text mr="12px" flex={`${labelWidth} 0 0`} bgColor={isLowBalance ? 'red' : undefined}>
         {label}
       </Text>

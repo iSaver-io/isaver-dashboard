@@ -338,7 +338,7 @@ export const useAvatarsSellControl = () => {
     async ({ id, price }: { id: number; price: string }) => {
       const priceInWei = ethers.utils.parseEther(price);
       const txHash = await avatarsSellContract.updatePowerPrice(id, priceInWei);
-      success({ title: 'Success', description: `Price for power ${id} updated`, txHash });
+      success({ title: 'Success', description: `Price for Power ${id} updated`, txHash });
     },
     {
       onSuccess: () => {

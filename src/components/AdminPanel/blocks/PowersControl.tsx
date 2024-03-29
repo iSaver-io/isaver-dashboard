@@ -19,12 +19,12 @@ export const PowersControl = () => {
         {isLoading ? <CenteredSpinner /> : null}
 
         <Button size="sm" onClick={onOpen} mb="20px">
-          Mint powers
+          Mint Powers
         </Button>
 
         {POWERS_LIST.map((power, index) => (
           <Box key={index}>
-            <Flex textStyle="text1" mb="10px">
+            <Flex textStyle="text1" fontSize="16px" mb="10px">
               <Text mr="12px" flex="220px 0 0">
                 Minted / Burned Power {power}:
               </Text>

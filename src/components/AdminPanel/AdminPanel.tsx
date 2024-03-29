@@ -38,7 +38,7 @@ export const AdminPanel = () => {
         <Center height="400px">
           <Box display="flex" flexDirection="column" gap="24px">
             {isConnected ? null : <ConnectWalletButton />}
-            {isAuthorized ? (
+            {isAdmin ? null : isAuthorized ? (
               <Button onClick={signOut}>Log in via Admin Google account</Button>
             ) : (
               <Button onClick={signIn}>Log in with Google</Button>

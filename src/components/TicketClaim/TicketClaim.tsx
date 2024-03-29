@@ -150,7 +150,7 @@ export const TicketClaim = () => {
           whiteSpace="nowrap"
         >
           <Text textStyle="textSansBold" mb={{ sm: '16px', xl: '0' }}>
-            {bigNumberToString(ticketPrice, { precision: 0 })} SAV / 1 Ticket
+            1 Ticket / {bigNumberToString(ticketPrice, { precision: 0 })} SAV
           </Text>
 
           {!isConnected ? (

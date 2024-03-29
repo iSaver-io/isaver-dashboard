@@ -116,8 +116,8 @@ export const StakingPlan: FC<StakingPlanProps> = ({
 
           {!isSuperPowered && (!isSubscribed || isSubscriptionEnding) ? (
             <Text textStyle="textSansBold">
-              {bigNumberToString(subscriptionCost, { precision: 0 })} SAV /{' '}
-              {getReadableDuration(subscriptionDuration)}
+              {getReadableDuration(subscriptionDuration)} /{' '}
+              {bigNumberToString(subscriptionCost, { precision: 0 })} SAV
             </Text>
           ) : null}
         </Flex>

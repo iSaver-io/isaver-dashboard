@@ -44,8 +44,8 @@ export const StakingControl = () => {
     <AdminSection title="Staking" isLoading={stakingPlansRequest.isLoading}>
       <>
         <ControlField
-          label="Extra APR for power C"
-          value={extraAprPowerC || 0}
+          label="Extra APR for Power C"
+          value={extraAprPowerC * 10 || 0}
           onSubmit={updateExtraAprPowerC.mutateAsync}
         />
 
@@ -173,6 +173,7 @@ const StakingPlanInfo: FC<StakingPlanInfoProps> = ({
   return (
     <Box
       textStyle="text1"
+      fontSize="16px"
       _notFirst={{ mt: '16px' }}
       border="1px solid"
       borderColor="gray.200"
@@ -268,6 +269,7 @@ const SuperStakingPlanInfo: FC<SuperStakingPlanInfoProps> = ({
   return (
     <Box
       textStyle="text1"
+      fontSize="16px"
       _notFirst={{ mt: '16px' }}
       border="1px solid"
       borderColor="gray.200"
@@ -279,28 +281,28 @@ const SuperStakingPlanInfo: FC<SuperStakingPlanInfoProps> = ({
         <Text color={isActive ? 'green.400' : 'red'}>{isActive ? 'Active' : 'Disabled'}</Text>
       </Flex>
 
-      <Flex alignItems="center" mb="12px">
-        <Flex>
-          <Label width="50px">APY:</Label>
-          <Value>{apr} %</Value>
-        </Flex>
-      </Flex>
+      <Flex alignItems="flex-end">
+        <Box>
+          <Flex>
+            <Label width="50px">APY:</Label>
+            <Value>{apr} %</Value>
+          </Flex>
 
-      <Flex alignItems="center" mb="12px">
-        <Flex>
-          <Label width="120px">Total staked:</Label>
-          <Value width="160px">{bigNumberToString(totalStaked)} SAVR</Value>
-        </Flex>
+          <Flex>
+            <Label width="120px">Total staked:</Label>
+            <Value width="160px">{bigNumberToString(totalStaked)} SAVR</Value>
+          </Flex>
 
-        <Flex>
-          <Label width="120px">Total claimed:</Label>
-          <Value width="160px">{bigNumberToString(totalClaimed)} SAVR</Value>
-        </Flex>
+          <Flex>
+            <Label width="120px">Total claimed:</Label>
+            <Value width="160px">{bigNumberToString(totalClaimed)} SAVR</Value>
+          </Flex>
 
-        <Flex>
-          <Label width="140px">Current locked:</Label>
-          <Value width="160px">{bigNumberToString(currentLocked)} SAVR</Value>
-        </Flex>
+          <Flex>
+            <Label width="140px">Current locked:</Label>
+            <Value width="160px">{bigNumberToString(currentLocked)} SAVR</Value>
+          </Flex>
+        </Box>
 
         <Button
           variant={isActive ? 'filledRed' : undefined}

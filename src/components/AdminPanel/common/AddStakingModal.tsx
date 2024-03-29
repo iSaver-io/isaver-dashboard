@@ -75,7 +75,7 @@ export const AddStakingModal: FC<AddStakingModalProps> = ({ onClose, onSubmit })
               isChecked={isSuperPowered}
               onChange={(e) => setIsSuperPowered(e.target.checked)}
             >
-              <Text textStyle="text1">Accessed only with power B?</Text>
+              <Text textStyle="text1">Accessed only with Power B?</Text>
             </Checkbox>
           </Box>
 

@@ -68,7 +68,7 @@ export const useAvatarSettingsActivePowers = () => {
       (a, b) => a.blockNumber - b.blockNumber
     );
 
-    const now = Date.now();
+    const now = Date.now() / 1000;
     const usersData = events.reduce((acc, event) => {
       if (event.name === 'PowerActivated') {
         const user = event.args[0];

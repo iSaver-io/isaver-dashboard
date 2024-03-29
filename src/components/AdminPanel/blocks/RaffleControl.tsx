@@ -113,6 +113,7 @@ const RaffleRoundInfo: FC<RaffleRoundInfoProps> = ({
   return (
     <Box
       textStyle="text1"
+      fontSize="16px"
       _notFirst={{ mt: '16px' }}
       border="1px solid"
       borderColor="gray.200"
