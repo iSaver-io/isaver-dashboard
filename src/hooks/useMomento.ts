@@ -157,7 +157,11 @@ export const useMomentoPrizes = () => {
       .sort((a, b) => a.info.chance.sub(b.info.chance).toNumber())
       .map((category) => category.prizes)
       .flat()
-      .filter((prize) => prize.isERC721 && !Object.values(addresses).includes(prize.tokenAddress))
+      .filter(
+        (prize) =>
+          (prize.isERC721 || prize.isERC1155) &&
+          !Object.values(addresses).includes(prize.tokenAddress)
+      )
       .map((category) =>
         category.tokenIds.map((tokenId) => ({ ...category, tokenId: tokenId.toString() }))
       )
@@ -172,7 +176,7 @@ export const useMomentoPrizes = () => {
       queryKey: [GET_MOMENTO_EXTERNAL_PRIZES, nft.tokenAddress, nft.tokenId],
       queryFn: async () =>
         await alchemy.nft.getNftMetadata(nft.tokenAddress, nft.tokenId, {
-          tokenType: NftTokenType.ERC721,
+          tokenType: nft.isERC721 ? NftTokenType.ERC721 : NftTokenType.ERC1155,
           refreshCache: true,
         }),
     })),

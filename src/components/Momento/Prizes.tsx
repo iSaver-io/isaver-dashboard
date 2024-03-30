@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useRef } from 'react';
 import Slider, { Settings } from 'react-slick';
-import { Box, Text } from '@chakra-ui/react';
+import { Box, Image, Text } from '@chakra-ui/react';
 import { useNetwork } from 'wagmi';
 
 import { useOnVisibleLogger } from '@/hooks/logger/useOnVisibleLogger';
@@ -137,8 +137,8 @@ const PrizeCard = ({ image, label, tokenId, contract }: PrizeCardProps) => {
 
   return (
     <Box px={{ sm: '4px', xl: '10px' }} textAlign="center">
-      <Box width={{ sm: '146px', xl: '310px' }}>
-        <img src={image} alt="slider item" />
+      <Box width={{ sm: '146px', xl: '310px' }} height={{ sm: '146px', xl: '310px' }}>
+        <Image src={image} alt="slider item" objectFit="contain" />
       </Box>
       <Text
         ref={ref}

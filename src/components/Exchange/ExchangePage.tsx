@@ -187,6 +187,7 @@ export const ExchangePage = () => {
             placeholder="0"
             value={amount}
             total={totalBalance}
+            onSetTotal={() => handleAmountChange(totalBalance)}
           />
         </Box>
 
