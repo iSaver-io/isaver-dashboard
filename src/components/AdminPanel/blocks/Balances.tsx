@@ -42,11 +42,7 @@ export const Balances = () => {
         sav={savSupply.circulatingSupply}
         savr={savrSupply.circulatingSupply}
       />
-      <BalanceRow
-        label="Total Burned"
-        sav={savSupply.maxSupply.sub(savSupply.totalSupply)}
-        savr={savrSupply.maxSupply.sub(savrSupply.totalSupply)}
-      />
+      <BalanceRow label="Total Burned" sav={savSupply.totalBurned} savr={savrSupply.totalBurned} />
 
       <BalanceRow label="Staking TVL" sav={tvlSav} savr={tvlSavr} />
       <BalanceRow label="Staking B Power TVL" savr={superPlansMetrics.tvl} />
@@ -72,7 +68,9 @@ export const Balances = () => {
       <BalanceRow
         label="Exchange Treasury"
         sav={vendorBalance.data || 0}
+        savMinLimit={10_000}
         usdt={vendorChangeBalance.data || 0}
+        usdtMinLimit={10_000}
       />
       <BalanceRow label="Vesting Pool" sav={vestingBalance.data || 0} />
     </AdminSection>

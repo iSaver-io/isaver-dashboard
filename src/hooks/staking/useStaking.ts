@@ -656,7 +656,9 @@ export const useStakingAdminActions = () => {
   const updateExtraAprPowerC = useMutation(
     ['update-extra-apr-power-c'],
     async (apr: number | string) => {
-      const txHash = await stakingContract.updateExtraAprPowerC(parseInt(apr.toString()));
+      const txHash = await stakingContract.updateExtraAprPowerC(
+        Math.round(parseFloat(apr.toString()) * 10)
+      );
       success({
         title: 'Success',
         description: `Extra APR for Power C set to ${apr}`,

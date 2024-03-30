@@ -45,7 +45,7 @@ export const StakingControl = () => {
       <>
         <ControlField
           label="Extra APR for Power C"
-          value={extraAprPowerC * 10 || 0}
+          value={extraAprPowerC || 0}
           onSubmit={updateExtraAprPowerC.mutateAsync}
         />
 

@@ -6,12 +6,16 @@ import { ReactComponent as CopyIcon } from '@/assets/images/icons/copy-2.svg';
 import { ReactComponent as MetamaskIcon } from '@/assets/images/icons/metamask.svg';
 import { ReactComponent as PolygonIcon } from '@/assets/images/icons/polygon.svg';
 import { useContractsAddresses } from '@/hooks/admin/useContractsAddresses';
+import { ContractsEnum } from '@/hooks/contracts/useContractAbi';
 import { useOnVisibleLogger } from '@/hooks/logger/useOnVisibleLogger';
+import { useStakingMetrics } from '@/hooks/staking/useStaking';
 import { useAddTokens } from '@/hooks/useAddTokens';
 import { useLogger } from '@/hooks/useLogger';
 import { useNotification } from '@/hooks/useNotification';
+import { useTokenSupply } from '@/hooks/useTokenSupply';
 import { trimAddress } from '@/utils/address';
 import { getExplorerLink } from '@/utils/getExplorerLink';
+import { beautifyAmount, bigNumberToNumber } from '@/utils/number';
 
 import './Landing.scss';
 
@@ -22,6 +26,10 @@ export const Numbers = () => {
   const { onCopy: onSAVCopy, hasCopied: hasSAVCopied } = useClipboard(ISaverSAVToken);
   const { onCopy: onSAVRCopy, hasCopied: hasSAVRCopied } = useClipboard(ISaverSAVRToken);
   const { addSAV, addSAVR } = useAddTokens();
+  const { tvlSav, tvlSavr } = useStakingMetrics();
+  const savSupply = useTokenSupply(ContractsEnum.SAV);
+  const savrSupply = useTokenSupply(ContractsEnum.SAVR);
+
   const logger = useLogger({
     event: 'landing',
     category: 'elements',
@@ -109,19 +117,19 @@ export const Numbers = () => {
         <Flex className="number-item">
           <Text className="number-item__heading">Total Value Locked</Text>
           <Text className="number-item__text" color="green.400">
-            115 344
+            {beautifyAmount(bigNumberToNumber(tvlSav || 0), { precision: 0 })}
           </Text>
         </Flex>
         <Flex className="number-item">
           <Text className="number-item__heading">Circulating Supply</Text>
           <Text className="number-item__text" color="green.400">
-            1 000 M
+            {beautifyAmount(bigNumberToNumber(savSupply.circulatingSupply), { precision: 0 })}
           </Text>
         </Flex>
         <Flex className="number-item">
           <Text className="number-item__heading">Total Burned</Text>
           <Text className="number-item__text" color="green.400">
-            5 344
+            {beautifyAmount(bigNumberToNumber(savSupply.totalBurned), { precision: 0 })}
           </Text>
         </Flex>
       </Flex>
@@ -163,19 +171,19 @@ export const Numbers = () => {
         <Flex className="number-item">
           <Text className="number-item__heading">Total Value Locked</Text>
           <Text className="number-item__text" color="savr">
-            115 344
+            {beautifyAmount(bigNumberToNumber(tvlSavr || 0), { precision: 0 })}
           </Text>
         </Flex>
         <Flex className="number-item">
           <Text className="number-item__heading">Circulating Supply</Text>
           <Text className="number-item__text" color="savr">
-            1 000 M
+            {beautifyAmount(bigNumberToNumber(savrSupply.circulatingSupply), { precision: 0 })}
           </Text>
         </Flex>
         <Flex className="number-item">
           <Text className="number-item__heading">Total Burned</Text>
           <Text className="number-item__text" color="savr">
-            5 344
+            {beautifyAmount(bigNumberToNumber(savrSupply.totalBurned), { precision: 0 })}
           </Text>
         </Flex>
       </Flex>
