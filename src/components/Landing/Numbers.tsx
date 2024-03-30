@@ -165,7 +165,7 @@ export const Numbers = () => {
         <Flex className="number-item">
           <Text className="number-item__heading">Holders</Text>
           <Text className="number-item__text" color="savr">
-            {'>'} 2 K
+            ~ 500
           </Text>
         </Flex>
         <Flex className="number-item">

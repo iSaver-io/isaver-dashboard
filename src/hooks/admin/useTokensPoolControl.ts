@@ -12,6 +12,18 @@ import { AddPrizeParamsType, useTokensPoolContract } from '../contracts/useToken
 import { useNotification } from '../useNotification';
 import { bigNumberToString } from '@/utils/number';
 
+export const useTokensPoolPrizes = (
+  contractName: ContractsEnum.MomentoTokensPool | ContractsEnum.BirthdayTokensPool
+) => {
+  const contract = useTokensPoolContract(contractName);
+
+  const prizesRequest = useQuery([TOKENS_POOL_PRIZES_REQUEST, contractName], () =>
+    contract.getPrizes()
+  );
+
+  return { prizesRequest };
+};
+
 export const TOKENS_POOL_PRIZES_REQUEST = 'tokens-pool-prizes-request';
 export const TOKENS_POOL_TOTAL_CHANCE_REQUEST = 'tokens-pool-total-chance-request';
 export const useTokensPoolControl = (
@@ -21,17 +33,14 @@ export const useTokensPoolControl = (
   const provider = useProvider();
   const signerOrProvider = signer || provider;
   const { address } = useAccount();
-
-  const erc1155Abi = useContractAbi({ contract: ContractsEnum.Ticket });
-
-  const contract = useTokensPoolContract(contractName);
-
   const { success, handleError, error } = useNotification();
   const queryClient = useQueryClient();
 
-  const prizesRequest = useQuery([TOKENS_POOL_PRIZES_REQUEST, contractName], () =>
-    contract.getPrizes()
-  );
+  const erc1155Abi = useContractAbi({ contract: ContractsEnum.Ticket });
+  const contract = useTokensPoolContract(contractName);
+
+  const { prizesRequest } = useTokensPoolPrizes(contractName);
+
   const totalChanceRequest = useQuery([TOKENS_POOL_TOTAL_CHANCE_REQUEST, contractName], () =>
     contract.getTotalChance()
   );

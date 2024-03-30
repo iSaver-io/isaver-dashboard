@@ -11,6 +11,8 @@ import { useConnectWallet } from '@/hooks/useConnectWallet';
 import { useNotification } from '@/hooks/useNotification';
 import alchemy from '@/modules/alchemy';
 
+import { useTokensPoolPrizes } from './admin/useTokensPoolControl';
+import { ContractsEnum } from './contracts/useContractAbi';
 import { TICKET_BALANCE_REQUEST } from './useTicketsBalance';
 
 const HAS_PENDING_REQUEST = 'has-pending-request';
@@ -144,23 +146,26 @@ export const useMomentoControl = () => {
 export const GET_MOMENTO_PRIZES = 'get-momento-prizes-request';
 export const GET_MOMENTO_EXTERNAL_PRIZES = 'get-momento-external-prizes-request';
 export const useMomentoPrizes = () => {
-  const momentoContract = useMomentoContract();
   const addresses = useContractsAddresses();
 
-  const momentoPrizesRequest = useQuery([GET_MOMENTO_PRIZES], async () =>
-    momentoContract.getMomentoPrizes()
-  );
+  const { prizesRequest } = useTokensPoolPrizes(ContractsEnum.MomentoTokensPool);
 
   const MAX_NFTS = 10;
   const externalNFTAddresses = useMemo(() => {
-    const nfts = (momentoPrizesRequest.data || [])
+    const nfts = (prizesRequest.data || [])
+      .filter((category) => !category.info.isEmpty)
+      .sort((a, b) => a.info.chance.sub(b.info.chance).toNumber())
+      .map((category) => category.prizes)
       .flat()
       .filter((prize) => prize.isERC721 && !Object.values(addresses).includes(prize.tokenAddress))
-      .map((category) => category.tokenIds.map((tokenId: string) => ({ ...category, tokenId })))
-      .flat();
+      .map((category) =>
+        category.tokenIds.map((tokenId) => ({ ...category, tokenId: tokenId.toString() }))
+      )
+      .flat()
+      .slice(0, 10);
 
     return nfts.slice(0, MAX_NFTS);
-  }, [addresses, momentoPrizesRequest.data]);
+  }, [addresses, prizesRequest.data]);
 
   const externalNFTRequests = useQueries({
     queries: externalNFTAddresses.map((nft) => ({
@@ -178,7 +183,12 @@ export const useMomentoPrizes = () => {
     [externalNFTRequests]
   );
 
-  return { momentoPrizesRequest, externalNFTs };
+  const isLoadingExternalNFT = useMemo(
+    () => externalNFTRequests.some((req) => !req.isFetched),
+    [externalNFTRequests]
+  );
+
+  return { momentoPrizesRequest: prizesRequest, externalNFTs, isLoadingExternalNFT };
 };
 
 export const GET_ALL_USER_PRIZES = 'get-all-user-prizes';

@@ -75,19 +75,20 @@ const cardsMock = [
 ];
 
 export const Prizes = () => {
-  const { externalNFTs } = useMomentoPrizes();
+  const { externalNFTs, isLoadingExternalNFT } = useMomentoPrizes();
 
   const cards = useMemo(() => {
-    if (externalNFTs.length) {
-      return externalNFTs.map((nft) => ({
-        image: nft?.image.originalUrl,
-        label: nft?.name,
-        contract: nft?.contract.address,
-        tokenId: nft?.tokenId,
-      }));
+    if (isLoadingExternalNFT || !externalNFTs.length) {
+      return cardsMock;
     }
-    return cardsMock;
-  }, [externalNFTs]);
+
+    return externalNFTs.map((nft) => ({
+      image: nft?.image.originalUrl,
+      label: nft?.name,
+      contract: nft?.contract.address,
+      tokenId: nft?.tokenId,
+    }));
+  }, [externalNFTs, isLoadingExternalNFT]);
 
   return (
     <Box textAlign="center">
