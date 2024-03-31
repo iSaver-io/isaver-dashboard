@@ -1,10 +1,20 @@
+import { Interface } from '@ethersproject/abi';
+import { Log } from 'alchemy-sdk';
 import EthDater from 'ethereum-block-by-date';
 import { BigNumber, BigNumberish, ethers } from 'ethers';
 import { useContract, useProvider, useSigner } from 'wagmi';
 
 import { FROM_BLOCK, FROM_BLOCK_EPISODE_2 } from '@/constants';
+import alchemy from '@/modules/alchemy';
 import { Staking } from '@/types.common';
-import { queryThrowBlocks } from '@/utils/queryThrowBlocks';
+import { TypedEvent, TypedEventFilter } from '@/types/typechain-types/common';
+import {
+  ClaimedEventObject,
+  StakedEventObject,
+  StakedSuperPlanEventObject,
+  SuperClaimedEventObject,
+  SuperWithdrawnEventObject,
+} from '@/types/typechain-types/contracts/Staking';
 import { waitForTransaction } from '@/utils/waitForTransaction';
 
 import { ContractsEnum, useContractAbi } from './useContractAbi';
@@ -29,6 +39,8 @@ export const useStakingContract = () => {
     abi,
     signerOrProvider: signer || provider,
   }) as unknown as Staking;
+
+  const stakingIface = new Interface(abi);
 
   const getAvailableTokens = async (isSAVRToken: boolean) => {
     return contract.getAvailableTokens(isSAVRToken);
@@ -115,30 +127,75 @@ export const useStakingContract = () => {
   };
 
   const getAllStakes = async () => {
-    const { block: toBlock } = await dater.getDate(new Date());
     const filter = contract.filters.Staked();
 
-    const fetchEvents = (from: number, to: number) => contract.queryFilter(filter, from, to);
+    const fetchEvents = async (filter: TypedEventFilter<TypedEvent<Event[]>>) =>
+      alchemy.core.getLogs({ ...filter, fromBlock: FROM_BLOCK, toBlock: 'latest' });
 
-    return await queryThrowBlocks(fetchEvents, { fromBlock: FROM_BLOCK, toBlock });
-  };
-
-  const getAllSuperStakes = async () => {
-    const { block: toBlock } = await dater.getDate(new Date());
-    const filter = contract.filters.StakedSuperPlan();
-
-    const fetchEvents = (from: number, to: number) => contract.queryFilter(filter, from, to);
-
-    return await queryThrowBlocks(fetchEvents, { fromBlock: FROM_BLOCK_EPISODE_2, toBlock });
+    const events = await fetchEvents(filter);
+    return events.map(
+      (event) =>
+        ({ ...event, ...stakingIface.parseLog(event).args } as unknown as StakedEventObject & Log)
+    );
   };
 
   const getAllClaims = async () => {
-    const { block: toBlock } = await dater.getDate(new Date());
     const filter = contract.filters.Claimed();
 
-    const fetchEvents = (from: number, to: number) => contract.queryFilter(filter, from, to);
+    const fetchEvents = async (filter: TypedEventFilter<TypedEvent<Event[]>>) =>
+      alchemy.core.getLogs({ ...filter, fromBlock: FROM_BLOCK, toBlock: 'latest' });
 
-    return await queryThrowBlocks(fetchEvents, { fromBlock: FROM_BLOCK, toBlock });
+    const events = await fetchEvents(filter);
+    return events.map(
+      (event) =>
+        ({ ...event, ...stakingIface.parseLog(event).args } as unknown as ClaimedEventObject & Log)
+    );
+  };
+
+  const getAllSuperStakes = async () => {
+    const filter = contract.filters.StakedSuperPlan();
+
+    const fetchEvents = async (filter: TypedEventFilter<TypedEvent<Event[]>>) =>
+      alchemy.core.getLogs({ ...filter, fromBlock: FROM_BLOCK_EPISODE_2, toBlock: 'latest' });
+
+    const events = await fetchEvents(filter);
+    return events.map(
+      (event) =>
+        ({
+          ...event,
+          ...stakingIface.parseLog(event).args,
+        } as unknown as StakedSuperPlanEventObject & Log)
+    );
+  };
+
+  const getAllSuperClaimed = async () => {
+    const filter = contract.filters.SuperClaimed();
+
+    const fetchEvents = async (filter: TypedEventFilter<TypedEvent<Event[]>>) =>
+      alchemy.core.getLogs({ ...filter, fromBlock: FROM_BLOCK_EPISODE_2, toBlock: 'latest' });
+
+    const events = await fetchEvents(filter);
+    return events.map(
+      (event) =>
+        ({ ...event, ...stakingIface.parseLog(event).args } as unknown as SuperClaimedEventObject &
+          Log)
+    );
+  };
+
+  const getAllSuperWithdrawn = async () => {
+    const filter = contract.filters.SuperWithdrawn();
+
+    const fetchEvents = async (filter: TypedEventFilter<TypedEvent<Event[]>>) =>
+      alchemy.core.getLogs({ ...filter, fromBlock: FROM_BLOCK_EPISODE_2, toBlock: 'latest' });
+
+    const events = await fetchEvents(filter);
+    return events.map(
+      (event) =>
+        ({
+          ...event,
+          ...stakingIface.parseLog(event).args,
+        } as unknown as SuperWithdrawnEventObject & Log)
+    );
   };
 
   const updatePlanActivity = async (planId: number, isActive: boolean) => {
@@ -201,6 +258,8 @@ export const useStakingContract = () => {
     getExtraAprPowerC,
     getSuperStakingPlansWithStake,
     getAllSuperStakes,
+    getAllSuperClaimed,
+    getAllSuperWithdrawn,
     depositSuperPlan,
     claimSuperPLan,
     withdrawSuperPLan,

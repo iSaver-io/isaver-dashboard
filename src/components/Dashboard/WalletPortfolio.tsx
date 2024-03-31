@@ -46,8 +46,8 @@ export const WalletPortfolio = () => {
 
   const { tvlSavSavr, totalClaimed, superPlansMetrics } = useStakingMetrics();
 
-  const { tvlAndClaimedData, stakingClaimsHistory, stakesHistory } = useStakingTvlAndTotalClaimed();
-  const isTvlChartLoaded = Boolean(stakingClaimsHistory.length && stakesHistory.length);
+  const { tvlAndClaimedData } = useStakingTvlAndTotalClaimed();
+  const isTvlChartLoaded = Boolean(tvlAndClaimedData.length);
   const chartRef = useRef(null);
   const imageRef = useRef(null);
 
@@ -220,7 +220,9 @@ export const WalletPortfolio = () => {
               >
                 <Text mr="8px">Total Claimed</Text>
                 <Text fontSize="18px" fontWeight="500">
-                  {getReadableAmount(totalClaimed || 0, { precision: 2 })}
+                  {getReadableAmount(superPlansMetrics.totalClaimed.add(totalClaimed || 0), {
+                    precision: 2,
+                  })}
                 </Text>
               </Flex>
             </Flex>

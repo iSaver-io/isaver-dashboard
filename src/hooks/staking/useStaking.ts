@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { useMutation, useQueries, useQuery, useQueryClient } from '@tanstack/react-query';
-import { BigNumber, BigNumberish } from 'ethers';
+import { BigNumber, BigNumberish, ethers } from 'ethers';
 import { useAccount } from 'wagmi';
 
 import { useStakingContract } from '@/hooks/contracts/useStakingContract';
@@ -72,7 +72,8 @@ export const useStakingSuperPlans = () => {
 
   const superStakingPlansWithUserStakeRequest = useQuery(
     [USER_SUPER_STAKING_INFO_REQUEST, { account }],
-    async () => (account ? stakingContract.getSuperStakingPlansWithStake(account) : null),
+    async () =>
+      stakingContract.getSuperStakingPlansWithStake(account || ethers.constants.AddressZero),
     {
       refetchInterval: 5000, // 5 sec
       select: (data) =>
