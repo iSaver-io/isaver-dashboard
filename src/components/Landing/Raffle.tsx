@@ -24,13 +24,22 @@ export const Raffle = () => {
       className="raffle"
     >
       <Box maxW="1068px" m="auto">
-        <Flex flexDirection="column" alignItems="center" mb={{ sm: '30px', lg: '65px' }}>
+        <Flex
+          flexDirection="column"
+          alignItems="center"
+          mb={{ sm: '40px', lg: '20px', xl: '65px' }}
+        >
           <h4 className="heading" ref={ref}>
             Our mini
             {bp === 'sm' ? <br /> : ' '}
             free-to-play
           </h4>
-          <Link href={`${APP_URL}/#claim-ticket`} color="savr" className="subheading">
+          <Link
+            href={`${APP_URL}/#claim-ticket`}
+            color="savr"
+            className="subheading"
+            textDecoration="underline"
+          >
             As a first step
           </Link>
         </Flex>
@@ -47,7 +56,7 @@ export const Raffle = () => {
             className="raffle__description"
             justifyContent="space-between"
             alignItems={{ md: 'center', lg: 'end' }}
-            mt={{ lg: '16px' }}
+            mt={{ xl: '16px' }}
             direction={{ sm: 'column', lg: 'row' }}
           >
             <Text className="raffle__text">

@@ -13,7 +13,7 @@ import './Landing.scss';
 
 export const Landing = () => {
   return (
-    <Box overflowX="hidden">
+    <Box overflowX="hidden" mt={{ sm: '-67px', '2xl': '-109px' }}>
       <Box id="top" pos="relative">
         <Main />
       </Box>

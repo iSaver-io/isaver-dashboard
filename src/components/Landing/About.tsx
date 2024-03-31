@@ -9,7 +9,7 @@ import './Landing.scss';
 export const About = () => {
   const bp = useBreakpoint({ ssr: false });
   const isXl = bp === 'xl';
-  const isBig = ['xl', '2xl'].includes(bp);
+  const isBig = ['2xl'].includes(bp);
 
   return (
     <Flex className="about-container">
@@ -37,7 +37,7 @@ export const About = () => {
             {!isBig ? <br /> : ' '}
             and accessible for everyone
           </h5>
-          <Text className="text" textAlign="center">
+          <Text className="text" textAlign="center" px="24px">
             iSaver is a DeFi platform on the Polygon blockchain that helps its users to generate
             sustainable passive income through Staking Pools based on SAV and SAVR tokens. Discover
             our ecosystem, where everyone can maximize the potential of their capital. Explore a

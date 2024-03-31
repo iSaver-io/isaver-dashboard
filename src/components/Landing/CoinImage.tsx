@@ -14,7 +14,6 @@ export const CoinImage = () => {
       <Box
         className="coins-text__img"
         height={{ sm: '160px', md: '240px', lg: '384px', xl: '405px', '2xl': '550px' }}
-        zIndex={-1}
       >
         <CoinsIcon />
       </Box>

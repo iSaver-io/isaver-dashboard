@@ -24,7 +24,7 @@ export const Banner = () => {
   return (
     <Flex justifyContent="center" flexWrap="wrap" className="banner">
       <Box maxW="1260px" m="auto">
-        <h4 className="banner__heading">No registration, no KYC, no hassle</h4>
+        <h4 className="banner__heading">No&nbsp;registration, no&nbsp;KYC, no&nbsp;hassle</h4>
         <h5 className="banner__subheading">Just by connecting your wallet</h5>
         <Flex justifyContent="center">
           <Button variant="primary" className="banner__btn" onClick={handleGetStartedClick}>

@@ -1,5 +1,5 @@
-import { useCallback } from 'react';
-import Slider from 'react-slick';
+import { useCallback, useRef, useState } from 'react';
+import Slider, { Settings } from 'react-slick';
 import { Box, Container, Flex, Text } from '@chakra-ui/react';
 
 import { useLogger } from '@/hooks/useLogger';
@@ -20,6 +20,7 @@ import { CoinImage } from './CoinImage';
 import './Landing.scss';
 
 export const Main = () => {
+  const [slider, setSlider] = useState<Slider | null>(null);
   const logger = useLogger({
     event: 'landing',
     category: 'elements',
@@ -28,12 +29,17 @@ export const Main = () => {
     actionGroup: 'interactions',
   });
 
-  const settings = {
+  const pause = () => {
+    slider?.slickPause();
+  };
+
+  const settings: Settings = {
     autoplay: true,
     arrows: false,
     dots: true,
     infinite: true,
     speed: 500,
+    autoplaySpeed: 10000,
     slidesToShow: 1,
     slidesToScroll: 1,
     appendDots: (dots: any) => (
@@ -43,7 +49,13 @@ export const Main = () => {
         left="0"
         mt="0 !important"
       >
-        <ul> {dots} </ul>
+        <ul>
+          {dots.map((dot: number) => (
+            <li key={dot} onClick={() => pause()}>
+              {dot}
+            </li>
+          ))}
+        </ul>
       </Box>
     ),
   };
@@ -64,7 +76,7 @@ export const Main = () => {
   }, [logger]);
 
   return (
-    <Slider {...settings}>
+    <Slider ref={(slider) => setSlider(slider)} {...settings}>
       <Box
         bgImage={{
           sm: `url(${bannerAvatarsSM})`,
@@ -74,7 +86,7 @@ export const Main = () => {
         bgPosition="bottom center"
         bgSize={{ sm: 'contain', md: 'auto 75%', lg: 'auto 90%', xl: 'auto 80%' }}
         bgRepeat="no-repeat"
-        h={{ sm: '504px', md: '574px', lg: '484px', xl: '504px', '2xl': '665px' }}
+        h={{ sm: '570px', md: '640px', lg: '550px', xl: '570px', '2xl': '773px' }}
         w="100%"
         bgColor="#1f1f1f"
       >
@@ -95,6 +107,7 @@ export const Main = () => {
             <Text
               textStyle="text2"
               fontSize={{ sm: '14px', xl: '24px' }}
+              fontWeight={400}
               w={{ sm: '189px', xl: '300px' }}
               className="main-avatars-text"
               mb={{ sm: '60px', md: '230px', lg: '100px', xl: '112px', '2xl': '154px' }}
@@ -105,9 +118,11 @@ export const Main = () => {
             <Text
               textStyle="text2"
               fontSize={{ sm: '14px', xl: '24px' }}
+              fontWeight={400}
               w={{ sm: '187px', xl: '300px' }}
               className="main-avatars-text"
               mb={{ sm: '80px', md: '230px', lg: '100px', xl: '84px', '2xl': '142px' }}
+              ml={{ sm: '18px', md: '0' }}
             >
               Mission: To help Earthlings create a decentralized world
             </Text>
@@ -126,12 +141,17 @@ export const Main = () => {
           </Button>
         </Container>
       </Box>
-      <Box h={{ sm: '504px', md: '574px', lg: '484px', xl: '504px', '2xl': '665px' }} w="100%">
+      <Box
+        h={{ sm: '570px', md: '640px', lg: '550px', xl: '570px', '2xl': '773px' }}
+        w="100%"
+        bgColor="#174033"
+      >
         <Container
           variant="header"
           alignItems="flex-end"
           h="100%"
           pb="105px"
+          pt={{ sm: '87px', lg: 0 }}
           flexDir={{ sm: 'column', lg: 'row' }}
         >
           <Flex w="100%" flexDirection="column" justifyContent="center" flexGrow={1}>
@@ -158,7 +178,7 @@ export const Main = () => {
             </Box>
           </Flex>
           <Box w="100%">
-            <CoinImage />{' '}
+            <CoinImage />
             <Button
               mt="15px"
               mx="auto"
@@ -178,7 +198,7 @@ export const Main = () => {
         bgPosition="center"
         bgSize="cover"
         bgRepeat="no-repeat"
-        h={{ sm: '504px', md: '574px', lg: '484px', xl: '504px', '2xl': '665px' }}
+        h={{ sm: '570px', md: '640px', lg: '550px', xl: '570px', '2xl': '773px' }}
         w="100%"
         pos="relative"
       >
@@ -188,7 +208,7 @@ export const Main = () => {
             xl: `url(${bannerMomentoXL})`,
             '2xl': `url(${bannerMomento2XL})`,
           }}
-          bgPosition="center left"
+          bgPosition={{ sm: 'center', '2xl': 'top center' }}
           bgSize="contain"
           bgRepeat="no-repeat"
           className="banner-momento__img"
@@ -200,13 +220,14 @@ export const Main = () => {
           flexDir="column"
           h="100%"
           pb={{ sm: '75px', lg: '115px', xl: '100px', '2xl': '105px' }}
+          pt={{ sm: '87px', lg: 0 }}
         >
           <Box textAlign={{ sm: 'center', lg: 'right' }}>
             <Text
               textStyle="text2"
               fontSize={{ sm: '14px', xl: '24px' }}
               w={{ sm: '270px', xl: '370px' }}
-              mt={{ sm: '25px', xl: '0' }}
+              mt={{ md: '0', lg: '25px', xl: '0' }}
               ml={{ sm: '0', lg: 'auto' }}
             >
               Instant Win-Win Raffle of various NFTs and SAVR tokens

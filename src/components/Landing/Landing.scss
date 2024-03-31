@@ -11,6 +11,13 @@ body {
   margin: auto;
 }
 
+.trusted-slider {
+  .slick-list {
+    cursor: auto;
+  }
+
+}
+
 #top {
   .slick-list {
     padding-bottom: 0 !important;
@@ -28,8 +35,8 @@ body {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 100%;
-    height: 100%;
+    width: 80%;
+    height: 70%;
     background: #a5ed5d;
     border-radius: 50%;
     filter: blur(40px);
@@ -111,6 +118,10 @@ body {
   text-transform: uppercase;
   color: #ffffff;
   margin: 0 0 5px 0;
+
+  span:first-child {
+    white-space: nowrap;
+  }
 }
 
 .main-subheading {
@@ -164,10 +175,11 @@ body {
   svg {
     pointer-events: none;
     position: absolute;
-    top: calc(50% + 50px);
-    left: 50%;
+    top: calc(50% + 70px);
+    left: 57%;
     transform: translate(-50%, -50%);
-    width: 100%;
+    width: 610px;
+    height: 100%;
   }
 }
 
@@ -196,6 +208,7 @@ body {
   padding: 50px 25px 28px 25px;
 
   &__heading {
+    font-family: 'PT Sans', sans-serif;
     font-weight: 700;
     font-size: 24px;
     line-height: 31px;
@@ -398,11 +411,22 @@ body {
   position: absolute;
   top: 0;
   left: 25px;
-  height: 100%;
-  width: 50%;
+  height: 950px;
+  width: 950px;
 }
 
 @media screen and (max-width: $xl2) {
+  .banner-momento__img {
+    height: 100%;
+    width: 50%;
+  }
+  .coins-text__img {
+    svg {
+      top: calc(50% + 20px);
+      left: 54%;
+      width: 455px;
+    }
+  }
   .heading::before {
     right: -40px;
   }
@@ -448,6 +472,7 @@ body {
     line-height: 130%;
   }
   .about-container {
+    padding: 50px 0 34px;
     margin-bottom: 100px;
 
     .text {
@@ -456,6 +481,7 @@ body {
     }
 
     &__img {
+      padding-top: 0;
       svg {
         width: 200px;
         height: 304px;
@@ -551,6 +577,12 @@ body {
 }
 
 @media screen and (max-width: $xl) {
+  .banner-momento__img {
+    top: 94px;
+    left: -10px;
+    height: 380px;
+    width: 430px;
+  }
   .main-container {
     max-width: 610px;
   }
@@ -568,9 +600,10 @@ body {
   }
   .coins-text__img {
     svg {
-      left: 35%;
+      top: calc(50% + 80px);
+      left: 45%;
       height: 355px;
-      width: 398px;
+      width: 320px;
     }
   }
   .coins-text__primary {
@@ -595,6 +628,10 @@ body {
 
     .subheading {
       margin-bottom: 30px;
+      font-family: $default-font-family !important;
+      font-size: 12px;
+      font-weight: 600;
+      line-height: 130%;
     }
   }
   .main-btns {
@@ -728,41 +765,10 @@ body {
     margin: auto;
 
     svg {
-      left: 50%;
-      height: 280px;
-      width: 320px;
+      left: 52%;
+      height: 310px;
+      width: 340px;
       top: 50%
-    }
-  }
-  .number-item {
-    margin-bottom: 20px;
-    width: 50%;
-
-    &:nth-child(-n+2) {
-      order: 1;
-    }
-    &:nth-child(2) {
-      order: 2;
-      width: 100%;
-
-      svg {
-        width: 20px;
-        height: 20px;
-      }
-    }
-    &:nth-child(n+4) {
-      order: 3;
-    }   
-    &:nth-child(6) {
-      width: 100%;
-    }
-
-    &:nth-last-child(-n + 3) {
-      margin-bottom: 20px;
-    }
-
-    &:last-child {
-      margin-bottom: 0;
     }
   }
   .about-container {
@@ -847,14 +853,28 @@ body {
     }
   }
   .banner-momento__img {
-    height: 80%;
-    width: 100%;
-    top: 60px;
-    left: 0;
+    height: 468px;
+    width: 468px;
+    top: 124px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  .number-item {
+    &:nth-child(2) {
+      svg {
+        width: 20px;
+        height: 20px;
+      }
+    }
   }
 }
 
 @media screen and (min-width: $sm) and (max-width: $md) {
+  .banner-momento__img {
+    height: 360px;
+    width: 360px;
+    top: 150px;
+  }
   .heading {
     font-size: 26px;
     font-weight: 700;
@@ -863,11 +883,11 @@ body {
   .main-text {
     position: relative;
     z-index: 2;
-    margin-top: 30px;
     font-size: 18px;
   }
   .main-heading {
     font-size: 26px;
+    margin-top: 0;
     br{
       display: block;
     }
@@ -924,8 +944,31 @@ body {
       }
     }
   }
-  .number {
-    margin-top: 40px;
+  .number-item {
+    width: 50%;
+
+    &:nth-child(1), :nth-child(4) {
+      order: 1;
+    }
+
+    &:nth-child(3) {
+      display: none;
+    }
+    &:nth-child(2) {
+      order: 2;
+      width: 100%;
+    }
+    &:nth-child(5), &:nth-child(6) {
+      order: 3;
+    }
+
+    &:nth-last-child(-n + 3) {
+      margin-bottom: 20px;
+    }
+
+    &:last-child {
+      margin-bottom: 0;
+    }
   }
   .plans {
     margin-bottom: 100px;
@@ -956,7 +999,21 @@ body {
     }
     &__description {
       width: 100px;
-      margin-left: 30px;
+      margin-left: 0px;
+      height: 430px;
+    }
+  }
+  .coins-text__img {
+    margin: auto;
+
+    svg {
+      left: 55%;
+      top: 38%
+    }
+  }
+  .trusted-slider {
+    img {
+      max-width: 100px;
     }
   }
 }
