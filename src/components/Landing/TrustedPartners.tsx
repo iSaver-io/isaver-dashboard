@@ -33,23 +33,28 @@ const settings: Settings = {
     {
       breakpoint: 479,
       settings: {
-        rows: 2,
+        rows: 3,
         slidesToShow: 2,
       },
     },
   ],
 };
 
-const images = [Partner1, Partner2, Partner3, Partner4, Partner5, Partner6];
+const images = [Partner1, Partner5, Partner2, Partner6, Partner3, Partner4];
 
 export const TrustedPartners = () => {
   return (
     <Box py={{ sm: '80px', xl: '100px' }}>
-      <Flex flexDirection="column" alignItems="center" mb={{ sm: '10px', xl: '50px' }}>
+      <Flex
+        flexDirection="column"
+        alignItems="center"
+        mb={{ sm: '10px', xl: '50px' }}
+        px={{ sm: '18px', md: 0 }}
+      >
         <h4 className="heading">trusted partners</h4>
       </Flex>
       <Box>
-        <Slider {...settings}>
+        <Slider className="trusted-slider" {...settings}>
           {images.map((image, index) => (
             <Flex
               display="flex !important"
@@ -58,6 +63,7 @@ export const TrustedPartners = () => {
               justifyContent="center"
               alignItems="center"
               px="5px"
+              _focus={{ outline: 'none' }}
               mt={{ sm: '20px', xl: '0' }}
             >
               <Image objectFit="contain" maxH="100%" src={image} alt="slider item" />
