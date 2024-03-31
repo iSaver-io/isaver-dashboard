@@ -26,7 +26,7 @@ export const Numbers = () => {
   const { onCopy: onSAVCopy, hasCopied: hasSAVCopied } = useClipboard(ISaverSAVToken);
   const { onCopy: onSAVRCopy, hasCopied: hasSAVRCopied } = useClipboard(ISaverSAVRToken);
   const { addSAV, addSAVR } = useAddTokens();
-  const { tvlSav, tvlSavr } = useStakingMetrics();
+  const { tvlSav, tvlSavr, superPlansMetrics } = useStakingMetrics();
   const savSupply = useTokenSupply(ContractsEnum.SAV);
   const savrSupply = useTokenSupply(ContractsEnum.SAVR);
 
@@ -99,7 +99,10 @@ export const Numbers = () => {
             color="green.400"
           >
             <Flex gap="13px" alignItems="center">
-              <Link target="_blank" href={getExplorerLink(chain, ISaverSAVToken)}>
+              <Link
+                target="_blank"
+                href={getExplorerLink({ chain, hash: ISaverSAVToken, type: 'token' })}
+              >
                 <PolygonIcon />
               </Link>
               {trimAddress(ISaverSAVToken, 3)}
@@ -153,7 +156,10 @@ export const Numbers = () => {
             color="savr"
           >
             <Flex gap="13px" alignItems="center">
-              <Link target="_blank" href={getExplorerLink(chain, ISaverSAVRToken, false)}>
+              <Link
+                target="_blank"
+                href={getExplorerLink({ chain, hash: ISaverSAVRToken, type: 'token' })}
+              >
                 <PolygonIcon />
               </Link>
               {trimAddress(ISaverSAVRToken, 3, false)}
@@ -171,7 +177,9 @@ export const Numbers = () => {
         <Flex className="number-item">
           <Text className="number-item__heading">Total Value Locked</Text>
           <Text className="number-item__text" color="savr">
-            {beautifyAmount(bigNumberToNumber(tvlSavr || 0), { precision: 0 })}
+            {beautifyAmount(bigNumberToNumber(superPlansMetrics.tvl.add(tvlSavr || 0)), {
+              precision: 0,
+            })}
           </Text>
         </Flex>
         <Flex className="number-item">

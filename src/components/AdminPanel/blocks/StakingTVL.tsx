@@ -194,7 +194,10 @@ export const StakingTVL = () => {
                   {sortedData.map((stake, index) => (
                     <Tr key={index}>
                       <Td textAlign="center">
-                        <Link target="_blank" href={getExplorerLink(chain, stake.user, true)}>
+                        <Link
+                          target="_blank"
+                          href={getExplorerLink({ chain, hash: stake.user, type: 'address' })}
+                        >
                           {stake.user}
                         </Link>
                       </Td>

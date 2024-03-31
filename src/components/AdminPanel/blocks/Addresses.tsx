@@ -52,7 +52,7 @@ export const Addresses = () => {
 };
 
 const AddressInfo = ({ title, address }: { title: string; address: string }) => {
-  const explorerLink = useExplorerLink(address, true);
+  const explorerLink = useExplorerLink(address, 'address');
 
   return (
     <Flex alignItems="baseline" fontSize="14px">

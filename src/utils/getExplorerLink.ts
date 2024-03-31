@@ -1,10 +1,16 @@
 import { Chain } from 'wagmi';
 import { polygon } from 'wagmi/chains';
 
-export const getExplorerLink = (chain?: Chain, hash?: string, isAddress?: boolean) => {
+export const getExplorerLink = ({
+  chain,
+  hash,
+  type = 'tx',
+}: {
+  chain?: Chain;
+  hash: string;
+  type: 'address' | 'tx' | 'token';
+}) => {
   if (!hash) return '';
-
-  const type = isAddress ? 'address' : 'tx';
 
   if (chain?.id === polygon.id) {
     return `https://polygonscan.com/${type}/${hash}`;

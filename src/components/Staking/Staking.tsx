@@ -324,7 +324,7 @@ export const Staking: FC<StakingProps> = ({ isPageView }) => {
             (stakingPlansRequest.data?.[selectedPlan].apr || 0) +
             (statusPowerC.isActive ? extraAprPowerC : 0)
           }
-          lockPeriodDays={stakingPlansRequest.data?.[selectedPlan].stakingDuration || 0}
+          lockPeriodDays={stakingPlansRequest.data?.[selectedPlan].stakingDuration.toNumber() || 0}
           isLoading={deposit.isLoading}
           isPageView={isPageView}
           highlightApr={statusPowerC.isActive}

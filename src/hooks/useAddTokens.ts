@@ -7,7 +7,7 @@ import { useNotification } from './useNotification';
 export const useAddTokens = () => {
   const { address: savAddress } = useContractAbi({ contract: ContractsEnum.SAV });
   const { address: savrAddress } = useContractAbi({ contract: ContractsEnum.SAVR });
-  const { success, handleError } = useNotification();
+  const { success, error } = useNotification();
 
   const signer = useAccount();
 
@@ -28,28 +28,50 @@ export const useAddTokens = () => {
         },
       };
 
+      const tokenParams = TOKEN_PARAMS[tokenName];
+      if (!tokenParams) return;
+
+      let wasAdded: boolean | undefined = false;
       try {
-        const tokenParams = TOKEN_PARAMS[tokenName];
-
-        if (!tokenParams) return;
-
-        const wasAdded =
-          signer.connector &&
-          signer.connector.watchAsset &&
-          (await signer.connector.watchAsset({
-            address: tokenParams.address,
-            symbol: tokenParams.symbol,
-            decimals: tokenParams.decimals,
-            image: tokenParams.image,
-          }));
-        if (wasAdded) {
-          success({ title: 'Token added' });
-        }
+        wasAdded = await window.ethereum?.request({
+          method: 'wallet_watchAsset',
+          params: {
+            type: 'ERC20',
+            options: {
+              address: tokenParams.address,
+              symbol: tokenParams.symbol,
+              decimals: tokenParams.decimals,
+              image: tokenParams.image,
+            },
+          },
+        });
       } catch (err) {
-        handleError(err);
+        console.error(err);
+      }
+
+      if (!wasAdded) {
+        try {
+          wasAdded =
+            signer.connector &&
+            signer.connector.watchAsset &&
+            (await signer.connector.watchAsset({
+              address: tokenParams.address,
+              symbol: tokenParams.symbol,
+              decimals: tokenParams.decimals,
+              image: tokenParams.image,
+            }));
+        } catch (err) {
+          console.error(err);
+        }
+      }
+
+      if (wasAdded) {
+        success({ title: 'Token added' });
+      } else {
+        error({ title: 'Failed to add to token' });
       }
     },
-    [savAddress, savrAddress, success, handleError, signer]
+    [savAddress, savrAddress, success, error, signer]
   );
 
   const addSAV = () => addToWallet('SAV');

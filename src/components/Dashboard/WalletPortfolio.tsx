@@ -44,7 +44,7 @@ export const WalletPortfolio = () => {
 
   const { balanceHistory } = useTokenBalanceHistory();
 
-  const { tvlSavSavr, totalClaimed } = useStakingMetrics();
+  const { tvlSavSavr, totalClaimed, superPlansMetrics } = useStakingMetrics();
 
   const { tvlAndClaimedData, stakingClaimsHistory, stakesHistory } = useStakingTvlAndTotalClaimed();
   const isTvlChartLoaded = Boolean(stakingClaimsHistory.length && stakesHistory.length);
@@ -209,7 +209,7 @@ export const WalletPortfolio = () => {
               <Flex alignItems="baseline" width="50%" whiteSpace="nowrap">
                 <Text mr="8px">Total Value Locked</Text>
                 <Text fontSize="18px" fontWeight="500">
-                  {getReadableAmount(tvlSavSavr || 0, { precision: 2 })}
+                  {getReadableAmount(superPlansMetrics.tvl.add(tvlSavSavr || 0), { precision: 2 })}
                 </Text>
               </Flex>
               <Flex

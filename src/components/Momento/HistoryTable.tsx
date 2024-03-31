@@ -138,7 +138,7 @@ export const HistoryTable = () => {
                 >
                   <Link
                     target="_blank"
-                    href={getExplorerLink(chain, transactionHash, false)}
+                    href={getExplorerLink({ chain, hash: transactionHash, type: 'tx' })}
                     onClick={() => logger({ label: 'transaction' })}
                   >
                     {transactionHash}

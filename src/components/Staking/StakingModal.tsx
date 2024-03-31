@@ -50,8 +50,8 @@ const boxCommonStyles = {
 
 type StakingModalProps = {
   tokens?: TOKENS[];
-  lockPeriodDays?: BigNumberish;
-  apr: number | string;
+  lockPeriodDays?: number;
+  apr: number;
   highlightApr?: boolean;
   isLoading?: boolean;
   isPageView?: boolean;
@@ -146,7 +146,7 @@ export const StakingModal: FC<StakingModalProps> = ({
     () =>
       !isGreaterThanMax && lockPeriodDays
         ? calculateStakeProfitByAPR({
-            amount: amount || 0,
+            amount: parseFloat(amount || '0'),
             periodDays: lockPeriodDays,
             apr,
           })
@@ -223,7 +223,7 @@ export const StakingModal: FC<StakingModalProps> = ({
             <Box {...boxCommonStyles} mb={10}>
               Your rewards
               <Spacer />
-              <>{bigNumberToString(rewards)} SAV</>
+              <>{rewards} SAV</>
             </Box>
           ) : null}
 
