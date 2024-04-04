@@ -29,15 +29,15 @@ export const About = () => {
           flexDirection="column"
           alignItems="center"
           justifyContent="center"
-          maxW="820px"
+          maxW={{ base: '820px', '2xl': '855px' }}
         >
           <h4 className="heading">About Isaver</h4>
           <h5 className="subheading">
             Decentralized Finance made easy
-            {!isBig ? <br /> : ' '}
+            <br />
             and accessible for everyone
           </h5>
-          <Text className="text" textAlign="center" px="24px">
+          <Text className="text" textAlign="center" px={{ sm: '24px', '2xl': '0' }}>
             iSaver is a DeFi platform on the Polygon blockchain that helps its users to generate
             sustainable passive income through Staking Pools based on SAV and SAVR tokens. Discover
             our ecosystem, where everyone can maximize the potential of their capital. Explore a

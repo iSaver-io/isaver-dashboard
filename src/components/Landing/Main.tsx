@@ -115,7 +115,7 @@ export const Main = () => {
           xl: `url(${bannerAvatarsXL})`,
         }}
         bgPosition="bottom center"
-        bgSize={{ sm: 'contain', md: 'auto 75%', lg: 'auto 90%', xl: 'auto 80%' }}
+        bgSize={{ sm: 'auto 70%', md: 'auto 70%', lg: 'auto 80%', xl: 'auto 70%' }}
         bgRepeat="no-repeat"
         h={{ sm: '570px', md: '640px', lg: '550px', xl: '570px', '2xl': '773px' }}
         w="100%"
@@ -138,22 +138,24 @@ export const Main = () => {
             <Text
               textStyle="text2"
               fontSize={{ sm: '14px', xl: '24px' }}
-              fontWeight={400}
-              w={{ sm: '189px', xl: '300px' }}
+              fontWeight={{ sm: 500, xl: 400 }}
+              w={{ sm: '199px', xl: '330px' }}
               className="main-avatars-text"
-              mb={{ sm: '60px', md: '230px', lg: '100px', xl: '112px', '2xl': '154px' }}
-              ml={{ sm: '90px', md: '0' }}
+              mb={{ sm: '90px', md: '240px', lg: '100px', xl: '112px', '2xl': '154px' }}
+              ml={{ sm: '100px', md: '0' }}
             >
-              They came from deep space and settled on the Polygon blockchain
+              They came from
+              <br />
+              Deep Space and settled on&nbsp;the&nbsp;Polygon blockchain
             </Text>
             <Text
               textStyle="text2"
               fontSize={{ sm: '14px', xl: '24px' }}
-              fontWeight={400}
-              w={{ sm: '187px', xl: '300px' }}
+              fontWeight={{ sm: 500, xl: 400 }}
+              w={{ sm: '170px', xl: '300px' }}
               className="main-avatars-text"
-              mb={{ sm: '80px', md: '230px', lg: '100px', xl: '84px', '2xl': '142px' }}
-              ml={{ sm: '18px', md: '0' }}
+              mb={{ sm: '80px', md: '240px', lg: '100px', xl: '84px', '2xl': '142px' }}
+              ml={{ sm: '0px', md: '0' }}
             >
               Mission: To help Earthlings create a decentralized world
             </Text>
@@ -186,11 +188,17 @@ export const Main = () => {
           pt={{ sm: '87px', lg: 0 }}
           flexDir={{ sm: 'column', lg: 'row' }}
         >
-          <Flex w="100%" flexDirection="column" justifyContent="center" flexGrow={1}>
+          <Flex
+            w="100%"
+            flexDirection="column"
+            justifyContent="center"
+            flexGrow={1}
+            ml={{ xl: '10px', '2xl': 'unset' }}
+          >
             <Box>
               <h1 className="main-heading">
                 <span>Build a team.</span>
-                <br /> <span className="color-green">Earn.</span>{' '}
+                <br /> <span className="color-sav">Earn.</span>{' '}
                 <span className="color-blue">Win.</span>
               </h1>
               <h2 className="main-subheading">DeFI platform on Polygon</h2>
@@ -209,7 +217,7 @@ export const Main = () => {
               </Button>
             </Box>
           </Flex>
-          <Box w="100%">
+          <Box w={{ base: '100%', xl: '405px' }}>
             <CoinImage />
             <Button
               mt="15px"

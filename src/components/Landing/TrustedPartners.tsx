@@ -1,5 +1,6 @@
+import { useMemo } from 'react';
 import Slider, { Settings } from 'react-slick';
-import { Box, Flex, Image } from '@chakra-ui/react';
+import { Box, Flex, Image, useBreakpoint } from '@chakra-ui/react';
 
 import Partner1 from './images/partner-1.svg';
 import Partner2 from './images/partner-2.svg';
@@ -40,9 +41,18 @@ const settings: Settings = {
   ],
 };
 
-const images = [Partner1, Partner5, Partner2, Partner6, Partner3, Partner4];
+const imagesXl = [Partner1, Partner5, Partner2, Partner6, Partner3, Partner4];
+const imagesMd = [Partner1, Partner2, Partner5, Partner6, Partner3, Partner4];
+const imagesSm = [Partner1, Partner2, Partner3, Partner5, Partner6, Partner4];
 
 export const TrustedPartners = () => {
+  const bp = useBreakpoint({ ssr: false });
+  const images = useMemo(() => {
+    if (['md', 'lg'].includes(bp)) return imagesMd;
+    if (['xl', '2xl'].includes(bp)) return imagesXl;
+    return imagesSm;
+  }, [bp]);
+
   return (
     <Box py={{ sm: '80px', xl: '100px' }}>
       <Flex

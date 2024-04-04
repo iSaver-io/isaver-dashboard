@@ -82,8 +82,9 @@ export const Raffle = () => {
               textStyle="button"
               textAlign="center"
               position="absolute"
-              top="35%"
+              top={{ sm: '33%', md: '31%' }}
               left="15%"
+              fontSize={{ sm: '16px', md: '18px' }}
               display={{ sm: 'block', lg: 'none' }}
             >
               5 DAYS

@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useRef } from 'react';
-import { Flex, Link, Text, useClipboard } from '@chakra-ui/react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
+import { Flex, Link, Text, useBreakpoint, useClipboard } from '@chakra-ui/react';
 import { useNetwork } from 'wagmi';
 
 import { ReactComponent as CopyIcon } from '@/assets/images/icons/copy-2.svg';
@@ -29,6 +29,8 @@ export const Numbers = () => {
   const { tvlSav, tvlSavr, superPlansMetrics } = useStakingMetrics();
   const savSupply = useTokenSupply(ContractsEnum.SAV);
   const savrSupply = useTokenSupply(ContractsEnum.SAVR);
+  const bp = useBreakpoint({ ssr: false });
+  const isSm = useMemo(() => bp === 'sm', [bp]);
 
   const logger = useLogger({
     event: 'landing',
@@ -86,7 +88,7 @@ export const Numbers = () => {
       </Flex>
       <Flex flexWrap="wrap" justifyContent="space-between" className="number">
         <Flex className="number-item">
-          <Text className="number-item__heading">Token Symbol</Text>
+          <Text className="number-item__heading">Token {!isSm ? 'Symbol' : ''}</Text>
           <Text className="number-item__text" color="green.400">
             SAV
           </Text>
@@ -143,7 +145,7 @@ export const Numbers = () => {
         mt={{ sm: '50px', '2xl': '80px' }}
       >
         <Flex className="number-item">
-          <Text className="number-item__heading">Token Symbol</Text>
+          <Text className="number-item__heading">Token {!isSm ? 'Symbol' : ''}</Text>
           <Text className="number-item__text" color="savr">
             SAVR
           </Text>

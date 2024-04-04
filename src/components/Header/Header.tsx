@@ -115,7 +115,6 @@ export const Header: FC<HeaderProps> = ({ isLandingView }) => {
               icon={<ArrowIcon width="24px" />}
               onClick={navigateToApp}
               padding={{ sm: '0' }}
-              border="none"
             />
           ) : (
             <Button
