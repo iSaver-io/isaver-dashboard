@@ -217,7 +217,7 @@ export const Main = () => {
               </Button>
             </Box>
           </Flex>
-          <Box w={{ base: '100%', xl: '405px' }}>
+          <Box w={{ base: '100%', xl: '405px', '2xl': '530px' }}>
             <CoinImage />
             <Button
               mt="15px"

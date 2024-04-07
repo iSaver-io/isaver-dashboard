@@ -67,6 +67,7 @@ export const TrustedPartners = () => {
         <Slider className="trusted-slider" {...settings}>
           {images.map((image, index) => (
             <Flex
+              className="trusted-slider__item"
               display="flex !important"
               key={index}
               h={{ sm: '40px', xl: '80px' }}
