@@ -1,15 +1,7 @@
 import { useEffect, useMemo } from 'react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { BigNumber, BigNumberish, ethers } from 'ethers';
-import {
-  Address,
-  erc721ABI,
-  useAccount,
-  useMutation,
-  useProvider,
-  useQuery,
-  useQueryClient,
-  useSigner,
-} from 'wagmi';
+import { Address, erc721ABI, useAccount, useMutation, useProvider, useSigner } from 'wagmi';
 import { getContract } from 'wagmi/actions';
 
 import { POWER_SUBSCRIPTION_ENDING_NOTIFICATION } from '@/components/AvatarSettings/PowerCard';
@@ -36,6 +28,94 @@ export const useApprovedCollections = () => {
   );
 
   return approvedCollections || [];
+};
+
+const AVATAR_SETTINGS_STATISTIC_REQUEST = 'avatar-settings-statistic-request';
+export const useAvatarSettingsStatistic = () => {
+  const contract = useAvatarSettingsContract();
+
+  const statisticRequest = useQuery([AVATAR_SETTINGS_STATISTIC_REQUEST], () =>
+    contract.getStatistic()
+  );
+
+  const activeAvatars = useMemo(() => statisticRequest.data?.[0], [statisticRequest.data]);
+  const activeExternalAvatars = useMemo(() => statisticRequest.data?.[1], [statisticRequest.data]);
+  const activatedPowers = useMemo(() => statisticRequest.data?.[2], [statisticRequest.data]);
+
+  return { statisticRequest, activatedPowers, activeAvatars, activeExternalAvatars };
+};
+
+const AVATAR_SETTINGS_ACTIVATE_POWER_EVENTS_REQUEST =
+  'avatar-setting-activate-power-events-request';
+const AVATAR_SETTINGS_DEACTIVATE_AVATAR_EVENTS_REQUEST =
+  'avatar-setting-deactivate-avatar-events-request';
+export const useAvatarSettingsActivePowers = () => {
+  const contract = useAvatarSettingsContract();
+
+  const activatePowerEvents = useQuery([AVATAR_SETTINGS_ACTIVATE_POWER_EVENTS_REQUEST], () =>
+    contract.getActivatePowerEvents()
+  );
+  const deactivateAvatarEvents = useQuery([AVATAR_SETTINGS_DEACTIVATE_AVATAR_EVENTS_REQUEST], () =>
+    contract.getDeactivateAvatarEvents()
+  );
+
+  const data = useMemo(() => {
+    if (deactivateAvatarEvents.data === undefined || activatePowerEvents.data === undefined) {
+      return undefined;
+    }
+
+    const events = [...activatePowerEvents.data, ...deactivateAvatarEvents.data].sort(
+      (a, b) => a.blockNumber - b.blockNumber
+    );
+
+    const now = Date.now() / 1000;
+    const usersData = events.reduce((acc, event) => {
+      if (event.name === 'PowerActivated') {
+        const user = event.args[0];
+        const powerId = event.args[1].toNumber();
+        const activeUntil = event.args[2].toNumber();
+
+        if (!(user in acc)) {
+          acc[user] = { 0: undefined, 1: undefined, 2: undefined, 3: undefined };
+        }
+
+        // Устанавливаем только если подписка еще активна
+        if (activeUntil > now) {
+          acc[user][powerId] = activeUntil;
+        }
+      } else {
+        const user = event.args[0];
+
+        acc[user] = { 0: undefined, 1: undefined, 2: undefined, 3: undefined };
+      }
+
+      return acc;
+    }, {} as Record<string, Record<number, number | undefined>>);
+
+    const activePowersCounter = Object.values(usersData).reduce(
+      (acc: Record<number | string, number>, user) => {
+        if (user[0]) acc[0] += 1;
+        if (user[1]) acc[1] += 1;
+        if (user[2]) acc[2] += 1;
+        if (user[3]) acc[3] += 1;
+
+        if (user[0] && user[1] && user[2] && user[3]) {
+          acc.full += 1;
+        }
+
+        return acc;
+      },
+      { 0: 0, 1: 0, 2: 0, 3: 0, full: 0 } as Record<number | string, number>
+    );
+
+    return { users: usersData, activePowers: activePowersCounter };
+  }, [activatePowerEvents.data, deactivateAvatarEvents.data]);
+
+  return {
+    isLoading: activatePowerEvents.isLoading || deactivateAvatarEvents.isLoading,
+    users: data?.users,
+    activePowers: data?.activePowers,
+  };
 };
 
 export const GET_USER_POWERS = 'get-user-powers';
@@ -145,11 +225,11 @@ export const useAvatarMetadata = () => {
 export const GET_ALL_EVENTS = 'get-all-events';
 export const useAllEvents = () => {
   const { address } = useAccount();
-  const { getAllEvents } = useAvatarSettingsContract();
+  const { getAllUserEvents } = useAvatarSettingsContract();
 
   const eventsRequest = useQuery(
     [GET_ALL_EVENTS, { address }],
-    async () => (address ? await getAllEvents(address) : []),
+    async () => (address ? await getAllUserEvents(address) : []),
     { staleTime: 0, cacheTime: 0, refetchInterval: 60_000, initialData: [], placeholderData: [] }
   );
 
@@ -218,7 +298,7 @@ export const useActivatePower = (powerId: number) => {
         queryClient.invalidateQueries({ queryKey: [GET_ALL_EVENTS] });
       },
       onError: (err) => {
-        handleError(err);
+        handleError(err, 'powers');
       },
     }
   );
@@ -289,7 +369,7 @@ export const useActivateAvatar = () => {
         queryClient.invalidateQueries({ queryKey: [GET_ALL_EVENTS] });
       },
       onError: (err) => {
-        handleError(err);
+        handleError(err, 'avatars');
       },
     }
   );
@@ -331,7 +411,7 @@ export const useDeactivateAvatar = () => {
         refetchAllowedNfts();
       },
       onError: (err) => {
-        handleError(err);
+        handleError(err, 'avatars');
       },
     }
   );
@@ -367,7 +447,7 @@ export const useTokenName = () => {
         queryClient.invalidateQueries({ queryKey: [GET_ALL_EVENTS] });
       },
       onError: (err) => {
-        handleError(err);
+        handleError(err, 'avatars');
       },
     }
   );
@@ -403,7 +483,7 @@ export const useTokenTelegram = () => {
         queryClient.invalidateQueries({ queryKey: [GET_ALL_EVENTS] });
       },
       onError: (err) => {
-        handleError(err);
+        handleError(err, 'avatars');
       },
     }
   );
@@ -452,7 +532,7 @@ export const useActivatePowerAccess = () => {
         queryClient.invalidateQueries({ queryKey: [GET_ALL_EVENTS] });
       },
       onError: (err) => {
-        handleError(err);
+        handleError(err, 'powers');
       },
     }
   );
@@ -487,7 +567,7 @@ export const useClaimBirthdayPresent = () => {
         queryClient.invalidateQueries({ queryKey: [GET_ALL_EVENTS] });
       },
       onError: (err) => {
-        handleError(err);
+        handleError(err, 'avatars');
       },
     }
   );

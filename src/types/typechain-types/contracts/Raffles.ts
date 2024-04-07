@@ -124,6 +124,7 @@ export interface RafflesInterface extends utils.Interface {
     "revokeRole(bytes32,address)": FunctionFragment;
     "rounds(uint256)": FunctionFragment;
     "supportsInterface(bytes4)": FunctionFragment;
+    "totalBurnedTickets()": FunctionFragment;
     "updateCallbackGasLimit(uint32)": FunctionFragment;
     "updateClaimPeriod(uint256)": FunctionFragment;
     "updateCoordinator(address)": FunctionFragment;
@@ -179,6 +180,7 @@ export interface RafflesInterface extends utils.Interface {
       | "revokeRole"
       | "rounds"
       | "supportsInterface"
+      | "totalBurnedTickets"
       | "updateCallbackGasLimit"
       | "updateClaimPeriod"
       | "updateCoordinator"
@@ -354,6 +356,10 @@ export interface RafflesInterface extends utils.Interface {
     values: [BytesLike]
   ): string;
   encodeFunctionData(
+    functionFragment: "totalBurnedTickets",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "updateCallbackGasLimit",
     values: [BigNumberish]
   ): string;
@@ -523,6 +529,10 @@ export interface RafflesInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "totalBurnedTickets",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "updateCallbackGasLimit",
     data: BytesLike
   ): Result;
@@ -582,6 +592,7 @@ export interface RafflesInterface extends utils.Interface {
     "RoleAdminChanged(bytes32,bytes32,bytes32)": EventFragment;
     "RoleGranted(bytes32,address,address)": EventFragment;
     "RoleRevoked(bytes32,address,address)": EventFragment;
+    "RoundEntered(address,uint256,uint256)": EventFragment;
     "RoundFinished(uint256)": EventFragment;
     "TicketsCollected(address,uint256)": EventFragment;
     "Upgraded(address)": EventFragment;
@@ -596,6 +607,7 @@ export interface RafflesInterface extends utils.Interface {
   getEvent(nameOrSignatureOrTopic: "RoleAdminChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleGranted"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleRevoked"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "RoundEntered"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoundFinished"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "TicketsCollected"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Upgraded"): EventFragment;
@@ -700,6 +712,18 @@ export type RoleRevokedEvent = TypedEvent<
 >;
 
 export type RoleRevokedEventFilter = TypedEventFilter<RoleRevokedEvent>;
+
+export interface RoundEnteredEventObject {
+  user: string;
+  roundId: BigNumber;
+  tickets: BigNumber;
+}
+export type RoundEnteredEvent = TypedEvent<
+  [string, BigNumber, BigNumber],
+  RoundEnteredEventObject
+>;
+
+export type RoundEnteredEventFilter = TypedEventFilter<RoundEnteredEvent>;
 
 export interface RoundFinishedEventObject {
   roundId: BigNumber;
@@ -959,6 +983,8 @@ export interface Raffles extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
+    totalBurnedTickets(overrides?: CallOverrides): Promise<[BigNumber]>;
+
     updateCallbackGasLimit(
       gasLimit: BigNumberish,
       overrides?: Overrides & { from?: string }
@@ -1211,6 +1237,8 @@ export interface Raffles extends BaseContract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
+  totalBurnedTickets(overrides?: CallOverrides): Promise<BigNumber>;
+
   updateCallbackGasLimit(
     gasLimit: BigNumberish,
     overrides?: Overrides & { from?: string }
@@ -1459,6 +1487,8 @@ export interface Raffles extends BaseContract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
+    totalBurnedTickets(overrides?: CallOverrides): Promise<BigNumber>;
+
     updateCallbackGasLimit(
       gasLimit: BigNumberish,
       overrides?: CallOverrides
@@ -1595,6 +1625,17 @@ export interface Raffles extends BaseContract {
       account?: string | null,
       sender?: string | null
     ): RoleRevokedEventFilter;
+
+    "RoundEntered(address,uint256,uint256)"(
+      user?: string | null,
+      roundId?: null,
+      tickets?: null
+    ): RoundEnteredEventFilter;
+    RoundEntered(
+      user?: string | null,
+      roundId?: null,
+      tickets?: null
+    ): RoundEnteredEventFilter;
 
     "RoundFinished(uint256)"(
       roundId?: BigNumberish | null
@@ -1771,6 +1812,8 @@ export interface Raffles extends BaseContract {
       interfaceId: BytesLike,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    totalBurnedTickets(overrides?: CallOverrides): Promise<BigNumber>;
 
     updateCallbackGasLimit(
       gasLimit: BigNumberish,
@@ -2016,6 +2059,10 @@ export interface Raffles extends BaseContract {
 
     supportsInterface(
       interfaceId: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    totalBurnedTickets(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

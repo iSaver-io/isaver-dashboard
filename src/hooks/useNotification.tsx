@@ -4,7 +4,7 @@ import { useToast } from '@chakra-ui/react';
 import { Notification, NotificationProps } from '@/components/ui/Notification/Notification';
 import { tryToGetErrorData } from '@/utils/error';
 
-import { useLogger } from './useLogger';
+import { EventContext, useLogger } from './useLogger';
 
 const commonProps = {
   position: 'bottom-left' as const,
@@ -20,6 +20,7 @@ export const useNotification = () => {
     category: 'notifications',
     action: 'notification_show',
     actionGroup: 'callbacks',
+    buttonLocation: 'popup',
   });
 
   const success = useCallback(
@@ -34,24 +35,24 @@ export const useNotification = () => {
     [toast, logger]
   );
   const error = useCallback(
-    (props: ToastProps) => {
+    (props: ToastProps, context?: EventContext) => {
       toast({
         ...commonProps,
         render: ({ onClose }) => <Notification type="error" onClose={onClose} {...props} />,
       });
 
-      logger({ label: props.title, content: props.description });
+      logger({ label: props.title, content: props.description, context });
     },
     [toast, logger]
   );
 
   const handleError = useCallback(
-    (err: any) => {
+    (err: any, context?: EventContext) => {
       console.error(err);
 
       const errData = tryToGetErrorData(err);
       if (errData) {
-        error({ title: errData.title, description: errData.description });
+        error({ title: errData.title, description: errData.description }, context);
       }
 
       return errData;

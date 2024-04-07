@@ -1,3 +1,4 @@
+import { useCallback } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import { Box, Button, Flex, Link, Text } from '@chakra-ui/react';
 
@@ -7,6 +8,7 @@ import {
   usePowerActivationFee,
   useUserPowers,
 } from '@/hooks/useAvatarSettings';
+import { useLogger } from '@/hooks/useLogger';
 import { useActiveAvatarNFT } from '@/hooks/useNFTHolders';
 import { AVATAR_LANDING_POWERS_INFO_URL, AVATARS_URL } from '@/router';
 
@@ -50,9 +52,16 @@ const POWERS = [
 export const PowersInfo = () => {
   const { activeAvatar, hasAvatar } = useActiveAvatar();
   const { avatarNFT } = useActiveAvatarNFT();
-
   const powerActivationFee = usePowerActivationFee();
   const { mutateAsync, isLoading } = useActivatePowerAccess();
+  const logger = useLogger({
+    event: 'settings',
+    category: 'elements',
+    action: 'button_click',
+    buttonLocation: 'mid',
+    actionGroup: 'conversions',
+    context: 'powers',
+  });
 
   const isPowersAllowed = hasAvatar && activeAvatar?.isPowersAllowed;
 
@@ -60,6 +69,15 @@ export const PowersInfo = () => {
   const { isActive: isActiveB } = useUserPowers(1);
   const { isActive: isActiveC } = useUserPowers(2);
   const { isActive: isActiveD } = useUserPowers(3);
+
+  const handleActivatePowerAccess = useCallback(() => {
+    logger({
+      label: 'activate',
+      value: powerActivationFee.toString(),
+      content: 'Powers Block',
+    });
+    return mutateAsync();
+  }, [logger, mutateAsync, powerActivationFee]);
 
   return (
     <Box className="powersInfo" id="powers">
@@ -70,7 +88,15 @@ export const PowersInfo = () => {
         {isPowersAllowed || !hasAvatar || !avatarNFT ? (
           <Text textStyle="text2" mt="15px">
             All about Powers is{' '}
-            <Link as={RouterLink} to={AVATAR_LANDING_POWERS_INFO_URL} color="savr" target="_blank">
+            <Link
+              as={RouterLink}
+              to={AVATAR_LANDING_POWERS_INFO_URL}
+              color="savr"
+              target="_blank"
+              onClick={() =>
+                logger({ action: 'link_click', label: 'here', actionGroup: 'interactions' })
+              }
+            >
               here
             </Link>
           </Text>
@@ -87,7 +113,7 @@ export const PowersInfo = () => {
             <div className="powersInfo_line" />
             <Button
               isLoading={isLoading}
-              onClick={() => mutateAsync()}
+              onClick={handleActivatePowerAccess}
               size="md"
               mt={{ base: '15px', '2xl': '25px' }}
             >

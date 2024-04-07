@@ -1,15 +1,25 @@
 import { useCallback } from 'react';
 import { useAccount } from 'wagmi';
 
-type EventName =
+export type EventName =
   | 'cross'
   | 'dashboard'
   | 'landing'
   | 'staking'
   | 'team'
   | 'raffle'
-  | 'avatarSettings';
-type EventCategory = 'elements' | 'forms' | 'blocks' | 'notifications';
+  | 'exchange'
+  | 'settings'
+  | 'avatars'
+  | 'momento';
+type EventCategory =
+  | 'elements'
+  | 'forms'
+  | 'blocks'
+  | 'notifications'
+  | 'cards'
+  | 'banners'
+  | 'presentations';
 type EventAction =
   | 'element_click'
   | 'button_click'
@@ -20,14 +30,31 @@ type EventAction =
   | 'menu_click'
   | 'wallet_click'
   | 'link_click'
+  | 'click'
+  | 'show'
   | 'notification_show';
 type EventLabel = string;
 type EventValue = string | number | null;
-type EventContext = 'staking' | 'teams' | 'raffles' | 'levels';
-type ButtonLocation = 'header' | 'up' | 'mid' | 'down' | 'footer' | 'popup';
+export type EventContext =
+  | 'staking'
+  | 'teams'
+  | 'raffles'
+  | 'levels'
+  | 'avatars'
+  | 'powers'
+  | 'momento';
+export type ButtonLocation =
+  | 'header'
+  | 'subhead'
+  | 'up'
+  | 'mid'
+  | 'down'
+  | 'footer'
+  | 'popup'
+  | 'card';
 type ActionGroup = 'interactions' | 'conversions' | 'callbacks';
 
-type LoggerProps = {
+export type LoggerProps = {
   event: EventName;
   category: EventCategory;
   action: EventAction;
@@ -38,6 +65,13 @@ type LoggerProps = {
   buttonLocation: ButtonLocation;
   actionGroup: ActionGroup;
 };
+
+const defaultProps = {
+  value: undefined,
+  content: undefined,
+  context: undefined,
+};
+
 export const useLogger = (commonProps?: Partial<LoggerProps>) => {
   const { address } = useAccount();
 
@@ -45,12 +79,13 @@ export const useLogger = (commonProps?: Partial<LoggerProps>) => {
     (props?: Partial<LoggerProps>) => {
       const pagePath = window.location.origin + window.location.pathname;
 
+      const allProps = { ...defaultProps, ...commonProps, ...props };
+
       // @ts-ignore
       window?.dataLayer.push({
         pagePath,
         userId: address?.slice(2) || 'Not connected',
-        ...commonProps,
-        ...props,
+        ...allProps,
       });
     },
     [commonProps, address]

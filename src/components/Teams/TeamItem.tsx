@@ -105,7 +105,7 @@ export const TeamItem: FC<TeamItemProps> = ({
             </Text>
           ) : (
             <Text textStyle="textSansBold">
-              {bigNumberToString(subscriptionCost, { precision: 0 })} SAV / 1 Team
+              1 Team / {bigNumberToString(subscriptionCost, { precision: 0 })} SAV
             </Text>
           )}
         </Box>

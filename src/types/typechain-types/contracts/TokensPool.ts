@@ -36,6 +36,7 @@ export declare namespace TokensPool {
     amount: BigNumberish;
     tokenIds: BigNumberish[];
     remaining: BigNumberish;
+    initialAmount: BigNumberish;
   };
 
   export type PrizeStructOutput = [
@@ -45,6 +46,7 @@ export declare namespace TokensPool {
     boolean,
     BigNumber,
     BigNumber[],
+    BigNumber,
     BigNumber
   ] & {
     tokenAddress: string;
@@ -54,6 +56,7 @@ export declare namespace TokensPool {
     amount: BigNumber;
     tokenIds: BigNumber[];
     remaining: BigNumber;
+    initialAmount: BigNumber;
   };
 }
 

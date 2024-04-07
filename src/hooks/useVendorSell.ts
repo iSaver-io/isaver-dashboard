@@ -44,7 +44,7 @@ export const useVendorSellControl = () => {
       onSuccess: () => {
         queryClient.invalidateQueries([SELL_COMMISSION_REQUEST]);
       },
-      onError: handleError,
+      onError: (err) => handleError(err),
     }
   );
 

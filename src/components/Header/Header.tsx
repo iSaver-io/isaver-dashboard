@@ -1,4 +1,5 @@
-import { FC, useCallback } from 'react';
+import { FC, useCallback, useMemo } from 'react';
+import { useLocation } from 'react-router-dom';
 import {
   Box,
   Circle,
@@ -25,6 +26,7 @@ import { useLocalReferrer } from '@/hooks/useLocalReferrer';
 import { useLogger } from '@/hooks/useLogger';
 import { useNavigateByHash } from '@/hooks/useNavigateByHash';
 import { APP_URL, LANDING_URL } from '@/router';
+import { getPageByPathname } from '@/utils/logger';
 
 import './Header.scss';
 
@@ -39,6 +41,7 @@ export const Header: FC<HeaderProps> = ({ isLandingView }) => {
   const { hasEndingSubscription } = useStakingPlansUserInfo();
   const { hasEndingReferralSubscription } = useUserReferralInfo();
   const { hasEndingTeamsSubscription } = useTeams();
+  const location = useLocation();
   const navigate = useNavigateByHash();
   const bp = useBreakpoint({ ssr: false });
   const logger = useLogger({
@@ -71,9 +74,10 @@ export const Header: FC<HeaderProps> = ({ isLandingView }) => {
 
   const handleOpenBurgerMenu = useCallback(() => {
     logger({ label: 'menu' });
-
     onOpen();
   }, [logger, onOpen]);
+
+  const pageName = useMemo(() => getPageByPathname(location.pathname), [location]);
 
   return (
     <Box className="app-header">
@@ -97,6 +101,8 @@ export const Header: FC<HeaderProps> = ({ isLandingView }) => {
             ) : (
               <ConnectWalletButton
                 location="header"
+                event="cross"
+                content={pageName}
                 isSmall={['sm', 'md', 'lg'].includes(bp)}
                 size={{ sm: 'md', '2xl': 'lg' }}
               />
@@ -109,7 +115,6 @@ export const Header: FC<HeaderProps> = ({ isLandingView }) => {
               icon={<ArrowIcon width="24px" />}
               onClick={navigateToApp}
               padding={{ sm: '0' }}
-              border="none"
             />
           ) : (
             <Button

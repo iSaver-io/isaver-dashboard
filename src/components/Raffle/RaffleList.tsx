@@ -104,14 +104,14 @@ export const RaffleList = () => {
         flexWrap="wrap"
         paddingX={{ md: '10px', lg: 'unset' }}
       >
-        <Box>
+        <Box width={{ sm: '100%', xl: '50%' }}>
           <Text textStyle="sectionHeading" mb="20px">
             Win big prizes
           </Text>
 
           <Text textStyle="text1">
-            Join iSaver Raffles gives you a chance to win big prizes!
-            <br />
+            iSaver Monthly Raffles gives you a chance to win SAVR tokens! And get ready for a new
+            experience in Momento - instant Win-Win Raffle of various NFTs and tokens. Just hit GO!
             It's easy, if you have a Ticket.
           </Text>
         </Box>

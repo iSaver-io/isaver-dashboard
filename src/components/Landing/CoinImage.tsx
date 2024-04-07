@@ -1,17 +1,19 @@
-import React from 'react';
 import { Box, Text } from '@chakra-ui/react';
 
-import { ReactComponent as CoinsIcon } from './images/coins.svg';
+import { ReactComponent as CoinsIcon } from './images/banner-coins.svg';
 
 import './Landing.scss';
 
 export const CoinImage = () => {
   return (
-    <Box width={{ xl: '100%' }} minWidth={{ base: '240px' }} textAlign="center">
+    <Box
+      width={{ xl: '100%' }}
+      minWidth={{ base: '240px', xl: '405px', '2xl': '580px' }}
+      textAlign="center"
+    >
       <Box
         className="coins-text__img"
-        width={{ xl: '100%' }}
-        height={{ sm: '300px', md: '300px', lg: '230px', xl: '310px', '2xl': '450px' }}
+        height={{ sm: '160px', md: '240px', lg: '384px', xl: '405px', '2xl': '550px' }}
       >
         <CoinsIcon />
       </Box>

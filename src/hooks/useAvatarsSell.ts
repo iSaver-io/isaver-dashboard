@@ -80,7 +80,7 @@ export const usePowerPrices = (ids: number[]) => {
 
   useQueries({
     queries: ids.map((id) => ({
-      queryKey: [POWER_PRICE_REQUEST, id],
+      queryKey: [POWER_PRICE_REQUEST, { id }],
       queryFn: async () => {
         const price = await avatarsSellContract.getPowerPrice(id);
         return bigNumberToNumber(price, { decimals: 18 });
@@ -187,7 +187,7 @@ export const useBuyAvatar = () => {
     },
     {
       onError: (err) => {
-        handleError(err);
+        handleError(err, 'avatars');
       },
     }
   );
@@ -210,14 +210,6 @@ export const useBuyPowers = () => {
 
       const allowance = await savToken.allowance(account, avatarsSellContract.address);
       const powerPrice = await avatarsSellContract.getPowerPrice(id);
-      const powerTypeMap: Record<string, string> = {
-        '1': 'A',
-        '2': 'B',
-        '3': 'C',
-        '4': 'D',
-      };
-      const idStr = id.toString();
-      const powerType = Object.keys(powerTypeMap).includes(idStr) ? powerTypeMap[idStr] : '';
 
       if (allowance.lt(powerPrice)) {
         const txHash = await savToken.approve(
@@ -228,6 +220,15 @@ export const useBuyPowers = () => {
       }
 
       const txHash = await avatarsSellContract.buyPower(id, amount);
+
+      const idStr = id.toString();
+      const powerTypeMap: Record<string, string> = {
+        '1': 'A',
+        '2': 'B',
+        '3': 'C',
+        '4': 'D',
+      };
+      const powerType = Object.keys(powerTypeMap).includes(idStr) ? powerTypeMap[idStr] : '';
       success({
         title: 'Success',
         description: `You have minted ${amount} Powers ${powerType}`,
@@ -236,7 +237,7 @@ export const useBuyPowers = () => {
     },
     {
       onError: (err) => {
-        handleError(err);
+        handleError(err, 'powers');
       },
     }
   );
@@ -269,6 +270,21 @@ export const useAvatarsSell = () => {
   };
 };
 
+export const AVATARS_SELL_SOLD_STATISTIC_REQUEST = 'avatars-sell-sold-statistic-request';
+export const useAvatarSellStatistic = () => {
+  const avatarsSellContract = useAvatarsSellContract();
+
+  const soldStatisticRequest = useQuery(
+    [AVATARS_SELL_SOLD_STATISTIC_REQUEST],
+    async () => await avatarsSellContract.getSoldStatistic()
+  );
+
+  const avatarsSold = useMemo(() => soldStatisticRequest.data?.[0], [soldStatisticRequest.data]);
+  const powersSold = useMemo(() => soldStatisticRequest.data?.[1], [soldStatisticRequest.data]);
+
+  return { soldStatisticRequest, avatarsSold, powersSold };
+};
+
 export const useAvatarsSellControl = () => {
   const avatarsSellContract = useAvatarsSellContract();
   const queryClient = useQueryClient();
@@ -285,7 +301,7 @@ export const useAvatarsSellControl = () => {
       onSuccess: () => {
         queryClient.invalidateQueries([BASE_PRICE_REQUEST, AVATAR_PRICE_REQUEST]);
       },
-      onError: handleError,
+      onError: (err) => handleError(err),
     }
   );
 
@@ -299,7 +315,7 @@ export const useAvatarsSellControl = () => {
       onSuccess: () => {
         queryClient.invalidateQueries([INFLATION_RATE_REQUEST]);
       },
-      onError: handleError,
+      onError: (err) => handleError(err),
     }
   );
 
@@ -313,7 +329,7 @@ export const useAvatarsSellControl = () => {
       onSuccess: () => {
         queryClient.invalidateQueries([INFLATION_PERIOD_REQUEST]);
       },
-      onError: handleError,
+      onError: (err) => handleError(err),
     }
   );
 
@@ -322,13 +338,13 @@ export const useAvatarsSellControl = () => {
     async ({ id, price }: { id: number; price: string }) => {
       const priceInWei = ethers.utils.parseEther(price);
       const txHash = await avatarsSellContract.updatePowerPrice(id, priceInWei);
-      success({ title: 'Success', description: `Price for power ${id} updated`, txHash });
+      success({ title: 'Success', description: `Price for Power ${id} updated`, txHash });
     },
     {
       onSuccess: () => {
         queryClient.invalidateQueries([POWER_PRICE_REQUEST]);
       },
-      onError: handleError,
+      onError: (err) => handleError(err),
     }
   );
   return {

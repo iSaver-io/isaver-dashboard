@@ -2,6 +2,7 @@ import { useCallback, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Box, Grid, Text, useBreakpoint } from '@chakra-ui/react';
 
+import { useLogger } from '@/hooks/useLogger';
 import { APP_URL, AVATARS_LANDING_PATH, WHITEPAPER_URL } from '@/router';
 
 import BacksideIcon from './images/backside.svg';
@@ -13,6 +14,14 @@ import PrizeImage5 from './images/otherPrizes/5.png';
 import PrizeImage6 from './images/otherPrizes/6.png';
 
 export const OtherPrizes = () => {
+  const logger = useLogger({
+    event: 'momento',
+    category: 'elements',
+    action: 'link_click',
+    buttonLocation: 'card',
+    actionGroup: 'interactions',
+  });
+
   return (
     <Box textAlign="center">
       <Text textStyle="h3" fontSize={{ sm: '18px', lg: '26px' }}>
@@ -33,7 +42,13 @@ export const OtherPrizes = () => {
             <>
               We know that a total of 12024 Avatars have arrived on Earth: 10000 are distributed for
               generation on our platform and 2024 are in the Momento pool. Join Momento for a chance
-              to win an Avatar! More about Avatars is <Link to={AVATARS_LANDING_PATH}>here</Link>
+              to win an Avatar! More about Avatars is{' '}
+              <Link
+                to={AVATARS_LANDING_PATH}
+                onClick={() => logger({ label: 'here', content: 'iSaver Avatar' })}
+              >
+                here
+              </Link>
             </>
           }
         />
@@ -44,7 +59,13 @@ export const OtherPrizes = () => {
             <>
               New NFT collections are being created every day. We choose some of them and add them
               to the Momento pool for everyone to have a chance to win. A list of collections is
-              always available in our <Link to={WHITEPAPER_URL}>Whitepaper</Link>
+              always available in our{' '}
+              <Link
+                to={WHITEPAPER_URL}
+                onClick={() => logger({ label: 'whitepaper', content: 'NFT NEW Collections' })}
+              >
+                Whitepaper
+              </Link>
             </>
           }
         />
@@ -56,7 +77,12 @@ export const OtherPrizes = () => {
               The Powers will give you a greater impact from your investment and activity on the
               iSaver platform. You can choose to activate one or all of the Powers, depending on
               your goals. Join Momento for a chance to win Powers! More about Powers is{' '}
-              <Link to={AVATARS_LANDING_PATH}>here</Link>
+              <Link
+                to={AVATARS_LANDING_PATH}
+                onClick={() => logger({ label: 'here', content: 'iSaver Powers' })}
+              >
+                here
+              </Link>
             </>
           }
         />
@@ -67,7 +93,13 @@ export const OtherPrizes = () => {
             <>
               The Ticket allows you to participate in the iSaver Raffles and Momento. Join Momento
               for a chance to win from 1 to 10 Tickets. You can mint your first Ticket by
-              participating in our mini <Link to={APP_URL}>FREE&nbsp;TO&nbsp;PLAY</Link>
+              participating in our mini{' '}
+              <Link
+                to={APP_URL}
+                onClick={() => logger({ label: 'free_to_play', content: 'Raffle Tickets' })}
+              >
+                FREE&nbsp;TO&nbsp;PLAY
+              </Link>
             </>
           }
         />
@@ -77,7 +109,9 @@ export const OtherPrizes = () => {
           description={
             <>
               Join Momento for a chance to win from 1 to 1,000 SAVR. And stake your SAVR{' '}
-              <Link to="/staking">here</Link>
+              <Link to="/staking" onClick={() => logger({ label: 'here', content: 'SAVR Tokens' })}>
+                here
+              </Link>
             </>
           }
         />
@@ -87,7 +121,13 @@ export const OtherPrizes = () => {
           description={
             <>
               Join Momento for a chance to win various ERC20 tokens on the Polygon blockchain. A
-              list of tokens is always available in our <Link to={WHITEPAPER_URL}>Whitepaper</Link>
+              list of tokens is always available in our{' '}
+              <Link
+                to={WHITEPAPER_URL}
+                onClick={() => logger({ label: 'whitepaper', content: 'Various Tokens' })}
+              >
+                Whitepaper
+              </Link>
             </>
           }
         />
@@ -105,12 +145,21 @@ interface CardProps {
 const Card = ({ image, title, description }: CardProps) => {
   const [isFlipped, setIsFlipped] = useState(false);
   const bp = useBreakpoint({ ssr: false });
+  const logger = useLogger({
+    event: 'momento',
+    category: 'elements',
+    action: 'element_click',
+    content: title,
+    buttonLocation: 'card',
+    actionGroup: 'interactions',
+  });
 
   const toggleCard = useCallback(() => {
     if (bp === 'sm') {
+      logger({ label: isFlipped ? 'backside2' : 'backside' });
       setIsFlipped((val) => !val);
     }
-  }, [bp]);
+  }, [bp, logger, isFlipped]);
 
   const isSm = ['sm', 'md', 'lg'].includes(bp);
 

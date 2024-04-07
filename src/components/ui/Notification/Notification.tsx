@@ -45,7 +45,7 @@ export const Notification: FC<NotificationProps> = ({
     return 'green.400';
   }, [type]);
 
-  const scanLink = useExplorerLink(txHash);
+  const scanLink = useExplorerLink(txHash || '', 'tx');
 
   const handleClose = useCallback(() => {
     logger({ label: 'close' });

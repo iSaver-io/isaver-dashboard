@@ -6,6 +6,7 @@ import { BigNumber } from 'ethers';
 import { Button } from '@/components/ui/Button/Button';
 import { TOKENS } from '@/hooks/contracts/useTokenContract';
 import { useStakingSuperPlans, useStakingSuperPowers } from '@/hooks/staking/useStaking';
+import { useLogger } from '@/hooks/useLogger';
 import { useNavigateByHash } from '@/hooks/useNavigateByHash';
 import { bigNumberToNumber, getReadableAmount, makeBigNumber } from '@/utils/number';
 import { getLocalDateString } from '@/utils/time';
@@ -33,6 +34,15 @@ export const SuperStakingPlan: FC<SuperStakingPlanProps> = ({
   const [isDepositLoading, setIsDepositLoading] = useState(false);
   const { isOpen, onOpen, onClose } = useDisclosure(); // StakingModal toggle
   const navigate = useNavigateByHash();
+  const logger = useLogger({
+    event: isPageView ? 'dashboard' : 'staking',
+    category: 'elements',
+    action: 'button_click',
+    content: 'Power B',
+    context: 'staking',
+    buttonLocation: 'mid',
+    actionGroup: 'conversions',
+  });
 
   const { statusPowerB, statusPowerC, extraAprPowerC } = useStakingSuperPowers();
   const { depositSuperPlan, claimSuperPlan, withdrawSuperPlan } = useStakingSuperPlans();
@@ -55,23 +65,37 @@ export const SuperStakingPlan: FC<SuperStakingPlanProps> = ({
     [depositSuperPlan, superPlanId, onClose]
   );
 
+  const handleDepositModalOpen = useCallback(() => {
+    logger({ label: 'deposit' });
+    onOpen();
+  }, [logger, onOpen]);
+
   const handleClaim = useCallback(() => {
+    logger({
+      label: 'claim',
+      value: userReward.toString(),
+    });
+
     setIsClaimLoading(true);
     claimSuperPlan.mutateAsync({ superPlanId }).finally(() => {
       setIsClaimLoading(false);
     });
-  }, [claimSuperPlan, superPlanId]);
+  }, [claimSuperPlan, superPlanId, userReward, logger]);
 
   const handleWithdraw = useCallback(() => {
+    logger({
+      label: 'withdraw',
+      value: userStakeSAVR.add(userReward).toString(),
+    });
+
     setIsWithdrawLoading(true);
     withdrawSuperPlan.mutateAsync({ superPlanId }).finally(() => {
       setIsWithdrawLoading(false);
     });
-  }, [withdrawSuperPlan, superPlanId]);
+  }, [withdrawSuperPlan, superPlanId, userReward, userStakeSAVR, logger]);
 
   const bp = useBreakpoint({ ssr: false });
   const isSm = ['sm'].includes(bp);
-  const isMd = ['md', 'xl'].includes(bp);
   const isLg = ['lg', '2xl'].includes(bp);
   const buttonWidth = ['2xl'].includes(bp) ? '140px' : '120px';
   const buttonShadow = '0px 9px 18px rgba(107, 201, 91, 0.27)';
@@ -220,7 +244,7 @@ export const SuperStakingPlan: FC<SuperStakingPlanProps> = ({
               boxShadow={buttonShadow}
               variant="outlined"
               isDisabled={!isActive || !statusPowerB.isActive}
-              onClick={onOpen}
+              onClick={handleDepositModalOpen}
             >
               Deposit
             </Button>

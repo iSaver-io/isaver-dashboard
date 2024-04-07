@@ -18,6 +18,7 @@ import {
   useTokenName,
   useTokenTelegram,
 } from '@/hooks/useAvatarSettings';
+import { useLogger } from '@/hooks/useLogger';
 import { useActiveAvatarNFT } from '@/hooks/useNFTHolders';
 
 import { Button } from '../ui/Button/Button';
@@ -35,6 +36,14 @@ export const AvatarComponent = () => {
   const { mutateAsync: claimBirthdayPresent, isLoading: isPresentClaimLoading } =
     useClaimBirthdayPresent();
   const { data: hasBirthdayGift = null } = useIsBirthdayPresentAvailable(activeAvatar?.tokenId);
+  const logger = useLogger({
+    event: 'settings',
+    category: 'elements',
+    action: 'button_click',
+    buttonLocation: 'up',
+    actionGroup: 'conversions',
+    context: 'avatars',
+  });
 
   const handleNameSave = useCallback(
     (name: string) => {
@@ -53,6 +62,11 @@ export const AvatarComponent = () => {
     },
     [setTokenTelegram, avatarNFT]
   );
+
+  const handleClaimBirthdayPresent = useCallback(() => {
+    logger({ label: 'claim', content: metadata.Birthday });
+    claimBirthdayPresent();
+  }, [logger, metadata, claimBirthdayPresent]);
 
   const validateName = useCallback((value: string) => {
     const regex = /^[A-Za-z ]{1,30}$/;
@@ -98,7 +112,7 @@ export const AvatarComponent = () => {
                         size="sm"
                         variant="outlinedWhite"
                         isLoading={isPresentClaimLoading}
-                        onClick={() => claimBirthdayPresent()}
+                        onClick={handleClaimBirthdayPresent}
                       >
                         Claim
                       </Button>
@@ -172,16 +186,24 @@ const TraitItem = ({
   const [isValid, setIsValid] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+  const logger = useLogger({
+    event: 'settings',
+    buttonLocation: 'up',
+    actionGroup: 'interactions',
+    context: 'avatars',
+  });
 
   const handleChange = useCallback(
     (e: ChangeEvent<HTMLInputElement>) => {
+      logger({ category: 'forms', action: 'form_add', label: label.toLowerCase() });
+
       let val = e.target.value.trimStart();
       if (isTelegram && !val.startsWith('@')) {
         val = '@' + val;
       }
       setValue(val);
     },
-    [isTelegram]
+    [isTelegram, logger, label]
   );
 
   useEffect(() => {
@@ -208,9 +230,15 @@ const TraitItem = ({
     if (isModified) {
       handleSave(value);
     } else {
+      logger({
+        category: 'elements',
+        action: 'element_click',
+        label: 'pencil',
+        content: label.toLowerCase(),
+      });
       inputRef.current?.focus();
     }
-  }, [isModified, handleSave, value]);
+  }, [isModified, handleSave, value, label, logger]);
 
   return (
     <Box className="traitsMain_item">

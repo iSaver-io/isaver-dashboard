@@ -1,7 +1,9 @@
 import { useRef } from 'react';
-import { Box, Flex, Text, useBreakpoint } from '@chakra-ui/react';
+import { Box, Flex, Link, Text, useBreakpoint } from '@chakra-ui/react';
 
 import { useOnVisibleLogger } from '@/hooks/logger/useOnVisibleLogger';
+import { useLogger } from '@/hooks/useLogger';
+import { APP_URL } from '@/router';
 
 import RaffleImg from './images/raffle_img.png';
 import RaffleImgSm from './images/raffle_img_sm.png';
@@ -11,9 +13,23 @@ import './Landing.scss';
 export const Raffle = () => {
   const bp = useBreakpoint({ ssr: false });
   const isSm = ['sm', 'md'].includes(bp);
+  const logger = useLogger({
+    event: 'landing',
+    category: 'elements',
+    action: 'link_click',
+    buttonLocation: 'down',
+    actionGroup: 'interactions',
+  });
 
   const ref = useRef<HTMLHeadingElement>(null);
-  useOnVisibleLogger(ref, 'our_mini');
+  useOnVisibleLogger(ref, {
+    event: 'landing',
+    category: 'blocks',
+    action: 'page_sсroll',
+    buttonLocation: 'mid',
+    actionGroup: 'interactions',
+    label: 'our_mini',
+  });
 
   return (
     <Flex
@@ -23,13 +39,25 @@ export const Raffle = () => {
       className="raffle"
     >
       <Box maxW="1068px" m="auto">
-        <Flex flexDirection="column" alignItems="center" mb={{ sm: '30px', lg: '65px' }}>
+        <Flex
+          flexDirection="column"
+          alignItems="center"
+          mb={{ sm: '40px', lg: '20px', xl: '65px' }}
+        >
           <h4 className="heading" ref={ref}>
             Our mini
             {bp === 'sm' ? <br /> : ' '}
             free-to-play
           </h4>
-          <h5 className="subheading">As a first step</h5>
+          <Link
+            href={`${APP_URL}/#claim-ticket`}
+            color="savr"
+            className="subheading"
+            textDecoration="underline"
+            onClick={() => logger({ label: 'first_step' })}
+          >
+            As a first step
+          </Link>
         </Flex>
 
         <Flex direction={{ sm: 'row', lg: 'column' }} width={{ sm: '100vw', lg: 'unset' }}>
@@ -44,7 +72,7 @@ export const Raffle = () => {
             className="raffle__description"
             justifyContent="space-between"
             alignItems={{ md: 'center', lg: 'end' }}
-            mt={{ lg: '16px' }}
+            mt={{ xl: '16px' }}
             direction={{ sm: 'column', lg: 'row' }}
           >
             <Text className="raffle__text">
@@ -54,8 +82,9 @@ export const Raffle = () => {
               textStyle="button"
               textAlign="center"
               position="absolute"
-              top="35%"
+              top={{ sm: '33%', md: '31%' }}
               left="15%"
+              fontSize={{ sm: '16px', md: '18px' }}
               display={{ sm: 'block', lg: 'none' }}
             >
               5 DAYS

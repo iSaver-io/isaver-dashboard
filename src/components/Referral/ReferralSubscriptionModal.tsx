@@ -61,7 +61,6 @@ export const ReferralSubscriptionModal: FC<ReferralSubscriptionModalProps> = ({
     event: 'team',
     category: 'elements',
     action: 'button_click',
-    label: 'activate',
     context: 'levels',
     buttonLocation: 'popup',
     actionGroup: 'conversions',
@@ -69,17 +68,28 @@ export const ReferralSubscriptionModal: FC<ReferralSubscriptionModalProps> = ({
   const navigate = useNavigateByHash();
   const { statusPowerA, hasActivePowerA } = useUserReferralSubscription();
 
-  const handleSubscribeToFull = useCallback(async () => {
-    logger({ value: bigNumberToString(fullSubscriptionCost), content: 'all' });
-    setIsFullLoading(true);
-    return onFullSubscribe().finally(() => {
-      setIsFullLoading(false);
-    });
-  }, [setIsFullLoading, onFullSubscribe, logger, fullSubscriptionCost]);
+  const handleSubscribeToFull = useCallback(
+    async (isProlong?: boolean) => {
+      logger({
+        value: bigNumberToString(fullSubscriptionCost),
+        content: 'all',
+        label: isProlong ? 'prolong' : 'activate',
+      });
+      setIsFullLoading(true);
+      return onFullSubscribe().finally(() => {
+        setIsFullLoading(false);
+      });
+    },
+    [setIsFullLoading, onFullSubscribe, logger, fullSubscriptionCost]
+  );
 
   const handleSubscribeToLevel = useCallback(
-    async (level: number) => {
-      logger({ value: bigNumberToString(levelSubscriptionCost), content: level });
+    async (level: number, isProlong?: boolean) => {
+      logger({
+        value: bigNumberToString(levelSubscriptionCost),
+        content: level,
+        label: isProlong ? 'prolong' : 'activate',
+      });
       setLevelLoading(level);
       return onLevelSubscribe(level).finally(() => {
         setLevelLoading(undefined);
@@ -117,7 +127,7 @@ export const ReferralSubscriptionModal: FC<ReferralSubscriptionModalProps> = ({
               subscriptionTill={fullSubscriptionTill}
               disabled={isLevelLoading || isFullLoading}
               isLoading={isFullLoading}
-              onSubscribe={handleSubscribeToFull}
+              onSubscribe={(isProlong) => handleSubscribeToFull(isProlong)}
             />
           </Box>
           <Divider mt="30px" />
@@ -137,7 +147,7 @@ export const ReferralSubscriptionModal: FC<ReferralSubscriptionModalProps> = ({
                       !hasActivePrevSubscription(levelsSubscriptionTill, index)
                     }
                     isLoading={levelLoading === index + 1}
-                    onSubscribe={() => handleSubscribeToLevel(index + 1)}
+                    onSubscribe={(isProlong) => handleSubscribeToLevel(index + 1, isProlong)}
                   />
                 </Box>
               ))}
@@ -178,7 +188,7 @@ type SubscriptionLevelProps = {
   isLoading?: boolean;
   disabled: boolean;
   labelAppend?: JSX.Element;
-  onSubscribe?: () => Promise<void>;
+  onSubscribe?: (isProlong: boolean) => Promise<void>;
 };
 const SubscriptionLevel: FC<SubscriptionLevelProps> = ({
   price,
@@ -196,6 +206,13 @@ const SubscriptionLevel: FC<SubscriptionLevelProps> = ({
   const isActive = subscriptionTill > currentTime;
   const isEnding =
     isActive && subscriptionTill - currentTime < REFERRAL_SUBSCRIPTION_ENDING_NOTIFICATION;
+
+  const handleSubscribe = useCallback(
+    (isProlong: boolean) => {
+      onSubscribe?.(isProlong);
+    },
+    [onSubscribe]
+  );
 
   return (
     <Box>
@@ -244,7 +261,7 @@ const SubscriptionLevel: FC<SubscriptionLevelProps> = ({
             height={{ sm: '100%', md: 'unset' }}
             isLoading={isLoading}
             isDisabled={disabled || isLoading}
-            onClick={onSubscribe}
+            onClick={() => handleSubscribe(false)}
           >
             Activate
           </Button>
@@ -256,7 +273,7 @@ const SubscriptionLevel: FC<SubscriptionLevelProps> = ({
             height={{ sm: '100%', md: 'unset' }}
             isLoading={isLoading}
             isDisabled={disabled || isLoading}
-            onClick={onSubscribe}
+            onClick={() => handleSubscribe(true)}
           >
             Prolong
           </Button>

@@ -78,7 +78,7 @@ export const useRaffleMiniGame = () => {
         queryClient.invalidateQueries({ queryKey: [RAFFLE_GET_LAST_CLAIM_REQUEST] });
         queryClient.invalidateQueries({ queryKey: [RAFFLE_IS_MINT_AVAILABLE_REQUEST] });
       },
-      onError: handleError,
+      onError: (err) => handleError(err, 'raffles'),
     }
   );
 
@@ -96,7 +96,7 @@ export const useRaffleMiniGame = () => {
         queryClient.invalidateQueries({ queryKey: [RAFFLE_GET_LAST_CLAIM_REQUEST] });
         queryClient.invalidateQueries({ queryKey: [RAFFLE_IS_MINT_AVAILABLE_REQUEST] });
       },
-      onError: handleError,
+      onError: (err) => handleError(err, 'raffles'),
     }
   );
 

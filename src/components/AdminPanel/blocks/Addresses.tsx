@@ -26,20 +26,33 @@ export const Addresses = () => {
         <AddressInfo title="Vesting" address={contracts.TokenVesting} />
         <AddressInfo title="Avatars (ERC721)" address={contracts.ISaverAvatars} />
         <AddressInfo title="Powers (ERC1155)" address={contracts.ISaverPowers} />
-        <AddressInfo title="Sell avatars & powers" address={contracts.AvatarsSell} />
+        <AddressInfo title="Sell avatars & Powers" address={contracts.AvatarsSell} />
         <AddressInfo title="Avatar settings" address={contracts.AvatarSettings} />
+        <AddressInfo title="Birthday Present pool" address={contracts.BirthdayTokensPool} />
+        <AddressInfo title="Momento" address={contracts.Momento} />
+        <AddressInfo title="Momento Prizes pool" address={contracts.MomentoTokensPool} />
 
         <Text textStyle="textMedium" mt="20px" mb="8px" fontSize="18px">
           Accounts (Pools)
         </Text>
         <AddressInfo title="Vesting Pool" address={accounts.vestingPool} />
+
+        <Text textStyle="textMedium" mt="20px" mb="8px" fontSize="18px">
+          Helpful Links
+        </Text>
+        <Link href="https://polygonscan.com/unitconverter" target="_blank" color="green.400">
+          Unit Converter
+        </Link>
+        <Link href="/vesting" target="_blank" color="green.400">
+          Vestings
+        </Link>
       </Flex>
     </AdminSection>
   );
 };
 
 const AddressInfo = ({ title, address }: { title: string; address: string }) => {
-  const explorerLink = useExplorerLink(address, true);
+  const explorerLink = useExplorerLink(address, 'address');
 
   return (
     <Flex alignItems="baseline" fontSize="14px">

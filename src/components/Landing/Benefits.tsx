@@ -29,7 +29,7 @@ export const Benefits = () => {
         </Flex>
         <Flex className="icons-card card--shadow">
           <ScalesIcon />
-          <Text className="icons-card__heading">Pegged to USDT&nbsp;1&nbsp;:&nbsp;1</Text>
+          <Text className="icons-card__heading">Tokens pegged to USDT&nbsp;1&nbsp;:&nbsp;1</Text>
           <Text className="icons-card__text">
             The rate of our tokens is tied to the stablecoin. No volatile assets. No risk of losing
             value of staked tokens.
@@ -45,7 +45,11 @@ export const Benefits = () => {
         </Flex>
         <Flex className="icons-card card--shadow">
           <PeopleIcon />
-          <Text className="icons-card__heading">Multi-type Referral Program</Text>
+          <Text className="icons-card__heading">
+            Multi-type
+            <br />
+            Referral Program
+          </Text>
           <Text className="icons-card__text">
             We offer 10-levels marketing to all users. You can invite your friends and earn up to
             100% from your friends' earnings.

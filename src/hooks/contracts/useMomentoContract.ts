@@ -40,6 +40,10 @@ export const useMomentoContract = () => {
     signerOrProvider: signer || provider,
   }) as unknown as TokensPool;
 
+  const getTotalBurnedTickets = () => {
+    return contract.totalBurnedTickets();
+  };
+
   const hasPendingRequest = (address: Address) => {
     return contract.hasPendingRequest(address);
   };
@@ -148,6 +152,7 @@ export const useMomentoContract = () => {
     tokensPoolAbi,
     tokensPoolContract,
     getMomentoPrizes,
+    getTotalBurnedTickets,
     abi,
     contract,
     address: contractAddress,

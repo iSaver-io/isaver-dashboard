@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { useMutation, useQueries, useQuery, useQueryClient } from '@tanstack/react-query';
-import { BigNumber, BigNumberish } from 'ethers';
+import { BigNumber, BigNumberish, ethers } from 'ethers';
 import { useAccount } from 'wagmi';
 
 import { useStakingContract } from '@/hooks/contracts/useStakingContract';
@@ -72,7 +72,8 @@ export const useStakingSuperPlans = () => {
 
   const superStakingPlansWithUserStakeRequest = useQuery(
     [USER_SUPER_STAKING_INFO_REQUEST, { account }],
-    async () => (account ? stakingContract.getSuperStakingPlansWithStake(account) : null),
+    async () =>
+      stakingContract.getSuperStakingPlansWithStake(account || ethers.constants.AddressZero),
     {
       refetchInterval: 5000, // 5 sec
       select: (data) =>
@@ -120,9 +121,7 @@ export const useStakingSuperPlans = () => {
         queryClient.invalidateQueries({ queryKey: [USER_SUPER_STAKING_INFO_REQUEST] });
         queryClient.invalidateQueries({ queryKey: [SAVR_BALANCE_REQUEST] });
       },
-      onError: (err) => {
-        handleError(err);
-      },
+      onError: (err) => handleError(err, 'staking'),
     }
   );
 
@@ -148,9 +147,7 @@ export const useStakingSuperPlans = () => {
         queryClient.invalidateQueries({ queryKey: [USER_SUPER_STAKING_INFO_REQUEST] });
         queryClient.invalidateQueries({ queryKey: [SAVR_BALANCE_REQUEST] });
       },
-      onError: (err) => {
-        handleError(err);
-      },
+      onError: (err) => handleError(err, 'staking'),
     }
   );
 
@@ -178,9 +175,7 @@ export const useStakingSuperPlans = () => {
         queryClient.invalidateQueries({ queryKey: [USER_SUPER_STAKING_INFO_REQUEST] });
         queryClient.invalidateQueries({ queryKey: [SAVR_BALANCE_REQUEST] });
       },
-      onError: (err) => {
-        handleError(err);
-      },
+      onError: (err) => handleError(err, 'staking'),
     }
   );
 
@@ -456,9 +451,7 @@ export const useStakingActions = () => {
         queryClient.invalidateQueries({ queryKey: [USER_STAKING_INFO_REQUEST] });
         queryClient.invalidateQueries({ queryKey: [SAV_BALANCE_REQUEST] });
       },
-      onError: (err) => {
-        handleError(err);
-      },
+      onError: (err) => handleError(err, 'staking'),
     }
   );
 
@@ -504,9 +497,7 @@ export const useStakingActions = () => {
         queryClient.invalidateQueries({ queryKey: [SAV_BALANCE_REQUEST] });
         queryClient.invalidateQueries({ queryKey: [SAVR_BALANCE_REQUEST] });
       },
-      onError: (err) => {
-        handleError(err);
-      },
+      onError: (err) => handleError(err, 'staking'),
     }
   );
 
@@ -529,9 +520,7 @@ export const useStakingActions = () => {
         queryClient.invalidateQueries({ queryKey: [USER_STAKES_REQUEST] });
         queryClient.invalidateQueries({ queryKey: [SAV_BALANCE_REQUEST] });
       },
-      onError: (err) => {
-        handleError(err);
-      },
+      onError: (err) => handleError(err, 'staking'),
     }
   );
 
@@ -558,9 +547,7 @@ export const useStakingActions = () => {
         queryClient.invalidateQueries({ queryKey: [USER_STAKES_REQUEST] });
         queryClient.invalidateQueries({ queryKey: [SAV_BALANCE_REQUEST] });
       },
-      onError: (err) => {
-        handleError(err);
-      },
+      onError: (err) => handleError(err, 'staking'),
     }
   );
 
@@ -592,7 +579,7 @@ export const useStakingAdminActions = () => {
       onSuccess: () => {
         queryClient.invalidateQueries([STAKING_PLANS_REQUEST]);
       },
-      onError: handleError,
+      onError: (err) => handleError(err, 'staking'),
     }
   );
 
@@ -627,7 +614,7 @@ export const useStakingAdminActions = () => {
       onSuccess: () => {
         queryClient.invalidateQueries([STAKING_PLANS_REQUEST]);
       },
-      onError: handleError,
+      onError: (err) => handleError(err, 'staking'),
     }
   );
 
@@ -645,7 +632,7 @@ export const useStakingAdminActions = () => {
       onSuccess: () => {
         queryClient.invalidateQueries([USER_SUPER_STAKING_INFO_REQUEST]);
       },
-      onError: handleError,
+      onError: (err) => handleError(err, 'staking'),
     }
   );
 
@@ -663,14 +650,16 @@ export const useStakingAdminActions = () => {
       onSuccess: () => {
         queryClient.invalidateQueries([USER_SUPER_STAKING_INFO_REQUEST]);
       },
-      onError: handleError,
+      onError: (err) => handleError(err, 'staking'),
     }
   );
 
   const updateExtraAprPowerC = useMutation(
     ['update-extra-apr-power-c'],
-    async ({ apr }: { apr: number }) => {
-      const txHash = await stakingContract.updateExtraAprPowerC(apr);
+    async (apr: number | string) => {
+      const txHash = await stakingContract.updateExtraAprPowerC(
+        Math.round(parseFloat(apr.toString()) * 10)
+      );
       success({
         title: 'Success',
         description: `Extra APR for Power C set to ${apr}`,
@@ -681,7 +670,7 @@ export const useStakingAdminActions = () => {
       onSuccess: () => {
         queryClient.invalidateQueries([USER_SUPER_STAKING_INFO_REQUEST]);
       },
-      onError: handleError,
+      onError: (err) => handleError(err, 'staking'),
     }
   );
 

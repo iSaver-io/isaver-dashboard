@@ -11,12 +11,47 @@ body {
   margin: auto;
 }
 
+.trusted-slider {
+  .slick-list {
+    cursor: auto;
+  }
+}
+
+#top {
+  .slick-list {
+    padding-bottom: 0 !important;
+  }
+}
+
+.main-avatars-text {
+  position: relative;
+  text-align: center;
+  z-index: 1;
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    height: 70%;
+    background: #a5ed5d;
+    border-radius: 50%;
+    filter: blur(40px);
+    z-index: -1;
+  }
+}
+
 .color-green {
   color: $color-green;
 }
 
 .color-blue {
   color: $color-blue;
+}
+.color-sav {
+  color: #a5ed5d;
 }
 
 .no-wrap {
@@ -85,6 +120,10 @@ body {
   text-transform: uppercase;
   color: #ffffff;
   margin: 0 0 5px 0;
+
+  span:first-child {
+    white-space: nowrap;
+  }
 }
 
 .main-subheading {
@@ -92,7 +131,7 @@ body {
   font-size: 32px;
   line-height: 130%;
   color: #ffffff;
-  margin-bottom: 72px;
+  margin-top: 5px;
 }
 
 .main-text {
@@ -100,7 +139,7 @@ body {
   font-size: 38px;
   line-height: 130%;
   text-transform: uppercase;
-  margin-bottom: 40px;
+  margin-top: 72px;
 }
 
 .main-btns {
@@ -113,15 +152,6 @@ body {
 
       min-width: 220px;
     }
-  }
-}
-
-.main-banner {
-  &__top {
-    margin-top: 10px;
-  }
-  &__bottom {
-    top: -60px;
   }
 }
 
@@ -147,9 +177,11 @@ body {
   svg {
     pointer-events: none;
     position: absolute;
-    top: 50%;
-    left: 50%;
+    top: calc(50% + 70px);
+    left: 57%;
     transform: translate(-50%, -50%);
+    width: 610px;
+    height: 100%;
   }
 }
 
@@ -160,6 +192,7 @@ body {
   text-transform: uppercase;
   color: #ffffff;
   margin-bottom: 7px;
+  position: relative;
 }
 
 .coins-text__secondary {
@@ -178,6 +211,7 @@ body {
   padding: 50px 25px 28px 25px;
 
   &__heading {
+    font-family: 'PT Sans', sans-serif;
     font-weight: 700;
     font-size: 24px;
     line-height: 31px;
@@ -233,25 +267,25 @@ body {
   width: 33%;
   align-items: center;
   flex-direction: column;
-  margin-bottom: 160px;
+  margin-bottom: 30px;
 
   &:nth-last-child(-n + 3) {
     margin-bottom: 0;
   }
 
   &__heading {
-    font-weight: 700;
-    font-size: 24px;
-    line-height: 31px;
+    font-weight: 500;
+    font-size: 18px;
+    line-height: 130%;
     text-align: center;
-    color: #ffffff;
-    margin-bottom: 20px;
+    color: #6e978a;
+    margin-bottom: 10px;
   }
 
   &__text {
     color: $color-green;
     font-weight: 700;
-    font-size: 52px;
+    font-size: 38px;
     line-height: 130%;
     text-align: center;
     text-transform: uppercase;
@@ -376,7 +410,26 @@ body {
   }
 }
 
+.banner-momento__img {
+  position: absolute;
+  top: 0;
+  left: 25px;
+  height: 950px;
+  width: 950px;
+}
+
 @media screen and (max-width: $xl2) {
+  .banner-momento__img {
+    height: 100%;
+    width: 50%;
+  }
+  .coins-text__img {
+    svg {
+      top: calc(50% + 20px);
+      left: 54%;
+      width: 455px;
+    }
+  }
   .heading::before {
     right: -40px;
   }
@@ -398,23 +451,23 @@ body {
   .main-subheading {
     font-size: 18px;
     line-height: 130%;
-    margin-bottom: 60px;
+    margin-top: 20px;
   }
   .main-text {
     font-size: 26px;
     line-height: 130%;
-    margin-bottom: 20px;
+    margin-top: 50px;
   }
   .main-btns {
     margin-bottom: 80px;
   }
   .coins-text__img {
     svg {
-      max-height: 420px;
       margin: 0 auto;
     }
   }
   .coins-text__primary {
+    position: initial;
     font-size: 26px;
     line-height: 130%;
   }
@@ -422,12 +475,8 @@ body {
     font-size: 18px;
     line-height: 130%;
   }
-  .main-banner {
-    &__bottom {
-      top: -35px;
-    }
-  }
   .about-container {
+    padding: 50px 0 34px;
     margin-bottom: 100px;
 
     .text {
@@ -436,6 +485,7 @@ body {
     }
 
     &__img {
+      padding-top: 0;
       svg {
         width: 200px;
         height: 304px;
@@ -481,9 +531,6 @@ body {
   }
   .number {
     margin-top: 40px;
-  }
-  .number-item {
-    margin-bottom: 60px;
   }
   .icons-card__heading {
     margin-top: 20px;
@@ -534,6 +581,18 @@ body {
 }
 
 @media screen and (max-width: $xl) {
+  .main-avatars-text {
+    &::after {
+      height: 80%;
+      filter: blur(30px);
+    }
+  }
+  .banner-momento__img {
+    top: 94px;
+    left: -10px;
+    height: 380px;
+    width: 430px;
+  }
   .main-container {
     max-width: 610px;
   }
@@ -541,25 +600,24 @@ body {
     font-size: 38px;
     margin-bottom: 0;
   }
-  .main-banner {
-    &__top {
-      margin-top: 0;
-    }
-  }
   .main-subheading {
-    font-size: 12px;
-    margin-bottom: 35px;
+    font-size: 18px;
+    margin-top: 15px;
   }
   .main-text {
-    font-size: 18px;
-    margin-bottom: 20px;
+    font-size: 16px;
+    font-weight: 600;
+    margin-top: 64px;
   }
   .coins-text__img {
     svg {
-      height: 360px;
+      top: calc(50% + 60px);
+      left: 50%;
+      width: 360px;
     }
   }
   .coins-text__primary {
+    position: relative;
     font-size: 18px;
     margin-bottom: 5px;
   }
@@ -581,6 +639,10 @@ body {
 
     .subheading {
       margin-bottom: 30px;
+      font-family: $default-font-family !important;
+      font-size: 12px;
+      font-weight: 600;
+      line-height: 130%;
     }
   }
   .main-btns {
@@ -607,16 +669,13 @@ body {
     margin-top: 30px;
   }
   .number-item {
-    margin-bottom: 50px;
-
     &__heading {
-      font-size: 16px;
-      line-height: 21px;
+      font-size: 12px;
       margin-bottom: 10px;
     }
 
     &__text {
-      font-size: 26px;
+      font-size: 18px;
       line-height: 130%;
     }
   }
@@ -685,12 +744,18 @@ body {
     padding: 0 10px;
   }
   .main-heading {
-    font-size: 38px;
-    margin-bottom: 10px;
+    font-size: 26px;
+    text-align: center;
+    margin-top: 20px;
+
+    br {
+      display: none;
+    }
   }
   .main-subheading {
     font-size: 18px;
-    margin-bottom: 20px;
+    text-align: center;
+    margin-top: 5px;
   }
   .main-btns button:last-child,
   .main-btns button:first-child {
@@ -702,42 +767,19 @@ body {
     margin-top: 30px;
     justify-content: center;
   }
-  .main-banner {
-    text-align: center;
-
-    &__bottom {
-      display: none;
-    }
-
-    &__top {
-      width: 100%;
-    }
-  }
   .main-text {
-    font-size: 26px;
-    margin-bottom: 0;
+    text-align: center;
+    font-size: 18px;
+    margin-top: 30px;
   }
   .coins-text__img {
     margin: auto;
 
     svg {
-      height: 480px;
-    }
-  }
-  .number-item {
-    margin-bottom: 30px;
-    width: 50%;
-
-    &:nth-child(3n) {
-      width: 100%;
-    }
-
-    &:nth-last-child(-n + 3) {
-      margin-bottom: 50px;
-    }
-
-    &:last-child {
-      margin-bottom: 0;
+      left: 52%;
+      height: 310px;
+      width: 340px;
+      top: 50%;
     }
   }
   .about-container {
@@ -758,19 +800,19 @@ body {
       width: 100vw;
       transform: unset;
       position: unset;
-      margin-top: -120px;
+      margin-top: -100px;
     }
     &__text {
       position: absolute;
-      top: 10%;
-      width: 100px;
+      top: 8%;
+      width: 132px;
       text-align: center;
-      font-size: 12px;
+      font-size: 16px;
       font-weight: 600;
     }
     &__heading {
       position: absolute;
-      top: 60%;
+      top: 55%;
       width: 100px;
       font-size: 26px;
       font-weight: 700;
@@ -780,7 +822,7 @@ body {
     &__description {
       position: relative;
       width: 100px;
-      margin-left: 50px;
+      margin-left: 25px;
     }
   }
   .banner {
@@ -821,9 +863,29 @@ body {
       }
     }
   }
+  .banner-momento__img {
+    height: 468px;
+    width: 468px;
+    top: 124px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  .number-item {
+    &:nth-child(2) {
+      svg {
+        width: 20px;
+        height: 20px;
+      }
+    }
+  }
 }
 
 @media screen and (min-width: $sm) and (max-width: $md) {
+  .banner-momento__img {
+    height: 360px;
+    width: 360px;
+    top: 150px;
+  }
   .heading {
     font-size: 26px;
     font-weight: 700;
@@ -832,16 +894,17 @@ body {
   .main-text {
     position: relative;
     z-index: 2;
+    font-size: 18px;
   }
   .main-heading {
     font-size: 26px;
-    margin-bottom: 5px;
+    margin-top: 0;
+    br {
+      display: block;
+    }
   }
   .main-subheading {
     font-size: 12px;
-  }
-  .main-text {
-    font-size: 18px;
   }
   .main-btns {
     margin-top: 20px;
@@ -855,7 +918,7 @@ body {
   }
   .coins-text__img {
     svg {
-      height: 400px;
+      width: 250px;
     }
   }
   .banner {
@@ -892,8 +955,28 @@ body {
       }
     }
   }
-  .number {
-    margin-top: 40px;
+  .number-item {
+    width: 50%;
+
+    &:nth-child(3) {
+      display: none;
+    }
+    &:nth-child(2) {
+      order: 2;
+      width: 100%;
+    }
+    &:nth-child(5),
+    &:nth-child(6) {
+      order: 3;
+    }
+
+    &:nth-last-child(-n + 3) {
+      margin-bottom: 20px;
+    }
+
+    &:last-child {
+      margin-bottom: 0;
+    }
   }
   .plans {
     margin-bottom: 100px;
@@ -908,8 +991,10 @@ body {
       margin-top: -80px;
     }
     &__text {
+      width: 100px;
       position: absolute;
-      top: 10%;
+      top: 4%;
+      font-size: 12px;
     }
     .heading {
       &::before {
@@ -924,7 +1009,56 @@ body {
     }
     &__description {
       width: 100px;
-      margin-left: 30px;
+      margin-left: 0px;
+      height: 430px;
+    }
+  }
+  .coins-text__img {
+    margin: auto;
+
+    svg {
+      left: 55%;
+      top: 38%;
+    }
+  }
+  .trusted-slider {
+    .slick-slide:nth-child(1) {
+      & > div:nth-child(1) {
+        .trusted-slider__item img {
+          max-width: 110px;
+        }
+      }
+      & > div:nth-child(2) {
+        .trusted-slider__item {
+          height: unset;
+          img {
+            max-width: 125px;
+          }
+        }
+      }
+      & > div:nth-child(3) {
+        .trusted-slider__item img {
+          max-width: 120px;
+        }
+      }
+    }
+    .slick-slide:nth-child(2) {
+      & > div:nth-child(1) {
+        .trusted-slider__item {
+          height: unset;
+          img {
+            max-width: 120px;
+          }
+        }
+      }
+      & > div:nth-child(2) {
+        .trusted-slider__item {
+          height: unset;
+          img {
+            max-width: 120px;
+          }
+        }
+      }
     }
   }
 }

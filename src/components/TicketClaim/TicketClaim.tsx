@@ -150,7 +150,7 @@ export const TicketClaim = () => {
           whiteSpace="nowrap"
         >
           <Text textStyle="textSansBold" mb={{ sm: '16px', xl: '0' }}>
-            {bigNumberToString(ticketPrice, { precision: 0 })} SAV / 1 Ticket
+            1 Ticket / {bigNumberToString(ticketPrice, { precision: 0 })} SAV
           </Text>
 
           {!isConnected ? (
@@ -173,8 +173,8 @@ export const TicketClaim = () => {
           </Box>
 
           <Text textStyle="text1">
-            Claim puzzle every day to get a free Ticket to iSaver Raffles.
-            <br /> Just five days and you can mint a Ticket. Also, everyone can buy any number of
+            Claim one puzzle every day to get a free Ticket. Use Tickets in Monthly Raffles and
+            Momento. Just five days and you can mint a Ticket. Also, everyone can buy any number of
             Tickets.
           </Text>
         </Box>
@@ -255,6 +255,7 @@ export const TicketClaim = () => {
 
       {isOpen ? (
         <BuyRaffleTicketsModal
+          event="dashboard"
           ticketPrice={ticketPrice}
           onBuy={buyTickets.mutateAsync}
           onClose={onClose}

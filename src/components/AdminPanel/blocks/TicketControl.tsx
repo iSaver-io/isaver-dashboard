@@ -7,6 +7,7 @@ import { Balance } from '@/components/Balance/Balance';
 import { Button } from '@/components/ui/Button/Button';
 import { useRaffleControl, useTicketPrice } from '@/hooks/raffle/useRaffle';
 import { useRaffleMiniGame } from '@/hooks/raffle/useRaffleMiniGame';
+import { useMomentoControl } from '@/hooks/useMomento';
 import { useTickets, useTicketSupply } from '@/hooks/useTickets';
 import { bigNumberToString } from '@/utils/number';
 
@@ -14,10 +15,18 @@ export const TicketControl = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const { mintTickets } = useTickets();
-  const { updateTicketPrice, updateExtraTicketsForPowerD } = useRaffleControl();
+  const {
+    updateTicketPrice,
+    updateExtraTicketsForPowerD,
+    totalBurnedTickets: raffleTotalBurnedTickets,
+  } = useRaffleControl();
   const { ticketPriceRequest } = useTicketPrice();
   const { extraTicketsPowerD } = useRaffleMiniGame();
   const ticketSupply = useTicketSupply();
+
+  const {
+    totalBurnedTicketsRequest: { data: momentoTotalBurned },
+  } = useMomentoControl();
 
   return (
     <AdminSection title="Raffle Ticket">
@@ -47,6 +56,14 @@ export const TicketControl = () => {
             isRaw
           />
           <Balance label="Total Burned" balance={ticketSupply.totalBurned} minLimit={0} isRaw />
+
+          <Balance
+            label="Total burned Raffle"
+            balance={raffleTotalBurnedTickets}
+            minLimit={0}
+            isRaw
+          />
+          <Balance label="Total burned Momento" balance={momentoTotalBurned} minLimit={0} isRaw />
         </Box>
 
         {isOpen ? <MintRaffleTicket onClose={onClose} onSubmit={mintTickets.mutateAsync} /> : null}

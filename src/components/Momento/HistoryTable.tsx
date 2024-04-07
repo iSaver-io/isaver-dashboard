@@ -19,6 +19,7 @@ import { ExportButton } from '@/components/ui/ExportButton/ExportButton';
 import { SortableTh } from '@/components/ui/Table/SortableTh';
 import { Table } from '@/components/ui/Table/Table';
 import { SortType, useDataSorting } from '@/hooks/useDataSorting';
+import { useLogger } from '@/hooks/useLogger';
 import { useAllUserPrizes } from '@/hooks/useMomento';
 import { exportToExcel } from '@/utils/exportToExcel';
 import { formatHistoryEventsToExport } from '@/utils/formatters/formatHistoryEventsToExport';
@@ -32,6 +33,13 @@ export const HistoryTable = () => {
   const isLoading = isFetching && !isFetched;
   const { isOpen, onToggle } = useDisclosure();
   const { chain } = useNetwork();
+  const logger = useLogger({
+    event: 'momento',
+    category: 'elements',
+    action: 'link_click',
+    buttonLocation: 'down',
+    actionGroup: 'interactions',
+  });
 
   const { sortedData, currentSortField, currentSortType, onSort } = useDataSorting(
     events,
@@ -71,7 +79,7 @@ export const HistoryTable = () => {
           </Text>
         </Box>
         <Box position="absolute" right="0" bottom="6px">
-          <ExportButton onClick={exportData} event="avatarSettings" buttonLocation="up" />
+          <ExportButton onClick={exportData} event="momento" buttonLocation="down" />
         </Box>
       </Flex>
 
@@ -128,7 +136,11 @@ export const HistoryTable = () => {
                   overflow="hidden"
                   textOverflow="ellipsis"
                 >
-                  <Link target="_blank" href={getExplorerLink(chain, transactionHash, false)}>
+                  <Link
+                    target="_blank"
+                    href={getExplorerLink({ chain, hash: transactionHash, type: 'tx' })}
+                    onClick={() => logger({ label: 'transaction' })}
+                  >
                     {transactionHash}
                   </Link>
                 </Td>

@@ -10,6 +10,8 @@ import { ReactComponent as UsdtIcon } from '@/assets/images/usdt_icon.svg';
 import { Button } from '@/components/ui/Button/Button';
 import { InputAmount } from '@/components/ui/InputAmount/InputAmount';
 import { useDashboardConfig } from '@/hooks/useDashboardConfig';
+import { useDebounce } from '@/hooks/useDebounce';
+import { useLogger } from '@/hooks/useLogger';
 import { useDocumentTitle, useMetaDescription } from '@/hooks/useMeta';
 import { useSavBalance, useUsdtBalance } from '@/hooks/useTokenBalance';
 import { useVendorSell } from '@/hooks/useVendorSell';
@@ -46,10 +48,21 @@ export const ExchangePage = () => {
   const usdtBalance = useUsdtBalance(address);
   const savBalance = useSavBalance(address);
   const { isExchangeSellEnabled } = useDashboardConfig();
+  const logger = useLogger({
+    event: 'exchange',
+    category: 'elements',
+  });
+  const debouncedLogger = useDebounce(logger);
 
   const handleClose = useCallback(() => {
+    logger({
+      label: 'back',
+      action: 'element_click',
+      buttonLocation: 'up',
+      actionGroup: 'interactions',
+    });
     navigate('/');
-  }, [navigate]);
+  }, [navigate, logger]);
 
   const resetState = useCallback(() => {
     setAmount('');
@@ -59,12 +72,21 @@ export const ExchangePage = () => {
   const handleSwap = useCallback(() => {
     if (!amount) return;
 
+    logger({
+      action: 'button_click',
+      label: 'confirm',
+      value: amount,
+      content: isTokenSell ? 'sav' : 'usdt',
+      buttonLocation: 'popup',
+      actionGroup: 'conversions',
+    });
+
     if (isTokenSell) {
       sellTokens.mutateAsync(makeBigNumber(amount)).then(resetState);
     } else {
       buyTokens.mutateAsync(makeBigNumber(amount, 6)).then(resetState);
     }
-  }, [isTokenSell, amount, sellTokens, buyTokens, resetState]);
+  }, [isTokenSell, amount, sellTokens, buyTokens, resetState, logger]);
 
   const toggleSell = useCallback(() => {
     setIsTokenSell((val) => !val);
@@ -95,8 +117,18 @@ export const ExchangePage = () => {
         setSellAmount(amount);
       }
       setAmount(amount);
+
+      debouncedLogger({
+        category: 'forms',
+        action: 'form_add',
+        label: 'amount',
+        value: amount,
+        content: isTokenSell ? 'sav' : 'usdt',
+        buttonLocation: 'popup',
+        actionGroup: 'interactions',
+      });
     },
-    [getTokenSellEquivalent, isTokenSell]
+    [getTokenSellEquivalent, isTokenSell, debouncedLogger]
   );
 
   const handleSellAmountChange = useCallback(
@@ -155,6 +187,7 @@ export const ExchangePage = () => {
             placeholder="0"
             value={amount}
             total={totalBalance}
+            onSetTotal={() => handleAmountChange(totalBalance)}
           />
         </Box>
 

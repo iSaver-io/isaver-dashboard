@@ -40,7 +40,7 @@ export const useStakingHistory = (enabled: boolean = true) => {
   const stakesDataRequest = useQuery(['stakes-history-request'], getAllStakes, {
     enabled,
     select: (data) =>
-      data.map(({ args }) => {
+      data.map((args) => {
         const stakingPlan = stakingPlansRequest.data?.find(
           (plan) => plan.stakingPlanId === args.stakingPlanId.toNumber()
         );
@@ -61,13 +61,10 @@ export const useStakingHistory = (enabled: boolean = true) => {
   const claimsDataRequest = useQuery(['claims-history-request'], getAllClaims, {
     enabled,
     select: (data) =>
-      data.map(({ args }) => {
-        const timestamp = args.timestamp.toNumber();
-        return {
-          ...args,
-          timestamp,
-        };
-      }),
+      data.map((args) => ({
+        ...args,
+        timestamp: args.timestamp.toNumber(),
+      })),
   });
 
   const claimsCountData = useMemo(
@@ -92,6 +89,47 @@ export const useStakingHistory = (enabled: boolean = true) => {
   );
 
   return { stakesDataRequest, claimsDataRequest, claimsCountData };
+};
+
+const useSuperStakingHistory = (enabled: boolean = true) => {
+  const { getAllSuperStakes, getAllSuperClaimed, getAllSuperWithdrawn } = useStakingContract();
+
+  const superStakesDataRequest = useQuery(['super-stakes-history-request'], getAllSuperStakes, {
+    enabled,
+    select: (data) =>
+      data.map((args) => ({
+        ...args,
+        superStakingPlanId: args.superStakingPlanId.toNumber(),
+        timestamp: args.timestamp.toNumber(),
+      })),
+  });
+
+  const superClaimsDataRequest = useQuery(['super-claims-history-request'], getAllSuperClaimed, {
+    enabled,
+    select: (data) =>
+      data.map((args) => ({
+        ...args,
+        superStakingPlanId: args.superStakingPlanId.toNumber(),
+        amount: args.profit,
+        timestamp: args.timestamp.toNumber(),
+      })),
+  });
+
+  const superWithdrawnDataRequest = useQuery(
+    ['super-withdrawn-history-request'],
+    getAllSuperWithdrawn,
+    {
+      enabled,
+      select: (data) =>
+        data.map((args) => ({
+          ...args,
+          superStakingPlanId: args.superStakingPlanId.toNumber(),
+          timestamp: args.timestamp.toNumber(),
+        })),
+    }
+  );
+
+  return { superStakesDataRequest, superClaimsDataRequest, superWithdrawnDataRequest };
 };
 
 export enum PERIOD {
@@ -201,6 +239,8 @@ export const useStakingTvlAndTotalClaimed = () => {
   const { isConnected } = useAccount();
   // Fetch only for disconnected
   const { stakesDataRequest, claimsDataRequest } = useStakingHistory(!isConnected);
+  const { superClaimsDataRequest, superStakesDataRequest, superWithdrawnDataRequest } =
+    useSuperStakingHistory(!isConnected);
 
   const stakingClaimsHistory = useMemo<TotalClaimedHistory[]>(
     () =>
@@ -220,9 +260,30 @@ export const useStakingTvlAndTotalClaimed = () => {
     [stakesDataRequest.data]
   );
 
+  const superStakesHistory = useMemo<TvlHistory[]>(
+    () =>
+      aggregateHistoryByDay(superStakesDataRequest.data || []).map(
+        ({ aggregatedAmount, ...data }) => ({
+          ...data,
+          tvl: aggregatedAmount,
+        })
+      ),
+    [superStakesDataRequest.data]
+  );
+
+  const superClaimsHistory = useMemo<TotalClaimedHistory[]>(
+    () =>
+      aggregateHistoryByDay(
+        [...(superClaimsDataRequest.data || []), ...(superWithdrawnDataRequest.data || [])].sort(
+          (a, b) => a.blockNumber - b.blockNumber
+        )
+      ).map(({ aggregatedAmount, ...data }) => ({ ...data, totalClaimed: aggregatedAmount })),
+    [superClaimsDataRequest.data, superWithdrawnDataRequest.data]
+  );
+
   const aggregatedTvlAndClaimedData = useMemo(
     () =>
-      [...stakesHistory, ...stakingClaimsHistory]
+      [...stakesHistory, ...superStakesHistory, ...stakingClaimsHistory, ...superClaimsHistory]
         .sort((a, b) => a.day - b.day)
         .reduce((acc, item) => {
           const lastItem = acc.length
@@ -264,7 +325,7 @@ export const useStakingTvlAndTotalClaimed = () => {
           tvl: bigNumberToNumber(item.tvl),
           totalClaimed: bigNumberToNumber(item.totalClaimed),
         })),
-    [stakesHistory, stakingClaimsHistory]
+    [stakesHistory, superStakesHistory, stakingClaimsHistory, superClaimsHistory]
   );
 
   return {

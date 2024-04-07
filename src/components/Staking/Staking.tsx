@@ -48,8 +48,9 @@ export const Staking: FC<StakingProps> = ({ isPageView }) => {
   const logger = useLogger({
     category: 'elements',
     action: 'button_click',
-    buttonLocation: 'up',
-    actionGroup: 'interactions',
+    buttonLocation: 'mid',
+    actionGroup: 'conversions',
+    context: 'staking',
   });
 
   const { stakingPlansRequest } = useStakingPlans();
@@ -118,13 +119,11 @@ export const Staking: FC<StakingProps> = ({ isPageView }) => {
     (
       planId: number,
       {
-        event,
         label,
         valueKey,
       }: {
-        event: 'staking' | 'dashboard';
-        label: 'activate' | 'deposit' | 'claim';
-        valueKey?: 'totalReward' | 'subscriptionCost';
+        label: 'activate' | 'deposit' | 'claim' | 'prolong';
+        valueKey?: 'totalAvailableReward' | 'subscriptionCost';
       }
     ) => {
       const plan = activeStakingPlansWithUserInfo.find((plan) => plan.stakingPlanId === planId);
@@ -136,7 +135,7 @@ export const Staking: FC<StakingProps> = ({ isPageView }) => {
         : undefined;
 
       logger({
-        event,
+        event: isPageView ? 'staking' : 'dashboard',
         label,
         value,
         content: plan?.stakingDuration ? plan?.stakingDuration.toString() : '-',
@@ -144,46 +143,43 @@ export const Staking: FC<StakingProps> = ({ isPageView }) => {
         actionGroup: 'conversions',
       });
     },
-    [activeStakingPlansWithUserInfo, logger]
+    [activeStakingPlansWithUserInfo, logger, isPageView]
   );
 
   const handleSubscribe = useCallback(
-    (planId: number) => {
+    (planId: number, isProlong?: boolean) => {
       logAction(planId, {
-        event: isPageView ? 'staking' : 'dashboard',
-        label: 'activate',
+        label: isProlong ? 'prolong' : 'activate',
         valueKey: 'subscriptionCost',
       });
 
       return subscribe.mutateAsync(planId);
     },
-    [subscribe, logAction, isPageView]
+    [subscribe, logAction]
   );
 
   const handleDeposit = useCallback(
     (planId: number) => {
       logAction(planId, {
-        event: isPageView ? 'staking' : 'dashboard',
         label: 'deposit',
       });
 
       setSelectedPlan(planId);
       onOpen();
     },
-    [logAction, isPageView, setSelectedPlan, onOpen]
+    [logAction, setSelectedPlan, onOpen]
   );
 
   const handleClaim = useCallback(
     (planId: number) => {
       logAction(planId, {
-        event: isPageView ? 'staking' : 'dashboard',
         label: 'claim',
-        valueKey: 'totalReward',
+        valueKey: 'totalAvailableReward',
       });
 
       return withdrawAllCompleted.mutateAsync(planId);
     },
-    [logAction, withdrawAllCompleted, isPageView]
+    [logAction, withdrawAllCompleted]
   );
 
   return (
@@ -295,7 +291,9 @@ export const Staking: FC<StakingProps> = ({ isPageView }) => {
               userStakeSavR={planData.currentSavrTokenStaked || 0}
               userTotalReward={planData.totalReward}
               isClaimAvailable={planData.hasReadyStakes}
-              onSubscribe={() => handleSubscribe(planData.stakingPlanId)}
+              onSubscribe={() =>
+                handleSubscribe(planData.stakingPlanId, planData.isSubscriptionEnding)
+              }
               onDeposit={() => handleDeposit(planData.stakingPlanId)}
               onClaim={() => handleClaim(planData.stakingPlanId)}
             />
@@ -326,7 +324,7 @@ export const Staking: FC<StakingProps> = ({ isPageView }) => {
             (stakingPlansRequest.data?.[selectedPlan].apr || 0) +
             (statusPowerC.isActive ? extraAprPowerC : 0)
           }
-          lockPeriodDays={stakingPlansRequest.data?.[selectedPlan].stakingDuration || 0}
+          lockPeriodDays={stakingPlansRequest.data?.[selectedPlan].stakingDuration.toNumber() || 0}
           isLoading={deposit.isLoading}
           isPageView={isPageView}
           highlightApr={statusPowerC.isActive}
