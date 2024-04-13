@@ -11,7 +11,7 @@ window.Buffer = require('buffer/').Buffer;
 const productionChains = process.env.REACT_APP_IS_MAINNET ? [polygon] : [polygonMumbai];
 const devChains = process.env.REACT_APP_IS_MAINNET
   ? [polygon, polygonMumbai, hardhat, localhost]
-  : [polygonMumbai, hardhat, localhost];
+  : [polygon, polygonMumbai, hardhat, localhost];
 
 const { chains, provider, webSocketProvider } = configureChains(
   process.env.NODE_ENV === 'production' ? productionChains : devChains,
