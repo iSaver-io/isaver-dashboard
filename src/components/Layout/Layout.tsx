@@ -37,7 +37,7 @@ export const Layout = () => {
   return (
     <>
       {/* // TODO: remove after migration */}
-      {isAdminPage ? null : (
+      {isAdminPage || isLandingPath ? null : (
         <Flex
           position="fixed"
           top="0"
