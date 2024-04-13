@@ -8,7 +8,7 @@ import { publicProvider } from 'wagmi/providers/public';
 
 window.Buffer = require('buffer/').Buffer;
 
-const productionChains = process.env.REACT_APP_IS_MAINNET ? [polygon] : [polygonMumbai];
+const productionChains = process.env.REACT_APP_IS_MAINNET ? [polygon] : [polygon, polygonMumbai];
 const devChains = process.env.REACT_APP_IS_MAINNET
   ? [polygon, polygonMumbai, hardhat, localhost]
   : [polygon, polygonMumbai, hardhat, localhost];
