@@ -49,7 +49,7 @@ export const Balances = () => {
 
       <BalanceRow
         label="Staking Rewards Treasury"
-        sav={stakingAvailableTokensSAV.data}
+        sav={stakingAvailableTokensSAV.data || 0}
         savMinLimit={10_000}
         savr={stakingAvailableTokensSAVR.data}
         savrMinLimit={10_000}
