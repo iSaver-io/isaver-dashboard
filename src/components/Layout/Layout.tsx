@@ -1,7 +1,7 @@
 import { useCallback, useEffect } from 'react';
 import { useLocation, useOutlet, useSearchParams } from 'react-router-dom';
 import { CSSTransition, SwitchTransition } from 'react-transition-group';
-import { Flex } from '@chakra-ui/react';
+import { Box, Flex, Text } from '@chakra-ui/react';
 
 import { Footer } from '@/components/Footer/Footer';
 import { Header } from '@/components/Header/Header';
@@ -34,6 +34,34 @@ export const Layout = () => {
 
   return (
     <>
+      {/* // TODO: remove after migration */}
+      <Flex
+        position="fixed"
+        top="0"
+        left="0"
+        width="100vw"
+        height="100vh"
+        justifyContent="center"
+        alignItems="center"
+        zIndex={1000000000000}
+        bgColor="rgba(0,0,0,0.5)"
+      >
+        <Box
+          borderRadius="5px"
+          bgColor="gray.200"
+          textAlign="center"
+          padding="24px"
+          maxWidth="500px"
+        >
+          <Text textStyle="h3" mb="12px">
+            Attention please!
+          </Text>
+          <Text textStyle="text1">
+            We are currently updating our contracts and therefore the platform is closed for
+            maintenance. SAV and SAVR tokens are paused. We'll be back in a few hours.
+          </Text>
+        </Box>
+      </Flex>
       <Header isLandingView={isLandingPath} />
       <SwitchTransition>
         <CSSTransition

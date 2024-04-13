@@ -11,6 +11,9 @@ html {
 
 body {
   background-color: $color-green-back;
+
+  // TODO: remove after migration
+  overflow: hidden;
 }
 
 #root {
