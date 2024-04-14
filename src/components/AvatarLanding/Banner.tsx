@@ -1,11 +1,10 @@
 import { useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { Box, Button, Flex, Text } from '@chakra-ui/react';
 
 import { useLogger } from '@/hooks/useLogger';
+import { APP_URL } from '@/router';
 
 export const Banner = () => {
-  const navigate = useNavigate();
   const logger = useLogger({
     event: 'avatars',
     category: 'banners',
@@ -16,8 +15,8 @@ export const Banner = () => {
   });
   const handleOpenMomento = useCallback(() => {
     logger({ label: 'momento' });
-    navigate('/momento');
-  }, [logger, navigate]);
+    window.open(APP_URL + '/momento');
+  }, [logger]);
 
   return (
     <Flex

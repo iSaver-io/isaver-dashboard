@@ -86,7 +86,7 @@ export const MintAvatar = () => {
           <Text
             textStyle="h3"
             color="sav"
-            mt={{ base: '20px', xl: '50px' }}
+            mt={{ base: '20px', xl: '0px' }}
             mb={{ base: 0, xl: '10px' }}
           >
             <Text as="span" color="white">

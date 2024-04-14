@@ -29,6 +29,9 @@ const settings: Settings = {
   autoplay: true,
   autoplaySpeed: 5000,
   adaptiveHeight: true,
+  draggable: true,
+  touchMove: true,
+  swipeToSlide: true,
 
   responsive: [
     {
@@ -81,7 +84,7 @@ export const AvatarsSlider = () => {
     <Box className="avatars-slider" mt={{ sm: '30px', '2xl': '50px' }}>
       <Slider {...settings}>
         {images.map((image, index) => (
-          <Box key={index} pr={{ sm: '5px', xl: '30px' }}>
+          <Box key={index} pr={{ sm: '5px', xl: '30px' }} _focus={{ outline: 'none' }}>
             <img src={image} alt="slider item" className="slider-image" />
           </Box>
         ))}

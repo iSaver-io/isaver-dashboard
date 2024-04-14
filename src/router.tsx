@@ -27,6 +27,7 @@ export const isDevelopment = process.env.NODE_ENV === 'development';
 
 // Common links
 export const AVATAR_LANDING_POWERS_INFO_URL = `${AVATARS_URL}/#powers`;
+export const DASHBOARD_PLAY_EVERYDAY_URL = `${APP_URL}/#claim-ticket`;
 
 export const LANDING_PATH = '/';
 export const AVATARS_LANDING_PATH = '/';

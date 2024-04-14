@@ -1,9 +1,15 @@
+// eslint-disable-next-line
 import { useCallback, useState } from 'react';
-import { Link } from 'react-router-dom';
-import { Box, Grid, Text, useBreakpoint } from '@chakra-ui/react';
+import { Box, Grid, Link, Text, useBreakpoint } from '@chakra-ui/react';
 
 import { useLogger } from '@/hooks/useLogger';
-import { APP_URL, AVATARS_LANDING_PATH, WHITEPAPER_URL } from '@/router';
+import {
+  APP_URL,
+  AVATARS_URL,
+  AVATAR_LANDING_POWERS_INFO_URL,
+  DASHBOARD_PLAY_EVERYDAY_URL,
+  WHITEPAPER_URL,
+} from '@/router';
 
 import BacksideIcon from './images/backside.svg';
 import PrizeImage1 from './images/otherPrizes/1.png';
@@ -44,7 +50,8 @@ export const OtherPrizes = () => {
               generation on our platform and 2024 are in the Momento pool. Join Momento for a chance
               to win an Avatar! More about Avatars is{' '}
               <Link
-                to={AVATARS_LANDING_PATH}
+                href={AVATARS_URL}
+                target="__blank"
                 onClick={() => logger({ label: 'here', content: 'iSaver Avatar' })}
               >
                 here
@@ -61,7 +68,8 @@ export const OtherPrizes = () => {
               to the Momento pool for everyone to have a chance to win. A list of collections is
               always available in our{' '}
               <Link
-                to={WHITEPAPER_URL}
+                href={WHITEPAPER_URL}
+                target="__blank"
                 onClick={() => logger({ label: 'whitepaper', content: 'NFT NEW Collections' })}
               >
                 Whitepaper
@@ -78,7 +86,8 @@ export const OtherPrizes = () => {
               iSaver platform. You can choose to activate one or all of the Powers, depending on
               your goals. Join Momento for a chance to win Powers! More about Powers is{' '}
               <Link
-                to={AVATARS_LANDING_PATH}
+                href={AVATAR_LANDING_POWERS_INFO_URL}
+                target="__blank"
                 onClick={() => logger({ label: 'here', content: 'iSaver Powers' })}
               >
                 here
@@ -95,7 +104,8 @@ export const OtherPrizes = () => {
               for a chance to win from 1 to 10 Tickets. You can mint your first Ticket by
               participating in our mini{' '}
               <Link
-                to={APP_URL}
+                href={DASHBOARD_PLAY_EVERYDAY_URL}
+                target="__blank"
                 onClick={() => logger({ label: 'free_to_play', content: 'Raffle Tickets' })}
               >
                 FREE&nbsp;TO&nbsp;PLAY
@@ -109,7 +119,11 @@ export const OtherPrizes = () => {
           description={
             <>
               Join Momento for a chance to win from 1 to 1,000 SAVR. And stake your SAVR{' '}
-              <Link to="/staking" onClick={() => logger({ label: 'here', content: 'SAVR Tokens' })}>
+              <Link
+                href={`${APP_URL}/staking`}
+                target="__blank"
+                onClick={() => logger({ label: 'here', content: 'SAVR Tokens' })}
+              >
                 here
               </Link>
             </>
@@ -123,7 +137,8 @@ export const OtherPrizes = () => {
               Join Momento for a chance to win various ERC20 tokens on the Polygon blockchain. A
               list of tokens is always available in our{' '}
               <Link
-                to={WHITEPAPER_URL}
+                href={WHITEPAPER_URL}
+                target="__blank"
                 onClick={() => logger({ label: 'whitepaper', content: 'Various Tokens' })}
               >
                 Whitepaper

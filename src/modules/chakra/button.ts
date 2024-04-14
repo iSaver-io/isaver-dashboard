@@ -99,11 +99,11 @@ const secondary = defineStyle({
 const secondaryFilled = defineStyle({
   ...secondary,
   bgColor: 'rgba(110, 151, 138, 0.1)',
-  borderColor: 'rgba(110, 151, 138, 0)',
+  borderColor: 'green.100',
 
   _hover: {
     ...secondary._hover,
-    bgColor: 'rgba(110, 151, 138, 0.1)',
+    bgColor: 'green.100',
     borderColor: 'green.100',
   },
 
