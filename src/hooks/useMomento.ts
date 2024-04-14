@@ -150,7 +150,7 @@ export const useMomentoPrizes = () => {
 
   const { prizesRequest } = useTokensPoolPrizes(ContractsEnum.MomentoTokensPool);
 
-  const MAX_NFTS = 10;
+  const MAX_NFTS = 12;
   const externalNFTAddresses = useMemo(() => {
     const nfts = (prizesRequest.data || [])
       .filter((category) => !category.info.isEmpty)
@@ -167,8 +167,7 @@ export const useMomentoPrizes = () => {
           .map((tokenId) => ({ ...category, tokenId: tokenId.toString() }))
           .slice(0, 3)
       )
-      .flat()
-      .slice(0, 12);
+      .flat();
 
     return nfts.slice(0, MAX_NFTS);
   }, [addresses, prizesRequest.data]);
