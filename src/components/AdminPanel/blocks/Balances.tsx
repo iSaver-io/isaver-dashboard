@@ -63,13 +63,17 @@ export const Balances = () => {
       <BalanceRow label="Staking B Power TVL" savr={superPlansMetrics.tvl} />
 
       <BalanceRow
+        label="Staking Locked Rewards"
+        sav={(stakingLockedTokens.data || BigNumber.from(0)).sub(tvlSav || 0)}
+      />
+
+      <BalanceRow
         label="Staking Rewards Treasury"
         sav={stakingAvailableTokensSAV.data || 0}
         savMinLimit={10_000}
         savr={stakingAvailableTokensSAVR.data}
         savrMinLimit={10_000}
       />
-      <BalanceRow label="Staking Locked Rewards" sav={stakingLockedTokens.data || 0} />
 
       <BalanceRow
         label="Referral Rewards Treasury"
