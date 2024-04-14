@@ -172,11 +172,11 @@ export const useTokensPoolControl = (
 
         const requiredForPrize = params.amount.mul(params.remaining);
 
-        if (balance < requiredForPrize) {
+        if (balance.lt(requiredForPrize)) {
           throw new Error(`${from} balance less than required for prize`);
         }
 
-        if (allowance < requiredForPrize) {
+        if (allowance.lt(requiredForPrize)) {
           const approveTx = await erc20Contract.approve(contract.address, requiredForPrize);
           const txHash = await waitForTransaction(approveTx);
 
@@ -223,7 +223,7 @@ export const useTokensPoolControl = (
 
         const requiredForPrize = params.amount.mul(params.remaining);
 
-        if (balance < requiredForPrize) {
+        if (balance.lt(requiredForPrize)) {
           throw new Error(`${from} balance less than required for prize`);
         }
 
