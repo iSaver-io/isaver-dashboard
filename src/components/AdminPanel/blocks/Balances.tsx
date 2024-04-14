@@ -5,7 +5,11 @@ import { AdminSection } from '@/components/AdminPanel/common/AdminSection';
 import { useAccounts } from '@/hooks/admin/useAccounts';
 import { useContractsAddresses } from '@/hooks/admin/useContractsAddresses';
 import { ContractsEnum } from '@/hooks/contracts/useContractAbi';
-import { useStakingAvailableTokens, useStakingMetrics } from '@/hooks/staking/useStaking';
+import {
+  useStakingAvailableTokens,
+  useStakingLockedTokens,
+  useStakingMetrics,
+} from '@/hooks/staking/useStaking';
 import { useSavBalance, useSavRBalance, useUsdtBalance } from '@/hooks/useTokenBalance';
 import { useTokenSupply } from '@/hooks/useTokenSupply';
 import { beautifyAmount, bigNumberToNumber, bigNumberToString } from '@/utils/number';
@@ -17,6 +21,7 @@ export const Balances = () => {
 
   const stakingAvailableTokensSAV = useStakingAvailableTokens(false);
   const stakingAvailableTokensSAVR = useStakingAvailableTokens(true);
+  const stakingLockedTokens = useStakingLockedTokens();
   const raffleBalance = useSavRBalance(Raffles);
   const referralBalance = useSavRBalance(ReferralManager);
   const vendorBalance = useSavBalance(VendorSell);
@@ -33,11 +38,16 @@ export const Balances = () => {
   const isLoading =
     stakingAvailableTokensSAV.isLoading ||
     stakingAvailableTokensSAVR.isLoading ||
+    stakingLockedTokens.isLoading ||
     raffleBalance.isLoading ||
     referralBalance.isLoading ||
     vendorBalance.isLoading ||
     vendorChangeBalance.isLoading ||
-    vestingBalance.isLoading;
+    vestingBalance.isLoading ||
+    momentoPoolSav.isLoading ||
+    momentoPoolSavr.isLoading ||
+    birthdayPoolSav.isLoading ||
+    birthdayPoolSavr.isLoading;
 
   return (
     <AdminSection title="Balances" isLoading={isLoading}>
@@ -59,6 +69,7 @@ export const Balances = () => {
         savr={stakingAvailableTokensSAVR.data}
         savrMinLimit={10_000}
       />
+      <BalanceRow label="Staking Locked Rewards" sav={stakingLockedTokens.data || 0} />
 
       <BalanceRow
         label="Referral Rewards Treasury"

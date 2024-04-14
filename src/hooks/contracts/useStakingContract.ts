@@ -44,6 +44,10 @@ export const useStakingContract = () => {
     return contract.getAvailableTokens(isSAVRToken);
   };
 
+  const getLockedTokens = async () => {
+    return contract.totalLockedTokens();
+  };
+
   const getStakingPlans = async () => {
     return contract.getStakingPlans();
   };
@@ -239,6 +243,7 @@ export const useStakingContract = () => {
     deposit,
     withdraw,
     withdrawAllCompleted,
+    getLockedTokens,
     getAvailableTokens,
     getStakingPlans,
     getUserStakingInfo,

@@ -697,3 +697,9 @@ export const useStakingAvailableTokens = (isSAVRToken: boolean) => {
     stakingContract.getAvailableTokens(isSAVRToken)
   );
 };
+
+export const STAKING_LOCKED_TOKENS_REQUEST = 'staking-locked-tokens-request';
+export const useStakingLockedTokens = () => {
+  const stakingContract = useStakingContract();
+  return useQuery([STAKING_LOCKED_TOKENS_REQUEST], () => stakingContract.getLockedTokens());
+};
