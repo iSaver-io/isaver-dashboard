@@ -121,7 +121,7 @@ export const Header: FC<HeaderProps> = ({ isLandingView }) => {
               variant="secondaryFilled"
               size={{ sm: 'md', '2xl': 'lg' }}
               width="220px"
-              // border="none"
+              border="none"
               onClick={navigateToApp}
             >
               Dashboard
