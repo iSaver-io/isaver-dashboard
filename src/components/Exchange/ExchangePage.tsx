@@ -231,7 +231,7 @@ export const ExchangePage = () => {
               <>Token sell fee is {(sellCommission || 0) * 100}%</>
             ) : (
               <>
-                The exchange is not available.
+                The exchange is not available now.
                 <br />
                 Contact your Leader or email us at{' '}
                 <Link color="blue" href="mailto:exchange@isaver.io">

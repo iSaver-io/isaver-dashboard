@@ -29,6 +29,7 @@ const settings: Settings = {
   variableWidth: false,
   adaptiveHeight: false,
   swipeToSlide: true,
+  initialSlide: 0,
 
   responsive: [
     {
@@ -86,7 +87,7 @@ export const Prizes = () => {
 
   const cards = useMemo(() => {
     if (isLoadingExternalNFT) return [];
-    if (!externalNFTs.length) return cardsMock;
+    if (!externalNFTs.length) return [];
 
     return externalNFTs
       .map((nft) => ({

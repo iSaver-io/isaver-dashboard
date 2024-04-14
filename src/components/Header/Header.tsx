@@ -112,6 +112,7 @@ export const Header: FC<HeaderProps> = ({ isLandingView }) => {
               size="md"
               variant="secondaryFilled"
               aria-label="Open app"
+              border="none"
               icon={<ArrowIcon width="24px" />}
               onClick={navigateToApp}
               padding={{ sm: '0' }}
