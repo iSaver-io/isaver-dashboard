@@ -94,6 +94,7 @@ export const StakingControl = () => {
         <Box mt="16px" maxHeight="400px" overflowY="auto">
           {superStakingPlansWithUserStake.map((superPlan) => (
             <SuperStakingPlanInfo
+              key={superPlan.stakingPlanId}
               stakingPlanId={superPlan.stakingPlanId}
               apr={superPlan.apr.apr}
               isActive={superPlan.plan.isActive}
