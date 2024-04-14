@@ -12,7 +12,8 @@ import { beautifyAmount, bigNumberToNumber, bigNumberToString } from '@/utils/nu
 
 export const Balances = () => {
   const { vestingPool } = useAccounts();
-  const { Raffles, ReferralManager, VendorSell } = useContractsAddresses();
+  const { Raffles, ReferralManager, VendorSell, MomentoTokensPool, BirthdayTokensPool } =
+    useContractsAddresses();
 
   const stakingAvailableTokensSAV = useStakingAvailableTokens(false);
   const stakingAvailableTokensSAVR = useStakingAvailableTokens(true);
@@ -24,6 +25,10 @@ export const Balances = () => {
   const { tvlSav, tvlSavr, superPlansMetrics } = useStakingMetrics();
   const savSupply = useTokenSupply(ContractsEnum.SAV);
   const savrSupply = useTokenSupply(ContractsEnum.SAVR);
+  const momentoPoolSav = useSavBalance(MomentoTokensPool);
+  const momentoPoolSavr = useSavRBalance(MomentoTokensPool);
+  const birthdayPoolSav = useSavBalance(BirthdayTokensPool);
+  const birthdayPoolSavr = useSavRBalance(BirthdayTokensPool);
 
   const isLoading =
     stakingAvailableTokensSAV.isLoading ||
@@ -73,6 +78,17 @@ export const Balances = () => {
         usdtMinLimit={10_000}
       />
       <BalanceRow label="Vesting Pool" sav={vestingBalance.data || 0} />
+
+      <BalanceRow
+        label="Momento Prizes Pool"
+        sav={momentoPoolSav.data || 0}
+        savr={momentoPoolSavr.data || 0}
+      />
+      <BalanceRow
+        label="Birthday Presents Pool"
+        sav={birthdayPoolSav.data || 0}
+        savr={birthdayPoolSavr.data || 0}
+      />
     </AdminSection>
   );
 };

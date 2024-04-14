@@ -110,8 +110,13 @@ export const useAvatarSettingsContract = () => {
   };
 
   const getApprovedCollections = async (): Promise<Address[]> => {
-    const filter = avatarSettings.filters.CollectionApprovalUpdated(null, null);
-    const events = await avatarSettings.queryFilter(filter);
+    const filter = avatarSettings.filters.CollectionApprovalUpdated();
+    const rawEvents = await alchemy.core.getLogs({
+      ...filter,
+      fromBlock: FROM_BLOCK_EPISODE_2,
+      toBlock: 'latest',
+    });
+    const events = rawEvents.map((event) => ({ ...event, ...avatarSettingsIface.parseLog(event) }));
 
     const activeCollections = new Set();
 
@@ -220,6 +225,16 @@ export const useAvatarSettingsContract = () => {
     return await avatarSettings.getPowerEndingTime(user, powerId);
   };
 
+  const updatePowerActivationFee = async (fee: BigNumberish) => {
+    const tx = await avatarSettings.updatePowerActivationFee(fee);
+    return waitForTransaction(tx);
+  };
+
+  const approveExternalCollection = async (collectionAddress: string, isApproved: boolean) => {
+    const tx = await avatarSettings.approveCollection(collectionAddress, isApproved);
+    return waitForTransaction(tx);
+  };
+
   return {
     avatarSettings,
     address: avatarSettingsAddress,
@@ -244,5 +259,7 @@ export const useAvatarSettingsContract = () => {
     hasPowerC,
     hasPowerD,
     getPowerEndingTime,
+    updatePowerActivationFee,
+    approveExternalCollection,
   };
 };

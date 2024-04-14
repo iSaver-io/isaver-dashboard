@@ -632,7 +632,7 @@ export const useStakingAdminActions = () => {
       const txHash = await stakingContract.addSuperStakingPlan(apr);
       success({
         title: 'Success',
-        description: `${apr} APY super Staking plan created`,
+        description: `${apr / 10}% APY super Staking plan created`,
         txHash,
       });
     },

@@ -1,6 +1,9 @@
+import { Interface } from '@ethersproject/abi';
 import { BigNumber } from 'ethers';
-import { useContract, useProvider, useSigner } from 'wagmi';
+import { Address, useContract, useProvider, useSigner } from 'wagmi';
 
+import { FROM_BLOCK_EPISODE_2 } from '@/constants';
+import alchemy from '@/modules/alchemy';
 import { TokensPool } from '@/types.common';
 import { waitForTransaction } from '@/utils/waitForTransaction';
 
@@ -18,6 +21,8 @@ export type AddPrizeParamsType = {
   tokenIds: string[];
 };
 
+const ADMIN_ROLE = '0x0000000000000000000000000000000000000000000000000000000000000000';
+
 export const useTokensPoolContract = (
   contractName: ContractsEnum.MomentoTokensPool | ContractsEnum.BirthdayTokensPool
 ) => {
@@ -33,6 +38,8 @@ export const useTokensPoolContract = (
     abi,
     signerOrProvider: signer || provider,
   }) as unknown as TokensPool;
+
+  const tokensPoolIface = new Interface(abi);
 
   const getPrizes = async () => {
     const totalCategories = (await contract.categoriesLength()).toNumber();
@@ -51,6 +58,56 @@ export const useTokensPoolContract = (
       info: { chance: val[1][0], prizeIds: val[1][1], isEmpty: val[1][2] },
       prizes: val[2],
     }));
+  };
+
+  const getAdmins = async () => {
+    const filterGranted = contract.filters.RoleGranted();
+    const filterRevoked = contract.filters.RoleRevoked();
+
+    const rawEventsGranted = await alchemy.core.getLogs({
+      ...filterGranted,
+      fromBlock: FROM_BLOCK_EPISODE_2,
+      toBlock: 'latest',
+    });
+    const rawEventsRevoked = await alchemy.core.getLogs({
+      ...filterRevoked,
+      fromBlock: FROM_BLOCK_EPISODE_2,
+      toBlock: 'latest',
+    });
+
+    const rawEvents = rawEventsGranted
+      .concat(rawEventsRevoked)
+      .sort((a, b) => a.blockNumber - b.blockNumber);
+
+    const events = rawEvents.map((event) => ({ ...event, ...tokensPoolIface.parseLog(event) }));
+
+    const activeAdmins = new Set();
+
+    for (const event of events) {
+      const { role, account } = event.args;
+
+      const isAdminRole = role === ADMIN_ROLE;
+      const isApproved = event.name === 'RoleGranted';
+
+      if (isAdminRole) {
+        if (isApproved) {
+          activeAdmins.add(account);
+        } else {
+          activeAdmins.delete(account);
+        }
+      }
+    }
+
+    return Array.from(activeAdmins) as Address[];
+  };
+
+  const grantAdminRole = async (account: string) => {
+    const tx = await contract.grantRole(ADMIN_ROLE, account);
+    return waitForTransaction(tx);
+  };
+  const revokeAdminRole = async (account: string) => {
+    const tx = await contract.revokeRole(ADMIN_ROLE, account);
+    return waitForTransaction(tx);
   };
 
   const getTotalChance = () => {
@@ -104,6 +161,10 @@ export const useTokensPoolContract = (
   return {
     contract,
     address: contractAddress,
+
+    getAdmins,
+    grantAdminRole,
+    revokeAdminRole,
 
     getPrizes,
     getTotalChance,

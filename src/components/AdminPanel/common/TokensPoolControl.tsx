@@ -7,12 +7,13 @@ import { Button } from '@/components/ui/Button/Button';
 import { useContractsAddresses } from '@/hooks/admin/useContractsAddresses';
 import { useTokensPoolControl } from '@/hooks/admin/useTokensPoolControl';
 import { ContractsEnum } from '@/hooks/contracts/useContractAbi';
+import { bigNumberToString } from '@/utils/number';
+import alchemy from '@/modules/alchemy';
 
 import { AddCategoryModal } from './AddCategoryModal';
 import { AddPrizeToTokensPoolModal } from './AddPrizeToTokensPoolModal';
+import { AddressesListControl } from './AddressesListControl';
 import { RemovePrizeModal } from './RemovePrizeModal';
-import { bigNumberToString } from '@/utils/number';
-import alchemy from '@/modules/alchemy';
 
 type TokensPoolTypes = ContractsEnum.MomentoTokensPool | ContractsEnum.BirthdayTokensPool;
 
@@ -41,6 +42,16 @@ export const TokensPoolControl = ({
           Create category
         </Button>
       </Flex>
+
+      <AddressesListControl
+        addresses={tokensPool.adminsRequest.data || []}
+        label="Edit admin"
+        listLabel="Admins"
+        addActionLabel="Grant role"
+        removeActionLabel="Revoke role"
+        onAdd={tokensPool.grantAdminRole.mutateAsync}
+        onRemove={tokensPool.revokeAdminRole.mutateAsync}
+      />
 
       <Text fontWeight="500" my="8px" fontSize="18px">
         Categories ({tokensPool.prizesRequest.data?.length}) (total chance:{' '}

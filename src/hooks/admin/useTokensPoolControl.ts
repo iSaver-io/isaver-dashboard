@@ -26,6 +26,7 @@ export const useTokensPoolPrizes = (
 
 export const TOKENS_POOL_PRIZES_REQUEST = 'tokens-pool-prizes-request';
 export const TOKENS_POOL_TOTAL_CHANCE_REQUEST = 'tokens-pool-total-chance-request';
+export const TOKENS_POOL_ADMINS = 'tokens-pool-admins-request';
 export const useTokensPoolControl = (
   contractName: ContractsEnum.MomentoTokensPool | ContractsEnum.BirthdayTokensPool
 ) => {
@@ -43,6 +44,43 @@ export const useTokensPoolControl = (
 
   const totalChanceRequest = useQuery([TOKENS_POOL_TOTAL_CHANCE_REQUEST, contractName], () =>
     contract.getTotalChance()
+  );
+
+  const adminsRequest = useQuery([TOKENS_POOL_ADMINS, contractName], () => contract.getAdmins());
+
+  const grantAdminRole = useMutation(
+    ['tokens-pool-grant-admin-role', contractName],
+    async (account: string) => {
+      const txHash = await contract.grantAdminRole(account);
+      success({
+        title: 'Success',
+        description: `Admin role granted to ${account}`,
+        txHash,
+      });
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: [TOKENS_POOL_ADMINS, contractName] });
+      },
+      onError: (err) => handleError(err),
+    }
+  );
+  const revokeAdminRole = useMutation(
+    ['tokens-pool-revoke-admin-role', contractName],
+    async (account: string) => {
+      const txHash = await contract.revokeAdminRole(account);
+      success({
+        title: 'Success',
+        description: `Admin role revoked from ${account}`,
+        txHash,
+      });
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: [TOKENS_POOL_ADMINS, contractName] });
+      },
+      onError: (err) => handleError(err),
+    }
   );
 
   const createCategoryMutation = useMutation(
@@ -264,6 +302,10 @@ export const useTokensPoolControl = (
   return {
     prizesRequest,
     totalChanceRequest,
+
+    adminsRequest,
+    grantAdminRole,
+    revokeAdminRole,
 
     createCategoryMutation,
     updateCategoryMutation,

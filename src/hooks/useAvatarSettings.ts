@@ -1,6 +1,7 @@
 import { useEffect, useMemo } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { BigNumber, BigNumberish, ethers } from 'ethers';
+import { parseEther } from 'ethers/lib/utils.js';
 import { Address, erc721ABI, useAccount, useMutation, useProvider, useSigner } from 'wagmi';
 import { getContract } from 'wagmi/actions';
 
@@ -571,4 +572,73 @@ export const useClaimBirthdayPresent = () => {
       },
     }
   );
+};
+
+export const useAvatarSettingsControl = () => {
+  const { approveExternalCollection, updatePowerActivationFee } = useAvatarSettingsContract();
+  const { address: account } = useAccount();
+  const { connect } = useConnectWallet();
+  const { success, handleError } = useNotification();
+  const queryClient = useQueryClient();
+
+  const approveCollectionMutation = useMutation(
+    ['approve-collection-mutation'],
+    async ({
+      collectionAddress,
+      isApproved,
+    }: {
+      collectionAddress: string;
+      isApproved: boolean;
+    }) => {
+      if (!account) {
+        connect();
+        return;
+      }
+
+      const txHash = await approveExternalCollection(collectionAddress, isApproved);
+      success({
+        title: 'Success',
+        description: `You have ${
+          isApproved ? 'approved' : 'removed'
+        } collection ${collectionAddress}`, // eslint-disable-line
+        txHash,
+      });
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: [GET_APPROVED_COLLECTIONS] });
+      },
+      onError: (err) => {
+        handleError(err, 'avatars');
+      },
+    }
+  );
+
+  const updatePowerActivationFeeMutation = useMutation(
+    ['approve-collection-mutation'],
+    async (fee: number) => {
+      if (!account) {
+        connect();
+        return;
+      }
+
+      const feeWei = parseEther(fee.toString());
+      const txHash = await updatePowerActivationFee(feeWei);
+      success({
+        title: 'Success',
+        description: `You have updated power activation fee to ${fee} SAV`, // eslint-disable-line
+        txHash,
+      });
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: [GET_POWER_ACTIVATION_FEE] });
+      },
+      onError: (err) => {
+        handleError(err, 'avatars');
+      },
+    }
+  );
+
+  return { approveCollectionMutation, updatePowerActivationFeeMutation };
 };

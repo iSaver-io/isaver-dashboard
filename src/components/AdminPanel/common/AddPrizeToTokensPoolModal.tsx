@@ -105,7 +105,7 @@ export const AddPrizeToTokensPoolModal = ({
             placeholder="Token address"
             value={tokenAddress}
             textOverflow="ellipsis"
-            onChange={(e) => setTokenAddress(e.target.value)}
+            onChange={(e) => setTokenAddress(e.target.value.trim())}
           />
 
           <Flex direction="column" gap="8px" mt="16px">

@@ -48,14 +48,26 @@ export const TicketControl = () => {
         </Button>
 
         <Box mt="24px">
-          <Balance label="Total Supply" balance={ticketSupply.totalSupply} minLimit={0} isRaw />
+          <Balance
+            label="Total Supply"
+            // Прибавляем supply первой версии билета + 13243
+            balance={ticketSupply.totalSupply}
+            minLimit={0}
+            isRaw
+          />
           <Balance
             label="Circulating Supply"
             balance={ticketSupply.circulatingSupply}
             minLimit={0}
             isRaw
           />
-          <Balance label="Total Burned" balance={ticketSupply.totalBurned} minLimit={0} isRaw />
+          <Balance
+            label="Total Burned"
+            // Прибавляем burned первой версии билета
+            balance={ticketSupply.totalBurned ? ticketSupply.totalBurned + 11588 : undefined}
+            minLimit={0}
+            isRaw
+          />
 
           <Balance
             label="Total burned Raffle"
