@@ -51,7 +51,7 @@ export const TicketControl = () => {
           <Balance
             label="Total Supply"
             // Прибавляем supply первой версии билета + 13243
-            balance={ticketSupply.totalSupply}
+            balance={ticketSupply.totalSupply ? ticketSupply.totalSupply + 11588 : undefined}
             minLimit={0}
             isRaw
           />
