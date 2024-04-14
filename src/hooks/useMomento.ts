@@ -163,10 +163,12 @@ export const useMomentoPrizes = () => {
           !Object.values(addresses).includes(prize.tokenAddress)
       )
       .map((category) =>
-        category.tokenIds.map((tokenId) => ({ ...category, tokenId: tokenId.toString() }))
+        category.tokenIds
+          .map((tokenId) => ({ ...category, tokenId: tokenId.toString() }))
+          .slice(0, 3)
       )
       .flat()
-      .slice(0, 10);
+      .slice(0, 12);
 
     return nfts.slice(0, MAX_NFTS);
   }, [addresses, prizesRequest.data]);

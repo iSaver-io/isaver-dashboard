@@ -78,16 +78,17 @@ export const Prizes = () => {
   const { externalNFTs, isLoadingExternalNFT } = useMomentoPrizes();
 
   const cards = useMemo(() => {
-    if (isLoadingExternalNFT || !externalNFTs.length) {
-      return cardsMock;
-    }
+    if (isLoadingExternalNFT) return [];
+    if (!externalNFTs.length) return cardsMock;
 
-    return externalNFTs.map((nft) => ({
-      image: nft?.image.originalUrl,
-      label: nft?.name,
-      contract: nft?.contract.address,
-      tokenId: nft?.tokenId,
-    }));
+    return externalNFTs
+      .map((nft) => ({
+        image: nft?.image.pngUrl || nft?.image.cachedUrl || nft?.image.originalUrl,
+        label: nft?.name,
+        contract: nft?.contract.address,
+        tokenId: nft?.tokenId,
+      }))
+      .filter((item) => !item.image?.includes('//ipfs'));
   }, [externalNFTs, isLoadingExternalNFT]);
 
   return (
