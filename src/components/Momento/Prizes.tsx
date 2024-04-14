@@ -10,13 +10,6 @@ import { getOpenseaLink } from '@/utils/getExplorerLink';
 import Prizes1 from './images/prizes1.png';
 import Prizes2 from './images/prizes2.png';
 
-const hashCode = (s: string) => {
-  return s.split('').reduce(function (a, b) {
-    a = (a << 5) - a + b.charCodeAt(0);
-    return a & a;
-  }, 0);
-};
-
 const settings: Settings = {
   infinite: true,
   speed: 400,
@@ -96,13 +89,7 @@ export const Prizes = () => {
         contract: nft?.contract.address,
         tokenId: nft?.tokenId,
       }))
-      .filter((item) => !item.image?.includes('//ipfs'))
-      .map((value) => ({
-        value,
-        sort: hashCode((value.label || '') + (value.image || '') + (value.tokenId || '')),
-      }))
-      .sort((a, b) => a.sort - b.sort)
-      .map(({ value }) => value);
+      .filter((item) => !item.image?.includes('//ipfs'));
   }, [externalNFTs, isLoadingExternalNFT]);
 
   return (
