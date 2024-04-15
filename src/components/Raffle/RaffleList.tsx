@@ -117,7 +117,7 @@ export const RaffleList = () => {
         </Box>
 
         {!isConnected ? (
-          <ConnectWalletButton location="down" />
+          <ConnectWalletButton location="down" alignSelf="flex-start" />
         ) : (
           <Button
             onClick={() => navigate('/momento')}

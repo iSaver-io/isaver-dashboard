@@ -61,6 +61,7 @@ export const TicketControl = () => {
             minLimit={0}
             isRaw
           />
+          <Balance label="Project Supply" balance={ticketSupply.projectSupply} minLimit={0} isRaw />
           <Balance
             label="Total Burned"
             // Прибавляем burned первой версии билета

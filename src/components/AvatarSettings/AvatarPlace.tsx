@@ -1,5 +1,4 @@
 import { useCallback, useState } from 'react';
-import { Link as RouterLink } from 'react-router-dom';
 import { AddIcon } from '@chakra-ui/icons';
 import { Box, IconButton, Link, Text } from '@chakra-ui/react';
 import { useAccount } from 'wagmi';
@@ -98,10 +97,9 @@ export const AvatarPlace = () => {
             <Text textStyle="text2" mt={{ base: '20px', md: '30px' }}>
               A more detailed is{' '}
               <Link
-                as={RouterLink}
-                to={AVATARS_URL}
+                href={AVATARS_URL}
                 color="savr"
-                target="_blank"
+                target="_self"
                 onClick={() => logger({ action: 'link_click', label: 'here' })}
               >
                 here

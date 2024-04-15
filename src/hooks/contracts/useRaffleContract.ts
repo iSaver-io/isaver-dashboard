@@ -1,7 +1,9 @@
+import { Interface } from '@ethersproject/abi';
 import { BigNumber, BigNumberish } from 'ethers';
 import { useContract, useProvider, useSigner } from 'wagmi';
 
-import { Raffles } from '@/types.common';
+import alchemy from '@/modules/alchemy';
+import { IRaffles, Raffles } from '@/types.common';
 import { waitForTransaction } from '@/utils/waitForTransaction';
 
 import { ContractsEnum, useContractAbi } from './useContractAbi';
@@ -30,6 +32,8 @@ export const useRaffleContract = () => {
     signerOrProvider: signer || provider,
   }) as unknown as Raffles;
 
+  const rafflesIface = new Interface(abi);
+
   const getWinnerTotalPrize = (address: string) => {
     return contract.getWinnerPrize(address);
   };
@@ -38,8 +42,19 @@ export const useRaffleContract = () => {
     return contract.TICKET_PRICE();
   };
 
-  const getRounds = () => {
-    return contract.getRounds();
+  const getRounds = async () => {
+    const selectorHash = rafflesIface.getSighash('getRounds');
+    const data = await alchemy.core.call(
+      {
+        from: await signer?.getAddress(),
+        to: contractAddress,
+        data: selectorHash,
+      },
+      'latest'
+    );
+
+    const decoded = rafflesIface.decodeFunctionResult('getRounds', data);
+    return decoded && decoded.length ? (decoded[0] as IRaffles.RoundStructOutput[]) : [];
   };
 
   const getRound = (roundId: number) => {

@@ -185,7 +185,7 @@ export const Footer = () => {
                 <GithubIcon />
               </a>
               <a
-                href="https://opensea.io/ISaverCreator"
+                href="https://opensea.io/iSaverCreator/created"
                 target="_blank"
                 rel="noreferrer"
                 onClick={() => handleSocialLinkClick('opensea')}

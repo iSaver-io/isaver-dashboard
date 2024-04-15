@@ -1,5 +1,4 @@
 import { useCallback } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
 import { Button, Flex, Text, useBreakpoint } from '@chakra-ui/react';
 import { useAccount } from 'wagmi';
 
@@ -7,6 +6,7 @@ import { ContractsEnum, useContractAbi } from '@/hooks/contracts/useContractAbi'
 import { useAvatarPrices, useBuyAvatar, useNextInflationTimestamp } from '@/hooks/useAvatarsSell';
 import { useLogger } from '@/hooks/useLogger';
 import { useAddressHasNFT } from '@/hooks/useNFTHolders';
+import { APP_URL } from '@/router';
 
 import { ConnectWalletButton } from '../ui/ConnectWalletButton/ConnectWalletButton';
 
@@ -25,7 +25,6 @@ export const MintAvatar = () => {
   });
   const bp = useBreakpoint({ ssr: false });
   const isSm = ['sm', 'md', 'lg'].includes(bp);
-  const navigate = useNavigate();
 
   const { address: avatarsAddress } = useContractAbi({ contract: ContractsEnum.ISaverAvatars });
   const { hasNFT } = useAddressHasNFT(avatarsAddress, address);
@@ -37,8 +36,8 @@ export const MintAvatar = () => {
 
   const handleOpenAvatarSettings = useCallback(() => {
     logger({ label: 'activate', actionGroup: 'interactions' });
-    navigate('/avatar-settings');
-  }, [logger, navigate]);
+    window.open(APP_URL + '/avatar-settings', '_self');
+  }, [logger]);
 
   return (
     <Flex flexDirection="column" alignItems="center">

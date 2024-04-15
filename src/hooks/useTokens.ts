@@ -21,12 +21,10 @@ export const useTokens = () => {
       token,
       spender,
       requiredAmount,
-      allow,
     }: {
       token: TOKENS;
       spender: string;
       requiredAmount: BigNumberish;
-      allow?: BigNumberish;
     }) => {
       if (!address) {
         connect();
@@ -35,9 +33,9 @@ export const useTokens = () => {
       const tokenContract = token === TOKENS.SAVR ? savRToken : savToken;
       const allowance = await tokenContract.allowance(address, spender);
 
-      const allowAmount = allow || BigNumber.from(10).pow(18).mul(10_000); // 10_000 tokens for default approve
-
       if (allowance.lt(requiredAmount)) {
+        const allowAmount =
+          BigNumber.from(requiredAmount).sub(allowance) || BigNumber.from(10).pow(18).mul(10_000); // 10_000 tokens for default approve
         const txHash = await tokenContract.approve(spender, BigNumber.from(allowAmount));
         success({ title: 'Approved', txHash });
       }

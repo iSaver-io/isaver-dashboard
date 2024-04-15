@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import { useQueries, useQuery } from '@tanstack/react-query';
-import { useAccount } from 'wagmi';
+import { BigNumber } from 'ethers';
 
 import { useAccounts } from './admin/useAccounts';
 import { useContractsAddresses } from './admin/useContractsAddresses';
@@ -34,7 +34,6 @@ export const useTicketSupply = () => {
   const ticketContract = useTicketContract();
   const tokenId = 0;
 
-  const { address } = useAccount();
   const accounts = useAccounts();
   const contracts = useContractsAddresses();
 
@@ -58,16 +57,6 @@ export const useTicketSupply = () => {
     return Array.from(new Set([...Object.values(accounts), ...Object.values(contracts)]));
   }, [accounts, contracts]);
 
-  const balance = useQuery(
-    ['ticket-circulating-supply', address],
-    async () => {
-      return address ? await ticketContract.balanceOf(address) : null;
-    },
-    {
-      select: (data) => data?.toNumber(),
-    }
-  );
-
   const balances = useQueries({
     queries: uniqueAddresses.map((address) => ({
       queryKey: ['ticket-circulating-supply', address],
@@ -80,20 +69,26 @@ export const useTicketSupply = () => {
     return totalMinted.data - currentSupply.data?.toNumber();
   }, [totalMinted.data, currentSupply.data]);
 
+  const projectSupply = useMemo(
+    () =>
+      balances
+        .reduce((sum, balanceRequest) => {
+          if (balanceRequest.data) return sum.add(balanceRequest.data);
+          return sum;
+        }, BigNumber.from(0))
+        .toNumber(),
+    [balances]
+  );
+
   const circulatingSupply = useMemo(() => {
     if (!currentSupply.data) return 0;
-    return balances
-      .reduce((sum, balanceRequest) => {
-        if (balanceRequest.data) return sum.sub(balanceRequest.data);
-        return sum;
-      }, currentSupply.data)
-      .toNumber();
-  }, [currentSupply.data, balances]);
+    return currentSupply.data.sub(projectSupply);
+  }, [currentSupply.data, projectSupply]);
 
   return {
     totalSupply: totalMinted.data,
     totalBurned,
     circulatingSupply,
-    balance,
+    projectSupply,
   };
 };
