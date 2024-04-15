@@ -69,6 +69,7 @@ export const useStakingSuperPlans = () => {
   const queryClient = useQueryClient();
   const { address: account } = useAccount();
   const { success, handleError } = useNotification();
+  const { statusPowerC, extraAprPowerC } = useStakingSuperPowers();
 
   const superStakingPlansWithUserStakeRequest = useQuery(
     [USER_SUPER_STAKING_INFO_REQUEST, { account }],
@@ -108,11 +109,14 @@ export const useStakingSuperPlans = () => {
       if (!superStakingPlan) throw new Error('Staking plan not found');
 
       const txHash = await stakingContract.depositSuperPlan({ superPlanId, amount });
+      const apr = statusPowerC.isActive
+        ? superStakingPlan.apr.apr + extraAprPowerC
+        : superStakingPlan.apr.apr;
       success({
         title: 'Success',
-        description: `You have deposited ${bigNumberToString(amount)} SAVR in Staking pool with ${
-          superStakingPlan.apr.apr
-        }% APY`,
+        description: `You have deposited ${bigNumberToString(
+          amount
+        )} SAVR in Staking pool with ${apr}% APY`,
         txHash,
       });
     },
