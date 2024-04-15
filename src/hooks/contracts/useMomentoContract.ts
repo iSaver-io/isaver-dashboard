@@ -59,7 +59,7 @@ export const useMomentoContract = () => {
   };
 
   const getPrize = async () => {
-    const tx = await contract.getPrize({ gasLimit: 15000000 });
+    const tx = await contract.getPrize();
     setIsGetPrizeConfirmed(true);
     const hash = await waitForTransaction(tx);
     const receipt = provider.getTransactionReceipt(hash);
