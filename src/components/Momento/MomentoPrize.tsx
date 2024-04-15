@@ -162,9 +162,11 @@ const NFT = ({
 }: Pick<PrizeInfo, 'tokenId' | 'tokenAddress'> & { isISaverCollection: boolean }) => {
   const { nft } = useGetNFT(tokenAddress, Number(tokenId));
 
+  const image = nft?.image.pngUrl || nft?.image.cachedUrl || nft?.image.originalUrl;
+
   return (
     <PrizeCard label={isISaverCollection ? 'iSaver Avatars' : 'NFT New collections'}>
-      <Image src={nft?.image.originalUrl} alt={nft?.name} />
+      <Image src={image} alt={nft?.name} />
     </PrizeCard>
   );
 };
