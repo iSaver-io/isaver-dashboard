@@ -226,17 +226,10 @@ export const useBuyPowers = () => {
 
       const txHash = await avatarsSellContract.buyPower(id, amount);
 
-      const idStr = id.toString();
-      const powerTypeMap: Record<string, string> = {
-        '1': 'A',
-        '2': 'B',
-        '3': 'C',
-        '4': 'D',
-      };
-      const powerType = Object.keys(powerTypeMap).includes(idStr) ? powerTypeMap[idStr] : '';
+      const letter = ['A', 'B', 'C', 'D'][parseInt(id.toString())];
       success({
         title: 'Success',
-        description: `You have minted ${amount} Powers ${powerType}`,
+        description: `You have minted ${amount} Powers ${letter}`,
         txHash,
       });
     },
