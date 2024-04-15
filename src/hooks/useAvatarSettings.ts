@@ -281,7 +281,7 @@ export const useActivatePower = (powerId: number) => {
         return;
       }
 
-      const approved = await powersContract.isApprovedForAll(avatarSettingsAddress, account);
+      const approved = await powersContract.isApprovedForAll(account, avatarSettingsAddress);
 
       if (!approved) {
         const tx = await powersContract.setApprovalForAll(avatarSettingsAddress, true);
