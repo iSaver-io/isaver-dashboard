@@ -202,7 +202,12 @@ export const useAvatarMetadata = () => {
 
       return JSON.parse(atob(base64String));
     },
-    { enabled: isConnected && hasAvatar, staleTime: 0, cacheTime: 0, retry: true }
+    {
+      enabled: isConnected && hasAvatar && activeAvatar.isAvatarCollection,
+      staleTime: 0,
+      cacheTime: 0,
+      retry: true,
+    }
   );
 
   const metadata = useMemo(() => {
@@ -220,7 +225,7 @@ export const useAvatarMetadata = () => {
     return result;
   }, [data]);
 
-  return { metadata, isLoading };
+  return { metadata, isLoading: isLoading && activeAvatar.isAvatarCollection };
 };
 
 export const GET_ALL_EVENTS = 'get-all-events';
@@ -340,13 +345,14 @@ export const useActivateAvatar = () => {
         abi: erc721ABI,
         signerOrProvider: signer || provider,
       });
-      const approved = await collectionContract.getApproved(BigNumber.from(tokenId));
 
-      if (approved !== avatarSettingsContract.address) {
-        const tx = await collectionContract.approve(
-          avatarSettingsContract.address,
-          BigNumber.from(tokenId)
-        );
+      const isApproved = await collectionContract.isApprovedForAll(
+        account,
+        avatarSettingsContract.address
+      );
+
+      if (!isApproved) {
+        const tx = await collectionContract.setApprovalForAll(avatarSettingsContract.address, true);
         const txHash = await waitForTransaction(tx);
         success({ title: 'Approved', txHash });
       }

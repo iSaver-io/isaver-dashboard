@@ -7,6 +7,7 @@ import { bigNumberToNumber } from '@/utils/number';
 
 import { useAvatarsSellContract } from './contracts/useAvatarsSellContract';
 import { useConnectWallet } from './useConnectWallet';
+import { NFT_HOLDERS_REQUEST } from './useNFTHolders';
 import { useNotification } from './useNotification';
 import { useTokens } from './useTokens';
 
@@ -150,6 +151,7 @@ export const useBuyAvatar = () => {
   const { address: account } = useAccount();
   const { connect } = useConnectWallet();
   const { success, handleError } = useNotification();
+  const queryClient = useQueryClient();
 
   const avatarPriceRequest = useQuery(
     [AVATAR_PRICE_REQUEST],
@@ -186,6 +188,9 @@ export const useBuyAvatar = () => {
       });
     },
     {
+      onSuccess: () => {
+        queryClient.invalidateQueries([NFT_HOLDERS_REQUEST]);
+      },
       onError: (err) => {
         handleError(err, 'avatars');
       },

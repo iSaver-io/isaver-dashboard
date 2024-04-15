@@ -9,7 +9,7 @@ import { alchemy } from '@/modules/alchemy';
 import { ContractsEnum, useContractAbi } from './contracts/useContractAbi';
 import { useActiveAvatar, useApprovedCollections } from './useAvatarSettings';
 
-const NFT_HOLDERS_REQUEST = 'get-token-holders';
+export const NFT_HOLDERS_REQUEST = 'get-token-holders';
 export const useNFTHolder = (tokenAddress: string) => {
   const nftHoldersRequest = useQuery(
     [NFT_HOLDERS_REQUEST, tokenAddress],
