@@ -51,7 +51,7 @@ export const OtherPrizes = () => {
               to win an Avatar! More about Avatars is{' '}
               <Link
                 href={AVATARS_URL}
-                target="__blank"
+                target="_self"
                 onClick={() => logger({ label: 'here', content: 'iSaver Avatar' })}
               >
                 here
@@ -69,7 +69,7 @@ export const OtherPrizes = () => {
               always available in our{' '}
               <Link
                 href={WHITEPAPER_URL}
-                target="__blank"
+                target="_blank"
                 onClick={() => logger({ label: 'whitepaper', content: 'NFT NEW Collections' })}
               >
                 Whitepaper
@@ -87,7 +87,7 @@ export const OtherPrizes = () => {
               your goals. Join Momento for a chance to win Powers! More about Powers is{' '}
               <Link
                 href={AVATAR_LANDING_POWERS_INFO_URL}
-                target="__blank"
+                target="_self"
                 onClick={() => logger({ label: 'here', content: 'iSaver Powers' })}
               >
                 here
@@ -105,7 +105,7 @@ export const OtherPrizes = () => {
               participating in our mini{' '}
               <Link
                 href={DASHBOARD_PLAY_EVERYDAY_URL}
-                target="__blank"
+                target="_self"
                 onClick={() => logger({ label: 'free_to_play', content: 'Raffle Tickets' })}
               >
                 FREE&nbsp;TO&nbsp;PLAY
@@ -121,7 +121,7 @@ export const OtherPrizes = () => {
               Join Momento for a chance to win from 1 to 1,000 SAVR. And stake your SAVR{' '}
               <Link
                 href={`${APP_URL}/staking`}
-                target="__blank"
+                target="_self"
                 onClick={() => logger({ label: 'here', content: 'SAVR Tokens' })}
               >
                 here
@@ -138,7 +138,7 @@ export const OtherPrizes = () => {
               list of tokens is always available in our{' '}
               <Link
                 href={WHITEPAPER_URL}
-                target="__blank"
+                target="_blank"
                 onClick={() => logger({ label: 'whitepaper', content: 'Various Tokens' })}
               >
                 Whitepaper

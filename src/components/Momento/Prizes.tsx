@@ -134,7 +134,7 @@ const PrizeCard = ({ image, label, tokenId, contract }: PrizeCardProps) => {
 
   const handleOpenOpenseaPage = useCallback(() => {
     const link = getOpenseaLink(contract || '', tokenId || '', chain);
-    window.open(link, '__blank');
+    window.open(link, '_blank');
   }, [chain, contract, tokenId]);
 
   return (

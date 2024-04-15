@@ -1,5 +1,4 @@
 import { useCallback } from 'react';
-import { Link as RouterLink } from 'react-router-dom';
 import { Box, Button, Flex, Link, Text } from '@chakra-ui/react';
 
 import {
@@ -89,10 +88,9 @@ export const PowersInfo = () => {
           <Text textStyle="text2" mt="15px">
             All about Powers is{' '}
             <Link
-              as={RouterLink}
-              to={AVATAR_LANDING_POWERS_INFO_URL}
+              href={AVATAR_LANDING_POWERS_INFO_URL}
               color="savr"
-              target="_blank"
+              target="_self"
               onClick={() =>
                 logger({ action: 'link_click', label: 'here', actionGroup: 'interactions' })
               }
