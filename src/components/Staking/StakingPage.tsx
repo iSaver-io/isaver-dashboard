@@ -68,7 +68,7 @@ export const StakingPage = () => {
         paddingX={{ sm: '10px', md: 'unset' }}
       >
         <Text textStyle="h3" textTransform="uppercase" id="stakings-list">
-          Your staking
+          Your lockup staking
         </Text>
 
         <ExportButton onClick={exportData} event="staking" buttonLocation="up" />

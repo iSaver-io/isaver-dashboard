@@ -103,9 +103,10 @@ export const Main = () => {
       logger({ label: 'burn', actionGroup: 'conversions' });
 
       setState(TicketStates.TicketBurnLoading);
-      burnTicket.mutateAsync().then(() => {
-        setState(TicketStates.TicketBurned);
-      });
+      burnTicket
+        .mutateAsync()
+        .then(() => setState(TicketStates.TicketBurned))
+        .catch(() => setState(TicketStates.TicketPlaced));
     }
   }, [burnTicket, state, logger]);
 
@@ -114,11 +115,14 @@ export const Main = () => {
       logger({ label: 'go', actionGroup: 'conversions' });
 
       setState(TicketStates.TicketGoLoading);
-      getPrize.mutateAsync().then(() => {
-        setTimeout(() => {
-          setState(TicketStates.Finished);
-        }, 4500);
-      });
+      getPrize
+        .mutateAsync()
+        .then(() => {
+          setTimeout(() => {
+            setState(TicketStates.Finished);
+          }, 4500);
+        })
+        .catch(() => setState(TicketStates.OracleResponded));
     }
   }, [getPrize, state, logger]);
 
