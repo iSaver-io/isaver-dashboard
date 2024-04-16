@@ -68,7 +68,7 @@ export const OtherPrizes = () => {
               to the Momento pool for everyone to have a chance to win. A list of collections is
               always available in our{' '}
               <Link
-                href={WHITEPAPER_URL}
+                href="https://isaver.gitbook.io/isaver/products/momento"
                 target="_blank"
                 onClick={() => logger({ label: 'whitepaper', content: 'NFT NEW Collections' })}
               >
@@ -137,7 +137,7 @@ export const OtherPrizes = () => {
               Join Momento for a chance to win various ERC20 tokens on the Polygon blockchain. A
               list of tokens is always available in our{' '}
               <Link
-                href={WHITEPAPER_URL}
+                href="https://isaver.gitbook.io/isaver/products/momento"
                 target="_blank"
                 onClick={() => logger({ label: 'whitepaper', content: 'Various Tokens' })}
               >

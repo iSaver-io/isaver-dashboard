@@ -108,7 +108,7 @@ export const useMomentoContract = () => {
           logParsed.args.isERC20 || logParsed.args.isERC1155
             ? `${
                 logParsed.args.isERC20
-                  ? bigNumberToString(logParsed.args.amount, { precision: 0 })
+                  ? bigNumberToString(logParsed.args.amount, { precision: 1 })
                   : logParsed.args.amount.toString()
               } ${tokenName}`
             : tokenName
