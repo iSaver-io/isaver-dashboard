@@ -126,7 +126,7 @@ const SavrTokens = ({ amount }: Pick<PrizeInfo, 'amount'>) => {
         lineHeight="1"
         zIndex={10}
       >
-        {bigNumberToString(amount, { precision: 0 })}
+        {bigNumberToString(amount, { precision: 1 })}
       </Text>
       <Text
         fontWeight="black"
