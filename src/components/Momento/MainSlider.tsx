@@ -116,6 +116,13 @@ export const MainSlider = ({ isLoading, prizeInfo }: MainSliderProps) => {
         if (speed > 150) {
           setSpeed((val) => Math.max(val - 100, 150));
         }
+      } else {
+        if (speed > 700) {
+          setIsAutoplay(false);
+          setCurrentSlide(slide);
+          setSpeed(800);
+        }
+        setSpeed((val) => val + 100);
       }
     },
     [isLoading, prizeInfo, speed]

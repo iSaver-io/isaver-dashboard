@@ -229,7 +229,7 @@ export const useBuyPowers = () => {
       const letter = ['A', 'B', 'C', 'D'][parseInt(id.toString())];
       success({
         title: 'Success',
-        description: `You have minted ${amount} Powers ${letter}`,
+        description: `You have minted ${amount}x Power ${letter}`,
         txHash,
       });
     },
