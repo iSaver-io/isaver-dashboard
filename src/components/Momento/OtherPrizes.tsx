@@ -101,7 +101,7 @@ export const OtherPrizes = () => {
           description={
             <>
               The Ticket allows you to participate in the iSaver Raffles and Momento. Join Momento
-              for a chance to win from 1 to 10 Tickets. You can mint your first Ticket by
+              for a chance to win from 0.1 to 10 Tickets. You can mint your first Ticket by
               participating in our mini{' '}
               <Link
                 href={DASHBOARD_PLAY_EVERYDAY_URL}

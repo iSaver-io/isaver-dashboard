@@ -20,7 +20,7 @@ import {
   Text,
   useBreakpoint,
 } from '@chakra-ui/react';
-import { BigNumberish, ethers } from 'ethers';
+import { parseEther } from 'ethers/lib/utils.js';
 import { useAccount } from 'wagmi';
 
 import { ReactComponent as ChevronDownIcon } from '@/assets/images/icons/chevron-down.svg';
@@ -137,7 +137,7 @@ export const StakingModal: FC<StakingModalProps> = ({
     }
   }, [token, amount, onStake, logger, isPageView]);
 
-  const amountBN = ethers.utils.parseEther(`${amount || 0}`);
+  const amountBN = parseEther(`${amount || 0}`);
   const isGreaterThanMax = balance?.lt(amountBN);
   const isStakeDisabled =
     !amount || parseFloat(amount) < MIN_STAKE_LIMIT || isGreaterThanMax || !isAgreed;
@@ -145,11 +145,16 @@ export const StakingModal: FC<StakingModalProps> = ({
   const rewards = useMemo(
     () =>
       !isGreaterThanMax && lockPeriodDays
-        ? calculateStakeProfitByAPR({
-            amount: parseFloat(amount || '0'),
-            periodDays: lockPeriodDays,
-            apr,
-          })
+        ? bigNumberToString(
+            parseEther(
+              calculateStakeProfitByAPR({
+                amount: parseFloat(amount || '0'),
+                periodDays: lockPeriodDays,
+                apr,
+              }).toString()
+            ),
+            { precision: 2 }
+          )
         : 0,
     [isGreaterThanMax, amount, lockPeriodDays, apr]
   );

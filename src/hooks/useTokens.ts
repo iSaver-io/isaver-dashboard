@@ -34,9 +34,7 @@ export const useTokens = () => {
       const allowance = await tokenContract.allowance(address, spender);
 
       if (allowance.lt(requiredAmount)) {
-        const allowAmount =
-          BigNumber.from(requiredAmount).sub(allowance) || BigNumber.from(10).pow(18).mul(10_000); // 10_000 tokens for default approve
-        const txHash = await tokenContract.approve(spender, BigNumber.from(allowAmount));
+        const txHash = await tokenContract.approve(spender, BigNumber.from(requiredAmount));
         success({ title: 'Approved', txHash });
       }
     }
