@@ -1,4 +1,5 @@
-import { Box, Center, Container } from '@chakra-ui/react';
+// eslint-disable-next-line
+import { Box, Center, Container, Tab, TabList, TabPanels, TabPanel, Tabs } from '@chakra-ui/react';
 import { useAccount } from 'wagmi';
 
 import { Button } from '@/components/ui/Button/Button';
@@ -51,20 +52,63 @@ export const AdminPanel = () => {
 
   return (
     <Container variant="dashboard" padding="40px 0 80px" minWidth="container.xl">
-      <Balances />
-      <TokensControl />
-      <StakingTVL />
-      <StakingControl />
-      <ReferralControl />
-      <TeamsControl />
-      <ExchangeControl />
-      <TicketControl />
-      <RaffleControl />
-      <PowersControl />
-      <AvatarSettingsControl />
-      <MomentoControl />
-      <AvatarsSellControl />
-      <VestingControl />
+      <Tabs isLazy>
+        <TabList>
+          <Tab>Balances</Tab>
+          <Tab>Tokens</Tab>
+          <Tab>Staking</Tab>
+          <Tab>Referral</Tab>
+          <Tab>Teams</Tab>
+          <Tab>Exchange</Tab>
+          <Tab>Raffles/Ticket</Tab>
+          <Tab>Momento</Tab>
+          <Tab>Powers</Tab>
+          <Tab>Avatars Settings</Tab>
+          <Tab>Avatars Sell</Tab>
+          <Tab>Vesting</Tab>
+        </TabList>
+
+        <TabPanels>
+          <TabPanel>
+            <Balances />
+          </TabPanel>
+          <TabPanel>
+            <TokensControl />
+          </TabPanel>
+          <TabPanel>
+            <StakingTVL />
+            <StakingControl />
+          </TabPanel>
+          <TabPanel>
+            <ReferralControl />
+          </TabPanel>
+          <TabPanel>
+            <TeamsControl />
+          </TabPanel>
+          <TabPanel>
+            <ExchangeControl />
+          </TabPanel>
+          <TabPanel>
+            <TicketControl />
+            <RaffleControl />
+          </TabPanel>
+          <TabPanel>
+            <MomentoControl />
+          </TabPanel>
+          <TabPanel>
+            <PowersControl />
+          </TabPanel>
+          <TabPanel>
+            <AvatarSettingsControl />
+          </TabPanel>
+          <TabPanel>
+            <AvatarsSellControl />
+          </TabPanel>
+          <TabPanel>
+            <VestingControl />
+          </TabPanel>
+        </TabPanels>
+      </Tabs>
 
       <TopNotificationControl />
 
