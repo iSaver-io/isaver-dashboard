@@ -44,20 +44,25 @@ export const useTokensPoolContract = (
   const getPrizes = async () => {
     const totalCategories = (await contract.categoriesLength()).toNumber();
 
-    return (
-      await Promise.all(
-        Array.from({ length: totalCategories }).map((_, categoryId) => {
-          const categoryInfo = contract.getCategory(categoryId);
-          const categoryPrizes = contract.getCategoryPrizes(categoryId);
+    const prizes = [];
+    let i = 0;
+    while (i < totalCategories) {
+      try {
+        const categoryInfo = await contract.getCategory(i);
+        const categoryPrizes = await contract.getCategoryPrizes(i);
 
-          return Promise.all([categoryId, categoryInfo, categoryPrizes]);
-        })
-      )
-    ).map((val) => ({
-      categoryId: val[0],
-      info: { chance: val[1][0], prizeIds: val[1][1], isEmpty: val[1][2] },
-      prizes: val[2],
-    }));
+        prizes.push({
+          categoryId: i,
+          info: { chance: categoryInfo[0], prizeIds: categoryInfo[1], isEmpty: categoryInfo[2] },
+          prizes: categoryPrizes,
+        });
+
+        i++;
+      } catch (e) {
+        console.log(e);
+      }
+    }
+    return prizes;
   };
 
   const getAdmins = async () => {
