@@ -1,4 +1,4 @@
-import { PropsWithChildren, useCallback, useEffect, useState } from 'react';
+import { PropsWithChildren, useCallback, useEffect, useMemo, useState } from 'react';
 import { Box, Flex, Image, Text } from '@chakra-ui/react';
 import { motion } from 'framer-motion';
 
@@ -117,6 +117,12 @@ export const MomentoPrize = ({ prizeInfo }: MomentoPrizeProps) => {
 };
 
 const SavrTokens = ({ amount }: Pick<PrizeInfo, 'amount'>) => {
+  const amountString = useMemo(() => {
+    const withPrecision = parseFloat(bigNumberToString(amount, { precision: 1 }));
+    const noPrecision = parseFloat(bigNumberToString(amount, { precision: 0 }));
+    return withPrecision === noPrecision ? noPrecision : withPrecision;
+  }, [amount]);
+
   return (
     <PrizeCard label="SAVR Tokens">
       <Image src={savrPrize} alt="SAVR" pos="absolute" left="0" top="0" />
@@ -126,7 +132,7 @@ const SavrTokens = ({ amount }: Pick<PrizeInfo, 'amount'>) => {
         lineHeight="1"
         zIndex={10}
       >
-        {bigNumberToString(amount, { precision: 1 })}
+        {amountString}
       </Text>
       <Text
         fontWeight="black"

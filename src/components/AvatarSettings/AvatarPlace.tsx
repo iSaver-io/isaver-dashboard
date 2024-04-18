@@ -4,12 +4,7 @@ import { Box, IconButton, Link, Text } from '@chakra-ui/react';
 import { useAccount } from 'wagmi';
 
 import { Button } from '@/components/ui/Button/Button';
-import {
-  useActivateAvatar,
-  useActiveAvatar,
-  useAvatarMetadata,
-  useDeactivateAvatar,
-} from '@/hooks/useAvatarSettings';
+import { useActiveAvatar, useAvatarMetadata, useDeactivateAvatar } from '@/hooks/useAvatarSettings';
 import { useLogger } from '@/hooks/useLogger';
 import { useActiveAvatarNFT } from '@/hooks/useNFTHolders';
 import { AVATARS_URL } from '@/router';
@@ -24,7 +19,6 @@ import { AvatarSelectionModal } from './AvatarSelectionModal';
 export const AvatarPlace = () => {
   const { avatarNFT, isLoading: isNFTLoading } = useActiveAvatarNFT();
   const { activeAvatar, hasAvatar, isFetching: isActiveAvatarFetching } = useActiveAvatar();
-  const { isLoading: isActivateLoading } = useActivateAvatar();
   const { mutateAsync, isLoading: isDeactivateLoading } = useDeactivateAvatar();
   const { isConnected } = useAccount();
   const { isLoading: isMetadataLoading } = useAvatarMetadata();
@@ -65,14 +59,6 @@ export const AvatarPlace = () => {
     mutateAsync();
   }, [mutateAsync, logger]);
 
-  if (isActiveAvatarFetching || (hasAvatar && isNFTLoading) || isActivateLoading) {
-    return (
-      <Box className="avatarPlace">
-        <CenteredSpinner />
-      </Box>
-    );
-  }
-
   return (
     <>
       <Box
@@ -82,7 +68,9 @@ export const AvatarPlace = () => {
           avatarNFT && activeAvatar.isAvatarCollection && 'avatarPlace_isaverAvatar',
         ].join(' ')}
       >
-        {!hasAvatar ? (
+        {isActiveAvatarFetching || (hasAvatar && isNFTLoading) ? (
+          <CenteredSpinner />
+        ) : !hasAvatar ? (
           <>
             <Text mb="20px" textStyle="h3" textTransform="uppercase">
               Place your Avatar

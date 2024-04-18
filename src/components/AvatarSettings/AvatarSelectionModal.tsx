@@ -27,7 +27,7 @@ type AvatarSelectionModalProps = {
 };
 
 export const AvatarSelectionModal = ({ onClose, isOpen }: AvatarSelectionModalProps) => {
-  const { activateAvatar } = useActivateAvatar();
+  const activateAvatar = useActivateAvatar();
   const { nftsForOwner, refetch, isLoading, avatarAddress } = useAllowedNFTsForOwner();
   const logger = useLogger({
     event: 'settings',
@@ -41,10 +41,12 @@ export const AvatarSelectionModal = ({ onClose, isOpen }: AvatarSelectionModalPr
     (address: string, tokenId: BigNumberish, tokenName?: string) => {
       logger({ label: 'activate', content: tokenName || 'ERC721', actionGroup: 'conversions' });
 
-      return activateAvatar({
-        collectionAddress: address as Address,
-        tokenId,
-      }).then(() => onClose());
+      return activateAvatar
+        .mutateAsync({
+          collectionAddress: address as Address,
+          tokenId,
+        })
+        .then(() => onClose());
     },
     [activateAvatar, onClose, logger]
   );

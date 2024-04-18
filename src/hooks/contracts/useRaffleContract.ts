@@ -114,7 +114,8 @@ export const useRaffleContract = () => {
   };
 
   const claimDay = async () => {
-    const tx = await contract.claimDay();
+    const gas = await contract.estimateGas.claimDay();
+    const tx = await contract.claimDay({ gasLimit: gas.mul(1.1) });
     return waitForTransaction(tx);
   };
 
