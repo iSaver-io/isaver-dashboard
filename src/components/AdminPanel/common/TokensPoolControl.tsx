@@ -145,6 +145,14 @@ const TokensPoolCategory = ({
 
     return chance;
   }, [info.isEmpty, info.chance, totalChanceRequest.data]);
+  const totalRemaining = useMemo(
+    () => prizes.reduce((acc, prize) => acc + parseInt(prize.remaining), 0),
+    [prizes]
+  );
+  const totalInitialRemaining = useMemo(
+    () => prizes.reduce((acc, prize) => acc + parseInt(prize.initialAmount), 0),
+    [prizes]
+  );
 
   return (
     <Box border="1px solid gray" borderRadius="12px" padding="8px 12px" mt="8px">
@@ -165,6 +173,10 @@ const TokensPoolCategory = ({
           <Text>
             Chance: {info.chance.toString()} {chancePercent ? `(${chancePercent}%)` : '(empty)'}
           </Text>
+          <Text>
+            Total remaining: {totalRemaining} / {totalInitialRemaining}
+          </Text>
+
           <Text>Prizes ({prizes.length}):</Text>
         </Box>
 
