@@ -326,7 +326,7 @@ export const useActivateAvatar = () => {
     contract: ContractsEnum.ISaverAvatars,
   });
 
-  const { mutateAsync, isLoading } = useMutation(
+  const activateAvatar = useMutation(
     [ACTIVATE_AVATAR],
     async ({
       collectionAddress,
@@ -381,7 +381,7 @@ export const useActivateAvatar = () => {
     }
   );
 
-  return { activateAvatar: mutateAsync, isLoading };
+  return activateAvatar;
 };
 
 export const DEACTIVATE_AVATAR = 'deactivate-avatar';

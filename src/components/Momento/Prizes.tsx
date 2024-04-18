@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useRef } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Slider, { Settings } from 'react-slick';
 import { Box, Image, Text } from '@chakra-ui/react';
 import { useNetwork } from 'wagmi';
@@ -10,7 +10,7 @@ import { getOpenseaLink } from '@/utils/getExplorerLink';
 import Prizes1 from './images/prizes1.png';
 import Prizes2 from './images/prizes2.png';
 
-const settings: Settings = {
+const sliderSettings: Settings = {
   infinite: true,
   speed: 400,
   slidesToShow: 4,
@@ -22,7 +22,6 @@ const settings: Settings = {
   variableWidth: false,
   adaptiveHeight: false,
   swipeToSlide: true,
-  initialSlide: 0,
 
   responsive: [
     {
@@ -76,6 +75,7 @@ const cardsMock = [
 ];
 
 export const Prizes = () => {
+  const [settings, setSettings] = useState(sliderSettings);
   const { externalNFTs, isLoadingExternalNFT } = useMomentoPrizes();
 
   const cards = useMemo(() => {
@@ -91,6 +91,14 @@ export const Prizes = () => {
       }))
       .filter((item) => !item.image?.includes('//ipfs'));
   }, [externalNFTs, isLoadingExternalNFT]);
+
+  const isSet = useRef(false);
+  useEffect(() => {
+    if (cards.length && !isSet.current) {
+      isSet.current = true;
+      setSettings((current) => ({ ...current, initialSlide: 0 }));
+    }
+  }, [cards]);
 
   return (
     <Box textAlign="center">

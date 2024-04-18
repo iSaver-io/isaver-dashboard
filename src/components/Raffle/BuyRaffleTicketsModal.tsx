@@ -1,4 +1,4 @@
-import { FC, useCallback, useState } from 'react';
+import { FC, useCallback, useMemo, useState } from 'react';
 import {
   Box,
   CloseButton,
@@ -57,10 +57,13 @@ export const BuyRaffleTicketsModal: FC<BuyRaffleTicketsModalProps> = ({
 
   const debouncedLogger = useDebounce(logger);
 
+  const totalPrice = useMemo(() => ticketPrice.mul(amount || 0), [amount, ticketPrice]);
+  const isValid = useMemo(() => totalPrice.lte(savBalance || 0), [totalPrice, savBalance]);
+
   const handleUpdate = useCallback(
     (val?: string) => {
       const MAX_VALUE = 1_000_000;
-      let value = Math.min(Number(val) || 0, MAX_VALUE);
+      let value = Math.floor(Math.min(Number(val) || 0, MAX_VALUE));
 
       setAmount(value || undefined);
 
@@ -112,7 +115,7 @@ export const BuyRaffleTicketsModal: FC<BuyRaffleTicketsModalProps> = ({
           <Text mt="26px" mb="10px" textStyle="textSansBold">
             Enter the number of Tickets
           </Text>
-          <InputAmount placeholder="0" value={amount} onChange={handleUpdate} />
+          <InputAmount placeholder="0" value={amount} onChange={handleUpdate} hasError={!isValid} />
 
           <Text mt="6px" mb="10px" textStyle="textSansBold">
             Price per Ticket
@@ -127,7 +130,7 @@ export const BuyRaffleTicketsModal: FC<BuyRaffleTicketsModalProps> = ({
             Total amount
           </Text>
           <Box {...boxCommonStyles}>
-            {bigNumberToString(ticketPrice.mul(amount || 0))}
+            {bigNumberToString(totalPrice)}
             <Spacer />
             SAV
           </Box>
@@ -141,7 +144,7 @@ export const BuyRaffleTicketsModal: FC<BuyRaffleTicketsModalProps> = ({
             width="100%"
             variant="outlined"
             onClick={handleBuy}
-            isDisabled={!amount || isLoading}
+            isDisabled={!amount || !isValid || isLoading}
             isLoading={isLoading}
           >
             Buy

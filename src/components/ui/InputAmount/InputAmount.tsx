@@ -16,6 +16,7 @@ type InputAmountProps = {
   total?: string | null;
   placeholder?: string;
   value?: string | number;
+  hasError?: boolean | null;
 
   tokenTicker?: string;
   tokenIcon?: any;
@@ -30,6 +31,7 @@ export const InputAmount: FC<InputAmountProps> = ({
   tokenIcon,
   tokenTicker,
   total,
+  hasError,
   onChange,
   onSetTotal,
 }) => {
@@ -65,14 +67,14 @@ export const InputAmount: FC<InputAmountProps> = ({
   const hasMax = Boolean(total);
 
   const isGreaterThanMax = total && parseFloat(localValue) > parseFloat(total);
-  const hasError = isGreaterThanMax;
+  const isError = hasError || isGreaterThanMax;
 
   return (
     <Box>
       <InputGroup
         variant="secondary"
         border="3px solid"
-        borderColor={hasError ? 'red' : 'transparent'}
+        borderColor={isError ? 'red' : 'transparent'}
         borderRadius="md"
         boxSizing="content-box"
       >
@@ -95,7 +97,7 @@ export const InputAmount: FC<InputAmountProps> = ({
 
         <Input
           type="string"
-          color={hasError ? 'red' : 'inherit'}
+          color={isError ? 'red' : 'inherit'}
           placeholder={placeholder}
           value={localValue}
           paddingLeft={inputPaddingRight}
