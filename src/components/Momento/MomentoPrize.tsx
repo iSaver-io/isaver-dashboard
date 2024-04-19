@@ -117,11 +117,10 @@ export const MomentoPrize = ({ prizeInfo }: MomentoPrizeProps) => {
 };
 
 const SavrTokens = ({ amount }: Pick<PrizeInfo, 'amount'>) => {
-  const amountString = useMemo(() => {
-    const withPrecision = parseFloat(bigNumberToString(amount, { precision: 1 }));
-    const noPrecision = parseFloat(bigNumberToString(amount, { precision: 0 }));
-    return withPrecision === noPrecision ? noPrecision : withPrecision;
-  }, [amount]);
+  const amountString = useMemo(
+    () => parseFloat(bigNumberToString(amount, { precision: 'full' })),
+    [amount]
+  );
 
   return (
     <PrizeCard label="SAVR Tokens">

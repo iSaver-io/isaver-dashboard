@@ -9,6 +9,7 @@ import type {
   CallOverrides,
   ContractTransaction,
   Overrides,
+  PayableOverrides,
   PopulatedTransaction,
   Signer,
   utils,
@@ -31,8 +32,7 @@ export interface TicketInterface extends utils.Interface {
     "DEFAULT_ADMIN_ROLE()": FunctionFragment;
     "MINTER_ROLE()": FunctionFragment;
     "PAUSER_ROLE()": FunctionFragment;
-    "URI_SETTER_ROLE()": FunctionFragment;
-    "_setRoyalties(address)": FunctionFragment;
+    "UPGRADER_ROLE()": FunctionFragment;
     "balanceOf(address,uint256)": FunctionFragment;
     "balanceOfBatch(address[],uint256[])": FunctionFragment;
     "burn(address,uint256,uint256)": FunctionFragment;
@@ -42,12 +42,14 @@ export interface TicketInterface extends utils.Interface {
     "getRoleAdmin(bytes32)": FunctionFragment;
     "grantRole(bytes32,address)": FunctionFragment;
     "hasRole(bytes32,address)": FunctionFragment;
+    "initialize()": FunctionFragment;
     "isApprovedForAll(address,address)": FunctionFragment;
     "mint(address,uint256,uint256,bytes)": FunctionFragment;
     "mintBatch(address,uint256[],uint256[],bytes)": FunctionFragment;
     "name()": FunctionFragment;
     "pause()": FunctionFragment;
     "paused()": FunctionFragment;
+    "proxiableUUID()": FunctionFragment;
     "renounceRole(bytes32,address)": FunctionFragment;
     "revokeRole(bytes32,address)": FunctionFragment;
     "royaltyInfo(uint256,uint256)": FunctionFragment;
@@ -55,13 +57,18 @@ export interface TicketInterface extends utils.Interface {
     "safeTransferFrom(address,address,uint256,uint256,bytes)": FunctionFragment;
     "setApprovalForAll(address,bool)": FunctionFragment;
     "setContractURI(string)": FunctionFragment;
+    "setName(string)": FunctionFragment;
+    "setRoyaltiesRecipient(address)": FunctionFragment;
     "setRoyaltyPercent(uint256)": FunctionFragment;
+    "setSymbol(string)": FunctionFragment;
     "setURI(uint256,string)": FunctionFragment;
     "supportsInterface(bytes4)": FunctionFragment;
     "symbol()": FunctionFragment;
     "totalMinted(uint256)": FunctionFragment;
     "totalSupply(uint256)": FunctionFragment;
     "unpause()": FunctionFragment;
+    "upgradeTo(address)": FunctionFragment;
+    "upgradeToAndCall(address,bytes)": FunctionFragment;
     "uri(uint256)": FunctionFragment;
   };
 
@@ -70,8 +77,7 @@ export interface TicketInterface extends utils.Interface {
       | "DEFAULT_ADMIN_ROLE"
       | "MINTER_ROLE"
       | "PAUSER_ROLE"
-      | "URI_SETTER_ROLE"
-      | "_setRoyalties"
+      | "UPGRADER_ROLE"
       | "balanceOf"
       | "balanceOfBatch"
       | "burn"
@@ -81,12 +87,14 @@ export interface TicketInterface extends utils.Interface {
       | "getRoleAdmin"
       | "grantRole"
       | "hasRole"
+      | "initialize"
       | "isApprovedForAll"
       | "mint"
       | "mintBatch"
       | "name"
       | "pause"
       | "paused"
+      | "proxiableUUID"
       | "renounceRole"
       | "revokeRole"
       | "royaltyInfo"
@@ -94,13 +102,18 @@ export interface TicketInterface extends utils.Interface {
       | "safeTransferFrom"
       | "setApprovalForAll"
       | "setContractURI"
+      | "setName"
+      | "setRoyaltiesRecipient"
       | "setRoyaltyPercent"
+      | "setSymbol"
       | "setURI"
       | "supportsInterface"
       | "symbol"
       | "totalMinted"
       | "totalSupply"
       | "unpause"
+      | "upgradeTo"
+      | "upgradeToAndCall"
       | "uri"
   ): FunctionFragment;
 
@@ -117,12 +130,8 @@ export interface TicketInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "URI_SETTER_ROLE",
+    functionFragment: "UPGRADER_ROLE",
     values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "_setRoyalties",
-    values: [string]
   ): string;
   encodeFunctionData(
     functionFragment: "balanceOf",
@@ -161,6 +170,10 @@ export interface TicketInterface extends utils.Interface {
     values: [BytesLike, string]
   ): string;
   encodeFunctionData(
+    functionFragment: "initialize",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "isApprovedForAll",
     values: [string, string]
   ): string;
@@ -175,6 +188,10 @@ export interface TicketInterface extends utils.Interface {
   encodeFunctionData(functionFragment: "name", values?: undefined): string;
   encodeFunctionData(functionFragment: "pause", values?: undefined): string;
   encodeFunctionData(functionFragment: "paused", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "proxiableUUID",
+    values?: undefined
+  ): string;
   encodeFunctionData(
     functionFragment: "renounceRole",
     values: [BytesLike, string]
@@ -203,10 +220,16 @@ export interface TicketInterface extends utils.Interface {
     functionFragment: "setContractURI",
     values: [string]
   ): string;
+  encodeFunctionData(functionFragment: "setName", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "setRoyaltiesRecipient",
+    values: [string]
+  ): string;
   encodeFunctionData(
     functionFragment: "setRoyaltyPercent",
     values: [BigNumberish]
   ): string;
+  encodeFunctionData(functionFragment: "setSymbol", values: [string]): string;
   encodeFunctionData(
     functionFragment: "setURI",
     values: [BigNumberish, string]
@@ -225,6 +248,11 @@ export interface TicketInterface extends utils.Interface {
     values: [BigNumberish]
   ): string;
   encodeFunctionData(functionFragment: "unpause", values?: undefined): string;
+  encodeFunctionData(functionFragment: "upgradeTo", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "upgradeToAndCall",
+    values: [string, BytesLike]
+  ): string;
   encodeFunctionData(functionFragment: "uri", values: [BigNumberish]): string;
 
   decodeFunctionResult(
@@ -240,11 +268,7 @@ export interface TicketInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "URI_SETTER_ROLE",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "_setRoyalties",
+    functionFragment: "UPGRADER_ROLE",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
@@ -265,6 +289,7 @@ export interface TicketInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "grantRole", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "hasRole", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "initialize", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "isApprovedForAll",
     data: BytesLike
@@ -274,6 +299,10 @@ export interface TicketInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "pause", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "paused", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "proxiableUUID",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "renounceRole",
     data: BytesLike
@@ -299,10 +328,16 @@ export interface TicketInterface extends utils.Interface {
     functionFragment: "setContractURI",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "setName", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "setRoyaltiesRecipient",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "setRoyaltyPercent",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "setSymbol", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "setURI", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "supportsInterface",
@@ -318,10 +353,18 @@ export interface TicketInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "unpause", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "upgradeTo", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "upgradeToAndCall",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "uri", data: BytesLike): Result;
 
   events: {
+    "AdminChanged(address,address)": EventFragment;
     "ApprovalForAll(address,address,bool)": EventFragment;
+    "BeaconUpgraded(address)": EventFragment;
+    "Initialized(uint8)": EventFragment;
     "Paused(address)": EventFragment;
     "RoleAdminChanged(bytes32,bytes32,bytes32)": EventFragment;
     "RoleGranted(bytes32,address,address)": EventFragment;
@@ -330,9 +373,13 @@ export interface TicketInterface extends utils.Interface {
     "TransferSingle(address,address,address,uint256,uint256)": EventFragment;
     "URI(string,uint256)": EventFragment;
     "Unpaused(address)": EventFragment;
+    "Upgraded(address)": EventFragment;
   };
 
+  getEvent(nameOrSignatureOrTopic: "AdminChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ApprovalForAll"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "BeaconUpgraded"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Paused"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleAdminChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleGranted"): EventFragment;
@@ -341,7 +388,19 @@ export interface TicketInterface extends utils.Interface {
   getEvent(nameOrSignatureOrTopic: "TransferSingle"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "URI"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Unpaused"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Upgraded"): EventFragment;
 }
+
+export interface AdminChangedEventObject {
+  previousAdmin: string;
+  newAdmin: string;
+}
+export type AdminChangedEvent = TypedEvent<
+  [string, string],
+  AdminChangedEventObject
+>;
+
+export type AdminChangedEventFilter = TypedEventFilter<AdminChangedEvent>;
 
 export interface ApprovalForAllEventObject {
   account: string;
@@ -354,6 +413,23 @@ export type ApprovalForAllEvent = TypedEvent<
 >;
 
 export type ApprovalForAllEventFilter = TypedEventFilter<ApprovalForAllEvent>;
+
+export interface BeaconUpgradedEventObject {
+  beacon: string;
+}
+export type BeaconUpgradedEvent = TypedEvent<
+  [string],
+  BeaconUpgradedEventObject
+>;
+
+export type BeaconUpgradedEventFilter = TypedEventFilter<BeaconUpgradedEvent>;
+
+export interface InitializedEventObject {
+  version: number;
+}
+export type InitializedEvent = TypedEvent<[number], InitializedEventObject>;
+
+export type InitializedEventFilter = TypedEventFilter<InitializedEvent>;
 
 export interface PausedEventObject {
   account: string;
@@ -442,6 +518,13 @@ export type UnpausedEvent = TypedEvent<[string], UnpausedEventObject>;
 
 export type UnpausedEventFilter = TypedEventFilter<UnpausedEvent>;
 
+export interface UpgradedEventObject {
+  implementation: string;
+}
+export type UpgradedEvent = TypedEvent<[string], UpgradedEventObject>;
+
+export type UpgradedEventFilter = TypedEventFilter<UpgradedEvent>;
+
 export interface Ticket extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
@@ -475,12 +558,7 @@ export interface Ticket extends BaseContract {
 
     PAUSER_ROLE(overrides?: CallOverrides): Promise<[string]>;
 
-    URI_SETTER_ROLE(overrides?: CallOverrides): Promise<[string]>;
-
-    _setRoyalties(
-      newRecipient: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
+    UPGRADER_ROLE(overrides?: CallOverrides): Promise<[string]>;
 
     balanceOf(
       account: string,
@@ -526,6 +604,10 @@ export interface Ticket extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
+    initialize(
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
+
     isApprovedForAll(
       account: string,
       operator: string,
@@ -555,6 +637,8 @@ export interface Ticket extends BaseContract {
     ): Promise<ContractTransaction>;
 
     paused(overrides?: CallOverrides): Promise<[boolean]>;
+
+    proxiableUUID(overrides?: CallOverrides): Promise<[string]>;
 
     renounceRole(
       role: BytesLike,
@@ -605,8 +689,23 @@ export interface Ticket extends BaseContract {
       overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
 
+    setName(
+      _name: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
+
+    setRoyaltiesRecipient(
+      newRecipient: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
+
     setRoyaltyPercent(
       percentBasePoints: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
+
+    setSymbol(
+      _symbol: string,
       overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
 
@@ -637,6 +736,17 @@ export interface Ticket extends BaseContract {
       overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
 
+    upgradeTo(
+      newImplementation: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
+
+    upgradeToAndCall(
+      newImplementation: string,
+      data: BytesLike,
+      overrides?: PayableOverrides & { from?: string }
+    ): Promise<ContractTransaction>;
+
     uri(tokenId: BigNumberish, overrides?: CallOverrides): Promise<[string]>;
   };
 
@@ -646,12 +756,7 @@ export interface Ticket extends BaseContract {
 
   PAUSER_ROLE(overrides?: CallOverrides): Promise<string>;
 
-  URI_SETTER_ROLE(overrides?: CallOverrides): Promise<string>;
-
-  _setRoyalties(
-    newRecipient: string,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
+  UPGRADER_ROLE(overrides?: CallOverrides): Promise<string>;
 
   balanceOf(
     account: string,
@@ -697,6 +802,10 @@ export interface Ticket extends BaseContract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
+  initialize(
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
   isApprovedForAll(
     account: string,
     operator: string,
@@ -726,6 +835,8 @@ export interface Ticket extends BaseContract {
   ): Promise<ContractTransaction>;
 
   paused(overrides?: CallOverrides): Promise<boolean>;
+
+  proxiableUUID(overrides?: CallOverrides): Promise<string>;
 
   renounceRole(
     role: BytesLike,
@@ -776,8 +887,23 @@ export interface Ticket extends BaseContract {
     overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
 
+  setName(
+    _name: string,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  setRoyaltiesRecipient(
+    newRecipient: string,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
   setRoyaltyPercent(
     percentBasePoints: BigNumberish,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  setSymbol(
+    _symbol: string,
     overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
 
@@ -802,6 +928,17 @@ export interface Ticket extends BaseContract {
     overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
 
+  upgradeTo(
+    newImplementation: string,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  upgradeToAndCall(
+    newImplementation: string,
+    data: BytesLike,
+    overrides?: PayableOverrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
   uri(tokenId: BigNumberish, overrides?: CallOverrides): Promise<string>;
 
   callStatic: {
@@ -811,12 +948,7 @@ export interface Ticket extends BaseContract {
 
     PAUSER_ROLE(overrides?: CallOverrides): Promise<string>;
 
-    URI_SETTER_ROLE(overrides?: CallOverrides): Promise<string>;
-
-    _setRoyalties(
-      newRecipient: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
+    UPGRADER_ROLE(overrides?: CallOverrides): Promise<string>;
 
     balanceOf(
       account: string,
@@ -862,6 +994,8 @@ export interface Ticket extends BaseContract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
+    initialize(overrides?: CallOverrides): Promise<void>;
+
     isApprovedForAll(
       account: string,
       operator: string,
@@ -889,6 +1023,8 @@ export interface Ticket extends BaseContract {
     pause(overrides?: CallOverrides): Promise<void>;
 
     paused(overrides?: CallOverrides): Promise<boolean>;
+
+    proxiableUUID(overrides?: CallOverrides): Promise<string>;
 
     renounceRole(
       role: BytesLike,
@@ -936,10 +1072,19 @@ export interface Ticket extends BaseContract {
 
     setContractURI(newuri: string, overrides?: CallOverrides): Promise<void>;
 
+    setName(_name: string, overrides?: CallOverrides): Promise<void>;
+
+    setRoyaltiesRecipient(
+      newRecipient: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     setRoyaltyPercent(
       percentBasePoints: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    setSymbol(_symbol: string, overrides?: CallOverrides): Promise<void>;
 
     setURI(
       tokenId_: BigNumberish,
@@ -966,10 +1111,30 @@ export interface Ticket extends BaseContract {
 
     unpause(overrides?: CallOverrides): Promise<void>;
 
+    upgradeTo(
+      newImplementation: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    upgradeToAndCall(
+      newImplementation: string,
+      data: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     uri(tokenId: BigNumberish, overrides?: CallOverrides): Promise<string>;
   };
 
   filters: {
+    "AdminChanged(address,address)"(
+      previousAdmin?: null,
+      newAdmin?: null
+    ): AdminChangedEventFilter;
+    AdminChanged(
+      previousAdmin?: null,
+      newAdmin?: null
+    ): AdminChangedEventFilter;
+
     "ApprovalForAll(address,address,bool)"(
       account?: string | null,
       operator?: string | null,
@@ -980,6 +1145,14 @@ export interface Ticket extends BaseContract {
       operator?: string | null,
       approved?: null
     ): ApprovalForAllEventFilter;
+
+    "BeaconUpgraded(address)"(
+      beacon?: string | null
+    ): BeaconUpgradedEventFilter;
+    BeaconUpgraded(beacon?: string | null): BeaconUpgradedEventFilter;
+
+    "Initialized(uint8)"(version?: null): InitializedEventFilter;
+    Initialized(version?: null): InitializedEventFilter;
 
     "Paused(address)"(account?: null): PausedEventFilter;
     Paused(account?: null): PausedEventFilter;
@@ -1055,6 +1228,9 @@ export interface Ticket extends BaseContract {
 
     "Unpaused(address)"(account?: null): UnpausedEventFilter;
     Unpaused(account?: null): UnpausedEventFilter;
+
+    "Upgraded(address)"(implementation?: string | null): UpgradedEventFilter;
+    Upgraded(implementation?: string | null): UpgradedEventFilter;
   };
 
   estimateGas: {
@@ -1064,12 +1240,7 @@ export interface Ticket extends BaseContract {
 
     PAUSER_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
 
-    URI_SETTER_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
-
-    _setRoyalties(
-      newRecipient: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
+    UPGRADER_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
 
     balanceOf(
       account: string,
@@ -1118,6 +1289,8 @@ export interface Ticket extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    initialize(overrides?: Overrides & { from?: string }): Promise<BigNumber>;
+
     isApprovedForAll(
       account: string,
       operator: string,
@@ -1145,6 +1318,8 @@ export interface Ticket extends BaseContract {
     pause(overrides?: Overrides & { from?: string }): Promise<BigNumber>;
 
     paused(overrides?: CallOverrides): Promise<BigNumber>;
+
+    proxiableUUID(overrides?: CallOverrides): Promise<BigNumber>;
 
     renounceRole(
       role: BytesLike,
@@ -1193,8 +1368,23 @@ export interface Ticket extends BaseContract {
       overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
 
+    setName(
+      _name: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+
+    setRoyaltiesRecipient(
+      newRecipient: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+
     setRoyaltyPercent(
       percentBasePoints: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+
+    setSymbol(
+      _symbol: string,
       overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
 
@@ -1223,6 +1413,17 @@ export interface Ticket extends BaseContract {
 
     unpause(overrides?: Overrides & { from?: string }): Promise<BigNumber>;
 
+    upgradeTo(
+      newImplementation: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+
+    upgradeToAndCall(
+      newImplementation: string,
+      data: BytesLike,
+      overrides?: PayableOverrides & { from?: string }
+    ): Promise<BigNumber>;
+
     uri(tokenId: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
   };
 
@@ -1235,12 +1436,7 @@ export interface Ticket extends BaseContract {
 
     PAUSER_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    URI_SETTER_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    _setRoyalties(
-      newRecipient: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
+    UPGRADER_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     balanceOf(
       account: string,
@@ -1292,6 +1488,10 @@ export interface Ticket extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    initialize(
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
     isApprovedForAll(
       account: string,
       operator: string,
@@ -1321,6 +1521,8 @@ export interface Ticket extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     paused(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    proxiableUUID(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     renounceRole(
       role: BytesLike,
@@ -1369,8 +1571,23 @@ export interface Ticket extends BaseContract {
       overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 
+    setName(
+      _name: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    setRoyaltiesRecipient(
+      newRecipient: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
     setRoyaltyPercent(
       percentBasePoints: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    setSymbol(
+      _symbol: string,
       overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 
@@ -1399,6 +1616,17 @@ export interface Ticket extends BaseContract {
 
     unpause(
       overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    upgradeTo(
+      newImplementation: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    upgradeToAndCall(
+      newImplementation: string,
+      data: BytesLike,
+      overrides?: PayableOverrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 
     uri(

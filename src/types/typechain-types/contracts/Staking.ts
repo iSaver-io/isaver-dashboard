@@ -731,7 +731,7 @@ export interface StakingInterface extends utils.Interface {
     "Staked(address,uint256,uint256,uint256,uint256,bool,uint256)": EventFragment;
     "StakedSuperPlan(address,uint256,uint256,uint256)": EventFragment;
     "StakingPlanCreated(uint256,uint256,uint256)": EventFragment;
-    "Subscribed(address,uint256)": EventFragment;
+    "Subscribed(address,uint256,uint256)": EventFragment;
     "SuperAprUpdated(uint256,uint256,uint256)": EventFragment;
     "SuperClaimed(address,uint256,uint256,uint256)": EventFragment;
     "SuperPlanActivityChanged(uint256,bool)": EventFragment;
@@ -896,9 +896,10 @@ export type StakingPlanCreatedEventFilter =
 export interface SubscribedEventObject {
   user: string;
   stakingPlanId: BigNumber;
+  timestamp: BigNumber;
 }
 export type SubscribedEvent = TypedEvent<
-  [string, BigNumber],
+  [string, BigNumber, BigNumber],
   SubscribedEventObject
 >;
 
@@ -2053,13 +2054,15 @@ export interface Staking extends BaseContract {
       apr?: null
     ): StakingPlanCreatedEventFilter;
 
-    "Subscribed(address,uint256)"(
+    "Subscribed(address,uint256,uint256)"(
       user?: string | null,
-      stakingPlanId?: BigNumberish | null
+      stakingPlanId?: BigNumberish | null,
+      timestamp?: null
     ): SubscribedEventFilter;
     Subscribed(
       user?: string | null,
-      stakingPlanId?: BigNumberish | null
+      stakingPlanId?: BigNumberish | null,
+      timestamp?: null
     ): SubscribedEventFilter;
 
     "SuperAprUpdated(uint256,uint256,uint256)"(

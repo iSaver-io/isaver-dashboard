@@ -81,7 +81,8 @@ export const useTokenContract = (token: ContractsEnum.SAV | ContractsEnum.SAVR) 
   };
 
   const approve = async (spender: string, amount: BigNumber): Promise<string> => {
-    const tx = await contract.approve(spender, amount);
+    const gas = await contract.estimateGas.approve(spender, amount);
+    const tx = await contract.approve(spender, amount, { gasLimit: gas.mul(11).div(10) }); // add 10% to gas limit
     return waitForTransaction(tx);
   };
 

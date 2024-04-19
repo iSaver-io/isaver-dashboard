@@ -491,7 +491,7 @@ export interface ReferralManagerInterface extends utils.Interface {
     "AdminChanged(address,address)": EventFragment;
     "BeaconUpgraded(address)": EventFragment;
     "DividendsAdded(address,address,uint256,uint256,uint256,uint256,uint256,uint256)": EventFragment;
-    "DividendsClaimed(address,uint256)": EventFragment;
+    "DividendsClaimed(address,uint256,uint256)": EventFragment;
     "Initialized(uint8)": EventFragment;
     "ReferralAdded(address,address)": EventFragment;
     "ReferrerSet(address,address)": EventFragment;
@@ -566,9 +566,10 @@ export type DividendsAddedEventFilter = TypedEventFilter<DividendsAddedEvent>;
 export interface DividendsClaimedEventObject {
   owner: string;
   amount: BigNumber;
+  timestamp: BigNumber;
 }
 export type DividendsClaimedEvent = TypedEvent<
-  [string, BigNumber],
+  [string, BigNumber, BigNumber],
   DividendsClaimedEventObject
 >;
 
@@ -1361,13 +1362,15 @@ export interface ReferralManager extends BaseContract {
       timestamp?: null
     ): DividendsAddedEventFilter;
 
-    "DividendsClaimed(address,uint256)"(
+    "DividendsClaimed(address,uint256,uint256)"(
       owner?: string | null,
-      amount?: null
+      amount?: null,
+      timestamp?: null
     ): DividendsClaimedEventFilter;
     DividendsClaimed(
       owner?: string | null,
-      amount?: null
+      amount?: null,
+      timestamp?: null
     ): DividendsClaimedEventFilter;
 
     "Initialized(uint8)"(version?: null): InitializedEventFilter;

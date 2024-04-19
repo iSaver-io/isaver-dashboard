@@ -11,7 +11,7 @@ import { useConnectWallet } from '@/hooks/useConnectWallet';
 import { useNotification } from '@/hooks/useNotification';
 import alchemy from '@/modules/alchemy';
 
-import { useTokensPoolPrizes } from './admin/useTokensPoolControl';
+import { useTokensPoolNFTPrizes } from './admin/useTokensPoolControl';
 import { ContractsEnum } from './contracts/useContractAbi';
 import { TICKET_BALANCE_REQUEST } from './useTicketsBalance';
 
@@ -145,10 +145,10 @@ export const useMomentoControl = () => {
 
 export const GET_MOMENTO_PRIZES = 'get-momento-prizes-request';
 export const GET_MOMENTO_EXTERNAL_PRIZES = 'get-momento-external-prizes-request';
-export const useMomentoPrizes = () => {
+export const useMomentoNFTPrizes = () => {
   const addresses = useContractsAddresses();
 
-  const { prizesRequest } = useTokensPoolPrizes(ContractsEnum.MomentoTokensPool);
+  const { prizesRequest } = useTokensPoolNFTPrizes(ContractsEnum.MomentoTokensPool);
 
   const externalNFTAddresses = useMemo(() => {
     const nfts = (prizesRequest.data || [])
@@ -205,7 +205,11 @@ export const useMomentoPrizes = () => {
     [externalNFTRequests]
   );
 
-  return { momentoPrizesRequest: prizesRequest, externalNFTs, isLoadingExternalNFT };
+  return {
+    momentoPrizesRequest: prizesRequest,
+    externalNFTs,
+    isLoading: prizesRequest.isLoading || isLoadingExternalNFT,
+  };
 };
 
 export const GET_ALL_USER_PRIZES = 'get-all-user-prizes';

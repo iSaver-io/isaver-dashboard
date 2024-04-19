@@ -97,6 +97,8 @@ export const useMomentoContract = () => {
           tokenName = 'iSaver Powers ' + ['A', 'B', 'C', 'D'][logParsed.args.tokenId.toNumber()];
         } else if (logParsed.args.tokenAddress === addresses.ISaverSAVRToken) {
           tokenName = 'SAVR';
+        } else if (logParsed.args.tokenAddress === addresses.ISaverSAVToken) {
+          tokenName = 'SAV';
         } else if (logParsed.args.tokenAddress === addresses.Ticket) {
           tokenName = 'iSaver Raffle Ticket';
         } else {
@@ -108,7 +110,7 @@ export const useMomentoContract = () => {
           logParsed.args.isERC20 || logParsed.args.isERC1155
             ? `${
                 logParsed.args.isERC20
-                  ? bigNumberToString(logParsed.args.amount, { precision: 1 })
+                  ? bigNumberToString(logParsed.args.amount, { precision: 'full' })
                   : logParsed.args.amount.toString()
               } ${tokenName}`
             : tokenName

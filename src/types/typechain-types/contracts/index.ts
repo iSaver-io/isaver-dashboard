@@ -5,6 +5,8 @@ import type * as extensions from "./extensions";
 export type { extensions };
 import type * as interfaces from "./interfaces";
 export type { interfaces };
+import type * as migration from "./migration";
+export type { migration };
 import type * as mocks from "./mocks";
 export type { mocks };
 import type * as tokens from "./tokens";

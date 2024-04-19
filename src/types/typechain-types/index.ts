@@ -146,6 +146,8 @@ export type { ITeams } from "./contracts/interfaces/ITeams";
 export { ITeams__factory } from "./factories/contracts/interfaces/ITeams__factory";
 export type { ITokensPool } from "./contracts/interfaces/ITokensPool";
 export { ITokensPool__factory } from "./factories/contracts/interfaces/ITokensPool__factory";
+export type { Airdrop } from "./contracts/migration/Airdrop";
+export { Airdrop__factory } from "./factories/contracts/migration/Airdrop__factory";
 export type { ERC20BurnableMock } from "./contracts/mocks/ERC20BurnableMock";
 export { ERC20BurnableMock__factory } from "./factories/contracts/mocks/ERC20BurnableMock__factory";
 export type { ERC721Mock } from "./contracts/mocks/ERC721Mock";

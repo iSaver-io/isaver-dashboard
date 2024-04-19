@@ -3,8 +3,9 @@ import Slider, { Settings } from 'react-slick';
 import { Box, Image, Text } from '@chakra-ui/react';
 import { useNetwork } from 'wagmi';
 
+import { CenteredSpinner } from '@/components/ui/CenteredSpinner/CenteredSpinner';
 import { useOnVisibleLogger } from '@/hooks/logger/useOnVisibleLogger';
-import { useMomentoPrizes } from '@/hooks/useMomento';
+import { useMomentoNFTPrizes } from '@/hooks/useMomento';
 import { getOpenseaLink } from '@/utils/getExplorerLink';
 
 import Prizes1 from './images/prizes1.png';
@@ -76,10 +77,10 @@ const cardsMock = [
 
 export const Prizes = () => {
   const [settings, setSettings] = useState(sliderSettings);
-  const { externalNFTs, isLoadingExternalNFT } = useMomentoPrizes();
+  const { externalNFTs, isLoading } = useMomentoNFTPrizes();
 
   const cards = useMemo(() => {
-    if (isLoadingExternalNFT) return [];
+    if (isLoading) return [];
     if (!externalNFTs.length) return [];
 
     return externalNFTs
@@ -90,7 +91,7 @@ export const Prizes = () => {
         tokenId: nft?.tokenId,
       }))
       .filter((item) => !item.image?.includes('//ipfs'));
-  }, [externalNFTs, isLoadingExternalNFT]);
+  }, [externalNFTs, isLoading]);
 
   const isSet = useRef(false);
   useEffect(() => {
@@ -110,6 +111,12 @@ export const Prizes = () => {
       </Text>
       <div className="momento_line" />
       <Box className="momento_prizes" mt={{ sm: '30px', '2xl': '50px' }}>
+        {isLoading ? (
+          <Box position="relative" height="200px">
+            <CenteredSpinner background="transparent" />
+          </Box>
+        ) : null}
+
         <Slider {...settings}>
           {cards.map((card, index) => (
             <PrizeCard key={card.label + index.toString()} {...card} />
