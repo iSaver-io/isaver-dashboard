@@ -64,7 +64,7 @@ export const AvatarSettingsControl = () => {
             </Text>
             <Text color="sav">
               {activatedPowers && activatedPowers[index]
-                ? `${activePowers?.[index]} (${activatedPowers[index]})`
+                ? `${activePowers?.[index] || '---'} (${activatedPowers[index]})`
                 : '---'}
             </Text>
           </Flex>

@@ -85,10 +85,13 @@ export const useTicketSupply = () => {
     return currentSupply.data.sub(projectSupply);
   }, [currentSupply.data, projectSupply]);
 
+  const isLoading = totalMinted.isLoading || balances.some((bal) => bal.isLoading);
+
   return {
     totalSupply: totalMinted.data,
     totalBurned,
     circulatingSupply,
     projectSupply,
+    isLoading,
   };
 };
