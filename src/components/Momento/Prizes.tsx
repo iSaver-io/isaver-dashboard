@@ -4,7 +4,7 @@ import { Box, Image, Text } from '@chakra-ui/react';
 import { useNetwork } from 'wagmi';
 
 import { useOnVisibleLogger } from '@/hooks/logger/useOnVisibleLogger';
-import { useMomentoPrizes } from '@/hooks/useMomento';
+import { useMomentoNFTPrizes } from '@/hooks/useMomento';
 import { getOpenseaLink } from '@/utils/getExplorerLink';
 
 import Prizes1 from './images/prizes1.png';
@@ -76,7 +76,7 @@ const cardsMock = [
 
 export const Prizes = () => {
   const [settings, setSettings] = useState(sliderSettings);
-  const { externalNFTs, isLoadingExternalNFT } = useMomentoPrizes();
+  const { externalNFTs, isLoadingExternalNFT } = useMomentoNFTPrizes();
 
   const cards = useMemo(() => {
     if (isLoadingExternalNFT) return [];

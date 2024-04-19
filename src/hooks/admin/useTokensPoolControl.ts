@@ -24,7 +24,20 @@ export const useTokensPoolPrizes = (
   return { prizesRequest };
 };
 
+export const useTokensPoolNFTPrizes = (
+  contractName: ContractsEnum.MomentoTokensPool | ContractsEnum.BirthdayTokensPool
+) => {
+  const contract = useTokensPoolContract(contractName);
+
+  const prizesRequest = useQuery([TOKENS_POOL_NFT_PRIZES_REQUEST, contractName], () =>
+    contract.getNFTPrizes()
+  );
+
+  return { prizesRequest };
+};
+
 export const TOKENS_POOL_PRIZES_REQUEST = 'tokens-pool-prizes-request';
+export const TOKENS_POOL_NFT_PRIZES_REQUEST = 'tokens-pool-nft-prizes-request';
 export const TOKENS_POOL_TOTAL_CHANCE_REQUEST = 'tokens-pool-total-chance-request';
 export const TOKENS_POOL_ADMINS = 'tokens-pool-admins-request';
 export const useTokensPoolControl = (

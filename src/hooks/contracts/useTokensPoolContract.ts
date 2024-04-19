@@ -65,6 +65,29 @@ export const useTokensPoolContract = (
     return prizes;
   };
 
+  const getNFTPrizes = async (limit: number = 5) => {
+    const categoriesWithNFT = await contract.getNonEmptyCategoriesWithNFTs();
+
+    const prizes = [];
+    let i = 0;
+    while (i < categoriesWithNFT.length && i < limit) {
+      try {
+        const categoryId = categoriesWithNFT[i];
+        const categoryInfo = await contract.getCategory(i);
+        const categoryPrizes = await contract.getCategoryPrizes(i);
+        prizes.push({
+          categoryId: i,
+          info: { chance: categoryInfo[0], prizeIds: categoryInfo[1], isEmpty: categoryInfo[2] },
+          prizes: categoryPrizes,
+        });
+        i++;
+      } catch (e) {
+        console.log(e);
+      }
+    }
+    return prizes;
+  };
+
   const getAdmins = async () => {
     const filterGranted = contract.filters.RoleGranted();
     const filterRevoked = contract.filters.RoleRevoked();
@@ -172,6 +195,7 @@ export const useTokensPoolContract = (
     revokeAdminRole,
 
     getPrizes,
+    getNFTPrizes,
     getTotalChance,
 
     createPrizeCategory,
