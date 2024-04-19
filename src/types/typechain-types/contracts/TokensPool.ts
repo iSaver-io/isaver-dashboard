@@ -75,6 +75,7 @@ export interface TokensPoolInterface extends utils.Interface {
     "getCategoryPrizes(uint256)": FunctionFragment;
     "getCategoryRemainingPrizes(uint256)": FunctionFragment;
     "getNonEmptyCategories()": FunctionFragment;
+    "getNonEmptyCategoriesWithNFTs()": FunctionFragment;
     "getPrizeFromOracleRandom()": FunctionFragment;
     "getPrizeFromOracleRandomForUser(address)": FunctionFragment;
     "getRoleAdmin(bytes32)": FunctionFragment;
@@ -127,6 +128,7 @@ export interface TokensPoolInterface extends utils.Interface {
       | "getCategoryPrizes"
       | "getCategoryRemainingPrizes"
       | "getNonEmptyCategories"
+      | "getNonEmptyCategoriesWithNFTs"
       | "getPrizeFromOracleRandom"
       | "getPrizeFromOracleRandomForUser"
       | "getRoleAdmin"
@@ -224,6 +226,10 @@ export interface TokensPoolInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "getNonEmptyCategories",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getNonEmptyCategoriesWithNFTs",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -405,6 +411,10 @@ export interface TokensPoolInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "getNonEmptyCategories",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getNonEmptyCategoriesWithNFTs",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -833,6 +843,10 @@ export interface TokensPool extends BaseContract {
 
     getNonEmptyCategories(overrides?: CallOverrides): Promise<[BigNumber[]]>;
 
+    getNonEmptyCategoriesWithNFTs(
+      overrides?: CallOverrides
+    ): Promise<[BigNumber[]]>;
+
     getPrizeFromOracleRandom(
       overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
@@ -1072,6 +1086,10 @@ export interface TokensPool extends BaseContract {
 
   getNonEmptyCategories(overrides?: CallOverrides): Promise<BigNumber[]>;
 
+  getNonEmptyCategoriesWithNFTs(
+    overrides?: CallOverrides
+  ): Promise<BigNumber[]>;
+
   getPrizeFromOracleRandom(
     overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
@@ -1307,6 +1325,10 @@ export interface TokensPool extends BaseContract {
     ): Promise<TokensPool.PrizeStructOutput[]>;
 
     getNonEmptyCategories(overrides?: CallOverrides): Promise<BigNumber[]>;
+
+    getNonEmptyCategoriesWithNFTs(
+      overrides?: CallOverrides
+    ): Promise<BigNumber[]>;
 
     getPrizeFromOracleRandom(overrides?: CallOverrides): Promise<void>;
 
@@ -1683,6 +1705,10 @@ export interface TokensPool extends BaseContract {
 
     getNonEmptyCategories(overrides?: CallOverrides): Promise<BigNumber>;
 
+    getNonEmptyCategoriesWithNFTs(
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     getPrizeFromOracleRandom(
       overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
@@ -1925,6 +1951,10 @@ export interface TokensPool extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     getNonEmptyCategories(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getNonEmptyCategoriesWithNFTs(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

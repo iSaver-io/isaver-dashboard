@@ -205,7 +205,11 @@ export const useMomentoNFTPrizes = () => {
     [externalNFTRequests]
   );
 
-  return { momentoPrizesRequest: prizesRequest, externalNFTs, isLoadingExternalNFT };
+  return {
+    momentoPrizesRequest: prizesRequest,
+    externalNFTs,
+    isLoading: prizesRequest.isLoading || isLoadingExternalNFT,
+  };
 };
 
 export const GET_ALL_USER_PRIZES = 'get-all-user-prizes';

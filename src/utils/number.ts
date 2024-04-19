@@ -7,11 +7,13 @@ export const bigNumberToString = (
     precision = 2,
   }: {
     decimals?: number;
-    precision?: number;
+    precision?: number | 'full';
   } = {}
 ) => {
   const parts = ethers.utils.formatUnits(value, decimals).split('.');
-  let fractional = parts[1].slice(0, precision).padEnd(precision, '0');
+  const fractionalPrecision =
+    precision === 'full' ? (parts[1] === '0' ? 0 : parts[1].length) : precision;
+  let fractional = parts[1].slice(0, fractionalPrecision).padEnd(fractionalPrecision, '0');
   return fractional ? `${parts[0]}.${fractional}` : `${parts[0]}`;
 };
 

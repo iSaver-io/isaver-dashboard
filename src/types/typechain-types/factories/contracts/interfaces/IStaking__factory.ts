@@ -192,6 +192,12 @@ const _abi = [
         name: "stakingPlanId",
         type: "uint256",
       },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "timestamp",
+        type: "uint256",
+      },
     ],
     name: "Subscribed",
     type: "event",

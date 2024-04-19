@@ -289,6 +289,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.ITokensPool__factory>;
     getContractFactory(
+      name: "Airdrop",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.Airdrop__factory>;
+    getContractFactory(
       name: "ERC20BurnableMock",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.ERC20BurnableMock__factory>;
@@ -702,6 +706,11 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.ITokensPool>;
+    getContractAt(
+      name: "Airdrop",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.Airdrop>;
     getContractAt(
       name: "ERC20BurnableMock",
       address: string,

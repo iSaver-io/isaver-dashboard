@@ -73,10 +73,10 @@ export const useTokensPoolContract = (
     while (i < categoriesWithNFT.length && i < limit) {
       try {
         const categoryId = categoriesWithNFT[i];
-        const categoryInfo = await contract.getCategory(i);
-        const categoryPrizes = await contract.getCategoryPrizes(i);
+        const categoryInfo = await contract.getCategory(categoryId);
+        const categoryPrizes = await contract.getCategoryPrizes(categoryId);
         prizes.push({
-          categoryId: i,
+          categoryId,
           info: { chance: categoryInfo[0], prizeIds: categoryInfo[1], isEmpty: categoryInfo[2] },
           prizes: categoryPrizes,
         });

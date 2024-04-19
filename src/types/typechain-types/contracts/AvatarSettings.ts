@@ -55,6 +55,9 @@ export interface AvatarSettingsInterface extends utils.Interface {
     "isBirthdayInRange(uint256)": FunctionFragment;
     "isBirthdayPresentAvailable(uint256)": FunctionFragment;
     "isPowerAccessActive()": FunctionFragment;
+    "onERC1155BatchReceived(address,address,uint256[],uint256[],bytes)": FunctionFragment;
+    "onERC1155Received(address,address,uint256,uint256,bytes)": FunctionFragment;
+    "onERC721Received(address,address,uint256,bytes)": FunctionFragment;
     "pause()": FunctionFragment;
     "paused()": FunctionFragment;
     "powerActivationFee()": FunctionFragment;
@@ -100,6 +103,9 @@ export interface AvatarSettingsInterface extends utils.Interface {
       | "isBirthdayInRange"
       | "isBirthdayPresentAvailable"
       | "isPowerAccessActive"
+      | "onERC1155BatchReceived"
+      | "onERC1155Received"
+      | "onERC721Received"
       | "pause"
       | "paused"
       | "powerActivationFee"
@@ -205,6 +211,18 @@ export interface AvatarSettingsInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "isPowerAccessActive",
     values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "onERC1155BatchReceived",
+    values: [string, string, BigNumberish[], BigNumberish[], BytesLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "onERC1155Received",
+    values: [string, string, BigNumberish, BigNumberish, BytesLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "onERC721Received",
+    values: [string, string, BigNumberish, BytesLike]
   ): string;
   encodeFunctionData(functionFragment: "pause", values?: undefined): string;
   encodeFunctionData(functionFragment: "paused", values?: undefined): string;
@@ -333,6 +351,18 @@ export interface AvatarSettingsInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "isPowerAccessActive",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "onERC1155BatchReceived",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "onERC1155Received",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "onERC721Received",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "pause", data: BytesLike): Result;
@@ -768,6 +798,32 @@ export interface AvatarSettings extends BaseContract {
 
     isPowerAccessActive(overrides?: CallOverrides): Promise<[boolean]>;
 
+    onERC1155BatchReceived(
+      arg0: string,
+      arg1: string,
+      arg2: BigNumberish[],
+      arg3: BigNumberish[],
+      arg4: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
+
+    onERC1155Received(
+      arg0: string,
+      arg1: string,
+      arg2: BigNumberish,
+      arg3: BigNumberish,
+      arg4: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
+
+    onERC721Received(
+      arg0: string,
+      arg1: string,
+      arg2: BigNumberish,
+      arg3: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
+
     pause(
       overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
@@ -947,6 +1003,32 @@ export interface AvatarSettings extends BaseContract {
 
   isPowerAccessActive(overrides?: CallOverrides): Promise<boolean>;
 
+  onERC1155BatchReceived(
+    arg0: string,
+    arg1: string,
+    arg2: BigNumberish[],
+    arg3: BigNumberish[],
+    arg4: BytesLike,
+    overrides?: CallOverrides
+  ): Promise<string>;
+
+  onERC1155Received(
+    arg0: string,
+    arg1: string,
+    arg2: BigNumberish,
+    arg3: BigNumberish,
+    arg4: BytesLike,
+    overrides?: CallOverrides
+  ): Promise<string>;
+
+  onERC721Received(
+    arg0: string,
+    arg1: string,
+    arg2: BigNumberish,
+    arg3: BytesLike,
+    overrides?: CallOverrides
+  ): Promise<string>;
+
   pause(
     overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
@@ -1119,6 +1201,32 @@ export interface AvatarSettings extends BaseContract {
     ): Promise<boolean>;
 
     isPowerAccessActive(overrides?: CallOverrides): Promise<boolean>;
+
+    onERC1155BatchReceived(
+      arg0: string,
+      arg1: string,
+      arg2: BigNumberish[],
+      arg3: BigNumberish[],
+      arg4: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<string>;
+
+    onERC1155Received(
+      arg0: string,
+      arg1: string,
+      arg2: BigNumberish,
+      arg3: BigNumberish,
+      arg4: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<string>;
+
+    onERC721Received(
+      arg0: string,
+      arg1: string,
+      arg2: BigNumberish,
+      arg3: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<string>;
 
     pause(overrides?: CallOverrides): Promise<void>;
 
@@ -1458,6 +1566,32 @@ export interface AvatarSettings extends BaseContract {
 
     isPowerAccessActive(overrides?: CallOverrides): Promise<BigNumber>;
 
+    onERC1155BatchReceived(
+      arg0: string,
+      arg1: string,
+      arg2: BigNumberish[],
+      arg3: BigNumberish[],
+      arg4: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    onERC1155Received(
+      arg0: string,
+      arg1: string,
+      arg2: BigNumberish,
+      arg3: BigNumberish,
+      arg4: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    onERC721Received(
+      arg0: string,
+      arg1: string,
+      arg2: BigNumberish,
+      arg3: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     pause(overrides?: Overrides & { from?: string }): Promise<BigNumber>;
 
     paused(overrides?: CallOverrides): Promise<BigNumber>;
@@ -1643,6 +1777,32 @@ export interface AvatarSettings extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     isPowerAccessActive(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    onERC1155BatchReceived(
+      arg0: string,
+      arg1: string,
+      arg2: BigNumberish[],
+      arg3: BigNumberish[],
+      arg4: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    onERC1155Received(
+      arg0: string,
+      arg1: string,
+      arg2: BigNumberish,
+      arg3: BigNumberish,
+      arg4: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    onERC721Received(
+      arg0: string,
+      arg1: string,
+      arg2: BigNumberish,
+      arg3: BytesLike,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

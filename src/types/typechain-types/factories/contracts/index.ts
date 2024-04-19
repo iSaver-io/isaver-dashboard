@@ -3,6 +3,7 @@
 /* eslint-disable */
 export * as extensions from "./extensions";
 export * as interfaces from "./interfaces";
+export * as migration from "./migration";
 export * as mocks from "./mocks";
 export * as tokens from "./tokens";
 export { AvatarSettings__factory } from "./AvatarSettings__factory";

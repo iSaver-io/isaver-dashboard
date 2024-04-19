@@ -46,20 +46,27 @@ export interface ISaverPowersInterface extends utils.Interface {
     "isValidToken(uint256)": FunctionFragment;
     "mint(address,uint256,uint256,bytes)": FunctionFragment;
     "mintBatch(address,uint256[],uint256[],bytes)": FunctionFragment;
+    "name()": FunctionFragment;
     "proxiableUUID()": FunctionFragment;
     "renounceRole(bytes32,address)": FunctionFragment;
     "revokeRole(bytes32,address)": FunctionFragment;
+    "royaltyInfo(uint256,uint256)": FunctionFragment;
     "safeBatchTransferFrom(address,address,uint256[],uint256[],bytes)": FunctionFragment;
     "safeTransferFrom(address,address,uint256,uint256,bytes)": FunctionFragment;
     "setApprovalForAll(address,bool)": FunctionFragment;
     "setContractDescription(string)": FunctionFragment;
     "setContractExternalUrl(string)": FunctionFragment;
     "setContractImageUrl(string)": FunctionFragment;
+    "setName(string)": FunctionFragment;
+    "setRoyaltiesRecipient(address)": FunctionFragment;
+    "setRoyaltyPercent(uint256)": FunctionFragment;
+    "setSymbol(string)": FunctionFragment;
     "setTokenData(uint256,string,string,string,string,string)": FunctionFragment;
     "setTokenDescription(uint256,string)": FunctionFragment;
     "setTokenExternalUrl(string)": FunctionFragment;
     "setTokenImageBaseUrl(string)": FunctionFragment;
     "supportsInterface(bytes4)": FunctionFragment;
+    "symbol()": FunctionFragment;
     "tokenData(uint256)": FunctionFragment;
     "tokenURI(uint256)": FunctionFragment;
     "totalSupply(uint256)": FunctionFragment;
@@ -87,20 +94,27 @@ export interface ISaverPowersInterface extends utils.Interface {
       | "isValidToken"
       | "mint"
       | "mintBatch"
+      | "name"
       | "proxiableUUID"
       | "renounceRole"
       | "revokeRole"
+      | "royaltyInfo"
       | "safeBatchTransferFrom"
       | "safeTransferFrom"
       | "setApprovalForAll"
       | "setContractDescription"
       | "setContractExternalUrl"
       | "setContractImageUrl"
+      | "setName"
+      | "setRoyaltiesRecipient"
+      | "setRoyaltyPercent"
+      | "setSymbol"
       | "setTokenData"
       | "setTokenDescription"
       | "setTokenExternalUrl"
       | "setTokenImageBaseUrl"
       | "supportsInterface"
+      | "symbol"
       | "tokenData"
       | "tokenURI"
       | "totalSupply"
@@ -177,6 +191,7 @@ export interface ISaverPowersInterface extends utils.Interface {
     functionFragment: "mintBatch",
     values: [string, BigNumberish[], BigNumberish[], BytesLike]
   ): string;
+  encodeFunctionData(functionFragment: "name", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "proxiableUUID",
     values?: undefined
@@ -188,6 +203,10 @@ export interface ISaverPowersInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "revokeRole",
     values: [BytesLike, string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "royaltyInfo",
+    values: [BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "safeBatchTransferFrom",
@@ -213,6 +232,16 @@ export interface ISaverPowersInterface extends utils.Interface {
     functionFragment: "setContractImageUrl",
     values: [string]
   ): string;
+  encodeFunctionData(functionFragment: "setName", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "setRoyaltiesRecipient",
+    values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setRoyaltyPercent",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(functionFragment: "setSymbol", values: [string]): string;
   encodeFunctionData(
     functionFragment: "setTokenData",
     values: [BigNumberish, string, string, string, string, string]
@@ -233,6 +262,7 @@ export interface ISaverPowersInterface extends utils.Interface {
     functionFragment: "supportsInterface",
     values: [BytesLike]
   ): string;
+  encodeFunctionData(functionFragment: "symbol", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "tokenData",
     values: [BigNumberish]
@@ -293,6 +323,7 @@ export interface ISaverPowersInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "mint", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "mintBatch", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "proxiableUUID",
     data: BytesLike
@@ -302,6 +333,10 @@ export interface ISaverPowersInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "revokeRole", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "royaltyInfo",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "safeBatchTransferFrom",
     data: BytesLike
@@ -326,6 +361,16 @@ export interface ISaverPowersInterface extends utils.Interface {
     functionFragment: "setContractImageUrl",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "setName", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "setRoyaltiesRecipient",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setRoyaltyPercent",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "setSymbol", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "setTokenData",
     data: BytesLike
@@ -346,6 +391,7 @@ export interface ISaverPowersInterface extends utils.Interface {
     functionFragment: "supportsInterface",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "symbol", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "tokenData", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "tokenURI", data: BytesLike): Result;
   decodeFunctionResult(
@@ -614,6 +660,8 @@ export interface ISaverPowers extends BaseContract {
       overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
 
+    name(overrides?: CallOverrides): Promise<[string]>;
+
     proxiableUUID(overrides?: CallOverrides): Promise<[string]>;
 
     renounceRole(
@@ -627,6 +675,14 @@ export interface ISaverPowers extends BaseContract {
       account: string,
       overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
+
+    royaltyInfo(
+      arg0: BigNumberish,
+      _salePrice: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<
+      [string, BigNumber] & { receiver: string; royaltyAmount: BigNumber }
+    >;
 
     safeBatchTransferFrom(
       from: string,
@@ -667,13 +723,33 @@ export interface ISaverPowers extends BaseContract {
       overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
 
+    setName(
+      _name: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
+
+    setRoyaltiesRecipient(
+      newRecipient: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
+
+    setRoyaltyPercent(
+      percentBasePoints: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
+
+    setSymbol(
+      _symbol: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
+
     setTokenData(
-      tokenId: BigNumberish,
-      name: string,
-      asset: string,
-      tier: string,
-      tokenType: string,
-      description: string,
+      _tokenId: BigNumberish,
+      _name: string,
+      _asset: string,
+      _tier: string,
+      _tokenType: string,
+      _description: string,
       overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
 
@@ -697,6 +773,8 @@ export interface ISaverPowers extends BaseContract {
       interfaceId: BytesLike,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
+
+    symbol(overrides?: CallOverrides): Promise<[string]>;
 
     tokenData(
       arg0: BigNumberish,
@@ -816,6 +894,8 @@ export interface ISaverPowers extends BaseContract {
     overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
 
+  name(overrides?: CallOverrides): Promise<string>;
+
   proxiableUUID(overrides?: CallOverrides): Promise<string>;
 
   renounceRole(
@@ -829,6 +909,14 @@ export interface ISaverPowers extends BaseContract {
     account: string,
     overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
+
+  royaltyInfo(
+    arg0: BigNumberish,
+    _salePrice: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<
+    [string, BigNumber] & { receiver: string; royaltyAmount: BigNumber }
+  >;
 
   safeBatchTransferFrom(
     from: string,
@@ -869,13 +957,33 @@ export interface ISaverPowers extends BaseContract {
     overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
 
+  setName(
+    _name: string,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  setRoyaltiesRecipient(
+    newRecipient: string,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  setRoyaltyPercent(
+    percentBasePoints: BigNumberish,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  setSymbol(
+    _symbol: string,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
   setTokenData(
-    tokenId: BigNumberish,
-    name: string,
-    asset: string,
-    tier: string,
-    tokenType: string,
-    description: string,
+    _tokenId: BigNumberish,
+    _name: string,
+    _asset: string,
+    _tier: string,
+    _tokenType: string,
+    _description: string,
     overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
 
@@ -899,6 +1007,8 @@ export interface ISaverPowers extends BaseContract {
     interfaceId: BytesLike,
     overrides?: CallOverrides
   ): Promise<boolean>;
+
+  symbol(overrides?: CallOverrides): Promise<string>;
 
   tokenData(
     arg0: BigNumberish,
@@ -1010,6 +1120,8 @@ export interface ISaverPowers extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    name(overrides?: CallOverrides): Promise<string>;
+
     proxiableUUID(overrides?: CallOverrides): Promise<string>;
 
     renounceRole(
@@ -1023,6 +1135,14 @@ export interface ISaverPowers extends BaseContract {
       account: string,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    royaltyInfo(
+      arg0: BigNumberish,
+      _salePrice: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<
+      [string, BigNumber] & { receiver: string; royaltyAmount: BigNumber }
+    >;
 
     safeBatchTransferFrom(
       from: string,
@@ -1063,13 +1183,27 @@ export interface ISaverPowers extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    setName(_name: string, overrides?: CallOverrides): Promise<void>;
+
+    setRoyaltiesRecipient(
+      newRecipient: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setRoyaltyPercent(
+      percentBasePoints: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setSymbol(_symbol: string, overrides?: CallOverrides): Promise<void>;
+
     setTokenData(
-      tokenId: BigNumberish,
-      name: string,
-      asset: string,
-      tier: string,
-      tokenType: string,
-      description: string,
+      _tokenId: BigNumberish,
+      _name: string,
+      _asset: string,
+      _tier: string,
+      _tokenType: string,
+      _description: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1093,6 +1227,8 @@ export interface ISaverPowers extends BaseContract {
       interfaceId: BytesLike,
       overrides?: CallOverrides
     ): Promise<boolean>;
+
+    symbol(overrides?: CallOverrides): Promise<string>;
 
     tokenData(
       arg0: BigNumberish,
@@ -1313,6 +1449,8 @@ export interface ISaverPowers extends BaseContract {
       overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
 
+    name(overrides?: CallOverrides): Promise<BigNumber>;
+
     proxiableUUID(overrides?: CallOverrides): Promise<BigNumber>;
 
     renounceRole(
@@ -1325,6 +1463,12 @@ export interface ISaverPowers extends BaseContract {
       role: BytesLike,
       account: string,
       overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+
+    royaltyInfo(
+      arg0: BigNumberish,
+      _salePrice: BigNumberish,
+      overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     safeBatchTransferFrom(
@@ -1366,13 +1510,33 @@ export interface ISaverPowers extends BaseContract {
       overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
 
+    setName(
+      _name: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+
+    setRoyaltiesRecipient(
+      newRecipient: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+
+    setRoyaltyPercent(
+      percentBasePoints: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+
+    setSymbol(
+      _symbol: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+
     setTokenData(
-      tokenId: BigNumberish,
-      name: string,
-      asset: string,
-      tier: string,
-      tokenType: string,
-      description: string,
+      _tokenId: BigNumberish,
+      _name: string,
+      _asset: string,
+      _tier: string,
+      _tokenType: string,
+      _description: string,
       overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
 
@@ -1396,6 +1560,8 @@ export interface ISaverPowers extends BaseContract {
       interfaceId: BytesLike,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    symbol(overrides?: CallOverrides): Promise<BigNumber>;
 
     tokenData(
       arg0: BigNumberish,
@@ -1516,6 +1682,8 @@ export interface ISaverPowers extends BaseContract {
       overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 
+    name(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     proxiableUUID(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     renounceRole(
@@ -1528,6 +1696,12 @@ export interface ISaverPowers extends BaseContract {
       role: BytesLike,
       account: string,
       overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    royaltyInfo(
+      arg0: BigNumberish,
+      _salePrice: BigNumberish,
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     safeBatchTransferFrom(
@@ -1569,13 +1743,33 @@ export interface ISaverPowers extends BaseContract {
       overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 
+    setName(
+      _name: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    setRoyaltiesRecipient(
+      newRecipient: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    setRoyaltyPercent(
+      percentBasePoints: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    setSymbol(
+      _symbol: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
     setTokenData(
-      tokenId: BigNumberish,
-      name: string,
-      asset: string,
-      tier: string,
-      tokenType: string,
-      description: string,
+      _tokenId: BigNumberish,
+      _name: string,
+      _asset: string,
+      _tier: string,
+      _tokenType: string,
+      _description: string,
       overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 
@@ -1599,6 +1793,8 @@ export interface ISaverPowers extends BaseContract {
       interfaceId: BytesLike,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
+
+    symbol(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     tokenData(
       arg0: BigNumberish,
