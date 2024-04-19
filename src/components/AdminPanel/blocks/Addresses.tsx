@@ -43,6 +43,13 @@ export const Addresses = () => {
         <Link href="https://polygonscan.com/unitconverter" target="_blank" color="green.400">
           Unit Converter
         </Link>
+        <Link
+          href="https://app.safe.global/home?safe=matic:0xc3Da992F9B3D4ac705C6709EEb62fA922Bf8cbEf"
+          target="_blank"
+          color="green.400"
+        >
+          Safe multisig
+        </Link>
         <Link href="/vesting" target="_blank" color="green.400">
           Vestings
         </Link>

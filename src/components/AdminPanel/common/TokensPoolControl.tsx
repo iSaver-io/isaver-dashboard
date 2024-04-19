@@ -58,15 +58,17 @@ export const TokensPoolControl = ({
         {tokensPool.totalChanceRequest.data?.toString()}):
       </Text>
 
-      {tokensPool.prizesRequest.data
-        ?.sort((a, b) => b.categoryId - a.categoryId)
-        .map((category) => (
-          <TokensPoolCategory
-            key={`category-${category.categoryId}`}
-            contractName={contractName}
-            {...category}
-          />
-        ))}
+      <Box maxHeight="1000px" overflow="auto">
+        {tokensPool.prizesRequest.data
+          ?.sort((a, b) => b.categoryId - a.categoryId)
+          .map((category) => (
+            <TokensPoolCategory
+              key={`category-${category.categoryId}`}
+              contractName={contractName}
+              {...category}
+            />
+          ))}
+      </Box>
 
       {isOpenAddCategory ? (
         <AddCategoryModal

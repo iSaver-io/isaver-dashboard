@@ -5,6 +5,7 @@ import { ControlField } from '@/components/AdminPanel/common/ControlField';
 import { MintRaffleTicket } from '@/components/AdminPanel/common/MintRaffleTicket';
 import { Balance } from '@/components/Balance/Balance';
 import { Button } from '@/components/ui/Button/Button';
+import { CenteredSpinner } from '@/components/ui/CenteredSpinner/CenteredSpinner';
 import { useRaffleControl, useTicketPrice } from '@/hooks/raffle/useRaffle';
 import { useRaffleMiniGame } from '@/hooks/raffle/useRaffleMiniGame';
 import { useMomentoControl } from '@/hooks/useMomento';
@@ -28,9 +29,14 @@ export const TicketControl = () => {
     totalBurnedTicketsRequest: { data: momentoTotalBurned },
   } = useMomentoControl();
 
+  const isLoading =
+    ticketSupply.isLoading || ticketPriceRequest.isLoading || extraTicketsPowerD.isLoading;
+
   return (
     <AdminSection title="Raffle Ticket">
       <>
+        {isLoading ? <CenteredSpinner /> : null}
+
         <ControlField
           label="Raffle Ticket price"
           value={ticketPriceRequest.data ? bigNumberToString(ticketPriceRequest.data) : null}
