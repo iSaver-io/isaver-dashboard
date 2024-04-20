@@ -268,7 +268,7 @@ const SubscriptionLevel: FC<SubscriptionLevelProps> = ({
         ) : null}
         {isEnding && onSubscribe ? (
           <Button
-            variant="outlinedWhite"
+            variant="outlinedWhiteReferralModal"
             size={{ sm: 'sm', md: 'unset' }}
             height={{ sm: '100%', md: 'unset' }}
             isLoading={isLoading}

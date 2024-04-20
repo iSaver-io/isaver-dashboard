@@ -3,9 +3,11 @@ import Slider, { Settings } from 'react-slick';
 import { Box, Button, Flex, Input, Text, useBreakpoint, useNumberInput } from '@chakra-ui/react';
 import { useAccount } from 'wagmi';
 
+import { ContractsEnum, useContractAbi } from '@/hooks/contracts/useContractAbi';
 import { useOnVisibleLogger } from '@/hooks/logger/useOnVisibleLogger';
 import { useBuyPowers, usePowerPrices } from '@/hooks/useAvatarsSell';
 import { useLogger } from '@/hooks/useLogger';
+import { useAddressHasNFT } from '@/hooks/useNFTHolders';
 
 import MinusIcon from './images/minus.svg';
 import PlusIcon from './images/plus.svg';
@@ -88,6 +90,10 @@ export const Powers = () => {
   const bp = useBreakpoint({ ssr: false });
   const is2XL = ['2xl'].includes(bp);
   const isXL = ['xl'].includes(bp);
+  const { address } = useAccount();
+  const { address: avatarsAddress } = useContractAbi({ contract: ContractsEnum.ISaverAvatars });
+
+  const { hasNFT } = useAddressHasNFT(avatarsAddress, address);
 
   const sliderSettings = useMemo(() => {
     if (isXL) {
@@ -114,7 +120,11 @@ export const Powers = () => {
     <>
       <Box
         className="powers"
-        mt={{ sm: '60px', lg: '70px', xl: '200px', '2xl': '280px' }}
+        mt={
+          hasNFT
+            ? { sm: '60px', lg: '70px', xl: '200px', '2xl': '280px' }
+            : { sm: '120px', lg: '130px', xl: '260px', '2xl': '340px' }
+        }
         px={{ base: '10px', xl: '30px' }}
       >
         <Box className="powers__description" mb={{ sm: '30px', md: 'unset' }}>

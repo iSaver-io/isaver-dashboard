@@ -167,7 +167,13 @@ const NFT = ({
 }: Pick<PrizeInfo, 'tokenId' | 'tokenAddress'> & { isISaverCollection: boolean }) => {
   const { nft } = useGetNFT(tokenAddress, Number(tokenId));
 
-  const image = nft?.image.pngUrl || nft?.image.cachedUrl || nft?.image.originalUrl;
+  const image = useMemo(() => {
+    const link = nft?.image.pngUrl || nft?.image.cachedUrl || nft?.image.originalUrl;
+    if (link?.includes('ipfs.io') && nft?.contract.openSeaMetadata.imageUrl) {
+      return nft?.contract.openSeaMetadata.imageUrl;
+    }
+    return link;
+  }, [nft]);
 
   return (
     <PrizeCard label={isISaverCollection ? 'iSaver Avatars' : 'NFT New collections'}>
