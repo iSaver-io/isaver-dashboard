@@ -36,6 +36,7 @@ export const Addresses = () => {
           Accounts (Pools)
         </Text>
         <AddressInfo title="Vesting Pool" address={accounts.vestingPool} />
+        <AddressInfo title="Multisig admin" address={accounts.multisig} />
 
         <Text textStyle="textMedium" mt="20px" mb="8px" fontSize="18px">
           Helpful Links
