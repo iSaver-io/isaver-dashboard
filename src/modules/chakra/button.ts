@@ -174,6 +174,13 @@ const outlinedWhite = defineStyle({
     },
   },
 });
+const outlinedWhiteReferralModal = defineStyle({
+  ...outlinedWhite,
+  paddingTop: 15,
+  paddingBottom: 15,
+  paddingLeft: 30,
+  paddingRight: 30,
+});
 
 const outlinedGreen = defineStyle({
   ...commonProps,
@@ -276,6 +283,7 @@ export const buttonTheme = defineStyleConfig({
     secondaryFilled,
     outlined,
     outlinedWhite,
+    outlinedWhiteReferralModal,
     outlinedGreen,
     filledRed,
     filledWhite,
