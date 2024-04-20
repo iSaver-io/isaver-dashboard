@@ -151,10 +151,11 @@ const TokensPoolCategory = ({
     () => prizes.reduce((acc, prize) => acc + parseInt(prize.remaining), 0),
     [prizes]
   );
-  const totalInitialRemaining = useMemo(
-    () => prizes.reduce((acc, prize) => acc + parseInt(prize.initialAmount), 0),
-    [prizes]
-  );
+  const totalInitialRemaining = useMemo(() => {
+    // hardcode for removing old Powers collection info in that category
+    if (categoryId === 12 && info.chance.toString() == '400') return '400';
+    return prizes.reduce((acc, prize) => acc + parseInt(prize.initialAmount), 0);
+  }, [prizes, categoryId, info]);
 
   return (
     <Box border="1px solid gray" borderRadius="12px" padding="8px 12px" mt="8px">
