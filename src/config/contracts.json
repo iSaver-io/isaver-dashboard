@@ -6270,7 +6270,7 @@
           ]
         },
         "ISaverPowers": {
-          "address": "0x0595Da2FCfe7825fe7BAB09cA1ff9D5D783E228A",
+          "address": "0xE0B290e6AA39538C9ea7F93A826fa419B82d9774",
           "abi": [
             {
               "inputs": [],
@@ -6862,6 +6862,19 @@
             },
             {
               "inputs": [],
+              "name": "name",
+              "outputs": [
+                {
+                  "internalType": "string",
+                  "name": "",
+                  "type": "string"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
+              "inputs": [],
               "name": "proxiableUUID",
               "outputs": [
                 {
@@ -6907,6 +6920,35 @@
               "name": "revokeRole",
               "outputs": [],
               "stateMutability": "nonpayable",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "_salePrice",
+                  "type": "uint256"
+                }
+              ],
+              "name": "royaltyInfo",
+              "outputs": [
+                {
+                  "internalType": "address",
+                  "name": "receiver",
+                  "type": "address"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "royaltyAmount",
+                  "type": "uint256"
+                }
+              ],
+              "stateMutability": "view",
               "type": "function"
             },
             {
@@ -7035,33 +7077,85 @@
             {
               "inputs": [
                 {
+                  "internalType": "string",
+                  "name": "_name",
+                  "type": "string"
+                }
+              ],
+              "name": "setName",
+              "outputs": [],
+              "stateMutability": "nonpayable",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "address",
+                  "name": "newRecipient",
+                  "type": "address"
+                }
+              ],
+              "name": "setRoyaltiesRecipient",
+              "outputs": [],
+              "stateMutability": "nonpayable",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
                   "internalType": "uint256",
-                  "name": "tokenId",
+                  "name": "percentBasePoints",
+                  "type": "uint256"
+                }
+              ],
+              "name": "setRoyaltyPercent",
+              "outputs": [],
+              "stateMutability": "nonpayable",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "string",
+                  "name": "_symbol",
+                  "type": "string"
+                }
+              ],
+              "name": "setSymbol",
+              "outputs": [],
+              "stateMutability": "nonpayable",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "_tokenId",
                   "type": "uint256"
                 },
                 {
                   "internalType": "string",
-                  "name": "name",
+                  "name": "_name",
                   "type": "string"
                 },
                 {
                   "internalType": "string",
-                  "name": "asset",
+                  "name": "_asset",
                   "type": "string"
                 },
                 {
                   "internalType": "string",
-                  "name": "tier",
+                  "name": "_tier",
                   "type": "string"
                 },
                 {
                   "internalType": "string",
-                  "name": "tokenType",
+                  "name": "_tokenType",
                   "type": "string"
                 },
                 {
                   "internalType": "string",
-                  "name": "description",
+                  "name": "_description",
                   "type": "string"
                 }
               ],
@@ -7128,6 +7222,19 @@
                   "internalType": "bool",
                   "name": "",
                   "type": "bool"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
+              "inputs": [],
+              "name": "symbol",
+              "outputs": [
+                {
+                  "internalType": "string",
+                  "name": "",
+                  "type": "string"
                 }
               ],
               "stateMutability": "view",
