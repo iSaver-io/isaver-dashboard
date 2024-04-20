@@ -65,27 +65,28 @@ export const useTokensPoolContract = (
     return prizes;
   };
 
-  const getNFTPrizes = async (limit: number = 5) => {
-    const categoriesWithNFT = await contract.getNonEmptyCategoriesWithNFTs();
+  const getNFTPrizes = async () => {
+    // const categoriesWithNFT = await contract.getNonEmptyCategoriesWithNFTs();
 
-    const prizes = [];
-    let i = 0;
-    while (i < categoriesWithNFT.length && i < limit) {
-      try {
-        const categoryId = categoriesWithNFT[i];
-        const categoryInfo = await contract.getCategory(categoryId);
-        const categoryPrizes = await contract.getCategoryPrizes(categoryId);
-        prizes.push({
-          categoryId,
-          info: { chance: categoryInfo[0], prizeIds: categoryInfo[1], isEmpty: categoryInfo[2] },
-          prizes: categoryPrizes,
-        });
-        i++;
-      } catch (e) {
-        console.log(e);
-      }
-    }
-    return prizes;
+    // TODO: хардкод для оптимизации , иначе приходится грузить все категории (35+ штук)
+    const categoriesWithNFT = [35, 11];
+
+    return (
+      await Promise.all(
+        categoriesWithNFT.map((categoryId) => {
+          const categoryInfo = contract.getCategory(categoryId);
+          const categoryPrizes = contract.getCategoryPrizes(categoryId);
+
+          return Promise.all([categoryId, categoryInfo, categoryPrizes]);
+        })
+      )
+    )
+      .map((val) => ({
+        categoryId: val[0],
+        info: { chance: val[1][0], prizeIds: val[1][1], isEmpty: val[1][2] },
+        prizes: val[2],
+      }))
+      .sort((a, b) => b.categoryId - a.categoryId);
   };
 
   const getAdmins = async () => {

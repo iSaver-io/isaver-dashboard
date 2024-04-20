@@ -195,12 +195,13 @@ const TokensPoolCategory = ({
 
       <Flex direction="column">
         {prizes
+          .map((p, prizeIndex) => ({ ...p, prizeIndex }))
           .filter((p) => p.remaining > 0)
-          .map((prize, prizeIndex) => (
+          .map((prize) => (
             <TokensPoolPrize
-              key={`prize-${prizeIndex}`}
+              key={`prize-${prize.prizeIndex}`}
               {...prize}
-              prizeId={prizeIndex}
+              prizeId={prize.prizeIndex}
               categoryId={categoryId}
               onRemove={handleRemovePrize}
             />

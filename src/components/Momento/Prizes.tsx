@@ -90,7 +90,8 @@ export const Prizes = () => {
         contract: nft?.contract.address,
         tokenId: nft?.tokenId,
       }))
-      .filter((item) => !item.image?.includes('//ipfs'));
+      .filter((item) => !item.image?.includes('//ipfs'))
+      .slice(0, 12);
   }, [externalNFTs, isLoading]);
 
   const isSet = useRef(false);

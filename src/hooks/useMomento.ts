@@ -151,34 +151,52 @@ export const useMomentoNFTPrizes = () => {
   const { prizesRequest } = useTokensPoolNFTPrizes(ContractsEnum.MomentoTokensPool);
 
   const externalNFTAddresses = useMemo(() => {
-    const nfts = (prizesRequest.data || [])
+    // const nfts = (prizesRequest.data || [])
+    //   .filter((category) => !category.info.isEmpty)
+    //   .sort((a, b) => a.info.chance.sub(b.info.chance).toNumber())
+    //   .map((category) => category.prizes)
+    //   .flat()
+    //   .filter(
+    //     (prize) =>
+    //       (prize.isERC721 || prize.isERC1155) &&
+    //       !Object.values(addresses).includes(prize.tokenAddress)
+    //   )
+    //   .map((category) =>
+    //     category.tokenIds.map((tokenId) => ({ ...category, tokenId: tokenId.toString() }))
+    //   );
+    if (!prizesRequest.data || !prizesRequest.data.length) return [];
+
+    const prizes = prizesRequest.data
       .filter((category) => !category.info.isEmpty)
       .sort((a, b) => a.info.chance.sub(b.info.chance).toNumber())
-      .map((category) => category.prizes)
-      .flat()
-      .filter(
-        (prize) =>
-          (prize.isERC721 || prize.isERC1155) &&
-          !Object.values(addresses).includes(prize.tokenAddress)
-      )
-      .map((category) =>
-        category.tokenIds.map((tokenId) => ({ ...category, tokenId: tokenId.toString() }))
-      );
+      .map((category) => ({
+        ...category,
+        prizes: category.prizes
+          .filter(
+            (prize) =>
+              (prize.isERC721 || prize.isERC1155) &&
+              !Object.values(addresses).includes(prize.tokenAddress)
+          )
+          .map((prize) =>
+            prize.tokenIds.map((tokenId) => ({ ...prize, tokenId: tokenId.toString() }))
+          ),
+      }));
 
-    const totalTokens = nfts.reduce((acc, collection) => acc + collection.length, 0);
-    const MAX_NFTS = Math.min(12, totalTokens);
+    const mainCategory = prizes.filter(({ categoryId }) => categoryId === 35)[0].prizes;
+    const secondaryCategory = prizes.filter(({ categoryId }) => categoryId === 11)[0].prizes;
 
-    const selectedNFTs = [];
+    const MAX_NFTS = Math.min(14, mainCategory.length + secondaryCategory.length);
+    const selectedNFTs = mainCategory.flat();
 
     for (let i = 0; selectedNFTs.length < MAX_NFTS; i++) {
-      const collectionIndex = i % nfts.length;
-      const tokenIndex = Math.floor(i / nfts.length);
+      const collectionIndex = i % secondaryCategory.length;
+      const tokenIndex = Math.floor(i / secondaryCategory.length);
 
-      if (nfts[collectionIndex].length < tokenIndex) {
+      if (secondaryCategory[collectionIndex].length < tokenIndex) {
         continue;
       }
 
-      selectedNFTs.push(nfts[collectionIndex][tokenIndex]);
+      selectedNFTs.push(secondaryCategory[collectionIndex][tokenIndex]);
     }
 
     return selectedNFTs;

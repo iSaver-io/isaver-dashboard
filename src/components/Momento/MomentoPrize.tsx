@@ -221,7 +221,11 @@ const OtherTokens = ({
         lineHeight="1"
         zIndex={10}
       >
-        {isERC20 ? bigNumberToString(amount, { precision: 0 }) : isERC1155 ? amount.toString() : ''}
+        {isERC20
+          ? bigNumberToString(amount, { precision: 'full' })
+          : isERC1155
+          ? amount.toString()
+          : ''}
       </Text>
       <Text
         fontWeight="black"
