@@ -47,9 +47,30 @@ export const MomentoPrize = ({ prizeInfo }: MomentoPrizeProps) => {
         tokenName = tokenMetadata.name || prizeInfo.tokenAddress;
       }
 
+      let prizeCategory = 'Various Tokens';
+      if (prizeInfo.isERC721) {
+        prizeCategory =
+          contracts.ISaverAvatars === prizeInfo.tokenAddress
+            ? 'iSaver Avatars'
+            : 'NFT New collections';
+      }
+      if (prizeInfo.tokenAddress === contracts.ISaverSAVRToken) {
+        prizeCategory = 'SAVR Tokens';
+      }
+      if (prizeInfo.tokenAddress === contracts.ISaverSAVToken) {
+        prizeCategory = 'SAV Tokens';
+      }
+      if (prizeInfo.tokenAddress === contracts.ISaverPowers) {
+        prizeCategory = 'iSaver Powers';
+      }
+      if (prizeInfo.tokenAddress === contracts.Ticket) {
+        prizeCategory = 'Raffle Tickets';
+      }
+
       logger({
         value: prizeInfo.amount.toString(),
         content: tokenName,
+        context: prizeCategory as any,
       });
       isLogged.current = true;
     };
