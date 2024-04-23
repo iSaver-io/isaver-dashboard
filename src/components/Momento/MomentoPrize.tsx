@@ -1,4 +1,4 @@
-import { PropsWithChildren, useCallback, useEffect, useMemo, useState } from 'react';
+import { PropsWithChildren, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Box, Flex, Image, Text } from '@chakra-ui/react';
 import { motion } from 'framer-motion';
 
@@ -37,16 +37,24 @@ export const MomentoPrize = ({ prizeInfo }: MomentoPrizeProps) => {
     buttonLocation: 'up',
     actionGroup: 'interactions',
   });
+  const isLogged = useRef(false);
 
   useEffect(() => {
-    if (prizeInfo) {
+    const log = async () => {
       let tokenName = getTokenNameByAddress(prizeInfo.tokenAddress, contracts);
+      if (!tokenName) {
+        const tokenMetadata = await alchemy.core.getTokenMetadata(prizeInfo.tokenAddress);
+        tokenName = tokenMetadata.name || prizeInfo.tokenAddress;
+      }
 
       logger({
         value: prizeInfo.amount.toString(),
         content: tokenName,
       });
-    }
+      isLogged.current = true;
+    };
+
+    if (prizeInfo && !isLogged.current) log();
   }, [prizeInfo, contracts, logger]);
 
   const renderPrize = useCallback(() => {
@@ -176,7 +184,7 @@ const NFT = ({
   }, [nft]);
 
   return (
-    <PrizeCard label={isISaverCollection ? 'iSaver Avatars' : 'NFT New collections'}>
+    <PrizeCard label={isISaverCollection ? 'iSaver Avatars' : 'NFT New collections'} padding="0px">
       <Image src={image} alt={nft?.name} />
     </PrizeCard>
   );
@@ -188,12 +196,12 @@ const Ticket = ({ amount }: Pick<PrizeInfo, 'amount'>) => {
       <Image src={ticketPrize} alt="ticket" />
       <Text
         fontWeight="black"
-        fontSize={{ base: '20px', lg: '48px', xl: '84px' }}
-        lineHeight="1"
+        fontSize={{ sm: '40px', lg: '44px', xl: '84px' }}
+        lineHeight={{ sm: '28px', lg: '30px', xl: '1' }}
         zIndex={10}
         pos="absolute"
-        right={0}
-        bottom={0}
+        right="10px"
+        bottom="10px"
       >
         x{amount.toString()}
       </Text>
@@ -218,20 +226,29 @@ const OtherTokens = ({
     fetchSymbol();
   }, [tokenAddress]);
 
+  const amountString = useMemo(
+    () =>
+      isERC20
+        ? bigNumberToString(amount, { precision: 'full' })
+        : isERC1155
+        ? amount.toString()
+        : '',
+    [isERC20, amount, isERC1155]
+  );
+
+  const amountFontSize = useMemo(
+    () =>
+      amountString.length > 3
+        ? { sm: '20px', lg: '32px', xl: '64px' }
+        : { sm: '20px', lg: '48px', xl: '84px' },
+    [amountString]
+  );
+
   return (
     <PrizeCard label="Various Tokens">
       <Image src={otherPrize} alt="SAVR" pos="absolute" left="0" top="0" />
-      <Text
-        fontWeight="black"
-        fontSize={{ base: '20px', lg: '48px', xl: '84px' }}
-        lineHeight="1"
-        zIndex={10}
-      >
-        {isERC20
-          ? bigNumberToString(amount, { precision: 'full' })
-          : isERC1155
-          ? amount.toString()
-          : ''}
+      <Text fontWeight="black" fontSize={amountFontSize} lineHeight="1" zIndex={10}>
+        {amountString}
       </Text>
       <Text
         fontWeight="black"
@@ -262,7 +279,11 @@ const flipVariants = {
   },
 };
 
-const PrizeCard = ({ label, children }: PropsWithChildren & { label: string }) => {
+const PrizeCard = ({
+  padding = '10px',
+  label,
+  children,
+}: PropsWithChildren & { padding?: string; label: string }) => {
   const [isFlipped, setIsFlipped] = useState(false);
 
   useEffect(() => {
@@ -274,7 +295,12 @@ const PrizeCard = ({ label, children }: PropsWithChildren & { label: string }) =
   }, []);
 
   return (
-    <Box mt={{ base: '45px', xl: '90px' }}>
+    <Flex
+      mt={{ base: '45px', xl: '90px' }}
+      flexDir="column"
+      alignItems="center"
+      justifyContent="center"
+    >
       <Box
         className="momento_prize_container"
         justifyContent="center"
@@ -285,6 +311,7 @@ const PrizeCard = ({ label, children }: PropsWithChildren & { label: string }) =
       >
         <Flex
           className="momento_prize"
+          padding={padding}
           as={motion.div}
           initial="back"
           animate={isFlipped ? 'front' : 'back'}
@@ -322,6 +349,6 @@ const PrizeCard = ({ label, children }: PropsWithChildren & { label: string }) =
       <Text textStyle="text1" textAlign="center" mt={{ base: '12px', xl: '30px' }}>
         {label}
       </Text>
-    </Box>
+    </Flex>
   );
 };

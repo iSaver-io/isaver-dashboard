@@ -67,6 +67,10 @@ export const RaffleList = () => {
     },
     [logger, navigate]
   );
+  const navigateToMomento = useCallback(() => {
+    logger({ action: 'button_click', label: 'go_and_win', context: 'raffles' });
+    navigate('/momento');
+  }, [logger, navigate]);
 
   const isLoading =
     stateFilter === RaffleStatusEnum.past
@@ -119,10 +123,7 @@ export const RaffleList = () => {
         {!isConnected ? (
           <ConnectWalletButton location="down" alignSelf="flex-start" />
         ) : (
-          <Button
-            onClick={() => navigate('/momento')}
-            width={{ sm: '100%', lg: '50%', xl: 'unset' }}
-          >
+          <Button onClick={navigateToMomento} width={{ sm: '100%', lg: '50%', xl: 'unset' }}>
             Go and win
           </Button>
         )}

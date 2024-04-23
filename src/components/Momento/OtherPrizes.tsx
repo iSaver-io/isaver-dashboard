@@ -1,6 +1,7 @@
 // eslint-disable-next-line
 import { useCallback, useState } from 'react';
 import { Box, Grid, Link, Text, useBreakpoint } from '@chakra-ui/react';
+import { motion } from 'framer-motion';
 
 import { useLogger } from '@/hooks/useLogger';
 import {
@@ -157,6 +158,22 @@ interface CardProps {
   description: JSX.Element | string;
 }
 
+const flipVariants = {
+  front: {
+    rotateY: 0,
+    opacity: 1,
+    transition: {
+      duration: 0.5,
+    },
+  },
+  back: {
+    rotateY: 180,
+    opacity: 1,
+    transition: {
+      duration: 0.5,
+    },
+  },
+};
 const Card = ({ image, title, description }: CardProps) => {
   const [isFlipped, setIsFlipped] = useState(false);
   const bp = useBreakpoint({ ssr: false });
@@ -184,24 +201,47 @@ const Card = ({ image, title, description }: CardProps) => {
       onMouseLeave={bp !== 'sm' ? () => setIsFlipped(false) : undefined}
       onClick={toggleCard}
     >
-      <Box
-        className={`momento_otherPrizes_card ${isFlipped ? 'flipped' : ''} ${
-          isSm ? 'momento_otherPrizes_card__small' : ''
-        }`}
-      >
-        <div className="front">
-          <img src={image} alt={title} width="100%" />
-          <Text
-            className="momento_otherPrizes_card_title"
-            fontSize={isSm ? '12px' : '18px'}
-            fontWeight={isSm ? '400' : '700'}
-            mt={isSm ? '10px' : '25px'}
-          >
-            {title}
-          </Text>
-          <img className="momento_otherPrizes_backside" src={BacksideIcon} alt="Backside" />
-        </div>
-        <div className="back">
+      <Box className={`momento_otherPrizes_card ${isSm ? 'momento_otherPrizes_card__small' : ''}`}>
+        <motion.div
+          className="front-wrapper"
+          initial="front"
+          animate={isFlipped ? 'back' : 'front'}
+          variants={flipVariants}
+          style={{
+            position: 'absolute',
+            backfaceVisibility: 'hidden',
+            rotateY: '180deg',
+            width: '100%',
+            height: '100%',
+          }}
+        >
+          <Box className="front">
+            <img src={image} alt={title} width="100%" />
+            <Text
+              className="momento_otherPrizes_card_title"
+              fontSize={isSm ? '12px' : '18px'}
+              fontWeight={isSm ? '400' : '700'}
+              mt={isSm ? '10px' : '25px'}
+            >
+              {title}
+            </Text>
+            <img className="momento_otherPrizes_backside" src={BacksideIcon} alt="Backside" />
+          </Box>
+        </motion.div>
+
+        <motion.div
+          className="back"
+          initial="back"
+          animate={isFlipped ? 'front' : 'back'}
+          variants={flipVariants}
+          style={{
+            position: 'absolute',
+            backfaceVisibility: 'hidden',
+            rotate: '0deg',
+            width: '100%',
+            height: '100%',
+          }}
+        >
           <Text
             className="momento_otherPrizes_card_title"
             textStyle={{ base: 'textSemiBold', xl: 'h3' }}
@@ -218,7 +258,7 @@ const Card = ({ image, title, description }: CardProps) => {
             {description}
           </Text>
           <img className="momento_otherPrizes_backside" src={BacksideIcon} alt="Backside" />
-        </div>
+        </motion.div>
       </Box>
     </Box>
   );

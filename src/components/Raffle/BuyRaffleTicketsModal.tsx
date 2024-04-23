@@ -34,7 +34,7 @@ const boxCommonStyles = {
 type BuyRaffleTicketsModalProps = {
   ticketPrice: BigNumber;
   event: EventName;
-  context?: EventContext;
+  context: EventContext;
   onClose: () => void;
   onBuy: (amount: number) => Promise<void>;
 };
@@ -51,7 +51,7 @@ export const BuyRaffleTicketsModal: FC<BuyRaffleTicketsModalProps> = ({
   const { data: savBalance } = useSavBalance(address);
   const logger = useLogger({
     event,
-    context: 'raffles',
+    context,
     buttonLocation: 'popup',
   });
 
@@ -71,7 +71,7 @@ export const BuyRaffleTicketsModal: FC<BuyRaffleTicketsModalProps> = ({
         category: 'forms',
         action: 'form_add',
         label: 'amount',
-        content: value,
+        value,
         actionGroup: 'interactions',
       });
     },
@@ -94,11 +94,10 @@ export const BuyRaffleTicketsModal: FC<BuyRaffleTicketsModalProps> = ({
       category: 'elements',
       action: 'button_click',
       label: 'buy_tickets',
-      content: amount,
-      context,
+      value: amount,
       actionGroup: 'conversions',
     });
-  }, [amount, onBuy, onClose, logger, context]);
+  }, [amount, onBuy, onClose, logger]);
 
   return (
     <Modal isCentered isOpen={true} onClose={onClose}>

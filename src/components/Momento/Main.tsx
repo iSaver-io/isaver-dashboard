@@ -64,6 +64,7 @@ export const Main = () => {
 
   useEffect(() => {
     setState(TicketStates.Initial);
+    setPrizeInfo(undefined);
   }, [address]);
 
   useEffect(() => {
@@ -137,6 +138,9 @@ export const Main = () => {
             alignSelf="flex-start"
             mb="16px"
             display={{ base: 'none', lg: 'block' }}
+            onClick={() =>
+              logger({ action: 'element_click', label: 'back', actionGroup: 'interactions' })
+            }
           >
             <ArrowBackIcon w="24px" h="24px" mr="10px" />
             Back

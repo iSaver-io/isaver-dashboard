@@ -249,6 +249,10 @@ wcm-modal {
   }
 }
 
+.chakra-popover__popper {
+  z-index: 100000 !important;
+}
+
 .prevent-select,
 .prevent-select > * {
   -webkit-touch-callout: none; /* iOS Safari */
