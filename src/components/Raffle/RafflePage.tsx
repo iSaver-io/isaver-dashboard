@@ -186,6 +186,7 @@ export const RafflePage = () => {
       {isOpen ? (
         <BuyRaffleTicketsModal
           event="raffle"
+          context="raffles"
           ticketPrice={ticketPrice}
           onBuy={buyTickets.mutateAsync}
           onClose={onClose}

@@ -104,6 +104,7 @@ export const Numbers = () => {
               <Link
                 target="_blank"
                 href={getExplorerLink({ chain, hash: ISaverSAVToken, type: 'token' })}
+                onClick={() => logger({ label: 'to_contract', content: 'sav' })}
               >
                 <PolygonIcon />
               </Link>
@@ -161,6 +162,7 @@ export const Numbers = () => {
               <Link
                 target="_blank"
                 href={getExplorerLink({ chain, hash: ISaverSAVRToken, type: 'token' })}
+                onClick={() => logger({ label: 'to_contract', content: 'savr' })}
               >
                 <PolygonIcon />
               </Link>

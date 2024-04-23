@@ -76,8 +76,8 @@ const cardsMock = [
 ];
 
 export const Prizes = () => {
-  const [settings, setSettings] = useState(sliderSettings);
   const { externalNFTs, isLoading } = useMomentoNFTPrizes();
+  const sliderRef = useRef<any>(null);
 
   const cards = useMemo(() => {
     if (isLoading) return [];
@@ -94,11 +94,10 @@ export const Prizes = () => {
       .slice(0, 12);
   }, [externalNFTs, isLoading]);
 
-  const isSet = useRef(false);
   useEffect(() => {
-    if (cards.length && !isSet.current) {
-      isSet.current = true;
-      setSettings((current) => ({ ...current, initialSlide: 0 }));
+    if (cards.length && sliderRef.current) {
+      sliderRef.current.slickGoTo(1);
+      sliderRef.current = null;
     }
   }, [cards]);
 
@@ -118,7 +117,7 @@ export const Prizes = () => {
           </Box>
         ) : null}
 
-        <Slider {...settings}>
+        <Slider ref={(slider) => (sliderRef.current = slider)} {...sliderSettings}>
           {cards.map((card, index) => (
             <PrizeCard key={card.label + index.toString()} {...card} />
           ))}

@@ -256,6 +256,7 @@ export const TicketClaim = () => {
       {isOpen ? (
         <BuyRaffleTicketsModal
           event="dashboard"
+          context="raffles"
           ticketPrice={ticketPrice}
           onBuy={buyTickets.mutateAsync}
           onClose={onClose}

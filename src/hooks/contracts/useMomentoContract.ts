@@ -103,7 +103,7 @@ export const useMomentoContract = () => {
           tokenName = 'iSaver Raffle Ticket';
         } else {
           const tokenMetadata = await alchemy.core.getTokenMetadata(logParsed.args.tokenAddress);
-          tokenName = tokenMetadata.name || 'Unknown token';
+          tokenName = tokenMetadata.symbol || `Token: ${logParsed.args.tokenAddress}`;
         }
 
         const label = (

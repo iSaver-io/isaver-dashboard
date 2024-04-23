@@ -1,8 +1,7 @@
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import Slider, { Settings } from 'react-slick';
 import { Box, Container, Flex, Text } from '@chakra-ui/react';
 
-import { useOnVisibleLogger } from '@/hooks/logger/useOnVisibleLogger';
 import { useLogger } from '@/hooks/useLogger';
 import { APP_URL, AVATARS_URL, MOMENTO_URL } from '@/router';
 
@@ -34,9 +33,21 @@ export const Main = () => {
     actionGroup: 'conversions',
   });
 
-  const pause = () => {
+  const pause = useCallback(() => {
     slider?.slickPause();
-  };
+  }, [slider]);
+
+  const logSent = useRef<Record<number, boolean>>({ 0: false, 1: false, 2: false });
+  const logBannerShown = useCallback(
+    (slide: number) => {
+      if (!logSent.current[slide]) {
+        const label = ['avatars', 'get_started', 'momento'][slide];
+        logger({ actionGroup: 'interactions', action: 'show', label });
+        logSent.current[slide] = true;
+      }
+    },
+    [logger]
+  );
 
   const settings: Settings = {
     autoplay: true,
@@ -47,6 +58,7 @@ export const Main = () => {
     autoplaySpeed: 10000,
     slidesToShow: 1,
     slidesToScroll: 1,
+    afterChange: logBannerShown,
     appendDots: (dots: any) => (
       <Box
         pos={'absolute !important' as any}
@@ -65,30 +77,9 @@ export const Main = () => {
     ),
   };
 
-  useOnVisibleLogger(refSlideMain, {
-    event: 'landing',
-    buttonLocation: 'up',
-    actionGroup: 'interactions',
-    category: 'banners',
-    action: 'show',
-    label: 'get_started',
-  });
-  useOnVisibleLogger(refSlideAvatars, {
-    event: 'landing',
-    buttonLocation: 'up',
-    actionGroup: 'interactions',
-    category: 'banners',
-    action: 'show',
-    label: 'avatars',
-  });
-  useOnVisibleLogger(refSlideMomento, {
-    event: 'landing',
-    buttonLocation: 'up',
-    actionGroup: 'interactions',
-    category: 'banners',
-    action: 'show',
-    label: 'momento',
-  });
+  useEffect(() => {
+    logBannerShown(0);
+  }, [logBannerShown]);
 
   const handleGenerateClick = useCallback(() => {
     logger({ label: 'avatars' });

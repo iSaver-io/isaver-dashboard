@@ -43,7 +43,9 @@ const menuItemStyle = {
 };
 
 export const WalletMenu: FC<Props> = ({ connector, disconnect, address }) => {
-  const connectorIcon = connector ? CONNECTOR_ICON[connector.name] : undefined;
+  const connectorIcon = connector
+    ? CONNECTOR_ICON[connector.name] || CONNECTOR_ICON['WalletConnect']
+    : undefined;
   const { onCopy, setValue, hasCopied } = useClipboard(address || '');
   const { success } = useNotification();
   const logger = useLogger({
