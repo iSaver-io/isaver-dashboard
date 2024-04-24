@@ -1,5 +1,5 @@
 // eslint-disable-next-line
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { Box, Grid, Link, Text, useBreakpoint } from '@chakra-ui/react';
 import { motion } from 'framer-motion';
 
@@ -185,20 +185,19 @@ const Card = ({ image, title, description }: CardProps) => {
     buttonLocation: 'card',
     actionGroup: 'interactions',
   });
+  const isSm = useMemo(() => ['sm', 'md', 'lg'].includes(bp), [bp]);
 
   const toggleCard = useCallback(() => {
-    if (bp === 'sm') {
+    if (isSm) {
       logger({ label: isFlipped ? 'backside2' : 'backside' });
       setIsFlipped((val) => !val);
     }
-  }, [bp, logger, isFlipped]);
-
-  const isSm = ['sm', 'md', 'lg'].includes(bp);
+  }, [logger, isFlipped, isSm]);
 
   return (
     <Box
-      onMouseEnter={bp !== 'sm' ? () => setIsFlipped(true) : undefined}
-      onMouseLeave={bp !== 'sm' ? () => setIsFlipped(false) : undefined}
+      onMouseEnter={!isSm ? () => setIsFlipped(true) : undefined}
+      onMouseLeave={!isSm ? () => setIsFlipped(false) : undefined}
       onClick={toggleCard}
     >
       <Box className={`momento_otherPrizes_card ${isSm ? 'momento_otherPrizes_card__small' : ''}`}>
