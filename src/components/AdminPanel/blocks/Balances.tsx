@@ -15,9 +15,15 @@ import { useTokenSupply } from '@/hooks/useTokenSupply';
 import { beautifyAmount, bigNumberToNumber, bigNumberToString } from '@/utils/number';
 
 export const Balances = () => {
-  const { vestingPool } = useAccounts();
-  const { Raffles, ReferralManager, VendorSell, MomentoTokensPool, BirthdayTokensPool } =
-    useContractsAddresses();
+  const { vestingPool, multisig } = useAccounts();
+  const {
+    Raffles,
+    ReferralManager,
+    VendorSell,
+    MomentoTokensPool,
+    BirthdayTokensPool,
+    TokenVesting,
+  } = useContractsAddresses();
 
   const stakingAvailableTokensSAV = useStakingAvailableTokens(false);
   const stakingAvailableTokensSAVR = useStakingAvailableTokens(true);
@@ -27,6 +33,7 @@ export const Balances = () => {
   const vendorBalance = useSavBalance(VendorSell);
   const vendorChangeBalance = useUsdtBalance(VendorSell);
   const vestingBalance = useSavBalance(vestingPool);
+  const vestingContractBalance = useSavBalance(TokenVesting);
   const { tvlSav, tvlSavr, superPlansMetrics } = useStakingMetrics();
   const savSupply = useTokenSupply(ContractsEnum.SAV);
   const savrSupply = useTokenSupply(ContractsEnum.SAVR);
@@ -34,6 +41,8 @@ export const Balances = () => {
   const momentoPoolSavr = useSavRBalance(MomentoTokensPool);
   const birthdayPoolSav = useSavBalance(BirthdayTokensPool);
   const birthdayPoolSavr = useSavRBalance(BirthdayTokensPool);
+  const multisigSav = useSavBalance(multisig);
+  const multisigSavr = useSavRBalance(multisig);
 
   const isLoading =
     stakingAvailableTokensSAV.isLoading ||
@@ -44,10 +53,13 @@ export const Balances = () => {
     vendorBalance.isLoading ||
     vendorChangeBalance.isLoading ||
     vestingBalance.isLoading ||
+    vestingContractBalance.isLoading ||
     momentoPoolSav.isLoading ||
     momentoPoolSavr.isLoading ||
     birthdayPoolSav.isLoading ||
-    birthdayPoolSavr.isLoading;
+    birthdayPoolSavr.isLoading ||
+    multisigSav.isLoading ||
+    multisigSavr.isLoading;
 
   return (
     <AdminSection title="Balances" isLoading={isLoading}>
@@ -93,6 +105,7 @@ export const Balances = () => {
         usdtMinLimit={10_000}
       />
       <BalanceRow label="Vesting Pool" sav={vestingBalance.data || 0} />
+      <BalanceRow label="Vesting Locked" sav={vestingContractBalance.data || 0} />
 
       <BalanceRow
         label="Momento Prizes Pool"
@@ -104,6 +117,8 @@ export const Balances = () => {
         sav={birthdayPoolSav.data || 0}
         savr={birthdayPoolSavr.data || 0}
       />
+
+      <BalanceRow label="Multisig" sav={multisigSav.data || 0} savr={multisigSavr.data || 0} />
     </AdminSection>
   );
 };
