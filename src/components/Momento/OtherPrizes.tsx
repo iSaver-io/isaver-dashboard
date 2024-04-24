@@ -237,7 +237,7 @@ const Card = ({ image, title, description }: CardProps) => {
           style={{
             position: 'absolute',
             backfaceVisibility: 'hidden',
-            rotate: '0deg',
+            rotateY: '0deg',
             width: '100%',
             height: '100%',
           }}
