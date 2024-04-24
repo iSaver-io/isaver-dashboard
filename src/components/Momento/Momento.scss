@@ -114,6 +114,7 @@
       width: 310px;
       position: relative;
       border-radius: 6px;
+      transform-style: preserve-3d;
 
       &__small {
         height: 190px;
@@ -140,6 +141,7 @@
       .front-wrapper,
       .front,
       .back {
+        transform-style: preserve-3d;
         box-shadow: 3px 4px 20px black;
         border-radius: 6px;
         overflow: hidden;
