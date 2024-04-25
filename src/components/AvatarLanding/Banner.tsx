@@ -1,10 +1,12 @@
-import { useCallback } from 'react';
+import { useCallback, useRef } from 'react';
 import { Box, Button, Flex, Text } from '@chakra-ui/react';
 
+import { useOnVisibleLogger } from '@/hooks/logger/useOnVisibleLogger';
 import { useLogger } from '@/hooks/useLogger';
 import { APP_URL } from '@/router';
 
 export const Banner = () => {
+  const ref = useRef(null);
   const logger = useLogger({
     event: 'avatars',
     category: 'banners',
@@ -15,11 +17,22 @@ export const Banner = () => {
   });
   const handleOpenMomento = useCallback(() => {
     logger({ label: 'momento' });
-    window.open(APP_URL + '/momento');
+    window.open(APP_URL + '/momento', '_self');
   }, [logger]);
+
+  useOnVisibleLogger(ref, {
+    event: 'avatars',
+    category: 'banners',
+    action: 'show',
+    label: 'momento',
+    context: 'avatars',
+    buttonLocation: 'down',
+    actionGroup: 'interactions',
+  });
 
   return (
     <Flex
+      ref={ref}
       className="banner"
       justifyContent={{ base: 'flex-start', xl: 'space-between' }}
       alignItems="center"

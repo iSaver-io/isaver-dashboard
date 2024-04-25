@@ -85,13 +85,13 @@ const settingsXl: Settings = {
 
 export const Powers = () => {
   const [powers, setPowers] = useState(POWERS);
-  const [powersKey, setPowersKey] = useState(0);
   const powerPrices = usePowerPrices(powers.map((power) => power.id));
   const bp = useBreakpoint({ ssr: false });
   const is2XL = ['2xl'].includes(bp);
   const isXL = ['xl'].includes(bp);
   const { address } = useAccount();
   const { address: avatarsAddress } = useContractAbi({ contract: ContractsEnum.ISaverAvatars });
+  const buyPowers = useBuyPowers();
 
   const { hasNFT } = useAddressHasNFT(avatarsAddress, address);
 
@@ -111,10 +111,10 @@ export const Powers = () => {
     );
   }, [powerPrices]);
 
-  // Для ремаунта компонентов и сброса счетчиков
-  const handleBuy = useCallback(() => {
-    setPowersKey((val) => val + 1);
-  }, [setPowersKey]);
+  const handleBuy = useCallback(
+    (id: number, amount: number) => buyPowers.mutateAsync({ id, amount }),
+    [buyPowers]
+  );
 
   return (
     <>
@@ -146,19 +146,27 @@ export const Powers = () => {
         </Box>
         <img className="powers__image" src={PowersImage} alt="Avatars unlock access to 4 Powers" />
         {is2XL ? (
-          <Flex justifyContent="space-between" gap="20px" mt="200px" key={powersKey}>
+          <Flex justifyContent="space-between" gap="20px" mt="200px">
             {powers.map((power) => (
-              <PowersCard key={`${powersKey}-${power.name}`} {...power} buyCallback={handleBuy} />
+              <PowersCard
+                key={power.name}
+                {...power}
+                onBuy={(amount) => handleBuy(power.id, amount)}
+              />
             ))}
           </Flex>
         ) : null}
       </Box>
       {!is2XL ? (
-        <Box className="powers__slider" key={powersKey}>
+        <Box className="powers__slider">
           <Box className="powers__slider__background" bgColor="bgGreen.50" />
           <Slider {...sliderSettings}>
             {powers.map((power) => (
-              <PowersCard key={`${powersKey}-${power.name}`} {...power} buyCallback={handleBuy} />
+              <PowersCard
+                key={power.name}
+                {...power}
+                onBuy={(amount) => handleBuy(power.id, amount)}
+              />
             ))}
           </Slider>
         </Box>
@@ -168,15 +176,15 @@ export const Powers = () => {
 };
 
 const PowersCard = ({
-  id,
   image,
   name,
   description,
   price,
   color,
-  buyCallback,
-}: PowersCardProps & { buyCallback: () => void }) => {
-  const buyPowers = useBuyPowers();
+  onBuy,
+}: Omit<PowersCardProps, 'id'> & { onBuy: (amount: number) => Promise<void> }) => {
+  const [localValue, setLocalValue] = useState(1);
+  const [isLoading, setIsLoading] = useState(false);
   const { isConnected } = useAccount();
   const { getInputProps, getIncrementButtonProps, getDecrementButtonProps, value } = useNumberInput(
     {
@@ -216,22 +224,38 @@ const PowersCard = ({
       content: name,
       actionGroup: 'conversions',
     });
-    buyPowers.mutateAsync({ id, amount: value }).then(buyCallback);
-  }, [buyPowers, id, value, buyCallback, logger, name]);
+
+    setIsLoading(true);
+    onBuy(parseInt(value))
+      .then(() => setLocalValue(1))
+      .finally(() => setIsLoading(false));
+  }, [value, logger, name, onBuy]);
 
   const handlePlusClick = useCallback(
     (event: any) => {
-      logger({ action: 'element_click', label: 'plus', actionGroup: 'interactions' });
+      logger({
+        action: 'element_click',
+        label: 'plus',
+        actionGroup: 'interactions',
+        content: name,
+      });
       inc.onClick?.(event);
+      setLocalValue((val) => val + 1);
     },
-    [inc, logger]
+    [inc, logger, name]
   );
   const handleMinusClick = useCallback(
     (event: any) => {
-      logger({ action: 'element_click', label: 'minus', actionGroup: 'interactions' });
+      logger({
+        action: 'element_click',
+        label: 'minus',
+        actionGroup: 'interactions',
+        content: name,
+      });
       dec.onClick?.(event);
+      setLocalValue((val) => val - 1);
     },
-    [dec, logger]
+    [dec, logger, name]
   );
 
   return (
@@ -258,7 +282,12 @@ const PowersCard = ({
           >
             <img src={MinusIcon} alt="minus" />
           </Button>
-          <Input {...inputProps} textStyle="buttonSmall" className="powers-card__counter__input" />
+          <Input
+            {...inputProps}
+            value={localValue}
+            textStyle="buttonSmall"
+            className="powers-card__counter__input"
+          />
           <Button
             {...inc}
             onClick={handlePlusClick}
@@ -279,7 +308,7 @@ const PowersCard = ({
         ref={ref}
         isDisabled={!isConnected}
         onClick={handleBuyPower}
-        isLoading={buyPowers.isLoading}
+        isLoading={isLoading}
         w="100%"
         mt="15px"
         h="35px"

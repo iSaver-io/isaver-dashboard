@@ -47,7 +47,7 @@ export const PowerStatus = ({ powerId, isActive }: PowerStatusProps) => {
     <Link
       href={AVATAR_LANDING_POWERS_INFO_URL}
       color="savr"
-      target="_blank"
+      target="_self"
       onClick={() => logger({ event: pageName, content: title })}
     >
       All about Powers
