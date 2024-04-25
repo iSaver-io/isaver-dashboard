@@ -158,7 +158,7 @@ const SavrTokens = ({ amount }: Pick<PrizeInfo, 'amount'>) => {
       <Image src={savrPrize} alt="SAVR" pos="absolute" left="0" top="0" />
       <Text
         fontWeight="black"
-        fontSize={{ base: '20px', lg: '48px', xl: '84px' }}
+        fontSize={{ sm: '46px', lg: '48px', xl: '84px' }}
         lineHeight="1"
         zIndex={10}
       >
@@ -166,7 +166,7 @@ const SavrTokens = ({ amount }: Pick<PrizeInfo, 'amount'>) => {
       </Text>
       <Text
         fontWeight="black"
-        fontSize={{ base: '16px', lg: '32px', xl: '52px' }}
+        fontSize={{ sm: '28px', lg: '32px', xl: '52px' }}
         lineHeight="1"
         zIndex={10}
       >
@@ -260,10 +260,7 @@ const OtherTokens = ({
   );
 
   const amountFontSize = useMemo(
-    () =>
-      amountString.length > 3
-        ? { sm: '20px', lg: '32px', xl: '64px' }
-        : { sm: '20px', lg: '48px', xl: '84px' },
+    () => (amountString.length > 3 ? { sm: '32px', xl: '64px' } : { sm: '48px', xl: '84px' }),
     [amountString]
   );
 
@@ -275,7 +272,7 @@ const OtherTokens = ({
       </Text>
       <Text
         fontWeight="black"
-        fontSize={{ base: '16px', lg: '32px', xl: '52px' }}
+        fontSize={{ sm: '24px', lg: '32px', xl: '52px' }}
         lineHeight="1"
         zIndex={10}
       >

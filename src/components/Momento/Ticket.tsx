@@ -88,8 +88,10 @@ export const Ticket = ({ tip, state, hasTickets, onClick }: TicketProps) => {
         overflow="visible"
         width={isActiveImage ? '251px' : undefined}
         margin={isActiveImage ? '0 -7px' : undefined}
-        cursor={hasTickets && !isActive ? 'pointer' : undefined}
-        onClick={hasTickets && !isActive ? handleClick : undefined}
+        cursor={!isActive && (hasTickets || state !== TicketStates.Initial) ? 'pointer' : undefined}
+        onClick={
+          !isActive && (hasTickets || state !== TicketStates.Initial) ? handleClick : undefined
+        }
       >
         {!isActive ? (
           <>
@@ -98,23 +100,21 @@ export const Ticket = ({ tip, state, hasTickets, onClick }: TicketProps) => {
               src={hasTickets && state === TicketStates.Initial ? TicketEmptyBorder : TicketEmpty}
               alt="Ticket"
             />
-            {hasTickets ? (
-              state === TicketStates.Finished ? (
-                // if replay
-                <Flex color="sav" alignItems="center">
-                  <Box width="28px" height="28px" mr="5px" zIndex={10}>
-                    <RepeatIcon />
-                  </Box>
-                  <Text textStyle="button" fontSize={{ xl: '18px' }}>
-                    Again
-                  </Text>
-                </Flex>
-              ) : (
-                // if first play
-                <Text textStyle="textSansSmall">
-                  {isSm ? 'Tap' : 'Double-click'} to activate your Ticket
+            {state === TicketStates.Finished ? (
+              // if replay
+              <Flex color="sav" alignItems="center">
+                <Box width="28px" height="28px" mr="5px" zIndex={10}>
+                  <RepeatIcon />
+                </Box>
+                <Text textStyle="button" fontSize={{ xl: '18px' }}>
+                  Again
                 </Text>
-              )
+              </Flex>
+            ) : hasTickets ? (
+              // if first play
+              <Text textStyle="textSansSmall">
+                {isSm ? 'Tap' : 'Double-click'} to activate your Ticket
+              </Text>
             ) : (
               <Text textStyle="textSansSmall">You need a Ticket to&nbsp;start</Text>
             )}

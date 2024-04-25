@@ -3,6 +3,7 @@ import { Button, Flex, Text, useBreakpoint } from '@chakra-ui/react';
 import { useAccount } from 'wagmi';
 
 import { ContractsEnum, useContractAbi } from '@/hooks/contracts/useContractAbi';
+import { useActiveAvatar } from '@/hooks/useAvatarSettings';
 import { useAvatarPrices, useBuyAvatar, useNextInflationTimestamp } from '@/hooks/useAvatarsSell';
 import { useLogger } from '@/hooks/useLogger';
 import { useAddressHasNFT } from '@/hooks/useNFTHolders';
@@ -28,6 +29,7 @@ export const MintAvatar = () => {
 
   const { address: avatarsAddress } = useContractAbi({ contract: ContractsEnum.ISaverAvatars });
   const { hasNFT } = useAddressHasNFT(avatarsAddress, address);
+  const { activeAvatar, hasAvatar } = useActiveAvatar();
 
   const handleBuy = useCallback(() => {
     logger({ label: 'mint_now', value: avatarPrice, actionGroup: 'conversions' });
@@ -106,7 +108,7 @@ export const MintAvatar = () => {
           >
             Mint now
           </Button>
-          {hasNFT ? (
+          {hasNFT && (!hasAvatar || !activeAvatar.isAvatarCollection) ? (
             <Button variant="outlinedWhite" onClick={handleOpenAvatarSettings} mt="10px" w="200px">
               Activate
             </Button>
