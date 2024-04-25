@@ -48,9 +48,9 @@ export const Notification: FC<NotificationProps> = ({
   const scanLink = useExplorerLink(txHash || '', 'tx');
 
   const handleClose = useCallback(() => {
-    logger({ label: 'close' });
+    logger({ label: 'close', content: description });
     onClose();
-  }, [logger, onClose]);
+  }, [logger, onClose, description]);
 
   const logExlporerClick = useCallback(() => {
     logger({ category: 'notifications', action: 'link_click', label: 'polygonscan' });

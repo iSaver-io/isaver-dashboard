@@ -35,7 +35,7 @@ export const SuperStakingPlan: FC<SuperStakingPlanProps> = ({
   const { isOpen, onOpen, onClose } = useDisclosure(); // StakingModal toggle
   const navigate = useNavigateByHash();
   const logger = useLogger({
-    event: isPageView ? 'dashboard' : 'staking',
+    event: isPageView ? 'staking' : 'dashboard',
     category: 'elements',
     action: 'button_click',
     content: 'Power B',

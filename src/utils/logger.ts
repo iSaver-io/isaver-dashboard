@@ -23,5 +23,5 @@ export const getTokenNameByAddress = (
   if (tokenAddress === contracts.ISaverPowers) return 'Powers';
   if (tokenAddress === contracts.ISaverAvatars) return 'Avatars';
 
-  return 'external';
+  return null;
 };

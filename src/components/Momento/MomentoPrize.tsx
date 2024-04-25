@@ -68,7 +68,9 @@ export const MomentoPrize = ({ prizeInfo }: MomentoPrizeProps) => {
       }
 
       logger({
-        value: prizeInfo.amount.toString(),
+        value: prizeInfo.isERC20
+          ? bigNumberToString(prizeInfo.amount, { precision: 'full' })
+          : prizeInfo.amount.toString(),
         content: tokenName,
         context: prizeCategory as any,
       });

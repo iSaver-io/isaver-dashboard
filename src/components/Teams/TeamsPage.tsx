@@ -47,7 +47,7 @@ export const TeamsPage = () => {
         action: 'button_click',
         label: 'claim',
         value: bigNumberToString(availableRewards),
-        content: 'sav',
+        content: 'savr',
         buttonLocation: 'down',
         actionGroup: 'conversions',
       });

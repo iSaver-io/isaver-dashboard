@@ -196,6 +196,7 @@ export const Footer = () => {
             <Link
               className="contact-mail"
               href="mailto:hello@isaver.io"
+              target="_blank"
               onClick={handleEmailLinkClick}
             >
               hello@isaver.io

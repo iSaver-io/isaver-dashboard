@@ -115,6 +115,7 @@
       position: relative;
       border-radius: 6px;
       transform-style: preserve-3d;
+      perspective: 900000px;
 
       &__small {
         height: 190px;
@@ -137,11 +138,14 @@
           color: $color-blue;
         }
       }
-
+      .front-wrapper,
+      .back {
+        transform-style: preserve-3d;
+        perspective: 900000px;
+      }
       .front-wrapper,
       .front,
       .back {
-        transform-style: preserve-3d;
         box-shadow: 3px 4px 20px black;
         border-radius: 6px;
         overflow: hidden;
