@@ -258,6 +258,7 @@ const TokensPoolPrize = ({
   } = useDisclosure();
   const contractAddresses = useContractsAddresses();
   const [tokenName, setTokenName] = useState<string>('');
+  const [tokenDecimals, setTokenDecimals] = useState<number>(18);
 
   const tokenType = isERC20 ? 'ERC20' : isERC721 ? 'ERC721' : isERC1155 ? 'ERC1155' : 'unknown';
 
@@ -270,13 +271,10 @@ const TokensPoolPrize = ({
     else if (tokenAddress === contractAddresses.Ticket) setTokenName('iSaver Ticket');
     else if (tokenAddress === contractAddresses.ISaverPowers) setTokenName('iSaver Powers');
     else {
-      alchemy.core
-        .getTokenMetadata(tokenAddress)
-        .then(
-          (tokenMetadata) =>
-            tokenMetadata &&
-            setTokenName('External: ' + (tokenMetadata.name || tokenMetadata.symbol))
-        );
+      alchemy.core.getTokenMetadata(tokenAddress).then((tokenMetadata) => {
+        setTokenName('External: ' + (tokenMetadata.name || tokenMetadata.symbol));
+        setTokenDecimals(tokenMetadata.decimals || 18);
+      });
       setTokenName('External token');
     }
   }, [tokenName, tokenAddress, contractAddresses]);
@@ -293,7 +291,10 @@ const TokensPoolPrize = ({
             </b>
           </Text>
           <Text>
-            Amount (in 1 prize): <b>{isERC20 ? bigNumberToString(amount) : amount.toString()}</b>
+            Amount (in 1 prize):{' '}
+            <b>
+              {isERC20 ? bigNumberToString(amount, { decimals: tokenDecimals }) : amount.toString()}
+            </b>
           </Text>
           <Text>
             Remaining prizes:{' '}

@@ -91,6 +91,7 @@ export const useMomentoContract = () => {
         const block = await provider.getBlock(log.blockNumber);
 
         let tokenName = '';
+        let decimals = 18;
         if (logParsed.args.tokenAddress === addresses.ISaverAvatars) {
           tokenName = 'iSaver Avatar';
         } else if (logParsed.args.tokenAddress === addresses.ISaverPowers) {
@@ -107,13 +108,14 @@ export const useMomentoContract = () => {
           tokenName =
             (logParsed.args.isERC20 ? tokenMetadata.symbol : tokenMetadata.name) ||
             `Token: ${logParsed.args.tokenAddress}`;
+          decimals = tokenMetadata.decimals || 18;
         }
 
         const label = (
           logParsed.args.isERC20 || logParsed.args.isERC1155
             ? `${
                 logParsed.args.isERC20
-                  ? bigNumberToString(logParsed.args.amount, { precision: 'full' })
+                  ? bigNumberToString(logParsed.args.amount, { precision: 'full', decimals })
                   : logParsed.args.amount.toString()
               } ${tokenName}`
             : tokenName
