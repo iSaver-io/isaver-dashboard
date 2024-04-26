@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { BigNumber } from 'ethers';
 
 import { Button } from '@/components/ui/Button/Button';
+import { useAccessControl } from '@/hooks/admin/useAccessControl';
 import { useContractsAddresses } from '@/hooks/admin/useContractsAddresses';
 import { useTokensPoolControl } from '@/hooks/admin/useTokensPoolControl';
 import { ContractsEnum } from '@/hooks/contracts/useContractAbi';
@@ -25,6 +26,7 @@ export const TokensPoolControl = ({
   contractName: TokensPoolTypes;
 }) => {
   const tokensPool = useTokensPoolControl(contractName);
+  const tokensPoolAccessControl = useAccessControl(contractName);
 
   const {
     isOpen: isOpenAddCategory,
@@ -44,13 +46,13 @@ export const TokensPoolControl = ({
       </Flex>
 
       <AddressesListControl
-        addresses={tokensPool.adminsRequest.data || []}
+        addresses={tokensPoolAccessControl.adminsRequest.data || []}
         label="Edit admin"
         listLabel="Admins"
         addActionLabel="Grant role"
         removeActionLabel="Revoke role"
-        onAdd={tokensPool.grantAdminRole.mutateAsync}
-        onRemove={tokensPool.revokeAdminRole.mutateAsync}
+        onAdd={tokensPoolAccessControl.grantAdminRole.mutateAsync}
+        onRemove={tokensPoolAccessControl.revokeAdminRole.mutateAsync}
       />
 
       <Text fontWeight="500" my="8px" fontSize="18px">
