@@ -239,11 +239,13 @@ const OtherTokens = ({
   isERC20,
 }: Pick<PrizeInfo, 'amount' | 'tokenAddress' | 'isERC20' | 'isERC1155'>) => {
   const [symbol, setSymbol] = useState<string | null>(null);
+  const [decimals, setDecimals] = useState<number>(18);
 
   useEffect(() => {
     const fetchSymbol = async () => {
       const tokenMetadata = await alchemy.core.getTokenMetadata(tokenAddress);
       setSymbol(tokenMetadata.symbol);
+      setDecimals(tokenMetadata.decimals || 18);
     };
 
     fetchSymbol();
@@ -252,11 +254,11 @@ const OtherTokens = ({
   const amountString = useMemo(
     () =>
       isERC20
-        ? bigNumberToString(amount, { precision: 'full' })
+        ? bigNumberToString(amount, { decimals, precision: 'full' })
         : isERC1155
         ? amount.toString()
         : '',
-    [isERC20, amount, isERC1155]
+    [isERC20, decimals, amount, isERC1155]
   );
 
   const amountFontSize = useMemo(
