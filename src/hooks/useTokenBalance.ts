@@ -1,7 +1,8 @@
 import { useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { useAccount, useProvider } from 'wagmi';
+import { erc20ABI, useAccount, useContract, useProvider, useSigner } from 'wagmi';
 
+import { ISaverSAVToken } from '@/types';
 import { getBalanceHistoryFromTransfers } from '@/utils/balance';
 
 import { ContractsEnum } from './contracts/useContractAbi';
@@ -33,6 +34,26 @@ export const useUsdtBalance = (address?: string) => {
   return useQuery([USDT_BALANCE_REQUEST, { address }], async () => {
     return address ? await usdtContract.balanceOf(address) : null;
   });
+};
+
+export const TOKEN_BALANCE_REQUEST = 'token-balance-request';
+export const useTokenBalance = (tokenAddress?: string, address?: string) => {
+  const { data: signer } = useSigner();
+  const provider = useProvider();
+
+  const contract = useContract({
+    address: tokenAddress,
+    abi: erc20ABI,
+    signerOrProvider: signer || provider,
+  }) as unknown as ISaverSAVToken;
+
+  return useQuery(
+    [TOKEN_BALANCE_REQUEST, { tokenAddress, address }],
+    async () => {
+      return address ? contract.balanceOf(address) : null;
+    },
+    { enabled: Boolean(tokenAddress) && Boolean(address) }
+  );
 };
 
 export const BALANCE_HISTORY_REQUEST = 'token-balance-history';

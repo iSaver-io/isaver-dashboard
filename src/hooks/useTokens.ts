@@ -1,6 +1,8 @@
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { BigNumber, BigNumberish } from 'ethers';
-import { useAccount } from 'wagmi';
+import { erc20ABI, useAccount, useContract, useProvider, useSigner } from 'wagmi';
+
+import { ISaverSAVToken } from '@/types';
 
 import { ContractsEnum } from './contracts/useContractAbi';
 import { TOKENS, useTokenContract } from './contracts/useTokenContract';
@@ -41,4 +43,24 @@ export const useTokens = () => {
   );
 
   return { savToken, savRToken, increaseAllowanceIfRequired };
+};
+
+const TOKEN_DECIMALS_REQUEST = 'token-decimals-request';
+export const useTokenDecimals = (tokenAddress?: string) => {
+  const { data: signer } = useSigner();
+  const provider = useProvider();
+
+  const contract = useContract({
+    address: tokenAddress,
+    abi: erc20ABI,
+    signerOrProvider: signer || provider,
+  }) as unknown as ISaverSAVToken;
+
+  return useQuery(
+    [TOKEN_DECIMALS_REQUEST, { tokenAddress }],
+    async () => {
+      return contract.decimals();
+    },
+    { enabled: Boolean(tokenAddress) }
+  );
 };
