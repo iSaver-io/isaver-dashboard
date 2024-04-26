@@ -25,6 +25,11 @@ export const RaffleDescription: FC<RaffleDescriptionProps> = ({
     [winnersForLevel]
   );
 
+  const formattedDescription = useMemo(
+    () => description?.replace(/(?<=\d) /g, '\xa0'),
+    [description]
+  );
+
   return (
     <Box
       bgColor="bgGreen.50"
@@ -113,7 +118,7 @@ export const RaffleDescription: FC<RaffleDescriptionProps> = ({
 
         {description ? (
           <Text textStyle="text1" mt={{ sm: '18px', '2xl': '26px' }}>
-            {description}
+            {formattedDescription}
           </Text>
         ) : null}
       </Flex>

@@ -89,56 +89,6 @@ export const useTokensPoolContract = (
       .sort((a, b) => b.categoryId - a.categoryId);
   };
 
-  const getAdmins = async () => {
-    const filterGranted = contract.filters.RoleGranted();
-    const filterRevoked = contract.filters.RoleRevoked();
-
-    const rawEventsGranted = await alchemy.core.getLogs({
-      ...filterGranted,
-      fromBlock: FROM_BLOCK_EPISODE_2,
-      toBlock: 'latest',
-    });
-    const rawEventsRevoked = await alchemy.core.getLogs({
-      ...filterRevoked,
-      fromBlock: FROM_BLOCK_EPISODE_2,
-      toBlock: 'latest',
-    });
-
-    const rawEvents = rawEventsGranted
-      .concat(rawEventsRevoked)
-      .sort((a, b) => a.blockNumber - b.blockNumber);
-
-    const events = rawEvents.map((event) => ({ ...event, ...tokensPoolIface.parseLog(event) }));
-
-    const activeAdmins = new Set();
-
-    for (const event of events) {
-      const { role, account } = event.args;
-
-      const isAdminRole = role === ADMIN_ROLE;
-      const isApproved = event.name === 'RoleGranted';
-
-      if (isAdminRole) {
-        if (isApproved) {
-          activeAdmins.add(account);
-        } else {
-          activeAdmins.delete(account);
-        }
-      }
-    }
-
-    return Array.from(activeAdmins) as Address[];
-  };
-
-  const grantAdminRole = async (account: string) => {
-    const tx = await contract.grantRole(ADMIN_ROLE, account);
-    return waitForTransaction(tx);
-  };
-  const revokeAdminRole = async (account: string) => {
-    const tx = await contract.revokeRole(ADMIN_ROLE, account);
-    return waitForTransaction(tx);
-  };
-
   const getTotalChance = () => {
     return contract.getTotalChance();
   };
@@ -190,10 +140,6 @@ export const useTokensPoolContract = (
   return {
     contract,
     address: contractAddress,
-
-    getAdmins,
-    grantAdminRole,
-    revokeAdminRole,
 
     getPrizes,
     getNFTPrizes,
