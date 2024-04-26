@@ -15,11 +15,15 @@ import {
 } from '@chakra-ui/react';
 import { BigNumber } from 'ethers';
 import { isAddress } from 'ethers/lib/utils.js';
+import { useAccount } from 'wagmi';
 
 import { Button } from '@/components/ui/Button/Button';
 import { InputAmount } from '@/components/ui/InputAmount/InputAmount';
 import { useContractsAddresses } from '@/hooks/admin/useContractsAddresses';
 import { AddPrizeParamsType } from '@/hooks/contracts/useTokensPoolContract';
+import { useTokenBalance } from '@/hooks/useTokenBalance';
+import { useTokenDecimals } from '@/hooks/useTokens';
+import { bigNumberToString } from '@/utils/number';
 
 export const AddPrizeToTokensPoolModal = ({
   onClose,
@@ -38,6 +42,13 @@ export const AddPrizeToTokensPoolModal = ({
   const contractAddresses = useContractsAddresses();
 
   const isValidAddress = isAddress(tokenAddress);
+  const { address } = useAccount();
+
+  const { data: decimals } = useTokenDecimals(tokenType === 'erc20' ? tokenAddress : undefined);
+  const { data: balance } = useTokenBalance(
+    tokenType === 'erc20' ? tokenAddress : undefined,
+    address
+  );
 
   useEffect(() => {
     if (
@@ -143,6 +154,15 @@ export const AddPrizeToTokensPoolModal = ({
               </Text>
             </Checkbox>
           </Flex>
+
+          {tokenType === 'erc20' ? (
+            <Box mt="16px">
+              <Text>Decimals: {decimals || '-'}</Text>
+              <Text mt="8px">
+                Balance: {balance ? bigNumberToString(balance, { decimals }) : '-'}
+              </Text>
+            </Box>
+          ) : null}
 
           {tokenType && tokenType !== 'erc20' ? (
             <Box mt="16px">
