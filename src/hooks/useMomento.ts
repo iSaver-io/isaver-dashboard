@@ -192,7 +192,8 @@ export const useMomentoNFTPrizes = () => {
           )
           .map((prize) =>
             prize.tokenIds.map((tokenId) => ({ ...prize, tokenId: tokenId.toString() }))
-          ),
+          )
+          .reverse(),
       }));
 
     const mainCategory = prizes.filter(({ categoryId }) => categoryId === 35)[0].prizes;
