@@ -115,7 +115,6 @@
       position: relative;
       border-radius: 6px;
       transform-style: preserve-3d;
-      perspective: 900000px;
 
       &__small {
         height: 190px;
@@ -141,7 +140,6 @@
       .front-wrapper,
       .back {
         transform-style: preserve-3d;
-        perspective: 900000px;
       }
       .front-wrapper,
       .front,

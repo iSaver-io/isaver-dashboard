@@ -85,8 +85,14 @@ export const useRaffleMiniGame = () => {
   const mintMyTicket = useMutation(
     [MINT_TICKET_MUTATION],
     async () => {
+      const amount = isPowerDActive && extraTicketsPowerD.data ? extraTicketsPowerD.data : null;
+
       const txHash = await raffleContract.mintMyTicket();
-      success({ title: 'Success', description: 'You have minted Raffle Ticket', txHash });
+      success({
+        title: 'Success',
+        description: `You have minted ${amount ? amount + 'x ' : ''}Raffle Ticket`,
+        txHash,
+      });
     },
     {
       onSuccess: () => {
