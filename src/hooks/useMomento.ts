@@ -187,7 +187,8 @@ export const useMomentoNFTPrizes = () => {
           .filter(
             (prize) =>
               (prize.isERC721 || prize.isERC1155) &&
-              !Object.values(addresses).includes(prize.tokenAddress)
+              !Object.values(addresses).includes(prize.tokenAddress) &&
+              prize.remaining.gt(0)
           )
           .map((prize) =>
             prize.tokenIds.map((tokenId) => ({ ...prize, tokenId: tokenId.toString() }))
