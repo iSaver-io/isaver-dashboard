@@ -1,5 +1,6 @@
 import { PropsWithChildren, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Box, Flex, Image, Text } from '@chakra-ui/react';
+import { NftTokenType } from 'alchemy-sdk';
 import { motion } from 'framer-motion';
 
 import { useContractsAddresses } from '@/hooks/admin/useContractsAddresses';
@@ -81,9 +82,10 @@ export const MomentoPrize = ({ prizeInfo }: MomentoPrizeProps) => {
   }, [prizeInfo, contracts, logger]);
 
   const renderPrize = useCallback(() => {
-    if (prizeInfo.isERC721) {
+    if (prizeInfo.isERC721 || prizeInfo.isERC1155) {
       return (
         <NFT
+          isERC1155={prizeInfo.isERC1155}
           tokenId={prizeInfo.tokenId}
           tokenAddress={prizeInfo.tokenAddress}
           isISaverCollection={contracts.ISaverAvatars === prizeInfo.tokenAddress}
@@ -192,11 +194,16 @@ const Powers = ({ tokenId }: Pick<PrizeInfo, 'tokenId'>) => {
 };
 
 const NFT = ({
+  isERC1155,
   tokenId,
   tokenAddress,
   isISaverCollection,
-}: Pick<PrizeInfo, 'tokenId' | 'tokenAddress'> & { isISaverCollection: boolean }) => {
-  const { nft } = useGetNFT(tokenAddress, Number(tokenId));
+}: Pick<PrizeInfo, 'tokenId' | 'tokenAddress' | 'isERC1155'> & { isISaverCollection: boolean }) => {
+  const { nft } = useGetNFT(
+    tokenAddress,
+    tokenId,
+    isERC1155 ? NftTokenType.ERC1155 : NftTokenType.ERC721
+  );
 
   const image = useMemo(() => {
     const link = nft?.image.pngUrl || nft?.image.cachedUrl || nft?.image.originalUrl;
