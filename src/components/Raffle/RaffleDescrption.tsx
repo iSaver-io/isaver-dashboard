@@ -25,10 +25,19 @@ export const RaffleDescription: FC<RaffleDescriptionProps> = ({
     [winnersForLevel]
   );
 
-  // const formattedDescription = useMemo(
-  //   () => description?.replace(/(?<=\d) /g, '\xa0'),
-  //   [description]
-  // );
+  const formattedDescription = useMemo(
+    () =>
+      description?.split(' ').reduce(
+        (acc, word) => {
+          const spaceChar = acc.isPrevNumber ? '&nbsp;' : ' ';
+          acc.res += spaceChar + word;
+          acc.isPrevNumber = !isNaN(parseFloat(word));
+          return acc;
+        },
+        { res: '', isPrevNumber: false }
+      ).res || '',
+    [description]
+  );
 
   return (
     <Box
@@ -117,9 +126,11 @@ export const RaffleDescription: FC<RaffleDescriptionProps> = ({
         </table>
 
         {description ? (
-          <Text textStyle="text1" mt={{ sm: '18px', '2xl': '26px' }}>
-            {description}
-          </Text>
+          <Text
+            textStyle="text1"
+            mt={{ sm: '18px', '2xl': '26px' }}
+            dangerouslySetInnerHTML={{ __html: formattedDescription }}
+          />
         ) : null}
       </Flex>
     </Box>
