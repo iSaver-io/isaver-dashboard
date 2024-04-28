@@ -5,13 +5,9 @@ import { AddRaffleRound } from '@/components/AdminPanel/common/AddRaffleRound';
 import { AdminSection } from '@/components/AdminPanel/common/AdminSection';
 import { RaffleStatus } from '@/components/Raffle/RaffleStatus';
 import { Button } from '@/components/ui/Button/Button';
-import { useAccessControl } from '@/hooks/admin/useAccessControl';
-import { ContractsEnum } from '@/hooks/contracts/useContractAbi';
 import { useRaffleControl, useTicketPrice } from '@/hooks/raffle/useRaffle';
 import { RaffleStatusEnum } from '@/utils/formatters/raffle';
 import { getLocalDateTimeString, getStampsFromDuration } from '@/utils/time';
-
-import { AddressesListControl } from '../common/AddressesListControl';
 
 export const RaffleControl = () => {
   const {
@@ -22,7 +18,6 @@ export const RaffleControl = () => {
     getWinnersFromOracleRandom,
     createRaffleRound,
   } = useRaffleControl();
-  const raffleAccessControl = useAccessControl(ContractsEnum.Raffles);
   const { ticketPriceRequest } = useTicketPrice();
   const { isOpen, onOpen, onClose } = useDisclosure();
 
@@ -35,16 +30,6 @@ export const RaffleControl = () => {
         <Button size="sm" onClick={onOpen}>
           Create raffle round
         </Button>
-
-        <AddressesListControl
-          addresses={raffleAccessControl.adminsRequest.data || []}
-          label="Edit admin"
-          listLabel="Admins"
-          addActionLabel="Grant role"
-          removeActionLabel="Revoke role"
-          onAdd={raffleAccessControl.grantAdminRole.mutateAsync}
-          onRemove={raffleAccessControl.revokeAdminRole.mutateAsync}
-        />
 
         <Box mt="16px" maxHeight="400px" overflowY="auto">
           {raffleRounds?.map((round) => (
