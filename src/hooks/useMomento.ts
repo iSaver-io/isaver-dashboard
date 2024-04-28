@@ -11,10 +11,7 @@ import { useConnectWallet } from '@/hooks/useConnectWallet';
 import { useNotification } from '@/hooks/useNotification';
 import alchemy from '@/modules/alchemy';
 
-import {
-  TOKENS_POOL_NFT_PRIZES_REQUEST,
-  useTokensPoolNFTPrizes,
-} from './admin/useTokensPoolControl';
+import { useTokensPoolNFTPrizes } from './admin/useTokensPoolControl';
 import { ContractsEnum } from './contracts/useContractAbi';
 import { TICKET_BALANCE_REQUEST } from './useTicketsBalance';
 
@@ -40,7 +37,6 @@ export const useMomento = () => {
   const { connect } = useConnectWallet();
   const { success, handleError } = useNotification();
   const queryClient = useQueryClient();
-  const contractAddresses = useContractsAddresses();
 
   const { data: hasPendingRequest } = useQuery(
     [HAS_PENDING_REQUEST, { address }],
@@ -110,15 +106,7 @@ export const useMomento = () => {
 
       if (prizeSentLog) {
         const prizeSentEvent = tokensPoolInterface.parseLog(prizeSentLog);
-        const prizeInfo = prizeSentEvent.args as unknown as PrizeInfo;
-        // Если приз сторонней коллекции НФТ, то обновляем список призов
-        if (
-          (prizeInfo.isERC1155 || prizeInfo.isERC721) &&
-          !Object.values(contractAddresses).includes(prizeInfo.tokenAddress)
-        ) {
-          queryClient.invalidateQueries([TOKENS_POOL_NFT_PRIZES_REQUEST]);
-        }
-        return prizeInfo;
+        return prizeSentEvent.args as unknown as PrizeInfo;
       }
     },
     {
@@ -255,16 +243,12 @@ export const useAllUserPrizes = () => {
 };
 
 export const GET_NFT = 'get-nft';
-export const useGetNFT = (
-  contractAddress: Address,
-  tokenId: number | bigint,
-  tokenType: NftTokenType.ERC721 | NftTokenType.ERC1155 = NftTokenType.ERC721
-) => {
+export const useGetNFT = (contractAddress: Address, tokenId: number) => {
   const { data } = useQuery(
-    [GET_NFT, contractAddress, tokenId.toString()],
+    [GET_NFT, tokenId],
     async () => {
       return await alchemy.nft.getNftMetadata(contractAddress, tokenId, {
-        tokenType,
+        tokenType: NftTokenType.ERC721,
         refreshCache: true,
       });
     },
