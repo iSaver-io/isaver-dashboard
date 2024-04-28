@@ -25,10 +25,10 @@ export const RaffleDescription: FC<RaffleDescriptionProps> = ({
     [winnersForLevel]
   );
 
-  const formattedDescription = useMemo(
-    () => description?.replace(/(?<=\d) /g, '\xa0'),
-    [description]
-  );
+  // const formattedDescription = useMemo(
+  //   () => description?.replace(/(?<=\d) /g, '\xa0'),
+  //   [description]
+  // );
 
   return (
     <Box
@@ -118,7 +118,7 @@ export const RaffleDescription: FC<RaffleDescriptionProps> = ({
 
         {description ? (
           <Text textStyle="text1" mt={{ sm: '18px', '2xl': '26px' }}>
-            {formattedDescription}
+            {description}
           </Text>
         ) : null}
       </Flex>
