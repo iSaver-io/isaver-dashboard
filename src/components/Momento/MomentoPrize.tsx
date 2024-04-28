@@ -82,10 +82,7 @@ export const MomentoPrize = ({ prizeInfo }: MomentoPrizeProps) => {
   }, [prizeInfo, contracts, logger]);
 
   const renderPrize = useCallback(() => {
-    if (
-      (prizeInfo.isERC721 || prizeInfo.isERC1155) &&
-      ![contracts.ISaverPowers, contracts.Ticket].includes(prizeInfo.tokenAddress)
-    ) {
+    if (prizeInfo.isERC721 || prizeInfo.isERC1155) {
       return (
         <NFT
           isERC1155={prizeInfo.isERC1155}
