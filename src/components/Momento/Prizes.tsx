@@ -96,7 +96,7 @@ export const Prizes = () => {
 
   useEffect(() => {
     if (cards.length && sliderRef.current) {
-      sliderRef.current.slickGoTo(1);
+      sliderRef.current.slickGoTo(0);
       sliderRef.current = null;
     }
   }, [cards]);
