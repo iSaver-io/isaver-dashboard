@@ -142,7 +142,7 @@ export const useStakingSuperPlans = () => {
         title: 'Success',
         description: `You have claimed ${bigNumberToString(
           superStakingPlan?.stake.profit || 0
-        )} SAVR rewards`,
+        )} SAVR Rewards`,
         txHash,
       });
     },
@@ -168,9 +168,9 @@ export const useStakingSuperPlans = () => {
         title: 'Success',
         description: `You have claimed ${bigNumberToString(
           superStakingPlan?.stake.profit || 0
-        )} SAVR rewards and ${bigNumberToString(
+        )} SAVR Rewards and ${bigNumberToString(
           superStakingPlan?.stake.deposit || 0
-        )} SAVR deposit`,
+        )} SAVR Deposit`,
         txHash,
       });
     },
