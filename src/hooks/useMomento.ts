@@ -125,8 +125,11 @@ export const useMomento = () => {
       onSuccess: () => {
         queryClient.invalidateQueries([HAS_PENDING_REQUEST, { address }]);
         queryClient.invalidateQueries([ORACLE_RESPONSE_REQUEST, { address }]);
-        queryClient.invalidateQueries([TICKET_BALANCE_REQUEST, { address }]);
         queryClient.invalidateQueries([GET_ALL_USER_PRIZES, { address }]);
+        setTimeout(
+          () => queryClient.invalidateQueries([TICKET_BALANCE_REQUEST, { address }]),
+          5000
+        );
       },
       onSettled: () => {
         momentoContract.setIsGetPrizeConfirmed(false);
