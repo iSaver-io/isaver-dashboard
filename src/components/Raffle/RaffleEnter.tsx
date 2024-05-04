@@ -125,7 +125,7 @@ export const RaffleEnter: FC<RaffleEnterProps> = ({
               <Text as="span" color="green.400" textStyle="textBold">
                 {maximumAvailableTickets}
               </Text>{' '}
-              Tickets in this Raffle {userEnteredTickets ? `(${leftTickets} left)` : null}
+              Tickets in this Raffle {userEnteredTickets ? <>({leftTickets}&nbsp;left)</> : null}
             </Text>
 
             <Flex alignItems="center" ml={{ '2xl': '60px' }}>

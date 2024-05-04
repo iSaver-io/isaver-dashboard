@@ -26,7 +26,7 @@ export const TokensPoolControl = ({
   contractName: TokensPoolTypes;
 }) => {
   const tokensPool = useTokensPoolControl(contractName);
-  const tokensPoolAccessControl = useAccessControl(contractName);
+  const tokensPoolAccessControl = useAccessControl(contractName, 'admin');
 
   const {
     isOpen: isOpenAddCategory,
@@ -46,13 +46,13 @@ export const TokensPoolControl = ({
       </Flex>
 
       <AddressesListControl
-        addresses={tokensPoolAccessControl.adminsRequest.data || []}
+        addresses={tokensPoolAccessControl.usersWithRoleRequest.data || []}
         label="Edit admin"
         listLabel="Admins"
         addActionLabel="Grant role"
         removeActionLabel="Revoke role"
-        onAdd={tokensPoolAccessControl.grantAdminRole.mutateAsync}
-        onRemove={tokensPoolAccessControl.revokeAdminRole.mutateAsync}
+        onAdd={tokensPoolAccessControl.grantRole.mutateAsync}
+        onRemove={tokensPoolAccessControl.revokeRole.mutateAsync}
       />
 
       <Text fontWeight="500" my="8px" fontSize="18px">
