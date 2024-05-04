@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/Button/Button';
 import { ConnectWalletButton } from '@/components/ui/ConnectWalletButton/ConnectWalletButton';
 import { useFirebaseAuth } from '@/hooks/admin/useDashboardConfigControl';
 import { useDocumentTitle } from '@/hooks/useMeta';
-import { useHasRole } from '@/hooks/admin/useHasRole';
+import { useHasRole } from '@/hooks/admin/useAccessControl';
 import { ContractsEnum } from '@/hooks/contracts/useContractAbi';
 
 import { Addresses } from './blocks/Addresses';
@@ -47,26 +47,20 @@ export const AdminPanel = () => {
   const { data: hasRaffleOperatorRole } = useHasRole(ContractsEnum.Raffles, 'operator');
   const { data: hasTicketAdminRole } = useHasRole(ContractsEnum.Ticket, 'admin');
   const { data: hasTicketMinterRole } = useHasRole(ContractsEnum.Ticket, 'minter');
-  const isRaffleAdmin =
-    hasRaffleAdminRole || hasRaffleOperatorRole || hasTicketAdminRole || hasTicketMinterRole;
+  const isTicketAdmin = hasTicketAdminRole || hasTicketMinterRole;
+  const isRaffleAdmin = hasRaffleAdminRole || hasRaffleOperatorRole;
 
   const { data: hasMomentoAdminRole } = useHasRole(ContractsEnum.Momento, 'admin');
-  const { data: hasMomentoTokensPoolAdminRole } = useHasRole(
-    ContractsEnum.MomentoTokensPool,
-    'admin'
-  );
-  const isMomentoAdmin = hasMomentoAdminRole || hasMomentoTokensPoolAdminRole;
+  const { data: hasMomentoPoolAdminRole } = useHasRole(ContractsEnum.MomentoTokensPool, 'admin');
+  const isMomentoAdmin = hasMomentoAdminRole || hasMomentoPoolAdminRole;
 
   const { data: hasPowersAdminRole } = useHasRole(ContractsEnum.ISaverPowers, 'admin');
   const { data: hasPowersMinterRole } = useHasRole(ContractsEnum.ISaverPowers, 'minter');
   const isPowersAdmin = hasPowersAdminRole || hasPowersMinterRole;
 
   const { data: hasAvatarSettingsAdminRole } = useHasRole(ContractsEnum.AvatarSettings, 'admin');
-  const { data: hasBirthdayTokensPoolAdminRole } = useHasRole(
-    ContractsEnum.BirthdayTokensPool,
-    'admin'
-  );
-  const isAvatarSettingsAdmin = hasAvatarSettingsAdminRole || hasBirthdayTokensPoolAdminRole;
+  const { data: hasBirthdayPoolAdminRole } = useHasRole(ContractsEnum.BirthdayTokensPool, 'admin');
+  const isAvatarSettingsAdmin = hasAvatarSettingsAdminRole || hasBirthdayPoolAdminRole;
 
   const { data: isAvatarSellAdmin } = useHasRole(ContractsEnum.AvatarsSell, 'admin');
 
@@ -99,7 +93,7 @@ export const AdminPanel = () => {
           {isReferralAdmin ? <Tab>Referral</Tab> : null}
           {isTeamsAdmin ? <Tab>Teams</Tab> : null}
           {isExchangeAdmin ? <Tab>Exchange</Tab> : null}
-          {isRaffleAdmin ? <Tab>Raffles/Ticket</Tab> : null}
+          {isRaffleAdmin || isTicketAdmin ? <Tab>Raffles/Ticket</Tab> : null}
           {isMomentoAdmin ? <Tab>Momento</Tab> : null}
           {isPowersAdmin ? <Tab>Powers</Tab> : null}
           {isAvatarSettingsAdmin ? <Tab>Avatars Settings</Tab> : null}
@@ -140,10 +134,10 @@ export const AdminPanel = () => {
               <ExchangeControl />
             </TabPanel>
           ) : null}
-          {isRaffleAdmin ? (
+          {isRaffleAdmin || isTicketAdmin ? (
             <TabPanel>
-              <TicketControl />
-              <RaffleControl />
+              {isTicketAdmin ? <TicketControl /> : null}
+              {isRaffleAdmin ? <RaffleControl /> : null}
             </TabPanel>
           ) : null}
           {isMomentoAdmin ? (

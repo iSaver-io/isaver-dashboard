@@ -24,7 +24,7 @@ export const useAccessControlContract = (contractName: ContractsEnum) => {
 
   const contractIface = new Interface(abi);
 
-  const getAdmins = async () => {
+  const getUsersWithRole = async (requiredRole: string) => {
     const filterGranted = contract.filters.RoleGranted();
     const filterRevoked = contract.filters.RoleRevoked();
 
@@ -39,8 +39,6 @@ export const useAccessControlContract = (contractName: ContractsEnum) => {
       toBlock: 'latest',
     });
 
-    const adminRole = await contract.DEFAULT_ADMIN_ROLE();
-
     const rawEvents = rawEventsGranted
       .concat(rawEventsRevoked)
       .sort((a, b) => a.blockNumber - b.blockNumber);
@@ -52,10 +50,10 @@ export const useAccessControlContract = (contractName: ContractsEnum) => {
     for (const event of events) {
       const { role, account } = event.args;
 
-      const isAdminRole = role === adminRole;
+      const hasRole = role === requiredRole;
       const isApproved = event.name === 'RoleGranted';
 
-      if (isAdminRole) {
+      if (hasRole) {
         if (isApproved) {
           activeAdmins.add(account);
         } else {
@@ -67,22 +65,20 @@ export const useAccessControlContract = (contractName: ContractsEnum) => {
     return Array.from(activeAdmins) as Address[];
   };
 
-  const grantAdminRole = async (account: string) => {
-    const adminRole = await contract.DEFAULT_ADMIN_ROLE();
-    const tx = await contract.grantRole(adminRole, account);
+  const grantRole = async (account: string, role: string) => {
+    const tx = await contract.grantRole(role, account);
     return waitForTransaction(tx);
   };
-  const revokeAdminRole = async (account: string) => {
-    const adminRole = await contract.DEFAULT_ADMIN_ROLE();
-    const tx = await contract.revokeRole(adminRole, account);
+  const revokeRole = async (account: string, role: string) => {
+    const tx = await contract.revokeRole(role, account);
     return waitForTransaction(tx);
   };
 
   return {
     contract,
-    getAdmins,
+    getUsersWithRole,
 
-    grantAdminRole,
-    revokeAdminRole,
+    grantRole,
+    revokeRole,
   };
 };

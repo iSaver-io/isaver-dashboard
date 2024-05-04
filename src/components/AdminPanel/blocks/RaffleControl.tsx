@@ -22,7 +22,7 @@ export const RaffleControl = () => {
     getWinnersFromOracleRandom,
     createRaffleRound,
   } = useRaffleControl();
-  const raffleAccessControl = useAccessControl(ContractsEnum.Raffles);
+  const raffleAccessControl = useAccessControl(ContractsEnum.Raffles, 'operator');
   const { ticketPriceRequest } = useTicketPrice();
   const { isOpen, onOpen, onClose } = useDisclosure();
 
@@ -37,13 +37,13 @@ export const RaffleControl = () => {
         </Button>
 
         <AddressesListControl
-          addresses={raffleAccessControl.adminsRequest.data || []}
-          label="Edit admin"
-          listLabel="Admins"
+          addresses={raffleAccessControl.usersWithRoleRequest.data || []}
+          label="Edit operator"
+          listLabel="Operators"
           addActionLabel="Grant role"
           removeActionLabel="Revoke role"
-          onAdd={raffleAccessControl.grantAdminRole.mutateAsync}
-          onRemove={raffleAccessControl.revokeAdminRole.mutateAsync}
+          onAdd={raffleAccessControl.grantRole.mutateAsync}
+          onRemove={raffleAccessControl.revokeRole.mutateAsync}
         />
 
         <Box mt="16px" maxHeight="400px" overflowY="auto">
