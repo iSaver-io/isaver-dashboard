@@ -5,6 +5,7 @@ import { useAccount } from 'wagmi';
 import { sendDataMessage } from '@/api/sendDataMessage';
 import { Logo } from '@/assets/images/icons-components/Logo';
 import { ReactComponent as ArrowIcon } from '@/components/Landing/images/arrow-right.svg';
+import { ReactComponent as DiscordIcon } from '@/components/Landing/images/discord.svg';
 import { ReactComponent as GithubIcon } from '@/components/Landing/images/github.svg';
 import { ReactComponent as OpenseaIcon } from '@/components/Landing/images/opensea.svg';
 import { ReactComponent as SavIcon } from '@/components/Landing/images/sav.svg';
@@ -175,6 +176,14 @@ export const Footer = () => {
                 onClick={() => handleSocialLinkClick('twitter')}
               >
                 <TwitterIcon />
+              </a>
+              <a
+                href="https://discord.gg/JTFwX2tNhk"
+                target="_blank"
+                rel="noreferrer"
+                onClick={() => handleSocialLinkClick('discord')}
+              >
+                <DiscordIcon />
               </a>
               <a
                 href="https://github.com/iSaver-io"
