@@ -178,7 +178,7 @@ export const Footer = () => {
                 <TwitterIcon />
               </a>
               <a
-                href="https://discord.gg/JTFwX2tNhk"
+                href="https://discord.gg/GmrPBZcd"
                 target="_blank"
                 rel="noreferrer"
                 onClick={() => handleSocialLinkClick('discord')}
