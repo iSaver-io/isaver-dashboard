@@ -7,6 +7,7 @@ import { useContractsAddresses } from '@/hooks/admin/useContractsAddresses';
 import { useLogger } from '@/hooks/useLogger';
 import { PrizeInfo, useGetNFT } from '@/hooks/useMomento';
 import alchemy from '@/modules/alchemy';
+import { getImageLinkForNFT } from '@/utils/images';
 import { getTokenNameByAddress } from '@/utils/logger';
 import { bigNumberToString } from '@/utils/number';
 
@@ -209,11 +210,7 @@ const NFT = ({
   );
 
   const image = useMemo(() => {
-    const link = nft?.image.pngUrl || nft?.image.cachedUrl || nft?.image.originalUrl;
-    if (link?.includes('ipfs.io') && nft?.contract.openSeaMetadata.imageUrl) {
-      return nft?.contract.openSeaMetadata.imageUrl;
-    }
-    return link;
+    return getImageLinkForNFT(nft);
   }, [nft]);
 
   return (
