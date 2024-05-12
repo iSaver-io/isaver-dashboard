@@ -7,6 +7,7 @@ import { CenteredSpinner } from '@/components/ui/CenteredSpinner/CenteredSpinner
 import { useOnVisibleLogger } from '@/hooks/logger/useOnVisibleLogger';
 import { useMomentoNFTPrizes } from '@/hooks/useMomento';
 import { getOpenseaLink } from '@/utils/getExplorerLink';
+import { getImageLinkForNFT } from '@/utils/images';
 
 import Prizes1 from './images/prizes1.png';
 import Prizes2 from './images/prizes2.png';
@@ -83,15 +84,17 @@ export const Prizes = () => {
     if (isLoading) return [];
     if (!externalNFTs.length) return [];
 
-    return externalNFTs
-      .map((nft) => ({
-        image: nft?.image.pngUrl || nft?.image.cachedUrl || nft?.image.originalUrl,
-        label: nft?.name,
-        contract: nft?.contract.address,
-        tokenId: nft?.tokenId,
-      }))
-      .filter((item) => !item.image?.includes('//ipfs'))
-      .slice(0, 12);
+    return (
+      externalNFTs
+        .map((nft) => ({
+          image: getImageLinkForNFT(nft),
+          label: nft?.name,
+          contract: nft?.contract.address,
+          tokenId: nft?.tokenId,
+        }))
+        // .filter((item) => !item.image?.includes('//ipfs'))
+        .slice(0, 12)
+    );
   }, [externalNFTs, isLoading]);
 
   useEffect(() => {
