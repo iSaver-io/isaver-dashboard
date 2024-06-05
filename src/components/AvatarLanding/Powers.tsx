@@ -131,7 +131,7 @@ export const Powers = () => {
           <Text
             id="powers"
             mb={{ sm: '15px', md: '20px', lg: '30px' }}
-            mt={{ sm: '0', xl: '30px' }}
+            mt={{ sm: '0', xl: '90px' }}
             textStyle="h2"
             as="h2"
             textTransform="uppercase"
