@@ -44,7 +44,7 @@ export const OtherPrizes = () => {
       >
         <Card
           image={PrizeImage1}
-          title="iSaver Avatar"
+          title="iSaver Avatars"
           description={
             <>
               We know that a total of 12024 Avatars have arrived on Earth: 10000 are distributed for
