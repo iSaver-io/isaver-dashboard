@@ -29,6 +29,39 @@ interface MomentoPrizeProps {
   prizeInfo: PrizeInfo;
 }
 
+const NFT_TOP_COLLECTIONS = [
+  'b37e4befacc50b02102d1e2117c4ea8a54beff',
+  '0x63e2f0c058ce9a194ec68f04320b7eb8ca555bd3',
+  '0xc70a7496716b3e25546901fe88215531abbd5a10',
+  '0x2f5b31d2b4891f0ed183d56dd6ebd55249ca1d0c',
+  '0x150afa2dfcaaada471472dfa6ad4b79e718a197c',
+  '0x425bf054ef7bad65b7bdd8e6587b1c3500e4f4ca',
+  '0xe9eee7294dc7c3bb64fd57a514e755022a333295',
+  '0x6ad08588568e258b2bdf065e7769fce398f68a1c',
+  '0x4ffa698ca3374ff154e58c8388a3aafe430dc2d3',
+  '0x85cbf58c9d20459339a0b1f586a5fac643a29286',
+  '0x91e51b92a2efea89bf1b6f66ad719737264724be',
+  '0x2d58a44d6c0a355de25761fb33a1f6269a97e2c5',
+  '0x551ec76c9fbb4f705f6b0114d1b79bb154747d38',
+  '0x47fae0155f418f7355b1ca8e46589811c272a7a8',
+  '0x187778e70489bbd9c81de1f87fd6a9d2088cf1eb',
+  '0xf43bc3f4f1edb7d4c373c8510a2888d69d83ceb7',
+  '0x4bca2c2ece9402b5d4dd031b49d48166c40b7957',
+  '0xb9c042c3275bc49799688eea1a29b1405d02946b',
+  '0xf81cb9bfea10d94801f3e445d3d818e72e8d1da4',
+  '0xe1c7be9a91bb376acbb7c205f1f733a3468153b4',
+  '0x78865315e4419e63073527bfdb660c550905da14',
+  '0x808ed3e23aac685126524aa4416d8eaeb2e767b9',
+  '0x750314b875e8cff5baa385db3e172686ca1fce40',
+  '0x24aa93b7abe09b5e55c5b29758282d05799ecea5',
+  '0x62dcbeab3124e3b1a9f1ac317c0613db8d6966b3',
+  '0x0ab302a678c1cf97043c1d932968d09d3176e64c',
+  '0x20e8165515fe69b03be6012cdaa76c833af0e241',
+  '0xfeee476cfaf56c2f359a63500415d5a2c7f2f2b9',
+  '0x28616ec69747094ad01b8c9d393ef8f3c0620e47',
+  '0x89d2e41408eacbbcc5eebeffaaa27fd2a01ff88b',
+];
+
 export const MomentoPrize = ({ prizeInfo }: MomentoPrizeProps) => {
   const contracts = useContractsAddresses();
   const logger = useLogger({
@@ -51,10 +84,13 @@ export const MomentoPrize = ({ prizeInfo }: MomentoPrizeProps) => {
 
       let prizeCategory = 'Various Tokens';
       if (prizeInfo.isERC721) {
+        const isTop = NFT_TOP_COLLECTIONS.includes(prizeInfo.tokenAddress);
         prizeCategory =
           contracts.ISaverAvatars === prizeInfo.tokenAddress
             ? 'iSaver Avatars'
-            : 'NFT New collections';
+            : isTop
+            ? 'NFT TOP collections'
+            : 'NFT NEW collections';
       }
       if (prizeInfo.tokenAddress === contracts.ISaverSAVRToken) {
         prizeCategory = 'SAVR Tokens';
@@ -213,8 +249,18 @@ const NFT = ({
     return getImageLinkForNFT(nft);
   }, [nft]);
 
+  const label = useMemo(
+    () =>
+      isISaverCollection
+        ? 'iSaver Avatars'
+        : NFT_TOP_COLLECTIONS.includes(tokenAddress)
+        ? 'NFT TOP collections'
+        : 'NFT NEW collections',
+    [isISaverCollection, tokenAddress]
+  );
+
   return (
-    <PrizeCard label={isISaverCollection ? 'iSaver Avatars' : 'NFT New collections'} padding="0px">
+    <PrizeCard label={label} padding="0px">
       <Image src={image} alt={nft?.name} />
     </PrizeCard>
   );
