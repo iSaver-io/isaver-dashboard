@@ -173,7 +173,7 @@ export const ExchangePage = () => {
         </Flex>
 
         <Text textStyle="textSansBold" mb="30px" fontSize="16px">
-          Please use only Polygon (MATIC) network
+          Please use only Polygon (PoS) network
         </Text>
 
         <Box>

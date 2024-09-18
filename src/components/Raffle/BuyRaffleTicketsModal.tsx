@@ -99,6 +99,11 @@ export const BuyRaffleTicketsModal: FC<BuyRaffleTicketsModalProps> = ({
     });
   }, [amount, onBuy, onClose, logger]);
 
+  const maxTotal = useMemo(
+    () => (savBalance && ticketPrice ? savBalance?.div(ticketPrice).toString() : '0'),
+    [savBalance, ticketPrice]
+  );
+
   return (
     <Modal isCentered isOpen={true} onClose={onClose}>
       <ModalOverlay />
@@ -114,7 +119,15 @@ export const BuyRaffleTicketsModal: FC<BuyRaffleTicketsModalProps> = ({
           <Text mt="26px" mb="10px" textStyle="textSansBold">
             Enter the number of Tickets
           </Text>
-          <InputAmount placeholder="0" value={amount} onChange={handleUpdate} hasError={!isValid} />
+          <InputAmount
+            placeholder="0"
+            value={amount}
+            onChange={handleUpdate}
+            hasError={!isValid}
+            total={maxTotal}
+            totalLabel="Max Tickets:"
+            onSetTotal={() => handleUpdate(maxTotal)}
+          />
 
           <Text mt="6px" mb="10px" textStyle="textSansBold">
             Price per Ticket

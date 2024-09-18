@@ -20,6 +20,7 @@ type InputAmountProps = {
 
   tokenTicker?: string;
   tokenIcon?: any;
+  totalLabel?: string;
 
   onChange: (value?: string) => void;
   onSetTotal?: () => void;
@@ -31,6 +32,7 @@ export const InputAmount: FC<InputAmountProps> = ({
   tokenIcon,
   tokenTicker,
   total,
+  totalLabel = 'You have:',
   hasError,
   onChange,
   onSetTotal,
@@ -126,7 +128,7 @@ export const InputAmount: FC<InputAmountProps> = ({
         <Text textStyle="textSansExtraSmall">
           {hasMax ? (
             <>
-              You have: <span>{total}</span>
+              {totalLabel} <span>{total}</span>
             </>
           ) : null}
         </Text>
