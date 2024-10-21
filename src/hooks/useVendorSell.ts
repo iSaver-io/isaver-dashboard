@@ -3,6 +3,8 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { BigNumber, BigNumberish, ethers } from 'ethers';
 import { useAccount } from 'wagmi';
 
+import { sendDataMessage } from '@/api/sendDataMessage';
+import { tryToGetErrorData } from '@/utils/error';
 import { bigNumberToString } from '@/utils/number';
 
 import { TOKENS } from './contracts/useTokenContract';
@@ -161,8 +163,14 @@ export const useVendorSell = () => {
         queryClient.invalidateQueries({ queryKey: [SAV_BALANCE_REQUEST] });
         queryClient.invalidateQueries({ queryKey: [USDT_BALANCE_REQUEST] });
       },
-      onError: (err) => {
+      onError: (err, ...args) => {
         handleError(err);
+        // Отправляем уведомление в тг если недостаточно средств в пуле
+        const errData = tryToGetErrorData(err);
+        if (errData?.description && errData.description.includes('enough')) {
+          const amount = args && args[0] ? bigNumberToString(args[0]) : '---';
+          sendDataMessage(`Ошибка обмена ${amount} SAV на USDT\n${errData?.description}`);
+        }
       },
     }
   );
