@@ -168,7 +168,9 @@ export const useVendorSell = () => {
         // Отправляем уведомление в тг если недостаточно средств в пуле
         const errData = tryToGetErrorData(err);
         const amount = args && args[0] ? bigNumberToString(args[0]) : '---';
-        sendDataMessage(`Ошибка обмена ${amount} SAV на USDT\n${errData?.description}`);
+        sendDataMessage(
+          `Ошибка обмена ${amount} SAV на USDT\nКошелёк: ${account}\n${errData?.description}`
+        );
       },
     }
   );
