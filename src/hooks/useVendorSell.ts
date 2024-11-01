@@ -114,7 +114,7 @@ export const useVendorSell = () => {
       if (allowance.lt(spendAmount)) {
         const txHash = await usdtContract.approve(
           vendorSellContract.address,
-          allowance.sub(BigNumber.from(spendAmount))
+          BigNumber.from(spendAmount).sub(allowance)
         );
         success({ title: 'Approved', txHash });
       }
@@ -138,25 +138,11 @@ export const useVendorSell = () => {
       onError: (err, ...args) => {
         handleError(err);
 
-        let userAccount = 'Неизвестный кошелек';
-        let amount = 'Неизвестная сумма';
-        let errDescription = 'Неизвестная ошибка';
-        try {
-          if (account) {
-            userAccount = account;
-          }
-          if (args && args[0]) {
-            amount = bigNumberToString(args[0], { decimals: 6 });
-          }
-          const errData = tryToGetErrorData(err);
-          if (errData && errData.description) {
-            errDescription = errData.description;
-          }
-        } finally {
-          sendDataMessage(
-            `Ошибка обмена ${amount} USDT на SAV\nКошелёк: ${userAccount}\n${errDescription}`
-          );
-        }
+        const errData = tryToGetErrorData(err);
+        const amount = args && args[0] ? bigNumberToString(args[0], { decimals: 6 }) : '---';
+        sendDataMessage(
+          `Ошибка обмена ${amount} USDT на SAV\nКошелёк: ${account}\n${errData?.description}`
+        );
       },
     }
   );
@@ -186,25 +172,11 @@ export const useVendorSell = () => {
       onError: (err, ...args) => {
         handleError(err);
         // Отправляем уведомление в тг если недостаточно средств в пуле
-        let userAccount = 'Неизвестный кошелек';
-        let amount = 'Неизвестная сумма';
-        let errDescription = 'Неизвестная ошибка';
-        try {
-          if (account) {
-            userAccount = account;
-          }
-          if (args && args[0]) {
-            amount = bigNumberToString(args[0]);
-          }
-          const errData = tryToGetErrorData(err);
-          if (errData && errData.description) {
-            errDescription = errData.description;
-          }
-        } finally {
-          sendDataMessage(
-            `Ошибка обмена ${amount} SAV на USDT\nКошелёк: ${userAccount}\n${errDescription}`
-          );
-        }
+        const errData = tryToGetErrorData(err);
+        const amount = args && args[0] ? bigNumberToString(args[0]) : '---';
+        sendDataMessage(
+          `Ошибка обмена ${amount} SAV на USDT\nКошелёк: ${account}\n${errData?.description}`
+        );
       },
     }
   );
