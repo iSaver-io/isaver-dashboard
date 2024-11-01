@@ -114,7 +114,7 @@ export const useVendorSell = () => {
       if (allowance.lt(spendAmount)) {
         const txHash = await usdtContract.approve(
           vendorSellContract.address,
-          BigNumber.from(ethers.constants.MaxUint256)
+          BigNumber.from(spendAmount).sub(allowance)
         );
         success({ title: 'Approved', txHash });
       }
@@ -135,8 +135,14 @@ export const useVendorSell = () => {
         queryClient.invalidateQueries({ queryKey: [SAV_BALANCE_REQUEST] });
         queryClient.invalidateQueries({ queryKey: [USDT_BALANCE_REQUEST] });
       },
-      onError: (err) => {
+      onError: (err, ...args) => {
         handleError(err);
+
+        const errData = tryToGetErrorData(err);
+        const amount = args && args[0] ? bigNumberToString(args[0], { decimals: 6 }) : '---';
+        sendDataMessage(
+          `Ошибка обмена ${amount} USDT на SAV\nКошелёк: ${account}\n${errData?.description}`
+        );
       },
     }
   );
