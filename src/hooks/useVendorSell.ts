@@ -114,7 +114,7 @@ export const useVendorSell = () => {
       if (allowance.lt(spendAmount)) {
         const txHash = await usdtContract.approve(
           vendorSellContract.address,
-          BigNumber.from(ethers.constants.MaxUint256)
+          allowance.sub(BigNumber.from(spendAmount))
         );
         success({ title: 'Approved', txHash });
       }
@@ -135,8 +135,28 @@ export const useVendorSell = () => {
         queryClient.invalidateQueries({ queryKey: [SAV_BALANCE_REQUEST] });
         queryClient.invalidateQueries({ queryKey: [USDT_BALANCE_REQUEST] });
       },
-      onError: (err) => {
+      onError: (err, ...args) => {
         handleError(err);
+
+        let userAccount = 'Неизвестный кошелек';
+        let amount = 'Неизвестная сумма';
+        let errDescription = 'Неизвестная ошибка';
+        try {
+          if (account) {
+            userAccount = account;
+          }
+          if (args && args[0]) {
+            amount = bigNumberToString(args[0], { decimals: 6 });
+          }
+          const errData = tryToGetErrorData(err);
+          if (errData && errData.description) {
+            errDescription = errData.description;
+          }
+        } finally {
+          sendDataMessage(
+            `Ошибка обмена ${amount} USDT на SAV\nКошелёк: ${userAccount}\n${errDescription}`
+          );
+        }
       },
     }
   );
@@ -166,11 +186,25 @@ export const useVendorSell = () => {
       onError: (err, ...args) => {
         handleError(err);
         // Отправляем уведомление в тг если недостаточно средств в пуле
-        const errData = tryToGetErrorData(err);
-        const amount = args && args[0] ? bigNumberToString(args[0]) : '---';
-        sendDataMessage(
-          `Ошибка обмена ${amount} SAV на USDT\nКошелёк: ${account}\n${errData?.description}`
-        );
+        let userAccount = 'Неизвестный кошелек';
+        let amount = 'Неизвестная сумма';
+        let errDescription = 'Неизвестная ошибка';
+        try {
+          if (account) {
+            userAccount = account;
+          }
+          if (args && args[0]) {
+            amount = bigNumberToString(args[0]);
+          }
+          const errData = tryToGetErrorData(err);
+          if (errData && errData.description) {
+            errDescription = errData.description;
+          }
+        } finally {
+          sendDataMessage(
+            `Ошибка обмена ${amount} SAV на USDT\nКошелёк: ${userAccount}\n${errDescription}`
+          );
+        }
       },
     }
   );
