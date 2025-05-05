@@ -50,9 +50,21 @@ export const HistoryTable = () => {
     { field: 'timestamp', type: 'desc' }
   );
 
+  // Hotfix for unique transaction hashes
+  const uniqueData = useMemo(() => {
+    const uniqueMap = new Map<string, any>();
+    sortedData.forEach((data) => {
+      const key = data.transactionHash;
+      if (!uniqueMap.has(key)) {
+        uniqueMap.set(key, data);
+      }
+    });
+    return Array.from(uniqueMap.values());
+  }, [sortedData]);
+
   const visibleItems = useMemo(
-    () => (isOpen ? sortedData : sortedData.slice(0, COLLAPSED_LIMIT)),
-    [isOpen, sortedData]
+    () => (isOpen ? uniqueData : uniqueData.slice(0, COLLAPSED_LIMIT)),
+    [isOpen, uniqueData]
   );
 
   const emptyRows = Math.max(0, COLLAPSED_LIMIT - visibleItems.length);
