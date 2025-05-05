@@ -14,16 +14,28 @@ export const useDataSorting = <T extends object>(
   );
   const [currentSortType, setCurrentSortType] = useState(initialSorting?.type || 'asc');
 
+  // Hotfix for unique transaction hashes
+  const uniqueData = useMemo(() => {
+    const uniqueMap = new Map<string, any>();
+    data.forEach((d) => {
+      const key = sortableFields.map((field) => d[field]).join('|');
+      if (!uniqueMap.has(key)) {
+        uniqueMap.set(key, d);
+      }
+    });
+    return Array.from(uniqueMap.values());
+  }, [data, sortableFields]);
+
   const sortedData = useMemo(
     () =>
-      [...data].sort((a, b) =>
+      [...uniqueData].sort((a, b) =>
         currentSortType === 'asc'
           ? // @ts-ignore
             compareTwoFields(a[currentSortField], b[currentSortField])
           : // @ts-ignore
             compareTwoFields(b[currentSortField], a[currentSortField])
       ),
-    [data, currentSortField, currentSortType]
+    [uniqueData, currentSortField, currentSortType]
   );
 
   const onSort = useCallback(
