@@ -3,10 +3,10 @@ import { useCallback, useMemo, useState } from 'react';
 import { compareTwoFields } from '@/utils/compareTwoFields';
 
 export type SortType = 'asc' | 'desc';
-// TODO: Fix typescript, add type for sortable fields
-export const useDataSorting = <T extends object>(
+
+export const useDataSorting = <T extends object, K extends keyof T>(
   data: T[],
-  sortableFields: string[],
+  sortableFields: K[],
   initialSorting?: { field: string; type: SortType }
 ) => {
   const [currentSortField, setCurrentSortField] = useState(
@@ -40,8 +40,10 @@ export const useDataSorting = <T extends object>(
 
   const onSort = useCallback(
     (field: string, type: SortType) => {
-      if (!sortableFields.includes(field))
-        throw new Error(`Incorrect sort field: ${field}. Expected: [${sortableFields.join(', ')}]`);
+      if (!sortableFields.includes(field as K))
+        throw new Error(
+          `Incorrect sort field: ${field.toString()}. Expected: [${sortableFields.join(', ')}]`
+        );
 
       setCurrentSortField(field);
       setCurrentSortType(type);
