@@ -102,6 +102,7 @@ export const PowerCard = ({ id, name, label, description, isPowersAllowed }: Pow
             {isEnding ? (
               <Box textAlign="center">
                 <Button
+                  variant="outlinedWhite"
                   isDisabled={!balance.toNumber()}
                   size="md"
                   onClick={() => handleActivate(true)}
