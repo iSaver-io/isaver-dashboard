@@ -18,13 +18,13 @@ export const useDataSorting = <T extends object>(
   const uniqueData = useMemo(() => {
     const uniqueMap = new Map<string, any>();
     data.forEach((d) => {
-      const key = JSON.stringify(d);
+      const key = sortableFields.map((field) => d[field]).join('|');
       if (!uniqueMap.has(key)) {
         uniqueMap.set(key, d);
       }
     });
     return Array.from(uniqueMap.values());
-  }, [data]);
+  }, [data, sortableFields]);
 
   const sortedData = useMemo(
     () =>
