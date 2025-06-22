@@ -185,8 +185,8 @@ export const useMomentoNFTPrizes = () => {
       .filter((category) => !category.info.isEmpty)
       .sort((a, b) => a.info.chance.sub(b.info.chance).toNumber())
       .map((category) => ({
-        ...category,
-        prizes: category.prizes
+        ...(category || {}),
+        prizes: (category?.prizes || [])
           .filter(
             (prize) =>
               (prize.isERC721 || prize.isERC1155) &&
@@ -199,8 +199,8 @@ export const useMomentoNFTPrizes = () => {
           .reverse(),
       }));
 
-    const mainCategory = prizes.filter(({ categoryId }) => categoryId === 35)[0].prizes;
-    const secondaryCategory = prizes.filter(({ categoryId }) => categoryId === 11)[0].prizes;
+    const mainCategory = prizes.filter(({ categoryId }) => categoryId === 35)[0]?.prizes || [];
+    const secondaryCategory = prizes.filter(({ categoryId }) => categoryId === 11)[0]?.prizes || [];
 
     const MAX_NFTS = Math.min(14, mainCategory.length + secondaryCategory.length);
     const selectedNFTs = mainCategory.flat();
