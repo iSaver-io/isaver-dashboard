@@ -49,7 +49,7 @@ const executeRequest = async (params: any, retryCount = 0): Promise<Log[]> => {
       error instanceof Error &&
       (error.message.includes('429') || error.message.includes('Internal error'))
     ) {
-      const delay = Math.pow(2, retryCount + 1) * 1000;
+      const delay = (Math.pow(2, retryCount + 1) + 2) * 1000;
       console.warn(`Request failed, retrying in ${delay / 1000} seconds...`);
       await new Promise((resolve) => setTimeout(resolve, delay));
       return executeRequest(params, retryCount + 1);
@@ -71,8 +71,8 @@ const processQueue = async () => {
     const timeSinceLastRequest = now - lastRequestTime;
 
     // Ждем минимум 1 секунду между запросами
-    if (timeSinceLastRequest < 1500) {
-      await new Promise((resolve) => setTimeout(resolve, 1500 - timeSinceLastRequest));
+    if (timeSinceLastRequest < 2000) {
+      await new Promise((resolve) => setTimeout(resolve, 2000 - timeSinceLastRequest));
     }
 
     const request = requestQueue.shift();
