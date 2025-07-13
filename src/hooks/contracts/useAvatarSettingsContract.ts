@@ -36,75 +36,108 @@ export const useAvatarSettingsContract = () => {
   }) as unknown as AvatarSettings;
 
   const getAllUserEvents = async (address: Address) => {
-    const fetchEvents = async (filter: TypedEventFilter<TypedEvent<Event[]>>) =>
-      getLogs(filter.address, filter.topics, FROM_BLOCK_EPISODE_2, 'latest');
+    const fetchAllEvents = async () => {
+      // Создаем фильтр для всех событий, связанных с пользователем
+      const allFilters = [
+        avatarSettings.filters.ExternalAvatarActivated(address),
+        avatarSettings.filters.AvatarActivated(address),
+        avatarSettings.filters.PowersAccessActivated(address),
+        avatarSettings.filters.AvatarDeactivated(address),
+        avatarSettings.filters.PowerActivated(address),
+        avatarSettings.filters.NameChanged(address),
+        avatarSettings.filters.TelegramChanged(address),
+        avatarSettings.filters.BirthdayPresentClaimed(null, address),
+      ];
 
-    const filters: Record<string, { filter: any; label?: string }> = {
-      ExternalAvatarActivated: {
-        filter: avatarSettings.filters.ExternalAvatarActivated(address),
-        label: 'Avatar activation',
-      },
-      AvatarActivated: {
-        filter: avatarSettings.filters.AvatarActivated(address),
-        label: 'iSaver Avatar activation',
-      },
-      PowersAccessActivated: {
-        filter: avatarSettings.filters.PowersAccessActivated(address),
-        label: 'Powers Block activation',
-      },
-      AvatarDeactivated: {
-        filter: avatarSettings.filters.AvatarDeactivated(address),
-        label: 'Avatar deactivation',
-      },
-      PowerActivated: {
-        filter: avatarSettings.filters.PowerActivated(address),
-        // label: 'Power activated',
-      },
-      NameChanged: {
-        filter: avatarSettings.filters.NameChanged(address),
-        label: 'Name change',
-      },
-      TelegramChanged: {
-        filter: avatarSettings.filters.TelegramChanged(address),
-        label: 'Telegram change',
-      },
-      BirthdayPresentClaimed: {
-        filter: avatarSettings.filters.BirthdayPresentClaimed(null, address),
-        label: 'Birthday present claimed',
-      },
+      // Объединяем все topics в один массив для одного запроса
+      const allTopics = allFilters.flatMap((filter) => filter.topics || []);
+
+      // Убираем дубликаты topics
+      const uniqueTopics = allTopics.filter((topic, index, arr) => arr.indexOf(topic) === index);
+
+      // Делаем один запрос для всех событий
+      const allLogs = await getLogs(avatarSettingsAddress, [], FROM_BLOCK_EPISODE_2, 'latest');
+
+      return allLogs;
     };
 
-    let allEvents: LogWithEventName[] = [];
-    for (const [key, filter] of Object.entries(filters)) {
-      const events = await fetchEvents(filter.filter);
-      allEvents = allEvents.concat(events.map((event) => ({ ...event, eventName: key })));
-    }
+    const eventLabels: Record<string, string> = {
+      ExternalAvatarActivated: 'Avatar activation',
+      AvatarActivated: 'iSaver Avatar activation',
+      PowersAccessActivated: 'Powers Block activation',
+      AvatarDeactivated: 'Avatar deactivation',
+      PowerActivated: 'Power activation',
+      NameChanged: 'Name change',
+      TelegramChanged: 'Telegram change',
+      BirthdayPresentClaimed: 'Birthday present claimed',
+    };
+
+    const allLogs = await fetchAllEvents();
 
     const events = await Promise.all(
-      allEvents.map(async ({ eventName, ...log }: LogWithEventName) => {
-        const logParsed = avatarSettingsIface.parseLog(log);
-        const block = await provider.getBlock(log.blockNumber);
+      allLogs
+        .map(async (log) => {
+          try {
+            const parsedLog = avatarSettingsIface.parseLog(log);
+            const eventName = parsedLog.name;
 
-        let label = '';
-        if (eventName === 'PowerActivated') {
-          const powerId: number = await logParsed.args.powerId.toNumber();
-          label = powerActivationLabels[powerId];
-        } else {
-          label = filters[eventName].label || '';
-          if (eventName === 'AvatarDeactivated' && logParsed.args.isAvatarCollection) {
-            label = 'iSaver Avatar deactivation';
+            // Проверяем, что событие связано с нужным пользователем
+            if (eventName === 'ExternalAvatarActivated' && parsedLog.args.sender !== address) {
+              return null;
+            } else if (eventName === 'AvatarActivated' && parsedLog.args.sender !== address) {
+              return null;
+            } else if (eventName === 'PowersAccessActivated' && parsedLog.args.sender !== address) {
+              return null;
+            } else if (eventName === 'AvatarDeactivated' && parsedLog.args.sender !== address) {
+              return null;
+            } else if (eventName === 'BirthdayPresentClaimed' && parsedLog.args.owner !== address) {
+              return null;
+            } else if (eventName === 'PowerActivated' && parsedLog.args.sender !== address) {
+              return null;
+            } else if (eventName === 'NameChanged' && parsedLog.args.sender !== address) {
+              return null;
+            } else if (eventName === 'TelegramChanged' && parsedLog.args.sender !== address) {
+              return null;
+            }
+            if (!Object.keys(eventLabels).includes(eventName)) {
+              return null;
+            }
+
+            const block = await provider.getBlock(log.blockNumber);
+
+            let label = '';
+            if (eventName === 'PowerActivated') {
+              const powerId: number = await parsedLog.args.powerId.toNumber();
+              label = powerActivationLabels[powerId];
+            } else if (eventName === 'AvatarDeactivated' && parsedLog.args.isAvatarCollection) {
+              label = 'iSaver Avatar deactivation';
+            } else {
+              label = eventLabels[eventName] || '';
+            }
+
+            if (!label) {
+              console.log('label for event not found', eventName);
+            }
+
+            return {
+              transactionHash: log.transactionHash,
+              label,
+              timestamp: block.timestamp,
+            };
+          } catch (error) {
+            console.error('Error parsing event:', error);
+            return null;
           }
-        }
-
-        return {
-          transactionHash: log.transactionHash,
-          label,
-          timestamp: block.timestamp,
-        };
-      })
+        })
+        .filter(Boolean)
     );
 
-    const sortedEvents = events.sort((a, b) => a.timestamp - b.timestamp);
+    const nonEmptyEvents = events.filter(Boolean) as {
+      transactionHash: string;
+      label: string;
+      timestamp: number;
+    }[];
+    const sortedEvents = nonEmptyEvents.sort((a, b) => a.timestamp - b.timestamp);
 
     return sortedEvents;
   };
