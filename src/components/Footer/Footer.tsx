@@ -47,8 +47,8 @@ export const Footer = () => {
     (e: any) => {
       e.preventDefault();
       if (email && validateEmail(email)) {
-        const message = `Пользователь оставил Email: ${email}\nКошелек: ${
-          address || '<i>не авторизован</i>'
+        const message = `Пользователь оставил Email: ${email} \nКошелек: ${
+          address || 'не авторизован'
         }`;
         sendDataMessage(message)
           .then(() => {

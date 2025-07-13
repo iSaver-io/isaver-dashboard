@@ -4,6 +4,7 @@ import { Log } from 'alchemy-sdk';
 import { ethers } from 'ethers';
 import { Address, useContract, useProvider, useSigner } from 'wagmi';
 
+import { getLogs } from '@/api/getLogs';
 import { FROM_BLOCK_EPISODE_2 } from '@/constants';
 import { useContractsAddresses } from '@/hooks/admin/useContractsAddresses';
 import alchemy from '@/modules/alchemy';
@@ -71,11 +72,7 @@ export const useMomentoContract = () => {
 
     const fetchEvent = async (filter: TypedEventFilter<TypedEvent<Event[]>>) => {
       try {
-        return await alchemy.core.getLogs({
-          ...filter,
-          fromBlock: FROM_BLOCK_EPISODE_2,
-          toBlock: 'latest',
-        });
+        return await getLogs(filter.address, filter.topics, FROM_BLOCK_EPISODE_2, 'latest');
       } catch (error) {
         console.error('Error fetching events:', error);
         return [];

@@ -1,8 +1,8 @@
 import { Interface } from '@ethersproject/abi';
 import { Address, useContract, useProvider, useSigner } from 'wagmi';
 
+import { getLogs } from '@/api/getLogs';
 import { FROM_BLOCK } from '@/constants';
-import alchemy from '@/modules/alchemy';
 import { AccessControlUpgradeable } from '@/types';
 import { waitForTransaction } from '@/utils/waitForTransaction';
 
@@ -28,16 +28,18 @@ export const useAccessControlContract = (contractName: ContractsEnum) => {
     const filterGranted = contract.filters.RoleGranted();
     const filterRevoked = contract.filters.RoleRevoked();
 
-    const rawEventsGranted = await alchemy.core.getLogs({
-      ...filterGranted,
-      fromBlock: FROM_BLOCK,
-      toBlock: 'latest',
-    });
-    const rawEventsRevoked = await alchemy.core.getLogs({
-      ...filterRevoked,
-      fromBlock: FROM_BLOCK,
-      toBlock: 'latest',
-    });
+    const rawEventsGranted = await getLogs(
+      filterGranted.address,
+      filterGranted.topics,
+      FROM_BLOCK,
+      'latest'
+    );
+    const rawEventsRevoked = await getLogs(
+      filterRevoked.address,
+      filterRevoked.topics,
+      FROM_BLOCK,
+      'latest'
+    );
 
     const rawEvents = rawEventsGranted
       .concat(rawEventsRevoked)

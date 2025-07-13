@@ -2,8 +2,8 @@ import { Interface } from '@ethersproject/abi';
 import { ethers } from 'ethers';
 import { useContract, useProvider, useSigner } from 'wagmi';
 
+import { getLogs } from '@/api/getLogs';
 import { FROM_BLOCK } from '@/constants';
-import alchemy from '@/modules/alchemy';
 import { Ticket } from '@/types.common';
 import { TypedEvent, TypedEventFilter } from '@/types/typechain-types/common';
 import { waitForTransaction } from '@/utils/waitForTransaction';
@@ -38,7 +38,7 @@ export const useTicketContract = () => {
     const filter = contract.filters.TransferSingle(null, ethers.constants.AddressZero);
 
     const fetchEvents = async (filter: TypedEventFilter<TypedEvent<Event[]>>) =>
-      alchemy.core.getLogs({ ...filter, fromBlock: FROM_BLOCK, toBlock: 'latest' });
+      getLogs(filter.address, filter.topics, FROM_BLOCK, 'latest');
 
     const events = await fetchEvents(filter);
     return events.map((event) => ticketIface.parseLog(event));

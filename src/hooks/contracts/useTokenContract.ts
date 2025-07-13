@@ -2,9 +2,10 @@ import EthDater from 'ethereum-block-by-date';
 import type { BigNumber } from 'ethers';
 import { useContract, useProvider, useSigner } from 'wagmi';
 
+import { getLogs } from '@/api/getLogs';
 import { ISaverSAVRToken } from '@/types.common';
+import { TransferEvent } from '@/types/typechain-types/contracts/mocks/ERC20BurnableMock';
 import { BALANCE_HISTORY_PERIOD } from '@/utils/balance';
-import { queryThrowBlocks } from '@/utils/queryThrowBlocks';
 import { waitForTransaction } from '@/utils/waitForTransaction';
 
 import { ContractsEnum, useContractAbi } from './useContractAbi';
@@ -36,32 +37,35 @@ export const useTokenContract = (token: ContractsEnum.SAV | ContractsEnum.SAVR) 
     return contract.balanceOf(address);
   };
 
-  const getBalanceHistoryTransfers = async (account: string) => {
+  const getBalanceHistoryTransfers = async (account: string): Promise<TransferEvent[]> => {
     const { block: fromBlock } = await dater.getDate(Date.now() - BALANCE_HISTORY_PERIOD);
     const { block: toBlock } = await dater.getDate(new Date());
 
     const filterFrom = contract.filters.Transfer(account);
     const filterTo = contract.filters.Transfer(null, account);
 
-    const fetchTransfersFrom = (from: number, to: number) =>
-      contract.queryFilter(filterFrom, from, to);
-    const fetchTransfersTo = (from: number, to: number) => contract.queryFilter(filterTo, from, to);
-
-    const fromTransfers = await queryThrowBlocks(fetchTransfersFrom, { fromBlock, toBlock });
-    const toTransfers = await queryThrowBlocks(fetchTransfersTo, {
+    const transferFromLogs = await getLogs(
+      filterFrom.address,
+      filterFrom.topics,
       fromBlock,
-      toBlock,
-    });
-
-    return (
-      [fromTransfers, toTransfers]
-        .reduce((acc, transfers) => {
-          acc.push(...transfers);
-          return acc;
-        }, [])
-        // @ts-ignore
-        .sort((t1, t2) => t1.blockNumber - t2.blockNumber)
+      toBlock
     );
+    const transferToLogs = await getLogs(filterTo.address, filterTo.topics, fromBlock, toBlock);
+
+    const parseLogs = (logs: any[]) => {
+      return logs.map((log) => {
+        // Парсим событие Transfer
+        const parsedLog = contract.interface.parseLog(log);
+        return {
+          ...log,
+          args: parsedLog.args,
+          blockNumber: Number(log.blockNumber),
+        } as TransferEvent;
+      });
+    };
+
+    const allLogs = [...(transferFromLogs || []), ...(transferToLogs || [])];
+    return parseLogs(allLogs).sort((t1, t2) => t1.blockNumber - t2.blockNumber);
   };
 
   const decimals = async (): Promise<number> => {

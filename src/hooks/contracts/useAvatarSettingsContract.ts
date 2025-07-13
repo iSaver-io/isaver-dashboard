@@ -3,8 +3,8 @@ import { Log } from 'alchemy-sdk';
 import { BigNumberish, Event } from 'ethers';
 import { Address, useContract, useProvider, useSigner } from 'wagmi';
 
+import { getLogs } from '@/api/getLogs';
 import { FROM_BLOCK_EPISODE_2 } from '@/constants';
-import alchemy from '@/modules/alchemy';
 import { AvatarSettings } from '@/types.common';
 import { TypedEvent, TypedEventFilter } from '@/types/typechain-types/common';
 import { waitForTransaction } from '@/utils/waitForTransaction';
@@ -37,7 +37,7 @@ export const useAvatarSettingsContract = () => {
 
   const getAllUserEvents = async (address: Address) => {
     const fetchEvents = async (filter: TypedEventFilter<TypedEvent<Event[]>>) =>
-      alchemy.core.getLogs({ ...filter, fromBlock: FROM_BLOCK_EPISODE_2, toBlock: 'latest' });
+      getLogs(filter.address, filter.topics, FROM_BLOCK_EPISODE_2, 'latest');
 
     const filters: Record<string, { filter: any; label?: string }> = {
       ExternalAvatarActivated: {
@@ -111,11 +111,7 @@ export const useAvatarSettingsContract = () => {
 
   const getApprovedCollections = async (): Promise<Address[]> => {
     const filter = avatarSettings.filters.CollectionApprovalUpdated();
-    const rawEvents = await alchemy.core.getLogs({
-      ...filter,
-      fromBlock: FROM_BLOCK_EPISODE_2,
-      toBlock: 'latest',
-    });
+    const rawEvents = await getLogs(filter.address, filter.topics, FROM_BLOCK_EPISODE_2, 'latest');
     const events = rawEvents.map((event) => ({ ...event, ...avatarSettingsIface.parseLog(event) }));
 
     const activeCollections = new Set();
@@ -137,7 +133,7 @@ export const useAvatarSettingsContract = () => {
     const filter = avatarSettings.filters.PowerActivated();
 
     const fetchEvents = async (filter: TypedEventFilter<TypedEvent<Event[]>>) =>
-      alchemy.core.getLogs({ ...filter, fromBlock: FROM_BLOCK_EPISODE_2, toBlock: 'latest' });
+      getLogs(filter.address, filter.topics, FROM_BLOCK_EPISODE_2, 'latest');
 
     const events = await fetchEvents(filter);
 
@@ -147,7 +143,7 @@ export const useAvatarSettingsContract = () => {
     const filter = avatarSettings.filters.AvatarDeactivated();
 
     const fetchEvents = async (filter: TypedEventFilter<TypedEvent<Event[]>>) =>
-      alchemy.core.getLogs({ ...filter, fromBlock: FROM_BLOCK_EPISODE_2, toBlock: 'latest' });
+      getLogs(filter.address, filter.topics, FROM_BLOCK_EPISODE_2, 'latest');
 
     const events = await fetchEvents(filter);
     return events.map((event) => ({ ...event, ...avatarSettingsIface.parseLog(event) }));
