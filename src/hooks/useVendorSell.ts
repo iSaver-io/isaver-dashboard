@@ -141,7 +141,7 @@ export const useVendorSell = () => {
         const errData = tryToGetErrorData(err);
         const amount = args && args[0] ? bigNumberToString(args[0], { decimals: 6 }) : '---';
         sendDataMessage(
-          `Ошибка обмена ${amount} USDT на SAV\nКошелёк: ${account}\n${errData?.description}`
+          `Ошибка обмена ${amount} USDT на SAV \nКошелёк: ${account} \n${errData?.description}`
         );
       },
     }
@@ -175,7 +175,7 @@ export const useVendorSell = () => {
         const errData = tryToGetErrorData(err);
         const amount = args && args[0] ? bigNumberToString(args[0]) : '---';
         sendDataMessage(
-          `Ошибка обмена ${amount} SAV на USDT\nКошелёк: ${account}\n${errData?.description}`
+          `Ошибка обмена ${amount} SAV на USDT \nКошелёк: ${account} \n${errData?.description}`
         );
       },
     }

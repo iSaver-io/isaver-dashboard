@@ -3,6 +3,7 @@ import { hardhat, localhost, polygon, polygonMumbai } from 'wagmi/chains';
 import { MetaMaskConnector } from 'wagmi/connectors/metaMask';
 import { WalletConnectConnector } from 'wagmi/connectors/walletConnect';
 import { alchemyProvider } from 'wagmi/providers/alchemy';
+import { infuraProvider } from 'wagmi/providers/infura';
 import { jsonRpcProvider } from 'wagmi/providers/jsonRpc';
 import { publicProvider } from 'wagmi/providers/public';
 
@@ -10,8 +11,8 @@ window.Buffer = require('buffer/').Buffer;
 
 const productionChains = process.env.REACT_APP_IS_MAINNET ? [polygon] : [polygon, polygonMumbai];
 const devChains = process.env.REACT_APP_IS_MAINNET
-  ? [polygon, polygonMumbai, hardhat, localhost]
-  : [polygon, polygonMumbai, hardhat, localhost];
+  ? [polygon, polygonMumbai]
+  : [polygon, polygonMumbai];
 
 const { chains, provider, webSocketProvider } = configureChains(
   process.env.NODE_ENV === 'production' ? productionChains : devChains,
@@ -19,6 +20,9 @@ const { chains, provider, webSocketProvider } = configureChains(
     alchemyProvider({
       apiKey: process.env.REACT_APP_ALCHEMY_KEY || '',
     }),
+    // infuraProvider({
+    //   apiKey: process.env.REACT_APP_INFURA_API_KEY || '',
+    // }),
     publicProvider(),
     // jsonRpcProvider({
     //   rpc: () => ({

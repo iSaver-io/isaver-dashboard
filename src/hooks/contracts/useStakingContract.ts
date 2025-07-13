@@ -3,8 +3,8 @@ import { Log } from 'alchemy-sdk';
 import { BigNumber, BigNumberish, ethers } from 'ethers';
 import { useContract, useProvider, useSigner } from 'wagmi';
 
+import { getLogs } from '@/api/getLogs';
 import { FROM_BLOCK, FROM_BLOCK_EPISODE_2 } from '@/constants';
-import alchemy from '@/modules/alchemy';
 import { Staking } from '@/types.common';
 import { TypedEvent, TypedEventFilter } from '@/types/typechain-types/common';
 import {
@@ -132,7 +132,7 @@ export const useStakingContract = () => {
     const filter = contract.filters.Staked();
 
     const fetchEvents = async (filter: TypedEventFilter<TypedEvent<Event[]>>) =>
-      alchemy.core.getLogs({ ...filter, fromBlock: FROM_BLOCK, toBlock: 'latest' });
+      getLogs(filter.address, filter.topics, FROM_BLOCK, 'latest');
 
     const events = await fetchEvents(filter);
     return events.map(
@@ -145,7 +145,7 @@ export const useStakingContract = () => {
     const filter = contract.filters.Claimed();
 
     const fetchEvents = async (filter: TypedEventFilter<TypedEvent<Event[]>>) =>
-      alchemy.core.getLogs({ ...filter, fromBlock: FROM_BLOCK, toBlock: 'latest' });
+      getLogs(filter.address, filter.topics, FROM_BLOCK, 'latest');
 
     const events = await fetchEvents(filter);
     return events.map(
@@ -158,7 +158,7 @@ export const useStakingContract = () => {
     const filter = contract.filters.StakedSuperPlan();
 
     const fetchEvents = async (filter: TypedEventFilter<TypedEvent<Event[]>>) =>
-      alchemy.core.getLogs({ ...filter, fromBlock: FROM_BLOCK_EPISODE_2, toBlock: 'latest' });
+      getLogs(filter.address, filter.topics, FROM_BLOCK_EPISODE_2, 'latest');
 
     const events = await fetchEvents(filter);
     return events.map(
@@ -174,7 +174,7 @@ export const useStakingContract = () => {
     const filter = contract.filters.SuperClaimed();
 
     const fetchEvents = async (filter: TypedEventFilter<TypedEvent<Event[]>>) =>
-      alchemy.core.getLogs({ ...filter, fromBlock: FROM_BLOCK_EPISODE_2, toBlock: 'latest' });
+      getLogs(filter.address, filter.topics, FROM_BLOCK_EPISODE_2, 'latest');
 
     const events = await fetchEvents(filter);
     return events.map(
@@ -188,7 +188,7 @@ export const useStakingContract = () => {
     const filter = contract.filters.SuperWithdrawn();
 
     const fetchEvents = async (filter: TypedEventFilter<TypedEvent<Event[]>>) =>
-      alchemy.core.getLogs({ ...filter, fromBlock: FROM_BLOCK_EPISODE_2, toBlock: 'latest' });
+      getLogs(filter.address, filter.topics, FROM_BLOCK_EPISODE_2, 'latest');
 
     const events = await fetchEvents(filter);
     return events.map(

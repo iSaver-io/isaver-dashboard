@@ -2,8 +2,8 @@ import { Interface } from '@ethersproject/abi';
 import { ethers } from 'ethers';
 import { useContract, useProvider, useSigner } from 'wagmi';
 
+import { getLogs } from '@/api/getLogs';
 import { FROM_BLOCK_EPISODE_2 } from '@/constants';
-import alchemy from '@/modules/alchemy';
 import { ISaverPowers } from '@/types.common';
 import { TypedEvent, TypedEventFilter } from '@/types/typechain-types/common';
 import { waitForTransaction } from '@/utils/waitForTransaction';
@@ -39,7 +39,7 @@ export const usePowersContract = () => {
     const filterBatch = contract.filters.TransferBatch(undefined, ethers.constants.AddressZero);
 
     const fetchEvents = async (filter: TypedEventFilter<TypedEvent<Event[]>>) =>
-      alchemy.core.getLogs({ ...filter, fromBlock: FROM_BLOCK_EPISODE_2, toBlock: 'latest' });
+      getLogs(filter.address, filter.topics, FROM_BLOCK_EPISODE_2, 'latest');
 
     const events = (await Promise.all([fetchEvents(filter), fetchEvents(filterBatch)])).flat();
 
