@@ -1,7 +1,7 @@
 import { BigNumber } from 'ethers';
 
 import { ReferralReward } from '@/types';
-import { DividendsAddedEvent } from '@/types/typechain-types/contracts/ReferralManager';
+import { DividendsAddedEventObject } from '@/types/typechain-types/contracts/ReferralManager';
 
 const REASONS_MAP: Record<string, string> = {
   '0': 'complete',
@@ -13,13 +13,13 @@ const REASONS_MAP: Record<string, string> = {
 const getRewardReason = (reason: BigNumber) => REASONS_MAP[reason.toString()] || '---';
 
 export const formatReferralRewards = (
-  rawRewards: DividendsAddedEvent[],
+  rawRewards: DividendsAddedEventObject[],
   stakingPlans: { stakingDuration: BigNumber }[]
 ): ReferralReward[] => {
   const getStakingDuration = (stakingPlanId: number) =>
     stakingPlans[stakingPlanId]?.stakingDuration.toNumber() || 0;
 
-  return rawRewards.map(({ args }) => ({
+  return rawRewards.map((args) => ({
     referral: args.referral,
     level: args.level.toNumber(),
     depositAmount: args.depositAmount,
