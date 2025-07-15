@@ -1,7 +1,11 @@
+import { Interface } from '@ethersproject/abi';
 import { BigNumber } from 'ethers';
 import { useContract, useProvider, useSigner } from 'wagmi';
 
+import { getLogs } from '@/api/getLogs';
+import { FROM_BLOCK } from '@/constants';
 import { ReferralManager } from '@/types.common';
+import { DividendsAddedEventObject } from '@/types/typechain-types/contracts/ReferralManager';
 import { waitForTransaction } from '@/utils/waitForTransaction';
 
 import { ContractsEnum, useContractAbi } from './useContractAbi';
@@ -57,8 +61,13 @@ export const useReferralContract = () => {
   };
 
   const getRewards = async (account: string) => {
+    const referralInterface = new Interface(abi);
     const filter = contract.filters.DividendsAdded(account);
-    return await contract.queryFilter(filter);
+    const logs = await getLogs(filter.address, filter.topics, FROM_BLOCK, 'latest');
+    const events = logs.map(
+      (log) => referralInterface.parseLog(log).args as unknown as DividendsAddedEventObject
+    );
+    return events;
   };
 
   const updateLevelSubscriptionCost = async (newCost: BigNumber) => {
